@@ -455,7 +455,7 @@ describe("backupVerifyCommand", () => {
 
   it("rejects case-mangled canonical SQLite paths", async () => {
     const stateAssetArchivePath = `${TEST_ARCHIVE_ROOT}/payload/posix/tmp/.openclaw`;
-    const sqliteArchivePath = `${stateAssetArchivePath}/State/OpenClaw.SQLITE`;
+    const sqliteArchivePath = `${stateAssetArchivePath}/State/Nova.SQLITE`;
     const sqlitePayload = await createSqlitePayload((database) => {
       database.exec(`
         CREATE TABLE schema_meta (
@@ -481,7 +481,7 @@ describe("backupVerifyCommand", () => {
       async (archivePath) => {
         const runtime = createBackupVerifyRuntime();
         await expect(backupVerifyCommand(runtime, { archive: archivePath })).rejects.toThrow(
-          /case-mangled canonical SQLite path.*State\/OpenClaw\.SQLITE/u,
+          /case-mangled canonical SQLite path.*State\/Nova\.SQLITE/u,
         );
       },
     );

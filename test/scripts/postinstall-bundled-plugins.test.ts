@@ -160,7 +160,7 @@ describe("bundled plugin postinstall", () => {
 
     expect(attempted).toEqual([firstCacheDir, secondCacheDir]);
     expect(warn).toHaveBeenCalledWith(
-      "[postinstall] could not prune OpenClaw compile cache: Error: locked",
+      "[postinstall] could not prune Nova compile cache: Error: locked",
     );
   });
 
@@ -715,7 +715,7 @@ describe("bundled plugin postinstall", () => {
     );
   });
 
-  it("resolves legacy plugin runtime deps roots from OpenClaw state env", () => {
+  it("resolves legacy plugin runtime deps roots from Nova state env", () => {
     expect(
       collectLegacyPluginRuntimeDepsStateRoots({
         env: {

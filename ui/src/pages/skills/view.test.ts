@@ -415,7 +415,7 @@ describe("renderSkills", () => {
               score: 0.95,
               slug: "github",
               displayName: "GitHub",
-              summary: "GitHub integration for OpenClaw",
+              summary: "GitHub integration for Nova",
               version: "1.2.3",
             },
           ],
@@ -437,7 +437,7 @@ describe("renderSkills", () => {
     expect(detailButton?.contains(installButton)).toBe(false);
     expect(resultItem?.querySelector(".settings-row__title")?.textContent?.trim()).toBe("GitHub");
     expect(resultItem?.querySelector(".settings-row__desc")?.textContent?.trim()).toBe(
-      "GitHub integration for OpenClaw",
+      "GitHub integration for Nova",
     );
     expect(resultItem?.querySelector(".settings-row__value")?.textContent?.trim()).toBe("v1.2.3");
     expect(installButton?.textContent?.trim()).toBe("Install");
@@ -462,7 +462,7 @@ describe("renderSkills", () => {
             skill: {
               slug: "github",
               displayName: "GitHub",
-              summary: "GitHub integration for OpenClaw",
+              summary: "GitHub integration for Nova",
               createdAt: 1_700_000_000,
               updatedAt: 1_700_000_100,
             },
@@ -475,7 +475,7 @@ describe("renderSkills", () => {
               os: ["macos", "linux"],
             },
             owner: {
-              displayName: "OpenClaw",
+              displayName: "Nova",
               handle: "openclaw",
             },
           },
@@ -491,7 +491,7 @@ describe("renderSkills", () => {
       Array.from(container.querySelectorAll(".callout")).map((node) => normalizeText(node)),
     ).toEqual(["rate limited", "Installed github"]);
     expect(normalizeText(container.querySelector(".md-preview-dialog__body")!)).toBe(
-      "GitHub integration for OpenClaw By OpenClaw (@openclaw) Latest: v1.2.3 Added search support Platforms: macos, linux Install GitHub",
+      "GitHub integration for Nova By Nova (@openclaw) Latest: v1.2.3 Added search support Platforms: macos, linux Install GitHub",
     );
 
     const detailInstallButton = container.querySelector<HTMLButtonElement>(

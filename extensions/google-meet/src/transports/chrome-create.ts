@@ -193,7 +193,7 @@ const CREATE_MEET_FROM_BROWSER_SCRIPT = `async () => {
   if (!current().startsWith("https://meet.google.com/")) {
     return {
       manualActionReason: "google-login-required",
-      manualAction: "Sign in to Google in the OpenClaw browser profile, then retry meeting creation.",
+      manualAction: "Sign in to Google in the Nova browser profile, then retry meeting creation.",
       browserUrl: current(),
       browserTitle: document.title,
       notes,
@@ -220,7 +220,7 @@ const CREATE_MEET_FROM_BROWSER_SCRIPT = `async () => {
   if (/do you want people to hear you in the meeting/i.test(pageText)) {
     return {
       manualActionReason: "meet-audio-choice-required",
-      manualAction: "Meet is showing the microphone choice. Click Use microphone in the OpenClaw browser profile, then retry meeting creation.",
+      manualAction: "Meet is showing the microphone choice. Click Use microphone in the Nova browser profile, then retry meeting creation.",
       browserUrl: href,
       browserTitle: document.title,
       notes,
@@ -229,7 +229,7 @@ const CREATE_MEET_FROM_BROWSER_SCRIPT = `async () => {
   if (/allow.*(microphone|camera)|blocked.*(microphone|camera)|permission.*(microphone|camera)/i.test(pageText)) {
     return {
       manualActionReason: "meet-permission-required",
-      manualAction: "Allow microphone/camera permissions for Meet in the OpenClaw browser profile, then retry meeting creation.",
+      manualAction: "Allow microphone/camera permissions for Meet in the Nova browser profile, then retry meeting creation.",
       browserUrl: href,
       browserTitle: document.title,
       notes,
@@ -237,7 +237,7 @@ const CREATE_MEET_FROM_BROWSER_SCRIPT = `async () => {
   }
   if (/couldn't create|unable to create/i.test(pageText)) {
     return {
-      manualAction: "Resolve the Google Meet page prompt in the OpenClaw browser profile, then retry meeting creation.",
+      manualAction: "Resolve the Google Meet page prompt in the Nova browser profile, then retry meeting creation.",
       browserUrl: href,
       browserTitle: document.title,
       notes,
@@ -246,7 +246,7 @@ const CREATE_MEET_FROM_BROWSER_SCRIPT = `async () => {
   if (location.hostname.toLowerCase() === "accounts.google.com" || /use your google account|to continue to google meet|choose an account|sign in to (join|continue)/i.test(pageText)) {
     return {
       manualActionReason: "google-login-required",
-      manualAction: "Sign in to Google in the OpenClaw browser profile, then retry meeting creation.",
+      manualAction: "Sign in to Google in the Nova browser profile, then retry meeting creation.",
       browserUrl: href,
       browserTitle: document.title,
       notes,

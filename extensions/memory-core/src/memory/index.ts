@@ -1,4 +1,4 @@
-// Memory Core plugin entrypoint registers its OpenClaw integration.
+// Memory Core plugin entrypoint registers its Nova integration.
 export { MemoryIndexManager } from "./manager.js";
 export {
   closeAllMemorySearchManagers,

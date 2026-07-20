@@ -85,7 +85,7 @@ function resolveRetentionScope(options: ShowWidgetToolOptions): string {
   return createHash("sha256").update(scope).digest("hex");
 }
 
-/** Creates a self-contained widget hosted by OpenClaw core. */
+/** Creates a self-contained widget hosted by Nova core. */
 export function createShowWidgetTool(options: ShowWidgetToolOptions = {}): AnyAgentTool {
   const gatewayCall = options.callGateway ?? callInProcessGatewayTool;
   return {

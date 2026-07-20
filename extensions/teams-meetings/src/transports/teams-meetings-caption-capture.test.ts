@@ -25,7 +25,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       allowSessionAdoption: true,
       autoJoin: true,
       captureCaptions: true,
-      guestName: "OpenClaw Guest",
+      guestName: "Nova Guest",
       meetingSessionId: "session-1",
       meetingUrl: URL,
       waitForInCallMs: 60_000,
@@ -42,7 +42,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     const leave = control({ label: "Leave" });
     const { result, window } = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Copper lantern validates Teams captions seven.")],
+      captionRows: [captionRow("Nova QA", "Copper lantern validates Teams captions seven.")],
       captureCaptions: true,
       leave,
     });
@@ -51,7 +51,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       captioning: true,
       captionsEnabledAttempted: true,
       inCall: true,
-      lastCaptionSpeaker: "OpenClaw QA",
+      lastCaptionSpeaker: "Nova QA",
       lastCaptionText: "Copper lantern validates Teams captions seven.",
       transcriptLines: 1,
     });
@@ -70,7 +70,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       epoch: "teams-caption-epoch",
       lines: [
         {
-          speaker: "OpenClaw QA",
+          speaker: "Nova QA",
           text: "Copper lantern validates Teams captions seven.",
         },
       ],
@@ -87,7 +87,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       allowMicrophone: false,
       captionClickIgnored: true,
       captionsInitiallyOn: false,
-      captionRows: [captionRow("OpenClaw QA", "Retry captions")],
+      captionRows: [captionRow("Nova QA", "Retry captions")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
@@ -100,7 +100,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     const second = await runStatusScript({
       allowMicrophone: false,
       captionsInitiallyOn: false,
-      captionRows: [captionRow("OpenClaw QA", "Retry captions")],
+      captionRows: [captionRow("Nova QA", "Retry captions")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: first.window["__openclawTeamsCaptions"],
@@ -116,14 +116,14 @@ describe("Microsoft Teams meeting captions and permissions", () => {
   it("preserves valid one-character caption lines", async () => {
     const { result } = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "I")],
+      captionRows: [captionRow("Nova QA", "I")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
 
     expect(result).toMatchObject({
       lastCaptionText: "I",
-      recentTranscript: [{ speaker: "OpenClaw QA", text: "I" }],
+      recentTranscript: [{ speaker: "Nova QA", text: "I" }],
       transcriptLines: 1,
     });
   });
@@ -132,7 +132,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     const { result, window } = await runStatusScript({
       allowMicrophone: false,
       captionRows: Array.from({ length: 505 }, (_, index) =>
-        captionRow("OpenClaw QA", `Bounded caption ${index}`),
+        captionRow("Nova QA", `Bounded caption ${index}`),
       ),
       captureCaptions: true,
       leave: control({ label: "Leave" }),
@@ -165,13 +165,13 @@ describe("Microsoft Teams meeting captions and permissions", () => {
   it("keeps repeated utterances from distinct caption rows", async () => {
     const first = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Yes")],
+      captionRows: [captionRow("Nova QA", "Yes")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
     const second = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Yes")],
+      captionRows: [captionRow("Nova QA", "Yes")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: first.window["__openclawTeamsCaptions"],
@@ -183,7 +183,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
   it("keeps the latest caption when Teams shortens a provisional row", async () => {
     vi.useFakeTimers();
-    const row = captionRow("OpenClaw QA", "We should leave today");
+    const row = captionRow("Nova QA", "We should leave today");
     const first = await runStatusScript({
       allowMicrophone: false,
       captionsInitiallyOn: true,
@@ -207,12 +207,12 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
     expect(second.result.lastCaptionText).toBe("We should leave");
     expect(second.result.recentTranscript).toMatchObject([
-      { speaker: "OpenClaw QA", text: "We should leave" },
+      { speaker: "Nova QA", text: "We should leave" },
     ]);
   });
 
   it("keeps a mid-sentence caption correction in the same row lifecycle", async () => {
-    const row = captionRow("OpenClaw QA", "I like cats");
+    const row = captionRow("Nova QA", "I like cats");
     const first = await runStatusScript({
       allowMicrophone: false,
       captionRows: [row],
@@ -239,13 +239,13 @@ describe("Microsoft Teams meeting captions and permissions", () => {
   it("keeps one utterance when Teams replaces a logically identical caption row", async () => {
     const first = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Logical row", "8")],
+      captionRows: [captionRow("Nova QA", "Logical row", "8")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
     const second = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Logical row replacement", "8")],
+      captionRows: [captionRow("Nova QA", "Logical row replacement", "8")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: first.window["__openclawTeamsCaptions"],
@@ -260,14 +260,14 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     const first = await runStatusScript({
       allowMicrophone: false,
       captionsInitiallyOn: true,
-      captionRows: [captionRow("OpenClaw QA", "Late logical", "9")],
+      captionRows: [captionRow("Nova QA", "Late logical", "9")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
     await vi.advanceTimersByTimeAsync(1_000);
     const second = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Late logical correction", "9")],
+      captionRows: [captionRow("Nova QA", "Late logical correction", "9")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: first.window["__openclawTeamsCaptions"],
@@ -282,7 +282,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     const first = await runStatusScript({
       allowMicrophone: false,
       captionsInitiallyOn: true,
-      captionRows: [captionRow("OpenClaw QA", "Virtual row return", "13")],
+      captionRows: [captionRow("Nova QA", "Virtual row return", "13")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
@@ -296,7 +296,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     });
     const returned = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Virtual row return", "13")],
+      captionRows: [captionRow("Nova QA", "Virtual row return", "13")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: missing.window["__openclawTeamsCaptions"],
@@ -308,7 +308,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
   it("commits an utterance when Teams recycles the same virtual-list row", async () => {
     vi.useFakeTimers();
-    const row = captionRow("OpenClaw QA", "First recycled-row utterance");
+    const row = captionRow("Nova QA", "First recycled-row utterance");
     const first = await runStatusScript({
       allowMicrophone: false,
       captionsInitiallyOn: true,
@@ -346,7 +346,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
   });
 
   it("commits a removed row before Teams rapidly reuses its DOM node", async () => {
-    const row = captionRow("OpenClaw QA", "Rapid first utterance");
+    const row = captionRow("Nova QA", "Rapid first utterance");
     const first = await runStatusScript({
       allowMicrophone: false,
       captionRows: [row],
@@ -376,7 +376,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
   it("does not merge recycled rows that only share a text prefix", async () => {
     vi.useFakeTimers();
-    const row = captionRow("OpenClaw QA", "Thank you");
+    const row = captionRow("Nova QA", "Thank you");
     const first = await runStatusScript({
       allowMicrophone: false,
       captionsInitiallyOn: true,
@@ -413,8 +413,8 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
   it("retains settled markers for older rows while newer captions settle", async () => {
     vi.useFakeTimers();
-    const firstRow = captionRow("OpenClaw QA", "First settled row", "11");
-    const secondRow = captionRow("OpenClaw QA", "Second settled row", "12");
+    const firstRow = captionRow("Nova QA", "First settled row", "11");
+    const secondRow = captionRow("Nova QA", "Second settled row", "12");
     const first = await runStatusScript({
       allowMicrophone: false,
       captionsInitiallyOn: true,
@@ -458,7 +458,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     if (!author) {
       throw new Error("expected caption author control");
     }
-    author.textContent = "OpenClaw QA";
+    author.textContent = "Nova QA";
     const second = await runStatusScript({
       allowMicrophone: false,
       captionRows: [row],
@@ -469,20 +469,20 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
     expect(second.result.transcriptLines).toBe(1);
     expect(second.result.recentTranscript).toMatchObject([
-      { speaker: "OpenClaw QA", text: "Late attribution" },
+      { speaker: "Nova QA", text: "Late attribution" },
     ]);
   });
 
   it("updates a corrected speaker on the same logical row before settlement", async () => {
     const first = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw Q", "Stable speaker correction", "10")],
+      captionRows: [captionRow("Nova Q", "Stable speaker correction", "10")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
     const second = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Stable speaker correction", "10")],
+      captionRows: [captionRow("Nova QA", "Stable speaker correction", "10")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: first.window["__openclawTeamsCaptions"],
@@ -490,7 +490,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
     expect(second.result.transcriptLines).toBe(1);
     expect(second.result.recentTranscript).toMatchObject([
-      { speaker: "OpenClaw QA", text: "Stable speaker correction" },
+      { speaker: "Nova QA", text: "Stable speaker correction" },
     ]);
   });
 
@@ -585,7 +585,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
         visible: [
           {
             at: "2026-07-17T12:00:00.000Z",
-            speaker: "OpenClaw QA",
+            speaker: "Nova QA",
             text: "Preserve call-end captions",
           },
         ],
@@ -616,13 +616,13 @@ describe("Microsoft Teams meeting captions and permissions", () => {
   it("finalizes caption capture before an SPA navigation can mix meetings", async () => {
     const params = {
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Meeting A caption")],
+      captionRows: [captionRow("Nova QA", "Meeting A caption")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     };
     const page = await runStatusScript(params);
 
-    params.captionRows = [captionRow("OpenClaw QA", "Meeting B caption")];
+    params.captionRows = [captionRow("Nova QA", "Meeting B caption")];
     page.triggerCaptionMutation(CONSUMER_URL);
 
     const captions = page.window["__openclawTeamsCaptions"] as {
@@ -710,7 +710,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     const currentUrl = "https://teams.live.com/v2/";
     const page = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Caption before control rerender")],
+      captionRows: [captionRow("Nova QA", "Caption before control rerender")],
       captureCaptions: true,
       currentUrl,
       leave,
@@ -742,7 +742,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
     };
     const { window } = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "New session")],
+      captionRows: [captionRow("Nova QA", "New session")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: old,
@@ -860,7 +860,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
   it("disconnects caption capture when finalizing a transcript", async () => {
     const first = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Final caption")],
+      captionRows: [captionRow("Nova QA", "Final caption")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
     });
@@ -884,7 +884,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
 
     const refreshed = await runStatusScript({
       allowMicrophone: false,
-      captionRows: [captionRow("OpenClaw QA", "Late caption")],
+      captionRows: [captionRow("Nova QA", "Late caption")],
       captureCaptions: true,
       leave: control({ label: "Leave" }),
       priorCaptions: captions,
@@ -908,7 +908,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
           lines: [
             {
               at: "2026-07-17T12:00:00.000Z",
-              speaker: "OpenClaw QA",
+              speaker: "Nova QA",
               text: "Copper lantern validates Teams captions seven.",
             },
           ],
@@ -920,7 +920,7 @@ describe("Microsoft Teams meeting captions and permissions", () => {
       lines: [
         {
           at: "2026-07-17T12:00:00.000Z",
-          speaker: "OpenClaw QA",
+          speaker: "Nova QA",
           text: "Copper lantern validates Teams captions seven.",
         },
       ],

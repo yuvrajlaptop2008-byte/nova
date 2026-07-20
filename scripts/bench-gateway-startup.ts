@@ -1,4 +1,4 @@
-// Bench Gateway Startup script supports OpenClaw repository automation.
+// Bench Gateway Startup script supports Nova repository automation.
 import { spawn } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -327,7 +327,7 @@ function parseOptions(argv: string[] = process.argv.slice(2)): CliOptions {
 }
 
 function printUsage(): void {
-  console.log(`OpenClaw Gateway startup benchmark
+  console.log(`Nova Gateway startup benchmark
 
 Usage:
   pnpm test:startup:gateway -- [options]

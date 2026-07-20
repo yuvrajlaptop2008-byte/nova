@@ -171,10 +171,7 @@ describe("telegram user Crabbox proof log polling", () => {
       parseArgs(["--output-dir", ".artifacts/one", "--output-dir", ".artifacts/two"]),
     ).toThrow("--output-dir was provided more than once");
 
-    expect(parseArgs(["--expect", "OpenClaw", "--expect", "ready"]).expect).toEqual([
-      "OpenClaw",
-      "ready",
-    ]);
+    expect(parseArgs(["--expect", "Nova", "--expect", "ready"]).expect).toEqual(["Nova", "ready"]);
   });
 
   it("uses unique default output dirs", () => {

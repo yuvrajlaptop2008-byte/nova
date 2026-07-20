@@ -1,4 +1,4 @@
-// Policy plugin entrypoint registers its OpenClaw integration.
+// Policy plugin entrypoint registers its Nova integration.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { registerPolicyCli } from "./src/cli.js";
 import { registerPolicyDoctorChecks } from "./src/doctor/register.js";

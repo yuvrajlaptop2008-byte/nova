@@ -1,4 +1,4 @@
-// Runway plugin entrypoint registers its OpenClaw integration.
+// Runway plugin entrypoint registers its Nova integration.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { buildRunwayVideoGenerationProvider } from "./video-generation-provider.js";
 

@@ -312,7 +312,7 @@ export async function prepareSetupMigrationAttemptBoundary(params: {
   };
 }
 
-/** Serializes all onboarding migration writes that share one OpenClaw state target. */
+/** Serializes all onboarding migration writes that share one Nova state target. */
 export async function withSetupMigrationTargetLock<T>(
   stateDir: string,
   fn: () => Promise<T>,
@@ -335,7 +335,7 @@ export function assertFreshSetupMigrationTarget(freshness: {
   }
   throw new Error(
     [
-      "Migration import during onboarding requires a fresh OpenClaw setup.",
+      "Migration import during onboarding requires a fresh Nova setup.",
       "Create a fresh setup or reset config, credentials, sessions, and workspace before importing.",
       "Backup plus overwrite/merge imports are feature-gated for now.",
       "Existing setup:",

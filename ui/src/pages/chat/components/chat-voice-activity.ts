@@ -84,7 +84,7 @@ export function voiceStatusLabel(
     return explicitDetail;
   }
   if (status === "thinking") {
-    return "Asking OpenClaw...";
+    return "Asking Nova...";
   }
   if (status === "connecting") {
     return "Connecting voice input...";

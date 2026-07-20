@@ -1,4 +1,4 @@
-// OpenClaw CLI runner selects JSON, one-shot, or interactive setup-helper mode.
+// Nova CLI runner selects JSON, one-shot, or interactive setup-helper mode.
 import { stdin as defaultStdin, stdout as defaultStdout } from "node:process";
 import { withProgress } from "../cli/progress.js";
 import { defaultRuntime, writeRuntimeJson, type RuntimeEnv } from "../runtime.js";
@@ -23,7 +23,7 @@ import {
 } from "./verified-inference.js";
 
 /**
- * CLI entry point for OpenClaw.
+ * CLI entry point for Nova.
  *
  * This module chooses JSON, one-shot, or interactive TUI mode and delegates all
  * command parsing/execution to dialogue and operation modules.
@@ -33,7 +33,7 @@ type SystemAgentInteractiveRunner = (
   runtime: RuntimeEnv,
 ) => Promise<void>;
 
-/** Options accepted by the OpenClaw command runner. */
+/** Options accepted by the Nova command runner. */
 export type RunSystemAgentOptions = {
   message?: string;
   yes?: boolean;
@@ -132,7 +132,7 @@ async function runOneShot(
   });
 }
 
-/** Run OpenClaw in JSON, one-shot message, or interactive TUI mode. */
+/** Run Nova in JSON, one-shot message, or interactive TUI mode. */
 export async function runSystemAgent(
   opts: RunSystemAgentOptions,
   runtime: RuntimeEnv = defaultRuntime,
@@ -161,7 +161,7 @@ export async function runSystemAgent(
     // same snapshot for planning so reply-only plans do not print before it.
     const overview = await withProgress(
       {
-        label: "Loading OpenClaw overview…",
+        label: "Loading Nova overview…",
         indeterminate: true,
         delayMs: 0,
         fallback: "none",
@@ -189,8 +189,8 @@ export async function runSystemAgent(
   const inputIsTty = (input as { isTTY?: boolean }).isTTY === true;
   const outputIsTty = (output as { isTTY?: boolean }).isTTY === true;
   if (!inputIsTty || !outputIsTty) {
-    // Without a TTY, OpenClaw cannot safely ask for confirmation; require --message instead.
-    runtime.error("OpenClaw needs an interactive TTY. Use --message for one command.");
+    // Without a TTY, Nova cannot safely ask for confirmation; require --message instead.
+    runtime.error("Nova needs an interactive TTY. Use --message for one command.");
     runtime.exit(1);
     return;
   }

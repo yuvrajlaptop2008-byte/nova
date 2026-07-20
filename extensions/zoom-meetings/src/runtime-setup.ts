@@ -51,7 +51,7 @@ export async function getZoomMeetingsSetupStatus(params: {
       ok: true,
       message: params.config.chrome.browserProfile
         ? `Chrome node profile configured: ${params.config.chrome.browserProfile}`
-        : "Local Chrome uses the configured OpenClaw browser profile",
+        : "Local Chrome uses the configured Nova browser profile",
     },
     {
       id: "guest-join",

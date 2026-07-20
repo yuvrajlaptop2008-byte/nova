@@ -166,7 +166,7 @@ export async function buildHermesPlan(ctx: MigrationProviderContext): Promise<Mi
       createMigrationManualItem({
         id: "manual:auth-reauthenticate:qwen",
         source: source.configPath ?? source.root,
-        message: "Hermes Qwen Portal OAuth and Qwen CLI credentials cannot be reused by OpenClaw.",
+        message: "Hermes Qwen Portal OAuth and Qwen CLI credentials cannot be reused by Nova.",
         recommendation:
           "Authenticate qwen with an API key after migration: openclaw onboard --auth-choice qwen-api-key.",
       }),
@@ -198,7 +198,7 @@ export async function buildHermesPlan(ctx: MigrationProviderContext): Promise<Mi
       (item) => item.kind === "auth" && item.details?.sourceKind === "hermes-auth-json",
     )
       ? [
-          "Hermes and OpenClaw must not keep using the same imported OpenAI OAuth refresh grant after migration; reauthenticate one side before running both.",
+          "Hermes and Nova must not keep using the same imported OpenAI OAuth refresh grant after migration; reauthenticate one side before running both.",
         ]
       : []),
     ...(items.some((item) => item.status === "conflict")
@@ -208,7 +208,7 @@ export async function buildHermesPlan(ctx: MigrationProviderContext): Promise<Mi
       : []),
     ...(source.archivePaths.length > 0
       ? [
-          "Some Hermes files are archive-only. They will be copied into the migration report for manual review, not loaded into OpenClaw.",
+          "Some Hermes files are archive-only. They will be copied into the migration report for manual review, not loaded into Nova.",
         ]
       : []),
     ...(items.some((item) => item.kind === "manual")

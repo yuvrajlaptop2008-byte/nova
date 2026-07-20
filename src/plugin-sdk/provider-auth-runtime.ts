@@ -244,7 +244,7 @@ export async function waitForLocalOAuthCallback(params: {
         res.end(
           "<!doctype html><html><head><meta charset='utf-8'/></head>" +
             `<body><h2>${escapedSuccessTitle}</h2>` +
-            "<p>You can close this window and return to OpenClaw.</p></body></html>",
+            "<p>You can close this window and return to Nova.</p></body></html>",
         );
 
         finish(undefined, { code, state });

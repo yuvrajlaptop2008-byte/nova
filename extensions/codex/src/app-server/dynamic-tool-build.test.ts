@@ -269,7 +269,7 @@ describe("Codex app-server dynamic tool build", () => {
     });
   });
 
-  it("preserves the host-provided OpenClaw tool through the Codex allowlist", async () => {
+  it("preserves the host-provided Nova tool through the Codex allowlist", async () => {
     const workspaceDir = path.join(tempDir, "workspace");
     const params = createParams(path.join(tempDir, "session.jsonl"), workspaceDir);
     params.disableTools = false;
@@ -692,7 +692,7 @@ describe("Codex app-server dynamic tool build", () => {
     expect(persistentWebSearchAllowed).toBe(false);
   });
 
-  it("exposes OpenClaw sandbox shell tools under distinct names for non-Docker sandbox backends", async () => {
+  it("exposes Nova sandbox shell tools under distinct names for non-Docker sandbox backends", async () => {
     setOpenClawCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("read"),
       createRuntimeDynamicTool("write"),
@@ -722,7 +722,7 @@ describe("Codex app-server dynamic tool build", () => {
     );
   });
 
-  it("exposes Docker sandbox shell tools when OpenClaw sandboxing disables native Code Mode", async () => {
+  it("exposes Docker sandbox shell tools when Nova sandboxing disables native Code Mode", async () => {
     setOpenClawCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("exec"),
       createRuntimeDynamicTool("process"),
@@ -997,7 +997,7 @@ describe("Codex app-server dynamic tool build", () => {
     expect(allowlistedTools.map((tool) => tool.name)).toEqual(["message"]);
   });
 
-  it("restores the policy-filtered OpenClaw shell when a finite allowlist disables native Code Mode", async () => {
+  it("restores the policy-filtered Nova shell when a finite allowlist disables native Code Mode", async () => {
     const execTool = createRuntimeDynamicTool("exec");
     const processTool = createRuntimeDynamicTool("process");
     const messageTool = createRuntimeDynamicTool("message");
@@ -1330,7 +1330,7 @@ describe("Codex app-server dynamic tool build", () => {
     expect(toolOptions.exec?.mode).toBeUndefined();
   });
 
-  it("passes the delegation capability into shared OpenClaw tool construction", async () => {
+  it("passes the delegation capability into shared Nova tool construction", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const params = createParams(sessionFile, workspaceDir);
@@ -1541,7 +1541,7 @@ describe("Codex app-server dynamic tool build", () => {
     expect(shouldEnableCodexAppServerNativeToolSurface(runtimePolicyParams)).toBe(true);
   });
 
-  it("disables Codex native tool surfaces whenever an OpenClaw sandbox is active", () => {
+  it("disables Codex native tool surfaces whenever an Nova sandbox is active", () => {
     const workspaceDir = path.join(tempDir, "workspace");
     const params = createParams(path.join(tempDir, "session.jsonl"), workspaceDir);
     params.disableTools = false;

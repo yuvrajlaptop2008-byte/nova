@@ -70,7 +70,7 @@ function quarantineStorePath(stateDir: string): string {
   return path.join(stateDir, "state", "openclaw-quarantine.sqlite");
 }
 
-describe("OpenClaw database integrity verifier", () => {
+describe("Nova database integrity verifier", () => {
   it("detects corruption off-thread, quarantines it, and latches later opens", async () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-");
     const env = { OPENCLAW_STATE_DIR: stateDir };
@@ -79,7 +79,7 @@ describe("OpenClaw database integrity verifier", () => {
     closeOpenClawStateDatabaseForTest();
     createUnsafeIndexDrift(agentPath);
     const targets: OpenClawDatabaseVerifyTarget[] = [
-      { kind: "agent", label: "OpenClaw agent database worker-1", path: agentPath },
+      { kind: "agent", label: "Nova agent database worker-1", path: agentPath },
     ];
 
     const directResults = verifyOpenClawDatabases(targets);
@@ -136,7 +136,7 @@ describe("OpenClaw database integrity verifier", () => {
     applyOpenClawDatabaseVerificationResults({
       env,
       results: [{ path: agentPath, ok: false, error: "corrupt index", terminal: true }],
-      targets: [{ kind: "agent", label: "OpenClaw agent database worker-1", path: agentPath }],
+      targets: [{ kind: "agent", label: "Nova agent database worker-1", path: agentPath }],
     });
     closeOpenClawStateDatabaseForTest();
 
@@ -278,7 +278,7 @@ describe("OpenClaw database integrity verifier", () => {
     closeOpenClawAgentDatabasesForTest();
     closeOpenClawStateDatabaseForTest();
     const targets: OpenClawDatabaseVerifyTarget[] = [
-      { kind: "agent", label: "OpenClaw agent database worker-1", path: agentPath },
+      { kind: "agent", label: "Nova agent database worker-1", path: agentPath },
     ];
 
     applyOpenClawDatabaseVerificationResults({
@@ -296,7 +296,7 @@ describe("OpenClaw database integrity verifier", () => {
     const statePath = openOpenClawStateDatabase({ env }).path;
     closeOpenClawStateDatabaseForTest();
     const targets: OpenClawDatabaseVerifyTarget[] = [
-      { kind: "state", label: "OpenClaw state database", path: statePath },
+      { kind: "state", label: "Nova state database", path: statePath },
     ];
 
     applyOpenClawDatabaseVerificationResults({

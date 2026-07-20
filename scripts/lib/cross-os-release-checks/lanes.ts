@@ -72,7 +72,7 @@ import {
   runDashboardSmoke,
   runModelsSet,
   runOnboard,
-  runOpenClaw,
+  runNova,
   startGateway,
   waitForGateway,
 } from "./runtime.ts";
@@ -240,7 +240,7 @@ export async function runUpgradeLane(
     let usedWindowsPackagedUpgradeTimeoutFallback = false;
     await runTimedLanePhase(lane, "update", async () => {
       try {
-        updateResult = await runOpenClaw({
+        updateResult = await runNova({
           lane,
           env: updateEnv,
           args: updateArgs,
@@ -302,7 +302,7 @@ export async function runUpgradeLane(
       })
     ) {
       await runTimedLanePhase(lane, "update-status", async () => {
-        await runOpenClaw({
+        await runNova({
           lane,
           env: updateEnv,
           args: ["update", "status", "--json"],
@@ -628,7 +628,7 @@ export async function runDevUpdateSuite(
     const updatedShell = await verifyFreshShellCommand({
       lane,
       env,
-      expectedNeedle: "OpenClaw",
+      expectedNeedle: "Nova",
       logPath: join(params.logsDir, "dev-update-shell.log"),
     });
 

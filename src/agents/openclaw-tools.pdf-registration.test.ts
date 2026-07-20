@@ -1,4 +1,4 @@
-// Verifies PDF tool factory output is included in OpenClaw tool registration.
+// Verifies PDF tool factory output is included in Nova tool registration.
 import { describe, expect, it } from "vitest";
 import { collectPresentOpenClawTools } from "./openclaw-tools.registration.js";
 import { createPdfTool } from "./tools/pdf-tool.js";

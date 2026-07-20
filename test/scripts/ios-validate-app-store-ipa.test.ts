@@ -197,7 +197,7 @@ async function writeIpaFixture(root: string): Promise<string> {
   }
 
   addTree(path.join(root, "Payload"), "Payload");
-  const ipaPath = path.join(root, "OpenClaw.ipa");
+  const ipaPath = path.join(root, "Nova.ipa");
   const buffer = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
   writeFileSync(ipaPath, buffer);
   return ipaPath;
@@ -222,7 +222,7 @@ async function writeValidFixture(
 }> {
   const binDir = path.join(root, "bin");
   const payloadDir = path.join(root, "Payload");
-  const appDir = path.join(payloadDir, "OpenClaw.app");
+  const appDir = path.join(payloadDir, "Nova.app");
   const fixturesDir = path.join(root, "fixtures");
   mkdirSync(appDir, { recursive: true });
   mkdirSync(binDir, { recursive: true });
@@ -234,17 +234,14 @@ async function writeValidFixture(
     plistString("OpenClawBuildTimestamp", options.buildTimestamp ?? BUILD_TIMESTAMP),
     plistString("OpenClawPushMode", options.pushMode ?? "appStore"),
     plistString("OpenClawPushRelayBaseURL", ""),
-    plistString(
-      "NSHealthShareUsageDescription",
-      "OpenClaw reads Health data for Health Summaries.",
-    ),
+    plistString("NSHealthShareUsageDescription", "Nova reads Health data for Health Summaries."),
     options.healthUpdateUsage === null
       ? ""
       : typeof options.healthUpdateUsage === "boolean"
         ? plistBool("NSHealthUpdateUsageDescription", options.healthUpdateUsage)
         : plistString(
             "NSHealthUpdateUsageDescription",
-            options.healthUpdateUsage ?? "OpenClaw reads Health data for Health Summaries.",
+            options.healthUpdateUsage ?? "Nova reads Health data for Health Summaries.",
           ),
     options.legacyKey ? plistString("OpenClawPushRelayProfile", "production") : "",
   ].join("");
@@ -274,7 +271,7 @@ async function writeValidFixture(
     profilePath,
     plist(
       [
-        plistString("Name", "OpenClaw App Store ai.openclawfoundation.app"),
+        plistString("Name", "Nova App Store ai.openclawfoundation.app"),
         plistArray("TeamIdentifier", ["FWJYW4S8P8"]),
         plistDict(
           "Entitlements",

@@ -433,7 +433,7 @@ describe("Microsoft Teams meeting platform adapter", () => {
     expect(currentLeave.clicks).toBe(0);
   });
 
-  it("does not leave a call owned by a newer OpenClaw session", () => {
+  it("does not leave a call owned by a newer Nova session", () => {
     const leave = control({ label: "Leave" });
     const inCallUrl = "https://teams.microsoft.com/v2/";
     const { result } = runLeaveScript({

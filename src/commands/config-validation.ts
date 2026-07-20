@@ -25,7 +25,7 @@ export async function requireValidConfigFileSnapshot(
       snapshot.issues.length > 0
         ? formatConfigIssueLines(snapshot.issues, "-").join("\n")
         : "Unknown validation issue.";
-    runtime.error(`OpenClaw config is invalid: ${snapshot.path}\n${issues}`);
+    runtime.error(`Nova config is invalid: ${snapshot.path}\n${issues}`);
     runtime.error(
       isPluginPackagingRuntimeOutputInvalidConfigSnapshot(snapshot)
         ? `Fix: ${formatPluginPackagingRuntimeOutputRecoveryHint()}`
@@ -54,7 +54,7 @@ export async function requireValidConfigFileSnapshot(
   return snapshot;
 }
 
-/** Read and return a valid OpenClaw config, or null after reporting validation errors. */
+/** Read and return a valid Nova config, or null after reporting validation errors. */
 export async function requireValidConfigSnapshot(
   runtime: RuntimeEnv,
   opts?: { includeCompatibilityAdvisory?: boolean },

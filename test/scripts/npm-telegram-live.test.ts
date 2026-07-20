@@ -92,7 +92,7 @@ describe("package Telegram live Docker E2E", () => {
     expect(script).toContain('credential_role="maintainer"');
   });
 
-  it("bounds installed-package hot path OpenClaw commands", () => {
+  it("bounds installed-package hot path Nova commands", () => {
     const script = readFileSync(DOCKER_SCRIPT_PATH, "utf8");
     const runtimeRunStart = script.indexOf("# Mount only QA harness source");
     const runtimeRun = script.slice(runtimeRunStart);
@@ -211,7 +211,7 @@ describe("package Telegram live Docker E2E", () => {
     ).toBe(".artifacts/custom");
   });
 
-  it("keeps the installed OpenClaw command as the package SUT", async () => {
+  it("keeps the installed Nova command as the package SUT", async () => {
     const prefix = mkTempRoot();
     const command = path.join(prefix, "bin", "openclaw");
     mkdirSync(path.dirname(command), { recursive: true });
@@ -247,7 +247,7 @@ describe("package Telegram live Docker E2E", () => {
     expect(script).toContain('-v "$OUTPUT_DIR_HOST:$OUTPUT_DIR_CONTAINER"');
   });
 
-  it("uses the container temp root for OpenClaw runtime scratch files", () => {
+  it("uses the container temp root for Nova runtime scratch files", () => {
     const script = readFileSync(DOCKER_SCRIPT_PATH, "utf8");
     const dockerEnvStart = script.indexOf("docker_env=(");
     const dockerEnvEnd = script.indexOf(")\n\nforward_env_if_set", dockerEnvStart);

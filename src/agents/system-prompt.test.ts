@@ -292,12 +292,12 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).toContain("<final>...</final>");
   });
 
-  it("includes an OpenClaw control section", () => {
+  it("includes an Nova control section", () => {
     const prompt = buildAgentSystemPrompt({
       workspaceDir: "/tmp/openclaw",
     });
 
-    expect(prompt).toContain("## OpenClaw Control");
+    expect(prompt).toContain("## Nova Control");
     expect(prompt).toContain("Config read: `gateway`");
     expect(prompt).not.toContain("openclaw gateway status|restart|start|stop");
     expect(prompt).toContain("Do not invent commands");
@@ -434,13 +434,13 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).not.toContain("Brave API");
   });
 
-  it("keeps the OpenClaw empty-tool fallback on the main prompt surface", () => {
+  it("keeps the Nova empty-tool fallback on the main prompt surface", () => {
     const prompt = buildAgentSystemPrompt({
       workspaceDir: "/tmp/openclaw",
       toolNames: [],
     });
 
-    expect(prompt).toContain("OpenClaw lists the standard tools above");
+    expect(prompt).toContain("Nova lists the standard tools above");
     expect(prompt).toContain("- sessions_spawn: spawn an isolated sub-agent session");
   });
 
@@ -553,7 +553,7 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).toContain("Several: most specific");
     expect(prompt).toContain("Docs: /tmp/openclaw/docs");
     expect(prompt).toContain(
-      "OpenClaw behavior questions: docs first via `Read`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
+      "Nova behavior questions: docs first via `Read`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
     );
   });
 
@@ -568,7 +568,7 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).toContain("Docs: /tmp/openclaw/docs");
     expect(prompt).toContain("Source: /tmp/openclaw");
     expect(prompt).toContain(
-      "OpenClaw behavior questions: docs first via `read`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
+      "Nova behavior questions: docs first via `read`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
     );
     expect(prompt).toContain("If docs are silent/stale, say so and inspect local source.");
   });
@@ -585,7 +585,7 @@ describe("buildAgentSystemPrompt", () => {
     const docsSection = prompt.slice(docsStart, nextSection);
 
     expect(prompt).toContain(
-      "OpenClaw behavior questions: docs first via `read`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
+      "Nova behavior questions: docs first via `read`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
     );
     expect(docsSection.length).toBeLessThan(840);
     expect(prompt).not.toContain("Self-knowledge rule: for questions about");
@@ -601,7 +601,7 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).toContain("Docs: https://docs.openclaw.ai");
     expect(prompt).toContain("Source: https://github.com/openclaw/openclaw");
     expect(prompt).toContain(
-      "OpenClaw behavior questions: docs mirror first when web exists. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
+      "Nova behavior questions: docs mirror first when web exists. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
     );
     expect(prompt).toContain("If docs are silent/stale, say so and inspect GitHub source.");
   });
@@ -785,7 +785,7 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).toContain(
       "Config, channels, plugins, new agents, model/provider, updates: ask `openclaw`.",
     );
-    expect(prompt).toContain("Never write own config; OpenClaw is system expert.");
+    expect(prompt).toContain("Never write own config; Nova is system expert.");
     expect(prompt).toContain("`visible:true` only web/app user or asked.");
   });
 
@@ -1592,7 +1592,7 @@ describe("buildSubagentSystemPrompt", () => {
     expect(prompt).toContain("set `agentId` unless default");
     expect(prompt).toContain("Never ask user for slash/CLI");
     expect(prompt).toContain("exec openclaw/acpx");
-    expect(prompt).toContain("`agents_list`/`subagents` = OpenClaw runtime=subagent only");
+    expect(prompt).toContain("`agents_list`/`subagents` = Nova runtime=subagent only");
     expect(prompt).toContain("Subagent results auto-announce");
     expect(prompt).toContain("never sessions_list/history, exec sleep, or poll loops");
     expect(prompt).toContain("Need wait: `sessions_yield`");

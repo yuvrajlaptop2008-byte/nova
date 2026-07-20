@@ -196,7 +196,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     );
   });
 
-  it("adds the OpenClaw session key to both managed tools MCP bridges", () => {
+  it("adds the Nova session key to both managed tools MCP bridges", () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -246,7 +246,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     });
   });
 
-  it("keeps managed OpenClaw tools MCP delegates reachable for fresh sessions", async () => {
+  it("keeps managed Nova tools MCP delegates reachable for fresh sessions", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -278,7 +278,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     );
   });
 
-  it("uses the no-MCP delegate for startup probes when the OpenClaw tools bridge is enabled", async () => {
+  it("uses the no-MCP delegate for startup probes when the Nova tools bridge is enabled", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -305,7 +305,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(defaultProbe).not.toHaveBeenCalled();
   });
 
-  it("normalizes OpenClaw Codex model ids for ACP startup", async () => {
+  it("normalizes Nova Codex model ids for ACP startup", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -338,7 +338,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     });
   });
 
-  it("strips the OpenClaw Anthropic provider prefix for Claude ACP startup", async () => {
+  it("strips the Nova Anthropic provider prefix for Claude ACP startup", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -372,7 +372,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     });
   });
 
-  it("keeps Claude ACP model ids intact after stripping the OpenClaw provider prefix", () => {
+  it("keeps Claude ACP model ids intact after stripping the Nova provider prefix", () => {
     expect(testing.normalizeClaudeAcpModelOverride("anthropic/claude-sonnet-4-6")).toBe(
       "claude-sonnet-4-6",
     );
@@ -725,7 +725,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     });
   });
 
-  it("disables delegate prompt timeout for OpenClaw-managed turns", async () => {
+  it("disables delegate prompt timeout for Nova-managed turns", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:test",
@@ -1659,7 +1659,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(baseStore["load"]).toHaveBeenCalledOnce();
   });
 
-  it("releases managed OpenClaw tools MCP delegates after close", async () => {
+  it("releases managed Nova tools MCP delegates after close", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => undefined),
       save: vi.fn(async () => {}),
@@ -1698,7 +1698,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
     expect(exposedRuntime.managedToolsSessionDelegates.has("agent:codex:main")).toBe(false);
   });
 
-  it("cleans up OpenClaw-owned ACPX process trees after close", async () => {
+  it("cleans up Nova-owned ACPX process trees after close", async () => {
     const baseStore: TestSessionStore = {
       load: vi.fn(async () => ({
         acpxRecordId: "agent:codex:acp:binding:test",
@@ -2589,7 +2589,7 @@ describe("AcpxRuntime fresh reset wrapper", () => {
 
     const { runtime, delegate, bridgeSafeDelegate } = makeRuntime(baseStore, {
       mcpServers: [{ name: "tools", command: "mcp-tools" }] as never,
-      probeAgent: "  OpenClaw  ",
+      probeAgent: "  Nova  ",
       agentRegistry: {
         resolve: (agentName: string) =>
           agentName === "openclaw" ? DOCUMENTED_OPENCLAW_BRIDGE_COMMAND : agentName,

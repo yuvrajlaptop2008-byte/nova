@@ -431,7 +431,7 @@ describe("install.ps1 failure handling", () => {
           "try {",
           ...ENTRYPOINT_LINES.map((line) => `  ${line}`),
           "} catch {",
-          "  if ($_.Exception.Message -ne 'OpenClaw installation failed with exit code 1.') { throw }",
+          "  if ($_.Exception.Message -ne 'Nova installation failed with exit code 1.') { throw }",
           "  $caught = $true",
           "}",
           "if (-not $caught) { throw 'Install failure did not reach the caller' }",
@@ -446,7 +446,7 @@ describe("install.ps1 failure handling", () => {
           "function Write-Banner { }",
           "function Ensure-ExecutionPolicy { return $true }",
           "function Check-Node { return $true }",
-          "function Check-ExistingOpenClaw { return $false }",
+          "function Check-ExistingNova { return $false }",
           "function Get-NpmCommandPath { return $null }",
           "function Install-OpenClawFromGit {",
           "  Write-Output 'pnpm stdout before failure'",
@@ -470,12 +470,12 @@ describe("install.ps1 failure handling", () => {
           "function Write-Banner { }",
           "function Ensure-ExecutionPolicy { return $true }",
           "function Check-Node { return $true }",
-          "function Check-ExistingOpenClaw { return $false }",
+          "function Check-ExistingNova { return $false }",
           "function Add-ToPath { param([string]$Path) }",
-          "function Install-OpenClaw { Write-Output 'npm stdout'; return $true }",
+          "function Install-Nova { Write-Output 'npm stdout'; return $true }",
           "function Ensure-OpenClawOnPath { return $true }",
           "function Refresh-GatewayServiceIfLoaded { }",
-          "function Invoke-OpenClawCommand { return 'OpenClaw test-version' }",
+          "function Invoke-OpenClawCommand { return 'Nova test-version' }",
           "$NoOnboard = $true",
           "$result = Main",
           "if ($result -is [array]) { throw 'Main returned an array' }",
@@ -491,15 +491,15 @@ describe("install.ps1 failure handling", () => {
           "function Write-Banner { }",
           "function Ensure-ExecutionPolicy { return $true }",
           "function Check-Node { return $true }",
-          "function Check-ExistingOpenClaw { return $false }",
+          "function Check-ExistingNova { return $false }",
           "function Add-ToPath { param([string]$Path) }",
-          "function Install-OpenClaw {",
+          "function Install-Nova {",
           "  Write-Output 'native chatter'",
           "  return $true",
           "}",
           "function Ensure-OpenClawOnPath { return $true }",
           "function Refresh-GatewayServiceIfLoaded { }",
-          "function Invoke-OpenClawCommand { return 'OpenClaw test-version' }",
+          "function Invoke-OpenClawCommand { return 'Nova test-version' }",
           "$NoOnboard = $true",
           ...ENTRYPOINT_LINES,
           "",
@@ -557,7 +557,7 @@ describe("install.ps1 failure handling", () => {
     const booleanSuccessBody = extractFunctionBody(source, "Test-BooleanSuccessResult");
     expect(completeInstallBody).toMatch(/\$PSCommandPath/);
     expect(completeInstallBody).toMatch(/\bexit \$script:InstallExitCode\b/);
-    expect(completeInstallBody).toMatch(/\bthrow "OpenClaw installation failed with exit code/);
+    expect(completeInstallBody).toMatch(/\bthrow "Nova installation failed with exit code/);
     expect(booleanSuccessBody).toContain("$Results.Count -gt 0");
     expect(source).toContain("$installSucceeded = Test-BooleanSuccessResult -Results $mainResults");
   });
@@ -617,7 +617,7 @@ describe("install.ps1 failure handling", () => {
   });
 
   it("runs npm install through the resolved command with quiet CI defaults", () => {
-    const npmInstallBody = extractFunctionBody(source, "Install-OpenClaw");
+    const npmInstallBody = extractFunctionBody(source, "Install-Nova");
     expect(npmInstallBody).toContain("$npmOutput = Invoke-NpmCommand -Arguments");
     expect(npmInstallBody).toContain("$npmDebugLogRoots = @(Get-NpmDebugLogRootCandidates)");
     expect(npmInstallBody).toContain('$npmInstallArguments = @("install", "-g")');
@@ -648,7 +648,7 @@ describe("install.ps1 failure handling", () => {
 
   it("does not force npm or pnpm lifecycle scripts through cmd.exe", () => {
     const ensurePnpmBody = extractFunctionBody(source, "Ensure-Pnpm");
-    const npmInstallBody = extractFunctionBody(source, "Install-OpenClaw");
+    const npmInstallBody = extractFunctionBody(source, "Install-Nova");
     const gitInstallBody = extractFunctionBody(source, "Install-OpenClawFromGit");
 
     expect(ensurePnpmBody).not.toContain("NPM_CONFIG_SCRIPT_SHELL");
@@ -705,13 +705,13 @@ describe("install.ps1 failure handling", () => {
     expect(source).not.toContain("Get-InstallerTempDirectory");
   });
 
-  it("rejects OpenClaw GitHub source targets for npm installs", () => {
-    const npmInstallBody = extractFunctionBody(source, "Install-OpenClaw");
+  it("rejects Nova GitHub source targets for npm installs", () => {
+    const npmInstallBody = extractFunctionBody(source, "Install-Nova");
     const sourceTargetBody = extractFunctionBody(source, "Test-OpenClawSourcePackageInstallSpec");
     expect(sourceTargetBody).toContain('$normalizedTag -eq "main"');
     expect(sourceTargetBody).toContain("^github:openclaw/openclaw");
     expect(npmInstallBody).toContain("Test-OpenClawSourcePackageInstallSpec -RequestedTag $Tag");
-    expect(npmInstallBody).toContain("npm installs do not support OpenClaw GitHub source targets");
+    expect(npmInstallBody).toContain("npm installs do not support Nova GitHub source targets");
     expect(npmInstallBody).toContain("-InstallMethod git -Tag main");
   });
 
@@ -722,7 +722,7 @@ describe("install.ps1 failure handling", () => {
   });
 
   it("preserves the min-release-age probe status before raw npmrc detection", () => {
-    const npmInstallBody = extractFunctionBody(source, "Install-OpenClaw");
+    const npmInstallBody = extractFunctionBody(source, "Install-Nova");
     const probeStatusCapture = npmInstallBody.indexOf("$minReleaseAgeStatus = $LASTEXITCODE");
     const rawKeyProbe = npmInstallBody.indexOf("Test-NpmConfigRawKey -Key");
     expect(probeStatusCapture).toBeGreaterThan(-1);
@@ -770,7 +770,7 @@ describe("install.ps1 failure handling", () => {
     expect(installNodeBody).toContain("Install-PortableNode");
     expect(installNodeBody).toContain("Portable Node.js bootstrap failed");
     expect(installNodeBody).toContain("Error: Could not install Node.js automatically.");
-    expect(depsRootBody).toContain("OpenClaw\\deps");
+    expect(depsRootBody).toContain("Nova\\deps");
     expect(portableNodeRootBody).toContain("portable-node");
     expect(portableNodeBody).toContain("Ensure-PortableNodeOnUserPath");
     expect(portableNodeBody).toContain(
@@ -901,7 +901,7 @@ describe("install.ps1 failure handling", () => {
     );
     expect(mainBody).toContain("$gitInstallResults = @(Install-OpenClawFromGit");
     expect(mainBody).toContain("Test-BooleanSuccessResult -Results $gitInstallResults");
-    expect(mainBody).toContain("$npmInstallResults = @(Install-OpenClaw)");
+    expect(mainBody).toContain("$npmInstallResults = @(Install-Nova)");
     expect(mainBody).toContain("Test-BooleanSuccessResult -Results $npmInstallResults");
     expect(gitInstallBody).toContain("Push-Location -LiteralPath $RepoDir");
     expect(gitInstallBody).toContain("$sourceInstallArgs = @(");
@@ -950,7 +950,7 @@ describe("install.ps1 failure handling", () => {
     expect(gitInstallBody).toContain('Write-Host "[!] pnpm build failed for the Git checkout"');
     expect(gitInstallBody).toContain('$entryPath = Join-Path $RepoDir "dist\\\\entry.js"');
     expect(gitInstallBody).toContain("Test-Path $entryPath");
-    expect(gitInstallBody).toContain('Write-Host "[!] OpenClaw build did not produce $entryPath"');
+    expect(gitInstallBody).toContain('Write-Host "[!] Nova build did not produce $entryPath"');
     expect(gitInstallBody).toContain('node ""$entryPath"" %*');
     expect(gitInstallBody).not.toContain("& $pnpmCommand -C $RepoDir install");
     expect(gitInstallBody).not.toContain('node ""$RepoDir\\\\dist\\\\entry.js"" %*');
@@ -991,9 +991,9 @@ describe("install.ps1 failure handling", () => {
             "function Write-Banner { }",
             "function Ensure-ExecutionPolicy { return $true }",
             "function Check-Node { return $true }",
-            "function Check-ExistingOpenClaw { return $false }",
+            "function Check-ExistingNova { return $false }",
             "function Get-NpmCommandPath { return 'npm.cmd' }",
-            "function Install-OpenClaw { return $true }",
+            "function Install-Nova { return $true }",
             "function Ensure-OpenClawOnPath { return $true }",
             "function Add-ToUserPath { param([string]$Path) }",
             "function Get-OpenClawCommandPath { return 'cmd.exe' }",

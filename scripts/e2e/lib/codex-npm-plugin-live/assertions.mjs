@@ -108,7 +108,7 @@ function readCodexBinding(sessionId, sessionKey, entry) {
 
   const dbPath = path.join(stateDir(), "state", "openclaw.sqlite");
   if (!fs.existsSync(dbPath)) {
-    throw new Error(`missing OpenClaw state database: ${dbPath}`);
+    throw new Error(`missing Nova state database: ${dbPath}`);
   }
   const db = new DatabaseSync(dbPath, { readOnly: true });
   try {
@@ -153,25 +153,25 @@ function readLegacySessionEntry(sessionId) {
   }
   const [sessionKey, entry] = sessionMatch;
   if (typeof entry.sessionFile !== "string" || !fs.existsSync(entry.sessionFile)) {
-    throw new Error(`missing OpenClaw session file: ${entry.sessionFile}`);
+    throw new Error(`missing Nova session file: ${entry.sessionFile}`);
   }
   const transcriptLines = readTextFileBounded(
     entry.sessionFile,
-    "OpenClaw legacy session transcript",
+    "Nova legacy session transcript",
     Math.min(MAX_TEXT_FILE_BYTES, MAX_TRANSCRIPT_SCAN_BYTES),
   )
     .split("\n")
     .filter((line) => line.trim());
   if (transcriptLines.length > MAX_TRANSCRIPT_WALK_ENTRIES) {
     throw new Error(
-      `OpenClaw transcript exceeded ${MAX_TRANSCRIPT_WALK_ENTRIES} events for ${sessionId}`,
+      `Nova transcript exceeded ${MAX_TRANSCRIPT_WALK_ENTRIES} events for ${sessionId}`,
     );
   }
   const transcriptEvents = transcriptLines.map((line, index) => {
     try {
       return JSON.parse(line);
     } catch {
-      throw new Error(`invalid OpenClaw legacy transcript event ${index + 1} for ${sessionId}`);
+      throw new Error(`invalid Nova legacy transcript event ${index + 1} for ${sessionId}`);
     }
   });
   return {
@@ -227,16 +227,16 @@ function readSessionEntry(sessionId) {
         !Number.isSafeInteger(transcriptSummary.event_count) ||
         !Number.isSafeInteger(transcriptSummary.transcript_bytes)
       ) {
-        throw new Error(`invalid OpenClaw transcript summary for ${sessionId}`);
+        throw new Error(`invalid Nova transcript summary for ${sessionId}`);
       }
       if (transcriptSummary.event_count > MAX_TRANSCRIPT_WALK_ENTRIES) {
         throw new Error(
-          `OpenClaw transcript exceeded ${MAX_TRANSCRIPT_WALK_ENTRIES} events for ${sessionId}`,
+          `Nova transcript exceeded ${MAX_TRANSCRIPT_WALK_ENTRIES} events for ${sessionId}`,
         );
       }
       if (transcriptSummary.transcript_bytes > MAX_TRANSCRIPT_SCAN_BYTES) {
         throw new Error(
-          `OpenClaw transcript exceeded ${MAX_TRANSCRIPT_SCAN_BYTES} bytes for ${sessionId}`,
+          `Nova transcript exceeded ${MAX_TRANSCRIPT_SCAN_BYTES} bytes for ${sessionId}`,
         );
       }
       const transcriptRows = db
@@ -250,12 +250,12 @@ function readSessionEntry(sessionId) {
       let transcriptBytes = 0;
       const transcriptEvents = transcriptRows.map((transcriptRow) => {
         if (typeof transcriptRow.event_json !== "string") {
-          throw new Error(`invalid OpenClaw transcript event for ${sessionId}`);
+          throw new Error(`invalid Nova transcript event for ${sessionId}`);
         }
         transcriptBytes += Buffer.byteLength(transcriptRow.event_json);
         if (transcriptBytes > MAX_TRANSCRIPT_SCAN_BYTES) {
           throw new Error(
-            `OpenClaw transcript exceeded ${MAX_TRANSCRIPT_SCAN_BYTES} bytes for ${sessionId}`,
+            `Nova transcript exceeded ${MAX_TRANSCRIPT_SCAN_BYTES} bytes for ${sessionId}`,
           );
         }
         return JSON.parse(transcriptRow.event_json);
@@ -743,13 +743,13 @@ function assertFollowthroughTranscript({ transcriptEvents, progressMarker, compl
 }
 
 function assertAgentTurnEvidence({ marker, sessionId, modelRef, stdoutPath, stderrPath }) {
-  const stdout = readTextFileBounded(stdoutPath, "OpenClaw agent JSON");
-  const stderr = readTextFileTail(stderrPath, "OpenClaw agent stderr");
+  const stdout = readTextFileBounded(stdoutPath, "Nova agent JSON");
+  const stderr = readTextFileTail(stderrPath, "Nova agent stderr");
   const response = JSON.parse(stdout);
   const text = extractAgentReplyTexts(JSON.stringify(response)).join("\n");
   if (!text.includes(marker)) {
     throw new Error(
-      `OpenClaw agent reply did not contain ${marker}:\nstdout=${stdout}\nstderr=${stderr}`,
+      `Nova agent reply did not contain ${marker}:\nstdout=${stdout}\nstderr=${stderr}`,
     );
   }
   const expectedProvider = modelRef.split("/")[0] || "codex";
@@ -768,7 +768,7 @@ function assertAgentTurnEvidence({ marker, sessionId, modelRef, stdoutPath, stde
     throw new Error(`unexpected session model override: ${entry.modelOverride}`);
   }
   if (!Number.isSafeInteger(transcriptEventCount) || transcriptEventCount < 1) {
-    throw new Error(`missing OpenClaw transcript events for ${sessionId}`);
+    throw new Error(`missing Nova transcript events for ${sessionId}`);
   }
 
   const binding = readCodexBinding(sessionId, sessionKey, entry);
@@ -826,7 +826,7 @@ function assertFollowthrough() {
 
   const stdoutPath = "/tmp/openclaw-codex-followthrough.json";
   const stderrPath = "/tmp/openclaw-codex-followthrough.err";
-  const response = JSON.parse(readTextFileBounded(stdoutPath, "OpenClaw follow-through JSON"));
+  const response = JSON.parse(readTextFileBounded(stdoutPath, "Nova follow-through JSON"));
   const replyTexts = (response.payloads || [])
     .map((payload) => (payload && typeof payload.text === "string" ? payload.text.trim() : ""))
     .filter(Boolean);
@@ -888,7 +888,7 @@ function assertAgentError() {
   const status = Number(process.argv[3]);
   if (!Number.isInteger(status) || status === 0) {
     throw new Error(
-      `expected OpenClaw agent to fail after Codex uninstall, got status ${process.argv[3]}`,
+      `expected Nova agent to fail after Codex uninstall, got status ${process.argv[3]}`,
     );
   }
   const stdout = fs.existsSync("/tmp/openclaw-codex-agent-after-uninstall.json")

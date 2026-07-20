@@ -174,7 +174,7 @@ describe("node connection notification routing", () => {
     expect(invoke).toHaveBeenCalledTimes(1);
     expect(invoke.mock.calls[0]?.[0]).toMatchObject({
       nodeId: "desk",
-      params: { body: "Replacement Mac connected to OpenClaw." },
+      params: { body: "Replacement Mac connected to Nova." },
     });
   });
 

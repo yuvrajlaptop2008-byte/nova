@@ -423,7 +423,7 @@ function childEnv(state, token, nodeLabel) {
   };
 }
 
-function spawnOpenClaw(args, options) {
+function spawnNova(args, options) {
   const cliArgs = options.built ? ["openclaw.mjs", ...args] : ["scripts/run-node.mjs", ...args];
   const child = spawn("node", cliArgs, {
     cwd: repoRoot(),
@@ -909,12 +909,12 @@ async function runHotPlugLocal(args) {
   const children = [];
   let nodeChild;
   if (args.build === true) {
-    logStep("building OpenClaw");
+    logStep("building Nova");
     await runCommand("pnpm", ["build"], {
       stdio: args.verbose ? "inherit" : ["ignore", "ignore", "ignore"],
     });
   } else {
-    logStep("using existing OpenClaw build (pass --build to rebuild)");
+    logStep("using existing Nova build (pass --build to rebuild)");
   }
   const childOptions = (state, label) => ({
     env: childEnv(state, token, label),
@@ -933,7 +933,7 @@ async function runHotPlugLocal(args) {
       HOME: nodeState.rootDir,
       npm_config_cache: process.env.npm_config_cache || path.join(os.homedir(), ".npm"),
     };
-    nodeChild = spawnOpenClaw(pondNodeArgs(port), options);
+    nodeChild = spawnNova(pondNodeArgs(port), options);
     children.push(nodeChild);
     return nodeChild;
   };
@@ -952,7 +952,7 @@ async function runHotPlugLocal(args) {
   try {
     logStep("starting cold gateway and node host with no MCP servers or skills");
     children.push(
-      spawnOpenClaw(
+      spawnNova(
         [
           "gateway",
           "run",
@@ -1259,7 +1259,7 @@ async function runGateway(args) {
   );
   const state = await prepareRoleState(baseDir, "gateway", token, "gateway");
   console.log(JSON.stringify({ role: "gateway", port, tokenSet: true, stateDir: state.stateDir }));
-  const child = spawnOpenClaw(
+  const child = spawnNova(
     [
       "gateway",
       "run",
@@ -1295,7 +1295,7 @@ async function runNode(args) {
     skillProofToken: String(args.skillProofToken || proofToken()),
   });
   console.log(JSON.stringify({ role: "node", nodeId, host, port, tokenSet: true }));
-  const child = spawnOpenClaw(
+  const child = spawnNova(
     [
       "node",
       "run",
@@ -1344,12 +1344,12 @@ async function runLocal(args) {
   });
   const children = [];
   if (args.build === true) {
-    logStep("building OpenClaw");
+    logStep("building Nova");
     await runCommand("pnpm", ["build"], {
       stdio: args.verbose ? "inherit" : ["ignore", "ignore", "ignore"],
     });
   } else {
-    logStep("using existing OpenClaw build (pass --build to rebuild)");
+    logStep("using existing Nova build (pass --build to rebuild)");
   }
   const childOptions = (state, label) => ({
     env: childEnv(state, token, label),
@@ -1364,7 +1364,7 @@ async function runLocal(args) {
   try {
     logStep("starting gateway");
     children.push(
-      spawnOpenClaw(
+      spawnNova(
         [
           "gateway",
           "run",
@@ -1389,7 +1389,7 @@ async function runLocal(args) {
     });
     logStep("starting pond-a and pond-b node hosts");
     children.push(
-      spawnOpenClaw(
+      spawnNova(
         [
           "node",
           "run",
@@ -1406,7 +1406,7 @@ async function runLocal(args) {
       ),
     );
     children.push(
-      spawnOpenClaw(
+      spawnNova(
         [
           "node",
           "run",
@@ -1466,7 +1466,7 @@ async function runLocal(args) {
         return skills.length === 0;
       });
       logStep("restarting pond-b and verifying publication returns");
-      const restartedB = spawnOpenClaw(
+      const restartedB = spawnNova(
         [
           "node",
           "run",

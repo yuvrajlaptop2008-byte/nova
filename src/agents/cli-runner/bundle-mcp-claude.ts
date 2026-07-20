@@ -1,5 +1,5 @@
 /**
- * Claude CLI argument helpers for OpenClaw-managed bundle MCP config.
+ * Claude CLI argument helpers for Nova-managed bundle MCP config.
  */
 import fs from "node:fs/promises";
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
@@ -16,7 +16,7 @@ export function findClaudeMcpConfigPaths(args?: string[]): string[] {
     if (arg === "--mcp-config") {
       // Claude treats --mcp-config as variadic. Keep this scan aligned with
       // extensions/anthropic/cli-shared.ts so user config files are not leaked
-      // as positional prompts after OpenClaw injects its strict overlay.
+      // as positional prompts after Nova injects its strict overlay.
       while (typeof args[i + 1] === "string" && !args[i + 1]?.startsWith("-")) {
         i += 1;
         const path = normalizeOptionalString(args[i]);
@@ -41,7 +41,7 @@ export function findClaudeMcpConfigPath(args?: string[]): string | undefined {
   return findClaudeMcpConfigPaths(args)[0];
 }
 
-/** Return Claude args with OpenClaw's strict MCP config path injected. */
+/** Return Claude args with Nova's strict MCP config path injected. */
 export function injectClaudeMcpConfigArgs(
   args: string[] | undefined,
   mcpConfigPath: string,
@@ -67,7 +67,7 @@ export function injectClaudeMcpConfigArgs(
   return next;
 }
 
-/** Writes the active per-attempt capture token into OpenClaw's generated Claude MCP config. */
+/** Writes the active per-attempt capture token into Nova's generated Claude MCP config. */
 export async function writeClaudeMcpCaptureConfig(params: {
   mcpConfigPath: string;
   captureKey: string;

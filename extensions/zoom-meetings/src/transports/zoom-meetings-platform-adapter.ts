@@ -304,7 +304,7 @@ export const ZOOM_MEETINGS_PLATFORM_ADAPTER: MeetingPlatformAdapter<
       category: "browser-control-unavailable",
       reason: "browser-control-unavailable",
       message:
-        "Open the OpenClaw browser profile, finish the Zoom sign-in, admission, or permission prompt, then retry.",
+        "Open the Nova browser profile, finish the Zoom sign-in, admission, or permission prompt, then retry.",
     }),
     buildLeaveScript: (meetingUrl) =>
       zoomMeetingLeaveScript({

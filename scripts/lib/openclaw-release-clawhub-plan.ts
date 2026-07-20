@@ -1,4 +1,4 @@
-// OpenClaw release ClawHub plan script supports release workflow routing.
+// Nova release ClawHub plan script supports release workflow routing.
 import { resolve } from "node:path";
 import {
   collectPluginClawHubReleasePlan,

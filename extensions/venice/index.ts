@@ -1,4 +1,4 @@
-// Venice plugin entrypoint registers its OpenClaw integration.
+// Venice plugin entrypoint registers its Nova integration.
 import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
 import {
   applyModelCompatPatch,

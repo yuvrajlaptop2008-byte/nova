@@ -322,7 +322,7 @@ function isEligibleComputerNode(node: NodeListNode): boolean {
 }
 
 const NOT_COMPUTER_CAPABLE_HINT =
-  "enable Computer Control in the OpenClaw app and approve the pairing update";
+  "enable Computer Control in the Nova app and approve the pairing update";
 
 function nodeMatchesQuery(node: NodeListNode, query: string): boolean {
   const lowered = query.toLowerCase();

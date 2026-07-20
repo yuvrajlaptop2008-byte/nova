@@ -57,7 +57,7 @@ export async function runDoctorStateSqliteCompact(
     };
   }
   if (!stat.isFile()) {
-    throw new Error(`Canonical OpenClaw state database is not a regular file: ${sqlitePath}`);
+    throw new Error(`Canonical Nova state database is not a regular file: ${sqlitePath}`);
   }
   const withMaintenanceLock = deps.withMaintenanceLock ?? withDoctorSqliteMaintenanceLock;
   return await withMaintenanceLock({
@@ -66,7 +66,7 @@ export async function runDoctorStateSqliteCompact(
     run: () => {
       if (isOpenClawStateDatabaseOpen()) {
         throw new Error(
-          "The shared OpenClaw state database is already open in this process. Stop OpenClaw and retry.",
+          "The shared Nova state database is already open in this process. Stop Nova and retry.",
         );
       }
 
@@ -74,7 +74,7 @@ export async function runDoctorStateSqliteCompact(
         afterMutation: () => {
           if (!clearOpenClawDatabaseQuarantine(sqlitePath, { env })) {
             throw new Error(
-              `OpenClaw state database ${sqlitePath} was compacted, but its persisted quarantine record could not be cleared. Rerun openclaw doctor --fix so the database is not refused again.`,
+              `Nova state database ${sqlitePath} was compacted, but its persisted quarantine record could not be cleared. Rerun openclaw doctor --fix so the database is not refused again.`,
             );
           }
           clearOpenClawStateDatabaseOpenFailure(sqlitePath);

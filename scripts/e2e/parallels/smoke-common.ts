@@ -1,4 +1,4 @@
-// Smoke Common helper supports OpenClaw script workflows.
+// Smoke Common helper supports Nova script workflows.
 import { readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { extractLastOpenClawVersionFromLog } from "./filesystem.ts";
@@ -6,11 +6,7 @@ import { run, say } from "./host-command.ts";
 import { resolveHostIp, resolveHostPort } from "./host-server.ts";
 import { startHostServer } from "./host-server.ts";
 import { runSmokeLane, type SmokeLane, type SmokeLaneStatus } from "./lane-runner.ts";
-import {
-  packageBuildCommitFromTgz,
-  packageVersionFromTgz,
-  packOpenClaw,
-} from "./package-artifact.ts";
+import { packageBuildCommitFromTgz, packageVersionFromTgz, packNova } from "./package-artifact.ts";
 import type { HostServer, Mode, PackageArtifact, Provider, SnapshotInfo } from "./types.ts";
 
 export interface SmokeHostOptions {
@@ -191,7 +187,7 @@ export async function packAndServeSmokeArtifact(
   label: string,
   requireControlUi = false,
 ): Promise<readonly [artifact: PackageArtifact, server: HostServer, hostPort: number]> {
-  const artifact = await packOpenClaw({
+  const artifact = await packNova({
     destination: tgzDir,
     packageSpec,
     requireControlUi,

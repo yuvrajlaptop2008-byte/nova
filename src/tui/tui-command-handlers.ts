@@ -494,9 +494,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
         await sendMessage(raw);
         break;
       case "openclaw":
-        chatLog.addSystem(
-          args ? `returning to OpenClaw with request: ${args}` : "returning to OpenClaw",
-        );
+        chatLog.addSystem(args ? `returning to Nova with request: ${args}` : "returning to Nova");
         requestExit({
           exitReason: "return-to-system-agent",
           ...(args ? { systemAgentMessage: args } : {}),

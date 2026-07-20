@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds the OpenClaw package artifact used by Docker E2E.
+// Builds the Nova package artifact used by Docker E2E.
 // The script owns the build/inventory/pack sequence so local scheduler, shell
 // helpers, and GitHub Actions all prepare the exact same npm tarball.
 import { spawn } from "node:child_process";
@@ -130,7 +130,7 @@ function resolvePackedOpenClawFileName(value) {
     filename !== path.basename(filename) ||
     filename !== path.win32.basename(filename)
   ) {
-    throw new Error(`npm pack reported unsafe OpenClaw tarball filename: ${filename}`);
+    throw new Error(`npm pack reported unsafe Nova tarball filename: ${filename}`);
   }
   return filename;
 }
@@ -366,7 +366,7 @@ function run(command, args, cwd, options = {}) {
 
 const PACKAGE_ARTIFACT_BUILD_STEPS = [
   {
-    label: "Building OpenClaw package artifacts",
+    label: "Building Nova package artifacts",
     command: "node",
     // The full profile keeps canonical declaration emission; ciArtifacts is a
     // PR-CI-only profile whose step env forces dts off and would clobber the
@@ -443,7 +443,7 @@ async function newestOpenClawTarball(outputDir, packOutput) {
     .toSorted()
     .at(-1);
   if (!packed) {
-    throw new Error(`missing packed OpenClaw tarball in ${outputDir}`);
+    throw new Error(`missing packed Nova tarball in ${outputDir}`);
   }
   return path.join(outputDir, packed);
 }
@@ -678,7 +678,7 @@ export async function packOpenClawPackageForDocker(sourceDir, outputDir, options
   if (options.packJsonPath && options.pnpmPack) {
     throw new Error("packJsonPath cannot be combined with pnpmPack");
   }
-  console.error("==> Packing OpenClaw package");
+  console.error("==> Packing Nova package");
   await prepareChangelog(sourceDir);
   let packOutput;
   let cleanupBundledAiRuntime = async () => {};
@@ -756,7 +756,7 @@ async function main() {
     await buildPackageArtifacts(sourceDir);
   }
 
-  console.error("==> Writing OpenClaw package inventory");
+  console.error("==> Writing Nova package inventory");
   await writePackageInventoryForDocker(sourceDir);
 
   const tarball = await packOpenClawPackageForDocker(sourceDir, outputDir, {
@@ -766,7 +766,7 @@ async function main() {
     pnpmPack: options.pnpmPack,
   });
 
-  console.error("==> Checking OpenClaw package tarball");
+  console.error("==> Checking Nova package tarball");
   const checkStartedAt = Date.now();
   await run(
     "node",
@@ -784,7 +784,7 @@ async function main() {
     },
   );
   console.error(
-    `==> OpenClaw package tarball check finished in ${Math.round((Date.now() - checkStartedAt) / 1000)}s`,
+    `==> Nova package tarball check finished in ${Math.round((Date.now() - checkStartedAt) / 1000)}s`,
   );
 
   process.stdout.write(`${tarball}\n`);

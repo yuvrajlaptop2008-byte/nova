@@ -1,4 +1,4 @@
-// OpenClaw first-run Docker harness.
+// Nova first-run Docker harness.
 // Imports packaged dist modules so the Docker lane verifies the npm tarball,
 // while this small test driver stays mounted from the checkout.
 import { spawn } from "node:child_process";
@@ -230,14 +230,14 @@ async function main() {
   clearConfigCache();
   assert(
     await shouldStartOnboardingForFreshInstall(["node", "openclaw"]),
-    "fresh bare OpenClaw invocation did not route to onboarding",
+    "fresh bare Nova invocation did not route to onboarding",
   );
 
   const blocked = await runPackagedCli(["setup", "--message", "overview"]);
-  assert(blocked.code === 1, "OpenClaw did not fail closed without inference");
+  assert(blocked.code === 1, "Nova did not fail closed without inference");
   assert(
     `${blocked.stdout}\n${blocked.stderr}`.includes("openclaw onboard"),
-    "blocked OpenClaw did not direct the user to inference onboarding",
+    "blocked Nova did not direct the user to inference onboarding",
   );
 
   const plannerCommand = `setup workspace ${spec.dockerDefaultWorkspace}`;
@@ -262,7 +262,7 @@ async function main() {
   assert(
     inferenceConfig.agents?.defaults?.workspace === undefined &&
       inferenceConfig.gateway === undefined,
-    "inference activation configured the rest before OpenClaw started",
+    "inference activation configured the rest before Nova started",
   );
   const activationPrompts = await fs.readFile(promptLogPath, "utf8");
   assert(
@@ -279,7 +279,7 @@ async function main() {
   ]);
   assert(
     modern.code === 0 && `${modern.stdout}\n${modern.stderr}`.includes(activation.modelRef),
-    "modern compatibility entrypoint did not expose OpenClaw after activation",
+    "modern compatibility entrypoint did not expose Nova after activation",
   );
 
   // An unrelated ambient channel credential must not alter the requested setup.
@@ -302,14 +302,14 @@ async function main() {
     const output = `${result.stdout}\n${result.stderr}`;
     assert(
       result.code === 0 && output.includes(command.expectOutput),
-      `OpenClaw first-run command ${command.id} did not apply: ${output}`,
+      `Nova first-run command ${command.id} did not apply: ${output}`,
     );
     if (command.planner) {
       assert(
         output.includes(`[openclaw] planner: ${spec.model}`) &&
           output.includes(FAKE_PLANNER_REPLY) &&
           output.includes(`[openclaw] interpreted: ${plannerCommand}`),
-        `OpenClaw first-run command ${command.id} did not use the verified planner: ${output}`,
+        `Nova first-run command ${command.id} did not use the verified planner: ${output}`,
       );
     }
     const probesAfter = countInferencePrompts(await readFakeClaudePromptLines(promptLogPath));
@@ -317,7 +317,7 @@ async function main() {
     const minimumProbes = command.approve ? 2 : 1;
     assert(
       probeDelta >= minimumProbes,
-      `OpenClaw command ${command.id} ran ${probeDelta} inference probes; expected at least ${minimumProbes} for preflight${command.approve ? " plus its persistent boundary" : ""}`,
+      `Nova command ${command.id} ran ${probeDelta} inference probes; expected at least ${minimumProbes} for preflight${command.approve ? " plus its persistent boundary" : ""}`,
     );
   }
 
@@ -346,13 +346,13 @@ async function main() {
   );
   assert(resolveDefaultModel(config) === spec.model, "first-run setup did not write default model");
   const reef = config.agents?.list?.find((agent) => agent.id === spec.agentId);
-  assert(reef, "OpenClaw did not create reef agent");
-  assert(reef.workspace === spec.dockerAgentWorkspace, "OpenClaw did not write reef workspace");
+  assert(reef, "Nova did not create reef agent");
+  assert(reef.workspace === spec.dockerAgentWorkspace, "Nova did not write reef workspace");
   assert(
     reef.model === undefined,
-    "OpenClaw wrote a per-agent model instead of inheriting the verified default",
+    "Nova wrote a per-agent model instead of inheriting the verified default",
   );
-  assert(config.channels?.discord?.enabled === true, "OpenClaw did not enable Discord");
+  assert(config.channels?.discord?.enabled === true, "Nova did not enable Discord");
   const discordToken = config.channels?.discord?.token;
   assert(
     discordToken &&
@@ -361,16 +361,16 @@ async function main() {
       discordToken.source === "env" &&
       "id" in discordToken &&
       discordToken.id === DISCORD_CREDENTIAL_ENV,
-    "OpenClaw did not write Discord token SecretRef",
+    "Nova did not write Discord token SecretRef",
   );
   assert(
     !JSON.stringify(config.channels.discord).includes(DISCORD_CREDENTIAL_FIXTURE),
-    "OpenClaw persisted the raw Discord token",
+    "Nova persisted the raw Discord token",
   );
   assert(config.channels?.telegram === undefined, "ambient Telegram credentials altered config");
   assert(
     !JSON.stringify(config).includes(spec.telegramToken),
-    "OpenClaw persisted an unrelated ambient credential",
+    "Nova persisted an unrelated ambient credential",
   );
 
   const audit = createSqliteAuditRecordStore<SystemAgentAuditEntry>({
@@ -384,7 +384,7 @@ async function main() {
     );
   }
 
-  console.log("OpenClaw first-run Docker E2E passed");
+  console.log("Nova first-run Docker E2E passed");
 }
 
 main().catch((err: unknown) => {

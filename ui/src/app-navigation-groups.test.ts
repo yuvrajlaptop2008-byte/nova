@@ -120,7 +120,7 @@ describe("sidebar entries", () => {
     expect(normalizeSidebarEntries([])).toEqual([]);
   });
 
-  it("keeps OpenClaw pinnable and linked from Settings without Settings chrome", () => {
+  it("keeps Nova pinnable and linked from Settings without Settings chrome", () => {
     expect(SIDEBAR_NAV_ROUTES).toContain("custodian");
     expect(settingsRoutes).toContain("custodian");
     expect(isSettingsNavigationRoute("custodian")).toBe(false);

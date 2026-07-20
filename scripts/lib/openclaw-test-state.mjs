@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Creates isolated OpenClaw test HOME/state directories and shell snippets.
+// Creates isolated Nova test HOME/state directories and shell snippets.
 import { randomBytes } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -322,7 +322,7 @@ function buildCreatePlan(options = {}) {
   };
 }
 
-/** Create an isolated OpenClaw test state directory and optional scenario config. */
+/** Create an isolated Nova test state directory and optional scenario config. */
 async function createState(options = {}) {
   const label = normalizeLabel(options.label);
   const root = await fs.mkdtemp(path.join(os.tmpdir(), `openclaw-${label}-`));
@@ -340,7 +340,7 @@ function renderEnvFile(plan) {
   return `${renderExports(plan.env)}\n`;
 }
 
-/** Render shell commands that create and export an isolated OpenClaw test state. */
+/** Render shell commands that create and export an isolated Nova test state. */
 function renderShellSnippet(options = {}) {
   const label = normalizeLabel(options.label);
   const scenario = requireScenario(options.scenario);
@@ -373,7 +373,7 @@ function renderShellSnippet(options = {}) {
   return `${lines.join("\n")}\n`;
 }
 
-/** Render a reusable shell function for creating isolated OpenClaw test state. */
+/** Render a reusable shell function for creating isolated Nova test state. */
 function renderShellFunction() {
   return `openclaw_test_state_create() {
   local raw_label="\${1:-state}"
@@ -382,7 +382,7 @@ function renderShellFunction() {
   case "$scenario" in
     empty|minimal|update-stable|upgrade-survivor|gateway-loopback|external-service) ;;
     *)
-      echo "unknown OpenClaw test-state scenario: $scenario" >&2
+      echo "unknown Nova test-state scenario: $scenario" >&2
       return 1
       ;;
   esac

@@ -1,4 +1,4 @@
-/** Loads and normalizes OpenClaw plugin manifests, including contracts and config schemas. */
+/** Loads and normalizes Nova plugin manifests, including contracts and config schemas. */
 import fs from "node:fs";
 import path from "node:path";
 import { normalizeModelCatalog } from "@openclaw/model-catalog-core/model-catalog-normalize";
@@ -1818,7 +1818,7 @@ export function loadPluginManifest(
   if (isCoreReservedPluginId(id)) {
     return cacheResult({
       ok: false,
-      error: `plugin manifest id "${id}" is reserved by OpenClaw core`,
+      error: `plugin manifest id "${id}" is reserved by Nova core`,
       manifestPath,
     });
   }
@@ -2092,18 +2092,18 @@ export function getPackageManifestMetadata(
 export function resolvePackageExtensionEntries(
   manifest: PackageManifest | undefined,
 ): PackageExtensionResolution {
-  const rawOpenClaw = manifest?.[MANIFEST_KEY] as unknown;
-  if (rawOpenClaw === undefined || rawOpenClaw === null) {
+  const rawNova = manifest?.[MANIFEST_KEY] as unknown;
+  if (rawNova === undefined || rawNova === null) {
     return { status: "missing", entries: [] };
   }
-  if (!isRecord(rawOpenClaw)) {
+  if (!isRecord(rawNova)) {
     return {
       status: "invalid",
       entries: [],
       error: "package.json openclaw must be an object",
     };
   }
-  const raw = rawOpenClaw.extensions;
+  const raw = rawNova.extensions;
   if (raw === undefined || raw === null) {
     return { status: "missing", entries: [] };
   }

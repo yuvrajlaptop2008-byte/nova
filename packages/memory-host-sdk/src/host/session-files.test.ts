@@ -653,7 +653,7 @@ describe("sessionPathForFile", () => {
 });
 
 describe("memory session sync targets", () => {
-  it("parses deprecated canonical OpenClaw transcript paths into sync identity", () => {
+  it("parses deprecated canonical Nova transcript paths into sync identity", () => {
     const sessionFile = path.join(tmpDir, "agents", "main", "sessions", "active.jsonl");
     fsSync.mkdirSync(path.dirname(sessionFile), { recursive: true });
 
@@ -966,7 +966,7 @@ describe("buildSessionEntry", () => {
         type: "message",
         message: {
           role: "user",
-          content: "[OpenClaw heartbeat poll]",
+          content: "[Nova heartbeat poll]",
           provenance: { kind: "internal_system", sourceTool: "heartbeat" },
         },
       }),
@@ -1022,7 +1022,7 @@ describe("buildSessionEntry", () => {
         type: "message",
         message: {
           role: "user",
-          content: "[OpenClaw heartbeat poll]",
+          content: "[Nova heartbeat poll]",
         },
       }),
       JSON.stringify({
@@ -1047,7 +1047,7 @@ describe("buildSessionEntry", () => {
         type: "message",
         message: {
           role: "user",
-          content: "[OpenClaw heartbeat poll]",
+          content: "[Nova heartbeat poll]",
           provenance: { kind: "internal_system", sourceTool: "heartbeat" },
         },
       }),

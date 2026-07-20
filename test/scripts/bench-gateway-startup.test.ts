@@ -44,7 +44,7 @@ describe("gateway startup benchmark script", () => {
 
   it("prints help without running benchmark cases", () => {
     expect(helpResult.status).toBe(0);
-    expect(helpResult.stdout).toContain("OpenClaw Gateway startup benchmark");
+    expect(helpResult.stdout).toContain("Nova Gateway startup benchmark");
     expect(helpResult.stdout).toContain("--case <id>");
     expect(helpResult.stdout).toContain("--cpu-prof-dir <dir>");
     expect(helpResult.stdout).toContain("default (gateway default)");

@@ -584,7 +584,7 @@ export function describeOpenAIProviderRuntimeContract(load: ProviderRuntimeContr
       });
     });
 
-    it("keeps OpenClaw cost metadata but applies Codex context metadata for gpt-5.5 models", () => {
+    it("keeps Nova cost metadata but applies Codex context metadata for gpt-5.5 models", () => {
       const provider = requireProviderContractProvider("openai");
       const model = provider.resolveDynamicModel?.({
         provider: "openai",

@@ -2,7 +2,7 @@
  * Extension relay CDP bridge.
  *
  * Presents a CDP browser endpoint (compatible with Playwright connectOverCDP)
- * on one side and the OpenClaw Chrome extension's chrome.debugger transport on
+ * on one side and the Nova Chrome extension's chrome.debugger transport on
  * the other. The bridge owns all Target.* synthesis so the extension stays a
  * thin forwarder — the old assets/chrome-extension put this logic in an
  * untestable MV3 service worker, which is why it rotted and was removed.
@@ -132,7 +132,7 @@ export class ExtensionRelayBridge {
     return this.extension?.identity ?? null;
   }
 
-  /** Tabs currently shared with OpenClaw (the extension's tab group). */
+  /** Tabs currently shared with Nova (the extension's tab group). */
   sharedTabs(): RelayTabInfo[] {
     return [...this.tabs.values()].map((tab) => tab.info);
   }
@@ -325,7 +325,7 @@ export class ExtensionRelayBridge {
 
   private sendToExtension(msg: RelayToExtensionMessage): void {
     if (!this.extension) {
-      throw new Error("OpenClaw Chrome extension is not connected to the relay");
+      throw new Error("Nova Chrome extension is not connected to the relay");
     }
     this.extension.socket.send(JSON.stringify(msg));
   }
@@ -386,7 +386,7 @@ export class ExtensionRelayBridge {
   private async ensureTabAttached(tabId: number): Promise<{ targetId: string; sessionId: string }> {
     const tab = this.tabs.get(tabId);
     if (!tab) {
-      throw new Error(`tab ${tabId} is not shared with OpenClaw`);
+      throw new Error(`tab ${tabId} is not shared with Nova`);
     }
     if (tab.attached) {
       return tab.attached;
@@ -605,7 +605,7 @@ export class ExtensionRelayBridge {
 
   /**
    * Drop chrome.debugger sessions once no CDP client is connected so the
-   * "OpenClaw is debugging this browser" infobar only spans active automation.
+   * "Nova is debugging this browser" infobar only spans active automation.
    */
   private detachAllWhenIdle(): void {
     if (this.clients.size > 0 || !this.extension) {
@@ -743,7 +743,7 @@ export class ExtensionRelayBridge {
             targetInfo: {
               targetId: BROWSER_TARGET_ID,
               type: "browser",
-              title: "OpenClaw Extension Relay",
+              title: "Nova Extension Relay",
               url: "",
               attached: true,
               canAccessOpener: false,
@@ -934,7 +934,7 @@ export class ExtensionRelayBridge {
         this.respondError(
           client,
           request,
-          "The OpenClaw extension relay drives the user's real browser profile; isolated browser contexts are not supported.",
+          "The Nova extension relay drives the user's real browser profile; isolated browser contexts are not supported.",
         );
         return;
       }

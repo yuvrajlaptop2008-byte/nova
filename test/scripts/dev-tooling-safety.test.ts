@@ -231,7 +231,7 @@ describe("script-specific dev tooling hardening", () => {
     expect(() => discordSmokeTesting.parseDriverMode("curl")).toThrow(/Invalid --driver/u);
   });
 
-  it("rejects unknown Discord smoke args before live Discord/OpenClaw work", async () => {
+  it("rejects unknown Discord smoke args before live Discord/Nova work", async () => {
     expect(() => discordSmokeTesting.parseArgs(["--wat"])).toThrow("Unknown argument: --wat");
     const [result] = await getDiscordCliResults();
 

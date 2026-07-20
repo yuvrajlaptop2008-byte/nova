@@ -121,7 +121,7 @@ async function runStatusFixture(params: {
       allowSessionAdoption: true,
       autoJoin: true,
       captureCaptions: false,
-      guestName: "OpenClaw Agent",
+      guestName: "Nova Agent",
       meetingSessionId: "session-1",
       meetingUrl: URL,
       readOnly: params.readOnly,
@@ -208,7 +208,7 @@ describe("Zoom meeting platform adapter", () => {
       allowSessionAdoption: true,
       autoJoin: true,
       captureCaptions: true,
-      guestName: "OpenClaw Agent",
+      guestName: "Nova Agent",
       meetingSessionId: "session-1",
       meetingUrl: URL,
       waitForInCallMs: 60_000,
@@ -398,7 +398,7 @@ describe("Zoom meeting platform adapter", () => {
       }),
     });
 
-    expect(guest.value).toBe("OpenClaw Agent");
+    expect(guest.value).toBe("Nova Agent");
     expect(guest.dispatchEvent).toHaveBeenCalledTimes(2);
     expect(join.click).toHaveBeenCalledOnce();
     expect(result).toMatchObject({ clickedJoin: true, manualActionRequired: false });

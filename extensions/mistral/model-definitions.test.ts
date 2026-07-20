@@ -16,7 +16,7 @@ function catalogModelById(models: ReturnType<typeof buildCatalogModels>, id: str
 }
 
 describe("mistral model definitions", () => {
-  it("uses current OpenClaw pricing for the bundled default model", () => {
+  it("uses current Nova pricing for the bundled default model", () => {
     const model = buildMistralModelDefinition();
     expect(model.id).toBe(MISTRAL_DEFAULT_MODEL_ID);
     expect(model.contextWindow).toBe(262144);

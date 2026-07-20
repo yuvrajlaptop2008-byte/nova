@@ -226,16 +226,16 @@ version = "9.9.9"
 
   it("finds the primary checkout sibling from a git worktree", async () => {
     const parentDir = createTempDir("openclaw-protocol-source-parent-");
-    const primaryOpenClaw = path.join(parentDir, "openclaw");
+    const primaryNova = path.join(parentDir, "openclaw");
     const codexRepo = path.join(parentDir, "codex");
     const worktreeRoot = createTempDir("openclaw-protocol-source-worktree-");
-    fs.mkdirSync(path.join(primaryOpenClaw, ".git", "worktrees", "codex-harness"), {
+    fs.mkdirSync(path.join(primaryNova, ".git", "worktrees", "codex-harness"), {
       recursive: true,
     });
     fs.mkdirSync(worktreeRoot, { recursive: true });
     fs.writeFileSync(
       path.join(worktreeRoot, ".git"),
-      `gitdir: ${path.join(primaryOpenClaw, ".git", "worktrees", "codex-harness")}\n`,
+      `gitdir: ${path.join(primaryNova, ".git", "worktrees", "codex-harness")}\n`,
     );
     createProtocolSchema(codexRepo);
     delete process.env.OPENCLAW_CODEX_REPO;

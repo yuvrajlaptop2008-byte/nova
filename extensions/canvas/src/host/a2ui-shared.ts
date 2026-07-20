@@ -107,7 +107,7 @@ export function injectCanvasRuntime(html: string, options: { liveReload?: boolea
     liveReloadErrorReported = true;
     try {
       // WebSocket error objects may expose the capability-bearing URL.
-      console.error("OpenClaw canvas live reload unavailable");
+      console.error("Nova canvas live reload unavailable");
     } catch {}
   }
 
@@ -177,9 +177,9 @@ export function injectCanvasRuntime(html: string, options: { liveReload?: boolea
     const action = id ? { ...baseAction, id } : { ...baseAction };
     return postToNode({ userAction: action });
   }
-  globalThis.OpenClaw = globalThis.OpenClaw ?? {};
-  globalThis.OpenClaw.postMessage = postToNode;
-  globalThis.OpenClaw.sendUserAction = sendUserAction;
+  globalThis.Nova = globalThis.Nova ?? {};
+  globalThis.Nova.postMessage = postToNode;
+  globalThis.Nova.sendUserAction = sendUserAction;
   globalThis.openclawPostMessage = postToNode;
   globalThis.openclawSendUserAction = sendUserAction;
 ${liveReloadSnippet}

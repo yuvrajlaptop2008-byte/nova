@@ -1,4 +1,4 @@
-// Covers preferred OpenClaw temp directory resolution.
+// Covers preferred Nova temp directory resolution.
 import { constants as fsConstants } from "node:fs";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
@@ -292,7 +292,7 @@ describe("resolvePreferredOpenClawTmpDir", () => {
         lstatSync,
         fallbackLstatSync,
       }),
-    ).toThrow(/Unsafe fallback OpenClaw temp dir/);
+    ).toThrow(/Unsafe fallback Nova temp dir/);
   });
 
   it("creates fallback directory when missing, then validates ownership and mode", () => {
@@ -521,7 +521,7 @@ describe("resolvePreferredOpenClawTmpDir", () => {
         tmpdir: vi.fn(() => "/var/fallback"),
         warn: vi.fn(),
       }),
-    ).toThrow(/Unable to create fallback OpenClaw temp dir/);
+    ).toThrow(/Unable to create fallback Nova temp dir/);
   });
 
   it("skips the POSIX preferred path on Windows even when /tmp is accessible (#60713)", () => {

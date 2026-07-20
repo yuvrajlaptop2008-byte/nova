@@ -122,7 +122,7 @@ async function restartRunningGatewayServiceAfterUpdate(
       env: inspection.state.env,
       stdout: process.stdout,
     });
-    note("Restarted the running gateway service after updating OpenClaw.", "Update");
+    note("Restarted the running gateway service after updating Nova.", "Update");
     return true;
   } catch (err) {
     runtime.error(`Update completed, but gateway service restart failed: ${String(err)}`);
@@ -130,7 +130,7 @@ async function restartRunningGatewayServiceAfterUpdate(
   }
 }
 
-/** Offers to update OpenClaw before doctor when running interactively from an updatable install. */
+/** Offers to update Nova before doctor when running interactively from an updatable install. */
 export async function maybeOfferUpdateBeforeDoctor(params: {
   runtime: RuntimeEnv;
   options: DoctorOptions;
@@ -152,7 +152,7 @@ export async function maybeOfferUpdateBeforeDoctor(params: {
   const git = await detectOpenClawGitCheckout(params.root);
   if (git === "git") {
     const shouldUpdate = await params.confirm({
-      message: "Update OpenClaw from git before running doctor?",
+      message: "Update Nova from git before running doctor?",
       initialValue: true,
     });
     if (!shouldUpdate) {

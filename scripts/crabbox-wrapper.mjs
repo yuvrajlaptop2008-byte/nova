@@ -730,7 +730,7 @@ function enforceBrokeredAws(commandArgs, providerName) {
   }
   console.error(
     [
-      "[crabbox] provider=aws requires a configured Crabbox broker for OpenClaw proof.",
+      "[crabbox] provider=aws requires a configured Crabbox broker for Nova proof.",
       "[crabbox] run `crabbox login --url https://crabbox.openclaw.ai --provider aws`, then retry.",
       "[crabbox] for intentional direct AWS provider debugging, set OPENCLAW_CRABBOX_ALLOW_DIRECT_AWS=1.",
     ].join("\n"),
@@ -2181,7 +2181,7 @@ function remoteGitBootstrapForChangedGate(changedGateBase, changedGateAlias) {
   return [
     `openclaw_changed_gate_base=${quotedBase};`,
     `openclaw_changed_gate_alias=${quotedAlias};`,
-    'if ! command -v git >/dev/null 2>&1; then echo "git is required for OpenClaw remote changed-gate sync" >&2; exit 2; fi;',
+    'if ! command -v git >/dev/null 2>&1; then echo "git is required for Nova remote changed-gate sync" >&2; exit 2; fi;',
     `openclaw_changed_gate_bundle=${quotedBundleFile};`,
     'if [ ! -f "$openclaw_changed_gate_bundle" ]; then echo "missing changed-gate bundle: $openclaw_changed_gate_bundle" >&2; exit 2; fi;',
     'openclaw_changed_gate_bundle_tmp="$(mktemp /tmp/openclaw-changed-gate.XXXXXX)" || exit 2;',
@@ -2195,7 +2195,7 @@ function remoteGitBootstrapForChangedGate(changedGateBase, changedGateAlias) {
     'if [ -n "$openclaw_changed_gate_alias" ]; then git update-ref "$openclaw_changed_gate_alias" refs/remotes/origin/main || exit 2; fi;',
     'if [ ! -f "$openclaw_changed_gate_bundle_tmp" ]; then echo "changed-gate bundle disappeared before import" >&2; exit 2; fi;',
     "openclaw_changed_gate_target=refs/remotes/origin/main;",
-    'if [ -s "$openclaw_changed_gate_bundle_tmp" ]; then git fetch -q "$openclaw_changed_gate_bundle_tmp" HEAD:refs/heads/openclaw-changed-gate-tree || exit 2; openclaw_changed_gate_tree="$(git rev-parse refs/heads/openclaw-changed-gate-tree^{tree})" || exit 2; openclaw_changed_gate_head="$(git -c user.name=OpenClaw -c user.email=ci@openclaw.local commit-tree "$openclaw_changed_gate_tree" -p refs/remotes/origin/main -m remote-changed-gate-tree)" || exit 2; git update-ref refs/heads/openclaw-changed-gate-head "$openclaw_changed_gate_head" || exit 2; openclaw_changed_gate_target=refs/heads/openclaw-changed-gate-head; fi;',
+    'if [ -s "$openclaw_changed_gate_bundle_tmp" ]; then git fetch -q "$openclaw_changed_gate_bundle_tmp" HEAD:refs/heads/openclaw-changed-gate-tree || exit 2; openclaw_changed_gate_tree="$(git rev-parse refs/heads/openclaw-changed-gate-tree^{tree})" || exit 2; openclaw_changed_gate_head="$(git -c user.name=Nova -c user.email=ci@openclaw.local commit-tree "$openclaw_changed_gate_tree" -p refs/remotes/origin/main -m remote-changed-gate-tree)" || exit 2; git update-ref refs/heads/openclaw-changed-gate-head "$openclaw_changed_gate_head" || exit 2; openclaw_changed_gate_target=refs/heads/openclaw-changed-gate-head; fi;',
     'rm -f "$openclaw_changed_gate_bundle_tmp" || exit 2;',
     "trap - EXIT HUP INT TERM;",
     'git reset --hard --quiet "$openclaw_changed_gate_target" || exit 2;',
@@ -2968,17 +2968,17 @@ function remoteAwsMacosSwiftBootstrap() {
     'openclaw_swift_version="$(swift --version 2>&1)" || { status=$?; printf "%s\\n" "$openclaw_swift_version" >&2; return "$status"; };',
     'printf "%s\\n" "$openclaw_swift_version" >&2;',
     'openclaw_swift_major_minor="$(printf "%s\\n" "$openclaw_swift_version" | sed -nE "s/.*Apple Swift version ([0-9]+)\\.([0-9]+).*/\\1 \\2/p" | head -n 1)";',
-    'if [ -z "$openclaw_swift_major_minor" ]; then echo "[crabbox] OpenClaw macOS app proof requires Swift tools 6.2+; unable to parse swift --version." >&2; return 2; fi;',
+    'if [ -z "$openclaw_swift_major_minor" ]; then echo "[crabbox] Nova macOS app proof requires Swift tools 6.2+; unable to parse swift --version." >&2; return 2; fi;',
     "set -- $openclaw_swift_major_minor;",
     'if [ "$1" -lt 6 ] || { [ "$1" -eq 6 ] && [ "$2" -lt 2 ]; }; then',
-    'echo "[crabbox] OpenClaw macOS app proof requires Swift tools 6.2+ (Xcode 26.x)." >&2;',
+    'echo "[crabbox] Nova macOS app proof requires Swift tools 6.2+ (Xcode 26.x)." >&2;',
     'echo "[crabbox] current Swift is $1.$2; select/install Xcode 26.x or use a Blacksmith macOS runner with Xcode_26.1.app." >&2;',
     "return 2;",
     "fi;",
-    'openclaw_xcodebuild_version="$(xcodebuild -version 2>&1)" || { printf "%s\\n" "$openclaw_xcodebuild_version" >&2; echo "[crabbox] OpenClaw macOS app proof requires Xcode 26.x; active developer directory does not provide usable xcodebuild." >&2; return 2; };',
+    'openclaw_xcodebuild_version="$(xcodebuild -version 2>&1)" || { printf "%s\\n" "$openclaw_xcodebuild_version" >&2; echo "[crabbox] Nova macOS app proof requires Xcode 26.x; active developer directory does not provide usable xcodebuild." >&2; return 2; };',
     'printf "%s\\n" "$openclaw_xcodebuild_version" >&2;',
     'openclaw_xcode_major="$(printf "%s\\n" "$openclaw_xcodebuild_version" | sed -nE "s/^Xcode ([0-9]+)(\\..*)?$/\\1/p" | head -n 1)";',
-    'if [ "$openclaw_xcode_major" != "26" ]; then echo "[crabbox] OpenClaw macOS app proof requires Xcode 26.x; current xcodebuild is ${openclaw_xcode_major:-unknown}." >&2; return 2; fi;',
+    'if [ "$openclaw_xcode_major" != "26" ]; then echo "[crabbox] Nova macOS app proof requires Xcode 26.x; current xcodebuild is ${openclaw_xcode_major:-unknown}." >&2; return 2; fi;',
     "};",
     "openclaw_crabbox_require_macos_swift_62",
   ].join(" ");
@@ -3281,7 +3281,7 @@ function prepareFullCheckoutForSync(options = {}) {
             "-C",
             dir,
             "-c",
-            "user.name=OpenClaw",
+            "user.name=Nova",
             "-c",
             "user.email=ci@openclaw.local",
             "commit-tree",
@@ -3643,7 +3643,7 @@ if (
       ? `pnpm crabbox:hydrate -- --id ${id}`
       : "pnpm crabbox:warmup, then pnpm crabbox:hydrate -- --id <id>";
     console.error(
-      `[crabbox] warning: provider=aws raw boxes may lack Node/Corepack/pnpm/Bun for ${runtimeEntrypoint}; hydrate first (${hydrate}) or pass --provider blacksmith-testbox for OpenClaw CI-like proof; not switching providers automatically`,
+      `[crabbox] warning: provider=aws raw boxes may lack Node/Corepack/pnpm/Bun for ${runtimeEntrypoint}; hydrate first (${hydrate}) or pass --provider blacksmith-testbox for Nova CI-like proof; not switching providers automatically`,
     );
   }
 }
@@ -3667,7 +3667,7 @@ if (
 ) {
   childEnv.CRABBOX_LOCAL_CONTAINER_DOCKER_SOCKET = "1";
   console.error(
-    "[crabbox] provider=docker enabling host Docker socket pass-through for OpenClaw Docker tests",
+    "[crabbox] provider=docker enabling host Docker socket pass-through for Nova Docker tests",
   );
 }
 if (
@@ -3678,7 +3678,7 @@ if (
 ) {
   childEnv.CRABBOX_LOCAL_CONTAINER_WORK_ROOT = "/tmp/openclaw-crabbox-docker-work";
   console.error(
-    "[crabbox] provider=docker using short host-visible work root for OpenClaw Docker tests",
+    "[crabbox] provider=docker using short host-visible work root for Nova Docker tests",
   );
 }
 

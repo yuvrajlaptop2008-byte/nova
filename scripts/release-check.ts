@@ -1,5 +1,5 @@
 #!/usr/bin/env -S node --import tsx
-// Release Check script supports OpenClaw repository automation.
+// Release Check script supports Nova repository automation.
 
 import { execFileSync, type ExecFileSyncOptions } from "node:child_process";
 import {
@@ -125,7 +125,7 @@ const forbiddenPrefixes = [
   ...rootPackageExcludedExtensionPrefixes,
   ...LOCAL_BUILD_METADATA_DIST_PATHS,
   "dist-runtime/",
-  "dist/OpenClaw.app/",
+  "dist/Nova.app/",
   "dist/extensions/qa-channel/",
   "dist/extensions/qa-lab/",
   "dist/plugin-sdk/extensions/qa-channel/",

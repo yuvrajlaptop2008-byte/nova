@@ -38,7 +38,7 @@ const CHILD_DISPATCHES = [
   },
   {
     manifestKey: "releaseChecks",
-    name: "OpenClaw Release Checks",
+    name: "Nova Release Checks",
     parentJobName: "Run release/live/Docker/QA validation",
     suffix: "-release-checks",
     trustedRef: "parent",
@@ -62,7 +62,7 @@ const CHILD_DISPATCHES = [
   },
   {
     manifestKey: "productPerformance",
-    name: "OpenClaw Performance",
+    name: "Nova Performance",
     parentJobName: "Run product performance evidence",
     suffix: "",
     trustedRef: "parent",

@@ -1,4 +1,4 @@
-// Applies OpenClaw's conversational setup: config, workspace files, gateway.
+// Applies Nova's conversational setup: config, workspace files, gateway.
 import { isDeepStrictEqual } from "node:util";
 import {
   readConfigFileSnapshot,
@@ -289,7 +289,7 @@ export async function applySystemAgentSetup(
   const snapshotConfig = requireValidSystemAgentSetupSnapshot(snapshot);
 
   if (hasExpectedConfigHash && resolveConfigSnapshotHash(snapshot) !== expectedConfigHash) {
-    throw new Error("OpenClaw config changed while AI access was being tested. Try setup again.");
+    throw new Error("Nova config changed while AI access was being tested. Try setup again.");
   }
 
   const guardModules =
@@ -359,8 +359,8 @@ export async function applySystemAgentSetup(
     if (!currentRoute || !sameDefaultInferenceRoute(currentRoute, expectedRoute)) {
       throw new Error(
         phase === "before"
-          ? "The default-agent inference route changed before setup could start, so no workspace or Gateway settings were changed. Retry setup from the current OpenClaw session."
-          : "The default-agent inference route changed after the config write, so no further setup effects were applied. Retry setup from the current OpenClaw session.",
+          ? "The default-agent inference route changed before setup could start, so no workspace or Gateway settings were changed. Retry setup from the current Nova session."
+          : "The default-agent inference route changed after the config write, so no further setup effects were applied. Retry setup from the current Nova session.",
       );
     }
   };
@@ -417,7 +417,7 @@ export async function applySystemAgentSetup(
           const currentSnapshot = requireValidSystemAgentSetupSnapshot(context.snapshot);
           if (hasExpectedConfigHash && context.previousHash !== expectedConfigHash) {
             throw new Error(
-              "OpenClaw config changed while AI access was being tested. Try setup again.",
+              "Nova config changed while AI access was being tested. Try setup again.",
             );
           }
           await assertVerifiedRoute(context.snapshot);
@@ -440,7 +440,7 @@ export async function applySystemAgentSetup(
               !isDeepStrictEqual(expectedSourceRoute.route, params.expectedInferenceRoute.route))
           ) {
             throw new Error(
-              "The setup candidate no longer preserves the exact verified inference route, so it was not saved. Retry setup from the current OpenClaw session.",
+              "The setup candidate no longer preserves the exact verified inference route, so it was not saved. Retry setup from the current Nova session.",
             );
           }
           // This is the auth/config operation's linearization point. Never hold
@@ -456,7 +456,7 @@ export async function applySystemAgentSetup(
   const nextConfig = committed.nextConfig;
   const settings = committed.result?.settings;
   if (!settings) {
-    throw new Error("OpenClaw setup committed without resolved Gateway settings.");
+    throw new Error("Nova setup committed without resolved Gateway settings.");
   }
   if (params.expectedInferenceRoute) {
     const afterRead = await readConfigFileSnapshotWithPluginMetadata();
@@ -470,7 +470,7 @@ export async function applySystemAgentSetup(
       const issue = expectedRuntime.issues[0];
       const detail = issue ? ` (${issue.path ? `${issue.path}: ` : ""}${issue.message})` : "";
       throw new Error(
-        `OpenClaw could not validate the setup route after its config write${detail}. No further setup effects were applied. Retry setup from the current OpenClaw session.`,
+        `Nova could not validate the setup route after its config write${detail}. No further setup effects were applied. Retry setup from the current Nova session.`,
       );
     }
     const expectedPersistedRoute = await projectDefaultInferenceRoute(expectedRuntime.config);
@@ -479,7 +479,7 @@ export async function applySystemAgentSetup(
     // metadata change that would make the committed config run differently.
     if (!isDeepStrictEqual(expectedPersistedRoute.route, params.expectedInferenceRoute.route)) {
       throw new Error(
-        "The materialized inference route no longer matches the exact verified route, so no further setup effects were applied. Retry setup from the current OpenClaw session.",
+        "The materialized inference route no longer matches the exact verified route, so no further setup effects were applied. Retry setup from the current Nova session.",
       );
     }
   }
@@ -520,7 +520,7 @@ export async function applySystemAgentSetup(
     (error) => lines.push(`Workspace files: ${formatErrorMessage(error)}`),
   );
 
-  // Setup approval includes consent for OpenClaw's local model harnesses.
+  // Setup approval includes consent for Nova's local model harnesses.
   // Keep the grant agent-scoped; regular agents retain interactive approvals.
   await runCommittedFollowUp(
     async () => {
@@ -540,7 +540,7 @@ export async function applySystemAgentSetup(
     },
     (error) =>
       lines.push(
-        `OpenClaw exec approval: ${formatErrorMessage(error)}; local model harnesses may ask again.`,
+        `Nova exec approval: ${formatErrorMessage(error)}; local model harnesses may ask again.`,
       ),
   );
 

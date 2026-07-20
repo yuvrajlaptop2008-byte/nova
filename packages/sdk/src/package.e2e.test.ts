@@ -1,4 +1,4 @@
-// OpenClaw SDK tests cover package behavior.
+// Nova SDK tests cover package behavior.
 import { spawn, spawnSync, type SpawnOptionsWithoutStdio } from "node:child_process";
 import { createReadStream } from "node:fs";
 import fs from "node:fs/promises";
@@ -341,7 +341,7 @@ async function startOpenClawRegistry(packages: PackedPackage[]): Promise<{
   };
 }
 
-describe("OpenClaw SDK package e2e", () => {
+describe("Nova SDK package e2e", () => {
   afterEach(async () => {
     await Promise.all(
       tempDirs.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true })),
@@ -430,9 +430,9 @@ describe("OpenClaw SDK package e2e", () => {
     }
 
     const importScript = `
-      import { GatewayClientTransport, OpenClaw, normalizeGatewayEvent } from "@openclaw/sdk";
+      import { GatewayClientTransport, Nova, normalizeGatewayEvent } from "@openclaw/sdk";
       if (typeof GatewayClientTransport !== "function") throw new Error("missing transport export");
-      if (typeof OpenClaw !== "function") throw new Error("missing client export");
+      if (typeof Nova !== "function") throw new Error("missing client export");
       const event = normalizeGatewayEvent({
         event: "agent",
         payload: { runId: "pack-smoke", stream: "lifecycle", data: { phase: "start" } }

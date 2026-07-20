@@ -1,4 +1,4 @@
-// Plugin state SQLite helpers persist plugin state in the OpenClaw state database.
+// Plugin state SQLite helpers persist plugin state in the Nova state database.
 import type { DatabaseSync } from "node:sqlite";
 import { resolveExpiresAtMsFromDurationMs } from "@openclaw/normalization-core/number-coercion";
 import type { Insertable, Selectable } from "kysely";

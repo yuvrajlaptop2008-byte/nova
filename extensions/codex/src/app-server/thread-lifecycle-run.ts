@@ -185,7 +185,7 @@ export async function startOrResumeThread(
       throw error;
     };
     if (!binding && bindingIdentity.kind === "session" && bindingIdentity.sessionKey) {
-      // Reset may rotate the OpenClaw session while this plugin is unloaded. Only
+      // Reset may rotate the Nova session while this plugin is unloaded. Only
       // the authoritative session store may let its successor displace that stale owner.
       const reclaimed = await lifecycleTiming.measure("reclaim-binding-generation", () =>
         reclaimCurrentCodexSessionGeneration({
@@ -244,7 +244,7 @@ export async function startOrResumeThread(
         bindingPatch: {
           cwd: params.cwd,
           // Supervised threads stay on the native user-home connection. Never
-          // persist an outer OpenClaw auth profile onto that private ownership.
+          // persist an outer Nova auth profile onto that private ownership.
           authProfileId: undefined,
           preserveNativeModel: true,
           dynamicToolsFingerprint,

@@ -1,4 +1,4 @@
-// Gateway Protocol schema module defines OpenClaw chat payloads.
+// Gateway Protocol schema module defines Nova chat payloads.
 import type { Static } from "typebox";
 import { Type } from "typebox";
 import { closedObject } from "./closed-object.js";
@@ -6,7 +6,7 @@ import { NonEmptyString } from "./primitives.js";
 import { WizardStartResultSchema } from "./wizard.js";
 
 /**
- * OpenClaw chat lets clients (macOS app onboarding, future UIs) hold the
+ * Nova chat lets clients (macOS app onboarding, future UIs) hold the
  * setup/repair conversation over the gateway. The gateway live-tests the
  * configured inference route before creating a session. Omitting `message`
  * returns the welcome/greeting for a verified fresh session without input.
@@ -56,7 +56,7 @@ export const SystemAgentChatQuestionSchema = closedObject({
   isOther: Type.Optional(Type.Boolean()),
 });
 
-/** One OpenClaw reply; `action` tells clients about conversation handoffs. */
+/** One Nova reply; `action` tells clients about conversation handoffs. */
 export const SystemAgentChatResultSchema = closedObject({
   sessionId: NonEmptyString,
   reply: NonEmptyString,

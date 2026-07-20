@@ -127,7 +127,7 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
   "agents.defaults.compaction.provider":
     "Id of a registered compaction provider plugin used for summarization. When set and the provider is registered, its summarize() method is called instead of the built-in summarizeInStages pipeline. Falls back to built-in on provider failure. Leave unset to use the default built-in summarization.",
   "agents.defaults.compaction.thinkingLevel":
-    'Optional thinking level used only for embedded OpenClaw compaction summaries: "off", "minimal", "low", "medium", "high", "xhigh", "adaptive", "max", or "ultra". It overrides the session level and is clamped to the actual compaction model/runtime; leave unset to inherit the session level. Native Codex app-server compaction ignores this setting because its compact request has no per-operation thinking override, and OpenClaw logs a warning.',
+    'Optional thinking level used only for embedded Nova compaction summaries: "off", "minimal", "low", "medium", "high", "xhigh", "adaptive", "max", or "ultra". It overrides the session level and is clamped to the actual compaction model/runtime; leave unset to inherit the session level. Native Codex app-server compaction ignores this setting because its compact request has no per-operation thinking override, and Nova logs a warning.',
   "agents.defaults.compaction.keepRecentTokens":
     "Minimum token budget preserved from the most recent conversation window during compaction. Use higher values to protect immediate context continuity and lower values to keep more long-tail history.",
   "agents.defaults.compaction.identifierPolicy":
@@ -143,9 +143,9 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
   "agents.defaults.compaction.qualityGuard.maxRetries":
     "Maximum number of regeneration retries after a failed safeguard summary quality audit. Use small values to bound extra latency and token cost.",
   "agents.defaults.compaction.midTurnPrecheck":
-    "Optional embedded OpenClaw tool-loop precheck that detects context pressure after a tool result is appended and before the next model call. When enabled, OpenClaw reuses existing precheck recovery to truncate tool results or compact before retrying.",
+    "Optional embedded Nova tool-loop precheck that detects context pressure after a tool result is appended and before the next model call. When enabled, Nova reuses existing precheck recovery to truncate tool results or compact before retrying.",
   "agents.defaults.compaction.midTurnPrecheck.enabled":
-    "Enable structured mid-turn context pressure checks for embedded OpenClaw tool loops. Default: false. Keep disabled unless long tool-heavy sessions hit context overflow before normal turn-end compaction can run.",
+    "Enable structured mid-turn context pressure checks for embedded Nova tool loops. Default: false. Keep disabled unless long tool-heavy sessions hit context overflow before normal turn-end compaction can run.",
   "agents.defaults.compaction.postIndexSync":
     'Controls post-compaction session memory reindex mode: "off", "async", or "await" (default: "async"). Use "await" for strongest freshness, "async" for lower compaction latency, and "off" only when session-memory sync is handled elsewhere.',
   "agents.defaults.compaction.postCompactionSections":
@@ -175,15 +175,15 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
   "agents.defaults.compaction.memoryFlush.systemPrompt":
     "System-prompt override for the pre-compaction memory flush turn to control extraction style and safety constraints. Use carefully so custom instructions do not reduce memory quality or leak sensitive context.",
   "agents.defaults.embeddedAgent":
-    "Embedded OpenClaw runner hardening controls for how workspace-local agent settings are trusted and applied in OpenClaw sessions.",
+    "Embedded Nova runner hardening controls for how workspace-local agent settings are trusted and applied in Nova sessions.",
   "agents.defaults.embeddedAgent.projectSettingsPolicy":
-    'How embedded OpenClaw handles workspace-local `.openclaw/settings.json`: "sanitize" (default) strips shellPath/shellCommandPrefix, "ignore" disables project settings entirely, and "trusted" applies project settings as-is.',
+    'How embedded Nova handles workspace-local `.openclaw/settings.json`: "sanitize" (default) strips shellPath/shellCommandPrefix, "ignore" disables project settings entirely, and "trusted" applies project settings as-is.',
   "agents.defaults.embeddedAgent.executionContract":
-    'Embedded OpenClaw execution contract: "default" keeps the standard runner behavior, while "strict-agentic" enables structured plan tracking and non-visible turn recovery for supported OpenAI/OpenAI Codex GPT-5-family runs.',
+    'Embedded Nova execution contract: "default" keeps the standard runner behavior, while "strict-agentic" enables structured plan tracking and non-visible turn recovery for supported OpenAI/OpenAI Codex GPT-5-family runs.',
   "agents.list[].embeddedAgent":
-    "Optional per-agent embedded OpenClaw overrides. Use this to opt specific agents into stricter GPT-5 execution behavior without changing the global default.",
+    "Optional per-agent embedded Nova overrides. Use this to opt specific agents into stricter GPT-5 execution behavior without changing the global default.",
   "agents.list[].embeddedAgent.executionContract":
-    'Optional per-agent embedded OpenClaw execution contract override. Set "strict-agentic" to enable structured plan tracking and non-visible turn recovery for that agent on supported OpenAI/OpenAI Codex GPT-5-family runs, or "default" to inherit the standard runner behavior.',
+    'Optional per-agent embedded Nova execution contract override. Set "strict-agentic" to enable structured plan tracking and non-visible turn recovery for that agent on supported OpenAI/OpenAI Codex GPT-5-family runs, or "default" to inherit the standard runner behavior.',
   "agents.defaults.humanDelay.mode": 'Delay style for block replies ("off", "natural", "custom").',
   "agents.defaults.humanDelay.minMs": "Minimum delay in ms for custom humanDelay (default: 800).",
   "agents.defaults.humanDelay.maxMs": "Maximum delay in ms for custom humanDelay (default: 2500).",
@@ -201,7 +201,7 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
     "How long bash waits before backgrounding (default: 2000; 0 backgrounds immediately).",
   "commands.config": "Allow /config chat command to read/write config on disk (default: false).",
   "commands.mcp":
-    "Allow /mcp chat command to manage OpenClaw MCP server config under mcp.servers (default: false).",
+    "Allow /mcp chat command to manage Nova MCP server config under mcp.servers (default: false).",
   "commands.plugins":
     "Allow /plugins chat command to list discovered plugins and toggle plugin enablement in config (default: false).",
   "commands.debug": "Allow /debug chat command for runtime-only overrides (default: false).",
@@ -215,11 +215,11 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
     "Optional secret used to HMAC hash owner IDs when ownerDisplay=hash. Prefer env substitution.",
   "commands.allowFrom":
     "Defines elevated command allow rules by channel and sender for owner-level command surfaces. Use narrow provider-specific identities so privileged commands are not exposed to broad chat audiences.",
-  mcp: "Global MCP server definitions managed by OpenClaw. Embedded OpenClaw and other runtime adapters can consume these servers without storing them inside runtime-owned project settings.",
+  mcp: "Global MCP server definitions managed by Nova. Embedded Nova and other runtime adapters can consume these servers without storing them inside runtime-owned project settings.",
   "mcp.servers":
-    "Named MCP server definitions. OpenClaw stores them in its own config and runtime adapters decide which transports are supported at execution time.",
+    "Named MCP server definitions. Nova stores them in its own config and runtime adapters decide which transports are supported at execution time.",
   "mcp.servers.*.codex":
-    "OpenClaw projection metadata for Codex app-server threads only. It does not affect ACP sessions or generic Codex harness config. Omit this block to keep the server available to every Codex app-server agent with Codex's default MCP approval behavior.",
+    "Nova projection metadata for Codex app-server threads only. It does not affect ACP sessions or generic Codex harness config. Omit this block to keep the server available to every Codex app-server agent with Codex's default MCP approval behavior.",
   "mcp.servers.*.toolFilter":
     "Per-server MCP tool selection. Use include to expose only selected MCP tool names, or exclude to hide selected MCP tool names. Entries accept exact names and simple '*' globs.",
   "mcp.servers.*.toolFilter.include":
@@ -227,11 +227,11 @@ export const AGENT_FIELD_HELP: Record<string, string> = {
   "mcp.servers.*.toolFilter.exclude":
     "Exact MCP tool names or simple '*' globs to hide from this server.",
   "mcp.servers.*.oauth.authProfileId":
-    "Refresh-capable auth profile id used to inject the current bearer token into this remote MCP server. When set, OpenClaw resolves and refreshes the profile at runtime and does not project refresh material downstream.",
+    "Refresh-capable auth profile id used to inject the current bearer token into this remote MCP server. When set, Nova resolves and refreshes the profile at runtime and does not project refresh material downstream.",
   "mcp.servers.*.codex.agents":
-    "Optional non-empty OpenClaw agent ids that should receive this MCP server in Codex app-server thread config. Empty, blank, or invalid lists fail closed; when omitted, the server is projected for all Codex app-server agents.",
+    "Optional non-empty Nova agent ids that should receive this MCP server in Codex app-server thread config. Empty, blank, or invalid lists fail closed; when omitted, the server is projected for all Codex app-server agents.",
   "mcp.servers.*.codex.defaultToolsApprovalMode":
     'Optional Codex MCP tool approval mode for this server: "auto", "prompt", or "approve". Use only for MCP servers you intentionally trust.',
   "mcp.servers.*.codex.default_tools_approval_mode":
-    "Codex-native spelling for the same per-server MCP tool approval mode. Prefer defaultToolsApprovalMode in OpenClaw config.",
+    "Codex-native spelling for the same per-server MCP tool approval mode. Prefer defaultToolsApprovalMode in Nova config.",
 };

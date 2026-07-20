@@ -1,5 +1,5 @@
 import { readPackageVersion } from "./package-json.js";
-// Runs OpenClaw package update checks, package steps, and restart handoff.
+// Runs Nova package update checks, package steps, and restart handoff.
 import { detectGlobalInstallManagerForRoot } from "./update-global.js";
 import { buildUpdateCommandRunner, DEFAULT_TIMEOUT_MS } from "./update-runner-command.js";
 import { resolveUpdateDoctorExecutionPolicy } from "./update-runner-doctor.js";

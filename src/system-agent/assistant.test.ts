@@ -1,4 +1,4 @@
-// OpenClaw assistant tests cover plan parsing and inference prompt construction.
+// Nova assistant tests cover plan parsing and inference prompt construction.
 import { describe, expect, it } from "vitest";
 import {
   buildSystemAgentAssistantUserPrompt,
@@ -36,7 +36,7 @@ function overview(overrides: Partial<SystemAgentOverview["tools"]> = {}): System
   };
 }
 
-describe("OpenClaw assistant", () => {
+describe("Nova assistant", () => {
   it("parses the first compact JSON command", () => {
     expect(
       parseSystemAgentAssistantPlanText(
@@ -95,8 +95,8 @@ describe("OpenClaw assistant", () => {
     expect(prompt).toContain("Default model: openai/gpt-5.5");
     expect(prompt).toContain("id=main, name=Main, workspace=/tmp/main");
     expect(prompt).toContain("OpenAI API key: found");
-    expect(prompt).toContain("OpenClaw docs: /tmp/openclaw/docs");
-    expect(prompt).toContain("OpenClaw source: /tmp/openclaw");
+    expect(prompt).toContain("Nova docs: /tmp/openclaw/docs");
+    expect(prompt).toContain("Nova source: /tmp/openclaw");
   });
 
   it("keeps truncated conversation history valid at a UTF-16 boundary", () => {

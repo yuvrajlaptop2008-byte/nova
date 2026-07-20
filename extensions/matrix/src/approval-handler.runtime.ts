@@ -45,7 +45,7 @@ import {
 import { resolveMatrixTargetIdentity } from "./matrix/target-ids.js";
 import type { CoreConfig } from "./types.js";
 
-// OpenClaw Matrix custom event content for capable clients; body and reactions remain fallback.
+// Nova Matrix custom event content for capable clients; body and reactions remain fallback.
 const MATRIX_APPROVAL_METADATA_KEY = "com.openclaw.approval" as const;
 
 type PendingMessage = {

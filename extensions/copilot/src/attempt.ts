@@ -113,7 +113,7 @@ type AttemptParamsLike = AgentHarnessAttemptParams & {
   reasoningEffort?: "low" | "medium" | "high" | "xhigh";
   // User-visible prompt body (when distinct from `prompt`, which may
   // include runtime-expanded context). Used when synthesizing the
-  // current-turn user message for the OpenClaw audit transcript so
+  // current-turn user message for the Nova audit transcript so
   // dashboard/CLI history shows what the user actually typed, not the
   // internal expansion. Symmetric to `EmbeddedRunAttemptParams.transcriptPrompt`.
   transcriptPrompt?: string;
@@ -701,14 +701,14 @@ export async function runCopilotAttempt(
 
     handle = await deps.pool.acquire(poolAcquire.key, poolAcquire.options);
     const client = handle.client;
-    // Load OpenClaw workspace bootstrap files (SOUL.md, IDENTITY.md,
+    // Load Nova workspace bootstrap files (SOUL.md, IDENTITY.md,
     // HEARTBEAT.md, ...) before constructing the SDK SessionConfig so
     // persona/identity/heartbeat reach the model via
     // `SessionConfig.systemMessage` (append mode). Mirrors codex's
     // `buildCodexWorkspaceBootstrapContext` call in run-attempt.ts.
     // Failures here are non-fatal: workspace-bootstrap returns
     // `instructions: undefined` and the session proceeds without the
-    // OpenClaw bootstrap block (SDK still loads AGENTS.md natively).
+    // Nova bootstrap block (SDK still loads AGENTS.md natively).
     const workspaceBootstrap = await resolveCopilotWorkspaceBootstrapContext({
       attempt: input,
       // Pair with `createSessionConfig`'s `workingDirectory:
@@ -751,7 +751,7 @@ export async function runCopilotAttempt(
             ? { systemPrompt: promptBuild.developerInstructions }
             : {}),
           prompt: additionalContext ? `${prompt}\n\n${additionalContext}` : prompt,
-          // Copilot SDK sessions own their own transcript. OpenClaw's
+          // Copilot SDK sessions own their own transcript. Nova's
           // mirrored messages are persistence state, not provider input.
           historyMessages: [],
           imagesCount: promptImagesCount,
@@ -962,7 +962,7 @@ export async function runCopilotAttempt(
       await bridge.awaitAgentEventChain();
       if (!bridge.recordSendResult(result) && !aborted) {
         // SDK sendAndWait returning undefined is treated as a timeout by the
-        // capability inventory. Do not call session.abort() here: OpenClaw may
+        // capability inventory. Do not call session.abort() here: Nova may
         // resume the in-flight SDK session on the next attempt.
         timedOut = true;
         timedOutDuringCompaction = bridge.isCompacting();
@@ -1101,7 +1101,7 @@ export async function runCopilotAttempt(
 
   // Dogfood finding #3 (mirror codex parity):
   //
-  // Without this synthesis the OpenClaw audit transcript never sees
+  // Without this synthesis the Nova audit transcript never sees
   // the user's prompt for a copilot attempt. The shell's
   // `persistTextTurnTranscript` skips the user write when
   // `embeddedAssistantGapFill` is true (its `body` arrives as ""),
@@ -1150,8 +1150,8 @@ export async function runCopilotAttempt(
   ];
 
   // Best-effort dual-write mirrors this attempt's full message snapshot into
-  // OpenClaw's runtime transcript store. The Copilot SDK may still maintain
-  // its own private files; OpenClaw-side audit state is addressed only by
+  // Nova's runtime transcript store. The Copilot SDK may still maintain
+  // its own private files; Nova-side audit state is addressed only by
   // session identity so missing identity cannot silently recreate JSONL state.
   const openClawSessionIdForMirror = readString(input.sessionId);
   const sessionKeyForMirror = readString((input as { sessionKey?: unknown }).sessionKey);
@@ -1199,7 +1199,7 @@ export async function runCopilotAttempt(
       // mirror failures, but we double-guard here so any future
       // signature change or unexpected rejection cannot break the
       // attempt result. The SDK's own session storage remains
-      // authoritative; only the OpenClaw audit transcript would be
+      // authoritative; only the Nova audit transcript would be
       // missing intermediate messages for this turn.
       console.warn(
         "[copilot-attempt] dual-write transcript wrapper rejected unexpectedly",
@@ -1375,7 +1375,7 @@ function createSessionConfig(
     // built-in kind that future SDK versions might surface outside
     // `availableTools`. Every bridged tool is also registered with
     // `overridesBuiltInTool: true` and `skipPermission: true` (see
-    // tool-bridge.ts) so 100% of tool calls go through OpenClaw's
+    // tool-bridge.ts) so 100% of tool calls go through Nova's
     // wrapped `execute()` which runs `runBeforeToolCallHook` (loop
     // detection, trusted plugin policies, before-tool-call hooks,
     // two-phase plugin approval). This mirrors the in-tree codex
@@ -1406,10 +1406,10 @@ function createSessionConfig(
     tools: sdkTools,
     // Restrict the SDK's tool catalog to the bridged tool names returned
     // by `createCopilotToolBridge`, plus the built-in `ask_user` tool for
-    // normal runs. Ring-zero OpenClaw runs expose only OpenClaw. Without this, the SDK
+    // normal runs. Ring-zero Nova runs expose only Nova. Without this, the SDK
     // would still expose its native read/write/shell/url/mcp/memory/
     // hook tools to the model alongside our overrides, which would
-    // bypass OpenClaw's wrapped-tool enforcement under any permissive
+    // bypass Nova's wrapped-tool enforcement under any permissive
     // permission policy and pollute the catalog with disabled tools
     // under the default reject policy. An empty list (`[]`) is
     // meaningful per the SDK contract
@@ -1446,15 +1446,15 @@ function createSessionConfig(
     ...(resolvedAuth.authMode === "gitHubToken" && resolvedAuth.gitHubToken
       ? { gitHubToken: resolvedAuth.gitHubToken }
       : {}),
-    // OpenClaw workspace bootstrap plus per-turn runtime guidance
+    // Nova workspace bootstrap plus per-turn runtime guidance
     // injected via the SDK's `systemMessage` field in append mode:
-    // SDK foundation + OpenClaw context. Append keeps every SDK
+    // SDK foundation + Nova context. Append keeps every SDK
     // guardrail intact while ensuring persona/identity/heartbeat and
     // channel policy guidance reach the model without native reads.
     // AGENTS.md and .github/copilot-instructions.md are filtered by
     // workspace-bootstrap.ts because the SDK auto-loads them from
     // `workingDirectory` (see `@github/copilot-sdk/dist/types.d.ts`
-    // L1036). Omitted when there is no OpenClaw-owned context so the
+    // L1036). Omitted when there is no Nova-owned context so the
     // SDK default foundation applies.
     ...(systemMessageContent
       ? {

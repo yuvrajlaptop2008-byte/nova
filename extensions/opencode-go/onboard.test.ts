@@ -6,7 +6,7 @@ import { applyOpencodeGoConfig, applyOpencodeGoProviderConfig } from "./onboard.
 const MODEL_REF = "opencode-go/kimi-k2.6";
 
 describe("opencode-go onboard", () => {
-  it("leaves model aliases to the OpenClaw catalog", () => {
+  it("leaves model aliases to the Nova catalog", () => {
     const cfg = {
       agents: {
         defaults: {

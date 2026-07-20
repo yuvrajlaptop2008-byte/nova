@@ -951,11 +951,11 @@ exit 7
       updateTarget: "2026.5.3-beta.2",
     });
 
-    const updateIndex = script.indexOf("Invoke-OpenClaw update --tag");
+    const updateIndex = script.indexOf("Invoke-Nova update --tag");
     const scopedIndex = script.indexOf("Invoke-WithScopedEnv @{ OPENCLAW_DISABLE_BUNDLED_PLUGINS");
-    const versionIndex = script.indexOf("Invoke-OpenClaw --version", scopedIndex);
-    const restartIndex = script.indexOf("Invoke-OpenClaw gateway restart");
-    const agentIndex = script.indexOf("Invoke-OpenClaw agent --local");
+    const versionIndex = script.indexOf("Invoke-Nova --version", scopedIndex);
+    const restartIndex = script.indexOf("Invoke-Nova gateway restart");
+    const agentIndex = script.indexOf("Invoke-Nova agent --local");
 
     expect(updateIndex).toBeGreaterThanOrEqual(0);
     expect(scopedIndex).toBeGreaterThanOrEqual(0);

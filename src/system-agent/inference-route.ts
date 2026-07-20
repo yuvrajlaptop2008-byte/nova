@@ -1,4 +1,4 @@
-// Resolves the configured default agent route shared by OpenClaw inference calls.
+// Resolves the configured default agent route shared by Nova inference calls.
 import { isDeepStrictEqual } from "node:util";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import {

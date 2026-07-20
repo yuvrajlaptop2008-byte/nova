@@ -1279,7 +1279,7 @@ export const registerTelegramNativeCommands = ({
             !codexChannelLoginRuntime.hasConfiguredCommandOwnerAllowlist(runtimeCfg)
           ) {
             await sendLoginMessage(
-              "Only a configured OpenClaw owner can start Codex login from Telegram.",
+              "Only a configured Nova owner can start Codex login from Telegram.",
             );
             return;
           }

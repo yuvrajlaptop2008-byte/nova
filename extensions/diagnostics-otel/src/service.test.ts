@@ -5248,7 +5248,7 @@ describe("diagnostics-otel service", () => {
             stopReason: "end_turn",
           },
         ],
-        systemPrompt: "OpenClaw appended instructions",
+        systemPrompt: "Nova appended instructions",
       },
     );
     await flushDiagnosticEvents();
@@ -5275,7 +5275,7 @@ describe("diagnostics-otel service", () => {
       },
     ]);
     expect(JSON.parse(stringAttribute(attrs, "gen_ai.system_instructions"))).toEqual([
-      { type: "text", content: "OpenClaw appended instructions" },
+      { type: "text", content: "Nova appended instructions" },
     ]);
     expect(Object.hasOwn(attrs ?? {}, "gen_ai.tool.definitions")).toBe(false);
     await service.stop?.(ctx);

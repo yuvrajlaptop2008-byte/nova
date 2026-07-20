@@ -1,4 +1,4 @@
-// OpenClaw overview tests cover summary output for rescue diagnostics.
+// Nova overview tests cover summary output for rescue diagnostics.
 import { describe, expect, it } from "vitest";
 import type { ConfigFileSnapshot, OpenClawConfig } from "../config/config.js";
 import {
@@ -101,7 +101,7 @@ describe("loadSystemAgentOverview", () => {
       'Next: run "gateway status" or "restart gateway"',
     );
     const startup = formatSystemAgentStartupMessage(overview);
-    expect(startup).toContain("## Hi, I'm OpenClaw.");
+    expect(startup).toContain("## Hi, I'm Nova.");
     expect(startup).toContain("Using: openai/gpt-5.2");
     expect(startup).toContain("Gateway: not reachable");
     expect(startup).toContain("I can start debugging with `gateway status`");
@@ -119,7 +119,7 @@ describe("loadSystemAgentOverview", () => {
     );
     expect(startup).toContain("Inference unavailable");
     expect(startup).toContain("run `openclaw onboard`");
-    expect(startup).toContain("OpenClaw needs working inference");
+    expect(startup).toContain("Nova needs working inference");
     expect(startup).not.toContain("local Claude Code/Codex/Gemini login");
     expect(startup).not.toContain("typed commands as last resort");
   });

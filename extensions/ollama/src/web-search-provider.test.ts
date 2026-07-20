@@ -245,7 +245,7 @@ describe("ollama web search provider", () => {
         JSON.stringify({
           results: [
             {
-              title: "OpenClaw",
+              title: "Nova",
               url: "https://openclaw.ai/docs",
               content: "Gateway docs and setup details",
             },

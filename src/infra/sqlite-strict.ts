@@ -1,4 +1,4 @@
-// Migrates OpenClaw-owned SQLite tables to canonical STRICT schemas.
+// Migrates Nova-owned SQLite tables to canonical STRICT schemas.
 import type { DatabaseSync } from "node:sqlite";
 import { requireNodeSqlite } from "./node-sqlite.js";
 import { assertSqliteIntegrity } from "./sqlite-integrity.js";
@@ -373,7 +373,7 @@ export function migrateSqliteSchemaToStrictInTransaction(
   return { migratedTables: tablesToMigrate.map((table) => table.name) };
 }
 
-/** Atomically upgrade OpenClaw-owned tables described by a canonical STRICT schema. */
+/** Atomically upgrade Nova-owned tables described by a canonical STRICT schema. */
 export function migrateSqliteSchemaToStrict(
   db: DatabaseSync,
   schemaSql: string,

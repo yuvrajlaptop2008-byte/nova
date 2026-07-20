@@ -1,4 +1,4 @@
-// Tests isolated OpenClaw test-state setup and cleanup behavior.
+// Tests isolated Nova test-state setup and cleanup behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";

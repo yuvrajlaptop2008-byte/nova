@@ -96,7 +96,7 @@ function friendlyError(error) {
   if (typeof error === "string") {
     return error;
   }
-  return error?.message || "OpenClaw could not complete the operation.";
+  return error?.message || "Nova could not complete the operation.";
 }
 
 function gatewayHost(gateway) {
@@ -117,7 +117,7 @@ function renderGateways(gateways) {
   if (!gateways.length) {
     const empty = document.createElement("p");
     empty.className = "discovery-empty";
-    empty.textContent = "Looking for nearby OpenClaw gateways…";
+    empty.textContent = "Looking for nearby Nova gateways…";
     elements.gatewayList.append(empty);
     return;
   }
@@ -184,7 +184,7 @@ async function connect() {
   render({
     activity: "Checking local services…",
     description: "Finding your gateway and preparing the Control UI.",
-    title: "Connecting to OpenClaw",
+    title: "Connecting to Nova",
   });
   try {
     const snapshot = await invoke("bootstrap");
@@ -203,9 +203,9 @@ async function connect() {
       }
       render({
         activity: "Starting the bundled installer…",
-        description: "OpenClaw is installing its managed CLI and Node runtime.",
+        description: "Nova is installing its managed CLI and Node runtime.",
         eyebrow: "FIRST-RUN SETUP",
-        title: "Preparing OpenClaw",
+        title: "Preparing Nova",
       });
       await install();
     }
@@ -221,7 +221,7 @@ async function install() {
   elements.logStatus.textContent = "RUNNING";
   show(elements.logWrap, true);
   render({
-    activity: "Installing OpenClaw…",
+    activity: "Installing Nova…",
     description: "A managed CLI and Node runtime are being installed in your home directory.",
     eyebrow: "INSTALLING",
     title: "Preparing your companion",
@@ -238,7 +238,7 @@ async function install() {
       dot: "error",
       eyebrow: "INSTALLATION ISSUE",
       showInstall: true,
-      title: "OpenClaw needs attention",
+      title: "Nova needs attention",
     });
   } finally {
     elements.installButton.disabled = false;
@@ -249,7 +249,7 @@ async function install() {
 async function runGatewayAction(action) {
   render({
     activity: `${action === "restart" ? "Restarting" : "Starting"} gateway…`,
-    description: "OpenClaw is waiting for the local gateway to become healthy.",
+    description: "Nova is waiting for the local gateway to become healthy.",
     eyebrow: "GATEWAY",
     title: "One moment",
   });
@@ -268,7 +268,7 @@ function renderRetry(message) {
       description: message,
       dot: "error",
       eyebrow: "CONNECTION ISSUE",
-      title: "OpenClaw needs attention",
+      title: "Nova needs attention",
     },
     connect,
   );
@@ -291,7 +291,7 @@ await listen("install-progress", ({ payload }) => appendLog(payload.line));
 await listen("updater://not-available", () => {
   renderUpdate({
     message: "No update is available.",
-    title: "OpenClaw is up to date",
+    title: "Nova is up to date",
   });
 });
 await listen("updater://available", ({ payload }) => {
@@ -348,7 +348,7 @@ const mode = new URLSearchParams(window.location.search).get("mode");
 if (mode === "reconnecting") {
   render({
     activity: "Retrying every few seconds…",
-    description: "The gateway connection dropped. OpenClaw will restore the dashboard automatically.",
+    description: "The gateway connection dropped. Nova will restore the dashboard automatically.",
     eyebrow: "GATEWAY OFFLINE",
     title: "Reconnecting",
   });
@@ -359,7 +359,7 @@ if (mode === "reconnecting") {
       description: "The gateway is stopped. The desktop companion will remain available in the tray.",
       dot: "idle",
       eyebrow: "GATEWAY STOPPED",
-      title: "OpenClaw is standing by",
+      title: "Nova is standing by",
     },
     () => runGatewayAction("start"),
   );

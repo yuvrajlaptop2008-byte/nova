@@ -73,7 +73,7 @@ function isProcessAlive(pid: number): boolean {
   }
 }
 
-function writeStallingOpenClaw(
+function writeStallingNova(
   root: string,
   options: {
     gatewayDescendantMarkerPath?: string;
@@ -128,7 +128,7 @@ function writeStallingOpenClaw(
   return scriptPath;
 }
 
-function writeLeakingStartupOpenClaw(root: string): string {
+function writeLeakingStartupNova(root: string): string {
   const scriptPath = path.join(root, "fake-leaking-openclaw.mjs");
   fs.writeFileSync(
     scriptPath,
@@ -148,7 +148,7 @@ function writeLeakingStartupOpenClaw(root: string): string {
   return scriptPath;
 }
 
-function writeSignaledStartupOpenClaw(root: string): string {
+function writeSignaledStartupNova(root: string): string {
   const scriptPath = path.join(root, "fake-signaled-openclaw.mjs");
   fs.writeFileSync(
     scriptPath,
@@ -171,7 +171,7 @@ function writeSignaledStartupOpenClaw(root: string): string {
   return scriptPath;
 }
 
-function writeNoisySecretsConfigureOpenClaw(root: string): string {
+function writeNoisySecretsConfigureNova(root: string): string {
   const scriptPath = path.join(root, "fake-noisy-secrets-configure-openclaw.mjs");
   fs.writeFileSync(
     scriptPath,
@@ -192,7 +192,7 @@ function writeNoisySecretsConfigureOpenClaw(root: string): string {
 
 function runProofHarness(
   root: string,
-  fakeOpenClaw: string,
+  fakeNova: string,
   mode: "start" | "startup-fails" | "status",
   envOverrides: NodeJS.ProcessEnv = {},
 ) {
@@ -201,7 +201,7 @@ function runProofHarness(
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_ENTRY: fakeOpenClaw,
+      OPENCLAW_ENTRY: fakeNova,
       OPENCLAW_SECRET_PROOF_READY_MS: "60",
       OPENCLAW_SECRET_PROOF_RPC_MS: "1000",
       ...envOverrides,
@@ -217,7 +217,7 @@ afterEach(() => {
 });
 
 describe("secret provider integration proof harness", () => {
-  it("runs pnpm-backed OpenClaw commands through the repo pnpm runner", async () => {
+  it("runs pnpm-backed Nova commands through the repo pnpm runner", async () => {
     const root = makeTempDir();
     const fakePnpm = path.join(root, "pnpm.cjs");
     fs.writeFileSync(fakePnpm, "#!/usr/bin/env node\n", { mode: 0o755 });
@@ -241,8 +241,8 @@ describe("secret provider integration proof harness", () => {
 
   it("keeps stalled startup health probes inside the ready deadline", async () => {
     const root = makeTempDir();
-    const fakeOpenClaw = writeStallingOpenClaw(root);
-    const result = runProofHarness(root, fakeOpenClaw, "start");
+    const fakeNova = writeStallingNova(root);
+    const result = runProofHarness(root, fakeNova, "start");
 
     expect(result.error).toBeUndefined();
     expect(result.status).toBe(0);
@@ -253,8 +253,8 @@ describe("secret provider integration proof harness", () => {
 
   it("fails fast when startup exits by signal", () => {
     const root = makeTempDir();
-    const fakeOpenClaw = writeSignaledStartupOpenClaw(root);
-    const result = runProofHarness(root, fakeOpenClaw, "start", {
+    const fakeNova = writeSignaledStartupNova(root);
+    const result = runProofHarness(root, fakeNova, "start", {
       OPENCLAW_SECRET_PROOF_READY_MS: "2000",
     });
 
@@ -268,10 +268,10 @@ describe("secret provider integration proof harness", () => {
   it("kills a stalled startup gateway before returning a readiness failure", async () => {
     const root = makeTempDir();
     const markerPath = path.join(root, "gateway-marker.txt");
-    const fakeOpenClaw = writeStallingOpenClaw(root, {
+    const fakeNova = writeStallingNova(root, {
       gatewayDescendantMarkerPath: markerPath,
     });
-    const result = runProofHarness(root, fakeOpenClaw, "start", {
+    const result = runProofHarness(root, fakeNova, "start", {
       OPENCLAW_SECRET_PROOF_TEARDOWN_GRACE_MS: "100",
     });
 
@@ -410,11 +410,11 @@ describe("secret provider integration proof harness", () => {
 
   it.runIf(process.platform !== "win32")("bounds captured PTY configure output", async () => {
     const root = makeTempDir();
-    const fakeOpenClaw = writeNoisySecretsConfigureOpenClaw(root);
+    const fakeNova = writeNoisySecretsConfigureNova(root);
     const previousLimit = process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES;
     const previousEntry = process.env.OPENCLAW_ENTRY;
     process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES = "128";
-    process.env.OPENCLAW_ENTRY = fakeOpenClaw;
+    process.env.OPENCLAW_ENTRY = fakeNova;
     try {
       const proof = await import(
         `${pathToFileURL(proofScriptPath).href}?case=pty-output-${Date.now()}`
@@ -424,7 +424,7 @@ describe("secret provider integration proof harness", () => {
         .runPtySecretsConfigurePreset({
           env: {
             ...process.env,
-            OPENCLAW_ENTRY: fakeOpenClaw,
+            OPENCLAW_ENTRY: fakeNova,
           },
         })
         .catch((caught: unknown) => caught);
@@ -453,7 +453,7 @@ describe("secret provider integration proof harness", () => {
     "cleans PTY configure descendants before timeout failure",
     async () => {
       const root = makeTempDir();
-      const fakeOpenClaw = path.join(root, "fake-openclaw-pty-timeout.mjs");
+      const fakeNova = path.join(root, "fake-openclaw-pty-timeout.mjs");
       const descendantPidPath = path.join(root, "descendant.pid");
       const readyPath = path.join(root, "ready");
       let descendantPid = 0;
@@ -466,7 +466,7 @@ describe("secret provider integration proof harness", () => {
         "setInterval(() => {}, 1000);",
       ].join("\n");
       fs.writeFileSync(
-        fakeOpenClaw,
+        fakeNova,
         [
           "#!/usr/bin/env node",
           "import childProcess from 'node:child_process';",
@@ -481,7 +481,7 @@ describe("secret provider integration proof harness", () => {
         ].join("\n"),
         { mode: 0o755 },
       );
-      process.env.OPENCLAW_ENTRY = fakeOpenClaw;
+      process.env.OPENCLAW_ENTRY = fakeNova;
       const proof = await import(
         `${pathToFileURL(proofScriptPath).href}?case=pty-timeout-${Date.now()}`
       );
@@ -491,7 +491,7 @@ describe("secret provider integration proof harness", () => {
           {
             env: {
               ...process.env,
-              OPENCLAW_ENTRY: fakeOpenClaw,
+              OPENCLAW_ENTRY: fakeNova,
             },
           },
           { timeoutKillGraceMs: 50, timeoutMs: 500 },
@@ -971,8 +971,8 @@ describe("secret provider integration proof harness", () => {
 
   it("detects startup secret leaks after the retained output cap", () => {
     const root = makeTempDir();
-    const fakeOpenClaw = writeLeakingStartupOpenClaw(root);
-    const result = runProofHarness(root, fakeOpenClaw, "startup-fails", {
+    const fakeNova = writeLeakingStartupNova(root);
+    const result = runProofHarness(root, fakeNova, "startup-fails", {
       OPENCLAW_SECRET_PROOF_OUTPUT_BYTES: "128",
     });
 
@@ -985,8 +985,8 @@ describe("secret provider integration proof harness", () => {
 
   it("keeps stalled managed status probes inside the ready deadline", async () => {
     const root = makeTempDir();
-    const fakeOpenClaw = writeStallingOpenClaw(root);
-    const result = runProofHarness(root, fakeOpenClaw, "status");
+    const fakeNova = writeStallingNova(root);
+    const result = runProofHarness(root, fakeNova, "status");
 
     expect(result.error).toBeUndefined();
     expect(result.status).toBe(0);

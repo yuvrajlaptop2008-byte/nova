@@ -1170,7 +1170,7 @@ async function runGatewayCommandOnce(opts: GatewayRunOpts, hooks: GatewayRunRunt
       const { maybeExplainGatewayServiceStop } = await import("./shared.js");
       await maybeExplainGatewayServiceStop();
       // An occupied port is only a healthy duplicate when the listener proves
-      // the OpenClaw liveness contract. Arbitrary HTTP listeners must fail.
+      // the Nova liveness contract. Arbitrary HTTP listeners must fail.
       const gatewayTls =
         isGatewayAlreadyRunningLockError(err) && cfg.gateway?.tls?.enabled === true
           ? await import("../../infra/tls/gateway.js")

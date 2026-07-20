@@ -46,7 +46,7 @@ function engineModel(engine: WorkboardExecutionEngine | null | undefined): strin
 }
 
 function buildCardPrompt(card: WorkboardCard): string {
-  const lines = [`Work on this OpenClaw Workboard card: ${card.title}`];
+  const lines = [`Work on this Nova Workboard card: ${card.title}`];
   if (card.notes?.trim()) {
     lines.push("", card.notes.trim());
   }

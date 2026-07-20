@@ -55,7 +55,7 @@ describe("buildTelegramSessionTranscriptPromptEntries", () => {
         transcriptMessageId: "a1",
         message: {
           message_id: "session:a1",
-          sender: "OpenClaw",
+          sender: "Nova",
           timestamp_ms: 2_000,
           body: "The chart is range-bound; want an alert?",
         },

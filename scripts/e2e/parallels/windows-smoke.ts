@@ -1,5 +1,5 @@
 #!/usr/bin/env -S pnpm tsx
-// Windows Smoke script supports OpenClaw repository automation.
+// Windows Smoke script supports Nova repository automation.
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { windowsAgentWorkspaceScript } from "./agent-workspace.ts";
@@ -117,7 +117,7 @@ const defaultOptions = (): WindowsOptions => ({
   vmName: "Windows 11",
 });
 
-const windowsPortableGitPathScript = `$portableGit = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'OpenClaw\\deps') 'portable-git') ''
+const windowsPortableGitPathScript = `$portableGit = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'Nova\\deps') 'portable-git') ''
 $env:PATH = "$portableGit\\cmd;$portableGit\\mingw64\\bin;$portableGit\\usr\\bin;$env:PATH"
 where.exe git.exe`;
 
@@ -540,8 +540,8 @@ class WindowsSmoke extends SmokeRunController<WindowsOptions> {
     throw new Error("Windows guest did not become ready");
   }
 
-  private logGuestPreflight(cleanOpenClaw: boolean): void {
-    const cleanScript = cleanOpenClaw
+  private logGuestPreflight(cleanNova: boolean): void {
+    const cleanScript = cleanNova
       ? "npm.cmd uninstall -g openclaw --no-fund --no-audit --loglevel=error 2>$null; $global:LASTEXITCODE = 0"
       : "";
     this.guestPowerShell(
@@ -563,7 +563,7 @@ ${cleanScript}`,
 $script = Invoke-RestMethod -Uri ${psSingleQuote(this.options.installUrl)} -TimeoutSec 120
 & ([scriptblock]::Create($script))${versionArg} -NoOnboard
 if ($LASTEXITCODE -ne 0) { throw "installer failed with exit code $LASTEXITCODE" }
-Invoke-OpenClaw --version
+Invoke-Nova --version
       if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LASTEXITCODE" }`,
       this.remainingPhaseTimeoutMs(WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS) ??
         WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS,
@@ -586,7 +586,7 @@ curl.exe -fsSL --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 ${p
 ${registryScript}
 npm.cmd install -g $tgz --no-fund --no-audit --loglevel=error
 if ($LASTEXITCODE -ne 0) { throw "npm install failed with exit code $LASTEXITCODE" }
-Invoke-OpenClaw --version
+Invoke-Nova --version
       if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LASTEXITCODE" }`,
       this.remainingPhaseTimeoutMs(WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS) ??
         WINDOWS_PACKAGE_INSTALL_TIMEOUT_MS,
@@ -608,7 +608,7 @@ Invoke-OpenClaw --version
   }
 
   private verifyVersionContains(needle: string): void {
-    const version = this.guestPowerShell("Invoke-OpenClaw --version");
+    const version = this.guestPowerShell("Invoke-Nova --version");
     if (!version.includes(needle)) {
       throw new Error(`version mismatch: expected substring ${needle}`);
     }
@@ -625,7 +625,7 @@ Invoke-OpenClaw --version
       `$ErrorActionPreference = 'Continue'
 $PSNativeCommandUseErrorActionPreference = $false
 Set-Item -Path ('Env:' + ${psSingleQuote(this.auth.apiKeyEnv)}) -Value ${psSingleQuote(this.auth.apiKeyValue)}
-Invoke-OpenClaw onboard --non-interactive --mode local --auth-choice ${psSingleQuote(this.auth.authChoice)} --secret-input-mode ref --gateway-port 18789 --gateway-bind loopback --install-daemon --skip-skills --skip-health --accept-risk --json
+Invoke-Nova onboard --non-interactive --mode local --auth-choice ${psSingleQuote(this.auth.authChoice)} --secret-input-mode ref --gateway-port 18789 --gateway-bind loopback --install-daemon --skip-skills --skip-health --accept-risk --json
 if ($LASTEXITCODE -ne 0) { throw "openclaw onboard failed with exit code $LASTEXITCODE" }
 ${this.windowsPluginIsolationScript()}`,
       720_000,
@@ -673,12 +673,12 @@ $config | ConvertTo-Json -Depth 100 | Set-Content -Path $configPath -Encoding ut
 ${windowsScopedEnvFunction}
 $script:OpenClawUpdateExit = 0
 Invoke-WithScopedEnv @{ OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = '1'; OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1' } {
-  Invoke-OpenClaw update --channel dev --yes --json
+  Invoke-Nova update --channel dev --yes --json
   $script:OpenClawUpdateExit = $LASTEXITCODE
 }
 if ($script:OpenClawUpdateExit -ne 0) { throw "openclaw update failed with exit code $script:OpenClawUpdateExit" }
-Invoke-OpenClaw --version
-Invoke-OpenClaw update status --json`,
+Invoke-Nova --version
+Invoke-Nova update status --json`,
       { timeoutMs: this.updateTimeoutSeconds * 1000 },
     );
   }
@@ -686,7 +686,7 @@ Invoke-OpenClaw update status --json`,
   private verifyDevChannelUpdate(): void {
     const status = this.guestPowerShell(
       `${windowsPortableGitPathScript}
-Invoke-OpenClaw update status --json`,
+Invoke-Nova update status --json`,
     );
     for (const needle of ['"installKind": "git"', '"value": "dev"', '"branch": "main"']) {
       if (!status.includes(needle)) {
@@ -700,7 +700,7 @@ Invoke-OpenClaw update status --json`,
       `gateway-${action}`,
       `$ErrorActionPreference = 'Continue'
 $PSNativeCommandUseErrorActionPreference = $false
-Invoke-OpenClaw gateway ${action}
+Invoke-Nova gateway ${action}
 if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTEXITCODE" }`,
       420_000,
     );
@@ -713,7 +713,7 @@ if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTE
     const start = Date.now();
     while (Date.now() < deadline) {
       const probe = this.guestPowerShell(
-        "Invoke-OpenClaw gateway probe --url ws://127.0.0.1:18789 --timeout 30000 --json",
+        "Invoke-Nova gateway probe --url ws://127.0.0.1:18789 --timeout 30000 --json",
         { check: false, timeoutMs: 60_000 },
       );
       if (/"ok"\s*:\s*true/.test(probe)) {
@@ -723,7 +723,7 @@ if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTE
         warn(
           `gateway-reachable recovery: gateway start after ${Math.floor((Date.now() - start) / 1000)}s`,
         );
-        this.guestPowerShell("Invoke-OpenClaw gateway start", {
+        this.guestPowerShell("Invoke-Nova gateway start", {
           check: false,
           timeoutMs: 120_000,
         });
@@ -737,11 +737,11 @@ if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTE
   }
 
   private showGatewayStatusCompat(): void {
-    const help = this.guestPowerShell("Invoke-OpenClaw gateway status --help", {
+    const help = this.guestPowerShell("Invoke-Nova gateway status --help", {
       check: false,
     });
     const suffix = help.includes("--require-rpc") ? "--deep --require-rpc" : "--deep";
-    this.guestPowerShell(`Invoke-OpenClaw gateway status ${suffix}`);
+    this.guestPowerShell(`Invoke-Nova gateway status ${suffix}`);
   }
 
   private verifyTurn(): Promise<void> {
@@ -775,7 +775,7 @@ for ($attempt = 1; $attempt -le 2; $attempt++) {
     '${resolveParallelsModelTimeoutSeconds("windows")}',
     '--json'
   )
-  $output = Invoke-OpenClaw @args 2>&1
+  $output = Invoke-Nova @args 2>&1
   $agentExitCode = $LASTEXITCODE
   if ($null -ne $output) { $output | ForEach-Object { $_ } }
   if ($agentExitCode -eq 0 -and ($output | Out-String) -match '"finalAssistant(Raw|Visible)Text":\\s*"OK"') {
@@ -801,7 +801,7 @@ if (-not $agentOk) { throw 'openclaw agent finished without OK response' }`,
   }
 
   private async extractLastVersion(phaseName: string): Promise<string> {
-    return await extractLastOpenClawVersion(this.runDir, phaseName, /OpenClaw\s+([0-9][^\s]*)/gi);
+    return await extractLastOpenClawVersion(this.runDir, phaseName, /Nova\s+([0-9][^\s]*)/gi);
   }
 
   protected async writeSummary(): Promise<string> {

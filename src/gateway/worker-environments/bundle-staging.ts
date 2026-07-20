@@ -275,7 +275,7 @@ export async function collectWorkerBundleManifest(
   const distFiles = await collectPackageDistInventory(sourceRoot);
   if (distFiles.length === 0) {
     throw new Error(
-      `OpenClaw worker bundle has no packaged dist files; build the running package at ${sourceRoot}`,
+      `Nova worker bundle has no packaged dist files; build the running package at ${sourceRoot}`,
     );
   }
   const referencedPackages = new Set<string>();

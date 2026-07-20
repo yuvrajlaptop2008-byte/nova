@@ -1698,7 +1698,7 @@ export function configuredPluginInstallIssueToHealthFinding(
       return {
         checkId: CONFIGURED_PLUGIN_INSTALLS_CHECK_ID,
         severity: "warning",
-        message: `Configured runtime plugin ${issue.pluginId} is older than this OpenClaw version.`,
+        message: `Configured runtime plugin ${issue.pluginId} is older than this Nova version.`,
         target,
         ...(issue.installPath ? { path: issue.installPath } : {}),
         fixHint: "Run `openclaw doctor --fix` to refresh the configured runtime plugin.",
@@ -1800,7 +1800,7 @@ type RepairMissingPluginInstallsResult = {
   records: Record<string, PluginInstallRecord>;
 };
 
-/** Repair missing installs inferred from the current OpenClaw config. */
+/** Repair missing installs inferred from the current Nova config. */
 export async function repairMissingConfiguredPluginInstalls(params: {
   cfg: OpenClawConfig;
   env?: NodeJS.ProcessEnv;

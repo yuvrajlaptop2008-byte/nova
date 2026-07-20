@@ -121,7 +121,7 @@ function hasUnavailableMissingSqlitePath(pathname: string): boolean {
   }
 }
 
-/** List agent databases recorded in the shared OpenClaw state registry. */
+/** List agent databases recorded in the shared Nova state registry. */
 export function listOpenClawRegisteredAgentDatabases(
   options: OpenClawStateDatabaseOptions = {},
 ): OpenClawRegisteredAgentDatabase[] {
@@ -130,13 +130,13 @@ export function listOpenClawRegisteredAgentDatabases(
   );
   if (!existsSync(pathname)) {
     if (hasUnavailableMissingSqlitePath(pathname)) {
-      throw new Error(`OpenClaw state database ${pathname} is unavailable.`);
+      throw new Error(`Nova state database ${pathname} is unavailable.`);
     }
     return [];
   }
   if (detectOpenClawStateDatabaseSchemaMigrations(options).length > 0) {
     throw new Error(
-      `OpenClaw state database ${pathname} has a legacy agent database registry schema; run openclaw doctor --fix to migrate it.`,
+      `Nova state database ${pathname} has a legacy agent database registry schema; run openclaw doctor --fix to migrate it.`,
     );
   }
 
@@ -145,9 +145,7 @@ export function listOpenClawRegisteredAgentDatabases(
   try {
     database.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
     if (readSqliteUserVersion(database) > OPENCLAW_STATE_SCHEMA_VERSION) {
-      throw new Error(
-        `OpenClaw state database ${pathname} uses a newer schema than this OpenClaw build.`,
-      );
+      throw new Error(`Nova state database ${pathname} uses a newer schema than this Nova build.`);
     }
     const registryTable = database
       .prepare("SELECT type FROM sqlite_master WHERE name = 'agent_databases'")
@@ -156,7 +154,7 @@ export function listOpenClawRegisteredAgentDatabases(
       return [];
     }
     if (registryTable.type !== "table") {
-      throw new Error(`OpenClaw state database ${pathname} has an invalid agent registry.`);
+      throw new Error(`Nova state database ${pathname} has an invalid agent registry.`);
     }
     const db = getNodeSqliteKysely<OpenClawAgentRegistryDatabase>(database);
     const rows = executeSqliteQuerySync(

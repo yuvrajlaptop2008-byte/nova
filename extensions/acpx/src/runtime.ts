@@ -1,6 +1,6 @@
 /**
- * OpenClaw ACPX runtime adapter. It wraps the upstream acpx runtime with
- * OpenClaw session metadata, lease tracking, model scoping, and cleanup policy.
+ * Nova ACPX runtime adapter. It wraps the upstream acpx runtime with
+ * Nova session metadata, lease tracking, model scoping, and cleanup policy.
  */
 import { AsyncLocalStorage } from "node:async_hooks";
 import fs from "node:fs/promises";
@@ -78,7 +78,7 @@ type OpenClawLeaseSessionMetadata = {
 };
 
 function withOpenClawManagedTurnTimeout<T extends object>(input: T): T & { timeoutMs: 0 } {
-  // OpenClaw owns ACP turn deadlines. acpx treats timeout after partial agent
+  // Nova owns ACP turn deadlines. acpx treats timeout after partial agent
   // output as a completed turn, which can mark background work done early.
   return {
     ...input,
@@ -744,7 +744,7 @@ function withManagedToolsMcpSessionEnv(params: {
   return changed ? nextServers : params.mcpServers;
 }
 
-/** OpenClaw-managed ACP runtime implementation backed by the upstream acpx runtime. */
+/** Nova-managed ACP runtime implementation backed by the upstream acpx runtime. */
 export class AcpxRuntime implements AcpRuntime {
   private readonly sessionStore: ResetAwareSessionStore;
   private readonly agentRegistry: AcpAgentRegistry;

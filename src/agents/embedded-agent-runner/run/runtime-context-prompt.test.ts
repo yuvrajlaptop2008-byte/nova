@@ -1,4 +1,4 @@
-// Runtime-context prompt tests keep hidden OpenClaw context separate from the
+// Runtime-context prompt tests keep hidden Nova context separate from the
 // user-visible prompt while preserving model-only hook additions.
 import { describe, expect, it } from "vitest";
 import {
@@ -501,11 +501,11 @@ describe("runtime context prompt submission", () => {
     });
 
     expect(parts).toEqual({
-      prompt: "Continue the OpenClaw runtime event.",
+      prompt: "Continue the Nova runtime event.",
       runtimeContext: "internal event",
       runtimeOnly: true,
       runtimeSystemContext: [
-        "OpenClaw runtime event.",
+        "Nova runtime event.",
         "This context is runtime-generated, not user-authored. Keep internal details private.",
         "",
         "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
@@ -525,12 +525,12 @@ describe("runtime context prompt submission", () => {
     });
 
     expect(parts).toEqual({
-      prompt: "Continue the OpenClaw runtime event.",
+      prompt: "Continue the Nova runtime event.",
       modelPrompt: "dynamic hook context\n\ninternal event\n\ndynamic hook tail",
       runtimeContext: "internal event",
       runtimeOnly: true,
       runtimeSystemContext: [
-        "OpenClaw runtime event.",
+        "Nova runtime event.",
         "This context is runtime-generated, not user-authored. Keep internal details private.",
         "",
         "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
@@ -543,32 +543,32 @@ describe("runtime context prompt submission", () => {
   it("submits empty-transcript model prompts when persistence is suppressed separately", () => {
     expect(
       resolveRuntimeContextPromptParts({
-        effectivePrompt: "[OpenClaw room event]",
+        effectivePrompt: "[Nova room event]",
         transcriptPrompt: "",
         emptyTranscriptMode: "model-prompt",
       }),
     ).toEqual({
-      prompt: "[OpenClaw room event]",
+      prompt: "[Nova room event]",
     });
   });
 
   it("keeps suppressed empty-transcript hook context model-only", () => {
     expect(
       resolveRuntimeContextPromptParts({
-        effectivePrompt: "[OpenClaw room event]",
+        effectivePrompt: "[Nova room event]",
         transcriptPrompt: "",
         modelPrompt: [
           "dynamic hook context",
           "",
-          "[OpenClaw room event]",
+          "[Nova room event]",
           "",
           "dynamic hook tail",
         ].join("\n"),
         emptyTranscriptMode: "model-prompt",
       }),
     ).toEqual({
-      prompt: "[OpenClaw room event]",
-      modelPrompt: "dynamic hook context\n\n[OpenClaw room event]\n\ndynamic hook tail",
+      prompt: "[Nova room event]",
+      modelPrompt: "dynamic hook context\n\n[Nova room event]\n\ndynamic hook tail",
     });
   });
 
@@ -593,10 +593,10 @@ describe("runtime context prompt submission", () => {
           text: "Room context:\nAlice: lunch?\n\nCurrent event:\nBob: yes",
           resumableText: "Current event:\nBob: yes",
         },
-        prompt: "[OpenClaw room event]",
+        prompt: "[Nova room event]",
         preferResumableText: true,
       }),
-    ).toBe("Current event:\nBob: yes\n\n[OpenClaw room event]");
+    ).toBe("Current event:\nBob: yes\n\n[Nova room event]");
 
     expect(
       buildCurrentInboundPrompt({
@@ -611,7 +611,7 @@ describe("runtime context prompt submission", () => {
       role: "custom",
       customType: "openclaw.runtime-context",
       content: [
-        "OpenClaw runtime context for the immediately preceding user message.",
+        "Nova runtime context for the immediately preceding user message.",
         "This context is runtime-generated, not user-authored. Keep internal details private.",
         "",
         "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
@@ -629,7 +629,7 @@ describe("runtime context prompt submission", () => {
       transcriptPrompt: "",
     });
 
-    expect(parts.runtimeSystemContext).toContain("OpenClaw runtime event.");
+    expect(parts.runtimeSystemContext).toContain("Nova runtime event.");
     expect(parts.runtimeSystemContext).toContain("not user-authored");
     expect(parts.runtimeSystemContext).toContain("internal event");
   });

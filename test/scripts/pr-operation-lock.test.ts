@@ -69,7 +69,7 @@ function spawnDetached(command: string, args: readonly string[], options: SpawnO
 function createTemplateRepo() {
   const dir = mkdtempSync(join(tmpdir(), "openclaw-pr-operation-lock-template-"));
   execFileSync("git", ["init", "-q", "-b", "main"], { cwd: dir });
-  execFileSync("git", ["config", "user.name", "OpenClaw Test"], { cwd: dir });
+  execFileSync("git", ["config", "user.name", "Nova Test"], { cwd: dir });
   execFileSync("git", ["config", "user.email", "test@openclaw.invalid"], { cwd: dir });
   writeFileSync(join(dir, "base.txt"), "base\n");
   execFileSync("git", ["add", "base.txt"], { cwd: dir });

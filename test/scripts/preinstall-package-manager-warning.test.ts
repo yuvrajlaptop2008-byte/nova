@@ -78,7 +78,7 @@ describe("install runtime enforcement", () => {
       ),
     ).toBe(false);
     expect(reportError).toHaveBeenCalledWith(
-      expect.stringContaining("this OpenClaw release requires Node"),
+      expect.stringContaining("this Nova release requires Node"),
     );
     expect(reportError).toHaveBeenCalledWith(expect.stringContaining("detected Node 24.14.1"));
   });

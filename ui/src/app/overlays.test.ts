@@ -83,7 +83,7 @@ function createGatewayHarness(
           createdAtMs,
           expiresAtMs: Date.now() + 60_000,
           request: {
-            title: "OpenClaw change",
+            title: "Nova change",
             description: "Set gateway.port to 19001",
             command: "Set gateway.port to 19001",
             proposalHash: "a".repeat(64),
@@ -117,7 +117,7 @@ async function flushMicrotasks() {
 }
 
 describe("application approval overlays", () => {
-  it("resolves OpenClaw changes through unified human approval", async () => {
+  it("resolves Nova changes through unified human approval", async () => {
     const request = vi.fn<RequestFn>(async (method) =>
       method.endsWith(".list") ? [] : { ok: true },
     );

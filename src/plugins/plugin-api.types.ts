@@ -231,7 +231,7 @@ export type OpenClawPluginApi = {
       /**
        * Parse-time command descriptors for lazy CLI registration.
        *
-       * When descriptors cover every command exposed at `parentPath`, OpenClaw
+       * When descriptors cover every command exposed at `parentPath`, Nova
        * can keep the plugin registrar lazy. Command-only registrations stay on
        * the eager compatibility path.
        */

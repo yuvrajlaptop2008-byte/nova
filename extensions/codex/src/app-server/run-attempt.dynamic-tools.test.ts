@@ -148,7 +148,7 @@ describe("runCodexAppServerAttempt dynamic tools", () => {
       };
       expect(toolResult.success).toBe(false);
       expect(toolResult.contentItems?.[0]?.type).toBe("inputText");
-      expect(toolResult.contentItems?.[0]?.text).toMatch(/^Unknown OpenClaw tool: lookup$/u);
+      expect(toolResult.contentItems?.[0]?.text).toMatch(/^Unknown Nova tool: lookup$/u);
 
       await harness.completeTurn({ threadId: "thread-1", turnId: "turn-1" });
       await run;
@@ -192,7 +192,7 @@ describe("runCodexAppServerAttempt dynamic tools", () => {
     expect(resultEvent?.data?.result).not.toHaveProperty("success");
     expect(resultEvent?.data?.result).not.toHaveProperty("contentItems");
     expect(resultEvent?.data?.result?.content?.[0]?.type).toBe("text");
-    expect(resultEvent?.data?.result?.content?.[0]?.text).toBe("Unknown OpenClaw tool: lookup");
+    expect(resultEvent?.data?.result?.content?.[0]?.text).toBe("Unknown Nova tool: lookup");
     expect(JSON.stringify(agentEvents)).not.toContain("plain-secret-value-12345");
     const globalStartEvent = globalAgentEvents.find(
       (event) => event.stream === "tool" && event.data.phase === "start",
@@ -589,7 +589,7 @@ describe("runCodexAppServerAttempt dynamic tools", () => {
           contentItems: [
             {
               type: "inputText",
-              text: "OpenClaw dynamic tool call timed out after 1ms while running tool echo.",
+              text: "Nova dynamic tool call timed out after 1ms while running tool echo.",
             },
           ],
         },

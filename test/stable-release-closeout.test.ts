@@ -10,9 +10,9 @@ const release = {
   isDraft: false,
   isPrerelease: false,
   assets: [
-    { name: "OpenClaw-2026.6.8.zip", digest: `sha256:${"a".repeat(64)}` },
-    { name: "OpenClaw-2026.6.8.dmg", digest: `sha256:${"b".repeat(64)}` },
-    { name: "OpenClaw-2026.6.8.dSYM.zip", digest: `sha256:${"c".repeat(64)}` },
+    { name: "Nova-2026.6.8.zip", digest: `sha256:${"a".repeat(64)}` },
+    { name: "Nova-2026.6.8.dmg", digest: `sha256:${"b".repeat(64)}` },
+    { name: "Nova-2026.6.8.dSYM.zip", digest: `sha256:${"c".repeat(64)}` },
   ],
 };
 const changelog =
@@ -24,7 +24,7 @@ const validCloseoutParams = {
   mainChangelog: changelog,
   tagChangelog: changelog,
   mainAppcast:
-    "https://github.com/openclaw/openclaw/releases/download/v2026.6.8/OpenClaw-2026.6.8.zip\n",
+    "https://github.com/openclaw/openclaw/releases/download/v2026.6.8/Nova-2026.6.8.zip\n",
   release,
   releaseTagSha: "tag-sha",
   mainSha: "main-sha",
@@ -149,7 +149,7 @@ describe("stable release closeout", () => {
     });
 
     expect(result.errors).toContain(
-      "GitHub release v2026.6.8 is missing required macOS asset(s): OpenClaw-2026.6.8.zip, OpenClaw-2026.6.8.dmg, OpenClaw-2026.6.8.dSYM.zip.",
+      "GitHub release v2026.6.8 is missing required macOS asset(s): Nova-2026.6.8.zip, Nova-2026.6.8.dmg, Nova-2026.6.8.dSYM.zip.",
     );
   });
 
@@ -171,7 +171,7 @@ describe("stable release closeout", () => {
       tagChangelog: changelog.replaceAll("2026.6.8", "2026.6.8-2"),
       release: correctionRelease,
       mainAppcast:
-        "https://github.com/openclaw/openclaw/releases/download/v2026.6.8-2/OpenClaw-2026.6.8-2.zip\n",
+        "https://github.com/openclaw/openclaw/releases/download/v2026.6.8-2/Nova-2026.6.8-2.zip\n",
       nowMs: Date.parse("2026-06-17T00:00:00Z"),
     });
 
@@ -193,7 +193,7 @@ describe("stable release closeout", () => {
         tagName: "v2026.6.8-2",
       },
       mainAppcast:
-        "https://github.com/openclaw/openclaw/releases/download/v2026.6.8-2/OpenClaw-2026.6.8.zip\n",
+        "https://github.com/openclaw/openclaw/releases/download/v2026.6.8-2/Nova-2026.6.8.zip\n",
       nowMs: Date.parse("2026-06-17T00:00:00Z"),
     });
 
@@ -213,13 +213,13 @@ describe("stable release closeout", () => {
     });
 
     expect(missing.errors).toContain(
-      "GitHub release v2026.6.8 Android asset names do not match the recovery contract: expected OpenClaw-Android-SHA256SUMS.txt, OpenClaw-Android.apk; got <none>.",
+      "GitHub release v2026.6.8 Android asset names do not match the recovery contract: expected Nova-Android-SHA256SUMS.txt, Nova-Android.apk; got <none>.",
     );
     expect(missing.errors).toContain(
       "GitHub release v2026.6.8 Windows asset names do not match the recovery contract: expected OpenClawCompanion-SHA256SUMS.txt, OpenClawCompanion-Setup-arm64.exe, OpenClawCompanion-Setup-x64.exe; got <none>.",
     );
     expect(missing.errors).toContain(
-      "GitHub release v2026.6.8 Android recovery asset(s) lack GitHub SHA-256 digests: OpenClaw-Android-SHA256SUMS.txt, OpenClaw-Android.apk.",
+      "GitHub release v2026.6.8 Android recovery asset(s) lack GitHub SHA-256 digests: Nova-Android-SHA256SUMS.txt, Nova-Android.apk.",
     );
     expect(missing.errors).toContain(
       "failed-publish recovery is missing the exact candidate-approved Windows installer digests.",
@@ -240,8 +240,8 @@ describe("stable release closeout", () => {
         ...release,
         assets: [
           ...release.assets,
-          { name: "OpenClaw-Android-SHA256SUMS.txt", digest: `sha256:${"d".repeat(64)}` },
-          { name: "OpenClaw-Android.apk", digest: `sha256:${"e".repeat(64)}` },
+          { name: "Nova-Android-SHA256SUMS.txt", digest: `sha256:${"d".repeat(64)}` },
+          { name: "Nova-Android.apk", digest: `sha256:${"e".repeat(64)}` },
           {
             name: "OpenClawCompanion-SHA256SUMS.txt",
             digest: `sha256:${"f".repeat(64)}`,
@@ -294,13 +294,13 @@ describe("stable release closeout", () => {
     });
 
     expect(result.errors).toContain(
-      "main package.json version is 2026.6.7, expected shipped version 2026.6.8 or a later stable OpenClaw CalVer.",
+      "main package.json version is 2026.6.7, expected shipped version 2026.6.8 or a later stable Nova CalVer.",
     );
     expect(result.errors).toContain(
       "main CHANGELOG.md ## 2026.6.8 does not exactly match the shipped release section.",
     );
     expect(result.errors).toContain(
-      "main appcast.xml does not point at OpenClaw-2026.6.8.zip from v2026.6.8.",
+      "main appcast.xml does not point at Nova-2026.6.8.zip from v2026.6.8.",
     );
     expect(result.errors).toContain(
       "rollback drill is older than 90 days: 2026-03-01. Run the private rollback drill before stable closeout.",
@@ -315,7 +315,7 @@ describe("stable release closeout", () => {
     });
 
     expect(result.errors).toContain(
-      "main package.json version is 2026.6.9-beta.1, expected shipped version 2026.6.8 or a later stable OpenClaw CalVer.",
+      "main package.json version is 2026.6.9-beta.1, expected shipped version 2026.6.8 or a later stable Nova CalVer.",
     );
   });
 });

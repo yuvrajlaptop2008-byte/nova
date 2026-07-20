@@ -38,7 +38,7 @@ describe("OpenClawStdioClientTransport", () => {
   });
 
   it("starts stdio MCP servers in a disposable process group on POSIX", async () => {
-    // Detached POSIX process groups let OpenClaw clean up child tool servers
+    // Detached POSIX process groups let Nova clean up child tool servers
     // without relying on shell-specific process trees.
     const child = new MockChildProcess();
     spawnMock.mockReturnValue(child);

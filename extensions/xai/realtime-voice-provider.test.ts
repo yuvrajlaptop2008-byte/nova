@@ -442,14 +442,14 @@ describe("buildXaiRealtimeVoiceProvider", () => {
         JSON.stringify({
           type: "conversation.item.input_audio_transcription.completed",
           item_id: "item_1",
-          transcript: "OpenClaw",
+          transcript: "Nova",
         }),
       ),
     );
     bridge.close();
 
     expect(onTranscript).toHaveBeenCalledOnce();
-    expect(onTranscript).toHaveBeenCalledWith("user", "OpenClaw", true);
+    expect(onTranscript).toHaveBeenCalledWith("user", "Nova", true);
   });
 
   it("buffers assistant transcript deltas and finalizes them when done has no text", async () => {
@@ -485,7 +485,7 @@ describe("buildXaiRealtimeVoiceProvider", () => {
       Buffer.from(
         JSON.stringify({
           type: "response.output_audio_transcript.delta",
-          delta: "OpenClaw",
+          delta: "Nova",
         }),
       ),
     );
@@ -497,8 +497,8 @@ describe("buildXaiRealtimeVoiceProvider", () => {
     bridge.close();
 
     expect(onTranscript).toHaveBeenNthCalledWith(1, "assistant", "Hello ", false);
-    expect(onTranscript).toHaveBeenNthCalledWith(2, "assistant", "OpenClaw", false);
-    expect(onTranscript).toHaveBeenNthCalledWith(3, "assistant", "Hello OpenClaw", true);
+    expect(onTranscript).toHaveBeenNthCalledWith(2, "assistant", "Nova", false);
+    expect(onTranscript).toHaveBeenNthCalledWith(3, "assistant", "Hello Nova", true);
     expect(onTranscript).toHaveBeenCalledTimes(3);
   });
 
@@ -1474,7 +1474,7 @@ describe("buildXaiRealtimeVoiceProvider", () => {
     secondSocket.readyState = FakeWebSocket.OPEN;
     secondSocket.emit("open");
 
-    bridge.sendUserMessage?.("OpenClaw finished checking.");
+    bridge.sendUserMessage?.("Nova finished checking.");
     expect(
       parseSent(secondSocket).filter((event) => event.type === "conversation.item.create"),
     ).toEqual([]);
@@ -1486,7 +1486,7 @@ describe("buildXaiRealtimeVoiceProvider", () => {
         item: {
           type: "message",
           role: "user",
-          content: [{ type: "input_text", text: "OpenClaw finished checking." }],
+          content: [{ type: "input_text", text: "Nova finished checking." }],
         },
       },
       { type: "response.create" },
@@ -1782,7 +1782,7 @@ describe("buildXaiRealtimeVoiceProvider", () => {
         {
           type: "function",
           name: "openclaw_agent_consult",
-          description: "Consult OpenClaw",
+          description: "Consult Nova",
           parameters: { type: "object", properties: {} },
         },
       ],

@@ -13,7 +13,7 @@ type BraveConfig = {
 };
 
 type BraveLlmContextResult = { url: string; title: string; snippets: string[] };
-/** Brave LLM Context API response subset used by OpenClaw. */
+/** Brave LLM Context API response subset used by Nova. */
 export type BraveLlmContextResponse = {
   grounding: { generic?: BraveLlmContextResult[] };
   sources?: { url?: string; hostname?: string; date?: string }[];

@@ -1,4 +1,4 @@
-// OpenClaw TUI backend runs setup-helper dialogue inside the shared local TUI shell.
+// Nova TUI backend runs setup-helper dialogue inside the shared local TUI shell.
 import { randomUUID } from "node:crypto";
 import type {
   SessionsPatchParams,
@@ -160,7 +160,7 @@ class SystemAgentTuiBackend implements TuiBackend {
   }
 
   stop(): void {
-    // The enclosing TUI owns terminal shutdown; OpenClaw has no transport to close.
+    // The enclosing TUI owns terminal shutdown; Nova has no transport to close.
   }
 
   async sendChat(opts: ChatSendOptions): Promise<{ runId: string }> {
@@ -206,7 +206,7 @@ class SystemAgentTuiBackend implements TuiBackend {
         {
           key: SYSTEM_AGENT_SESSION_KEY,
           sessionId: "openclaw",
-          displayName: "OpenClaw",
+          displayName: "Nova",
           updatedAt: Date.now(),
           thinkingLevel: this.route.thinkingLevel,
           verboseLevel: "off",
@@ -222,14 +222,14 @@ class SystemAgentTuiBackend implements TuiBackend {
       defaultId: SYSTEM_AGENT_ID,
       mainKey: "main",
       scope: "per-sender",
-      agents: [{ id: SYSTEM_AGENT_ID, name: "OpenClaw" }],
+      agents: [{ id: SYSTEM_AGENT_ID, name: "Nova" }],
     };
   }
 
   async patchSession(opts: SessionsPatchParams): Promise<SessionsPatchResult> {
     if (opts.model !== undefined) {
       throw new Error(
-        "OpenClaw cannot change the model inside its active verified session. Exit and run `openclaw onboard`, then start OpenClaw again.",
+        "Nova cannot change the model inside its active verified session. Exit and run `openclaw onboard`, then start Nova again.",
       );
     }
     return {
@@ -238,7 +238,7 @@ class SystemAgentTuiBackend implements TuiBackend {
       key: SYSTEM_AGENT_SESSION_KEY,
       entry: {
         sessionId: "openclaw",
-        displayName: "OpenClaw",
+        displayName: "Nova",
         updatedAt: Date.now(),
       },
       resolved: {},
@@ -315,10 +315,7 @@ class SystemAgentTuiBackend implements TuiBackend {
   }
 
   private emitFinal(runId: string, sessionKey: string, text: string): void {
-    const assistant = message(
-      "assistant",
-      text || "OpenClaw listened and found nothing to change.",
-    );
+    const assistant = message("assistant", text || "Nova listened and found nothing to change.");
     this.messages.push(assistant);
     this.emit("chat", {
       runId,
@@ -347,7 +344,7 @@ class SystemAgentTuiBackend implements TuiBackend {
     try {
       const reply = await this.engine.handle(text);
       if ((reply.action === "open-tui" || reply.action === "open-setup") && reply.handoff) {
-        // The outer loop owns interactive handoffs after the OpenClaw TUI exits.
+        // The outer loop owns interactive handoffs after the Nova TUI exits.
         this.handoff = reply.handoff;
         queueMicrotask(() => this.requestExit?.());
       } else if (reply.action === "exit") {
@@ -382,7 +379,7 @@ async function runSetupHandoff(
 ): Promise<void> {
   if (handoff.target !== "channels") {
     runtime.error(
-      "Setup cannot replace the inference route powering OpenClaw. Exit and run `openclaw onboard`, then start OpenClaw again.",
+      "Setup cannot replace the inference route powering Nova. Exit and run `openclaw onboard`, then start Nova again.",
     );
     return;
   }
@@ -433,7 +430,7 @@ export async function runSystemAgentTui(
   for (;;) {
     const route = await requireTuiVerifiedInference(boundOpts);
     // A returned agent request is single-use; a later wizard handoff must not
-    // replay it when OpenClaw re-enters the chat shell.
+    // replay it when Nova re-enters the chat shell.
     const initialMessage = nextInput;
     const engine = createChatEngine(boundOpts);
     let welcome: string;
@@ -474,7 +471,7 @@ export async function runSystemAgentTui(
     }
     if (handoff.kind === "model-setup") {
       runtime.error(
-        "OpenClaw cannot replace its active inference route. Run `openclaw onboard` outside this session, then start OpenClaw again.",
+        "Nova cannot replace its active inference route. Run `openclaw onboard` outside this session, then start Nova again.",
       );
       return;
     }

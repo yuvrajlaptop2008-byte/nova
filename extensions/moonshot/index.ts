@@ -1,4 +1,4 @@
-// Moonshot plugin entrypoint registers its OpenClaw integration.
+// Moonshot plugin entrypoint registers its Nova integration.
 import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
 import { buildOpenAICompatibleReplayPolicy } from "openclaw/plugin-sdk/provider-model-shared";
 import { buildProviderStreamFamilyHooks } from "openclaw/plugin-sdk/provider-stream-family";

@@ -1,4 +1,4 @@
-// OpenClaw overview gathers config, agent, tool, docs, source, and gateway status.
+// Nova overview gathers config, agent, tool, docs, source, and gateway status.
 import {
   listAgentEntries,
   resolveAgentEffectiveModelPrimary,
@@ -249,7 +249,7 @@ export function formatSystemAgentOverview(overview: SystemAgentOverview): string
       ? ["Config issues:", ...overview.config.issues.map((issue) => `  - ${issue}`)]
       : [];
   return [
-    "OpenClaw online. Little claws, typed tools.",
+    "Nova online. Little claws, typed tools.",
     "",
     `Config: ${configStatus}`,
     `Path: ${overview.config.path}`,
@@ -266,7 +266,7 @@ export function formatSystemAgentOverview(overview: SystemAgentOverview): string
     `AI: ${
       overview.defaultModel
         ? `conversation runs on ${overview.defaultModel}`
-        : "inference unavailable; run openclaw onboard before starting OpenClaw"
+        : "inference unavailable; run openclaw onboard before starting Nova"
     }`,
     `Docs: ${overview.references.docsPath ?? overview.references.docsUrl}`,
     overview.references.sourcePath
@@ -323,10 +323,10 @@ function formatStartupAction(overview: SystemAgentOverview): string {
     return "I can start debugging with `validate config` or `doctor`.";
   }
   if (!overview.defaultModel) {
-    return "OpenClaw needs working inference before it can help with the rest of setup.";
+    return "Nova needs working inference before it can help with the rest of setup.";
   }
   if (!overview.config.exists) {
-    return "Run `openclaw onboard` to establish inference before starting OpenClaw.";
+    return "Run `openclaw onboard` to establish inference before starting Nova.";
   }
   if (!overview.gateway.reachable) {
     return "I can start debugging with `gateway status`, or queue `restart gateway` for approval.";
@@ -335,7 +335,7 @@ function formatStartupAction(overview: SystemAgentOverview): string {
 }
 
 /**
- * Welcome shown right after inference activation. OpenClaw owns the
+ * Welcome shown right after inference activation. Nova owns the
  * remaining workspace, Gateway, channel, and agent setup.
  */
 export function formatSystemAgentOnboardingWelcome(overview: SystemAgentOverview): string {
@@ -357,7 +357,7 @@ export function formatSystemAgentStartupMessage(overview: SystemAgentOverview): 
     ? `${overview.defaultAgentId} (${agent.name})`
     : overview.defaultAgentId;
   return [
-    "## Hi, I'm OpenClaw.",
+    "## Hi, I'm Nova.",
     "",
     "- Start me when setup, config, Gateway, model choice, or agent routing feels off.",
     `- ${formatStartupUse(overview)}`,

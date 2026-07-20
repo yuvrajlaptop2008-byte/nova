@@ -345,7 +345,7 @@ describe("applySystemAgentSetup transaction boundaries", () => {
     const config = {
       agents: {
         defaults: { model: "openai/gpt-5.5" },
-        list: [{ id: "OpenClaw" }],
+        list: [{ id: "Nova" }],
       },
     } satisfies OpenClawConfig;
     mocks.state.initialSnapshot = snapshot("reserved", config);
@@ -849,7 +849,7 @@ describe("applySystemAgentSetup transaction boundaries", () => {
     expect(result.lines).toEqual(
       expect.arrayContaining([
         "Workspace files: workspace exploded",
-        "OpenClaw exec approval: approval exploded; local model harnesses may ask again.",
+        "Nova exec approval: approval exploded; local model harnesses may ask again.",
         "Plugin registry refresh failed: registry exploded",
         "Gateway service: service exploded",
       ]),

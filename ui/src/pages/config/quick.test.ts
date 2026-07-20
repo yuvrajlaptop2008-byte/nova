@@ -63,7 +63,7 @@ function createProps(overrides: Partial<QuickSettingsProps> = {}): QuickSettings
     onThinkingChange: vi.fn(),
     onFastModeChange: vi.fn(),
     connected: true,
-    assistantName: "OpenClaw",
+    assistantName: "Nova",
     version: "2026.4.22",
     ...overrides,
   };

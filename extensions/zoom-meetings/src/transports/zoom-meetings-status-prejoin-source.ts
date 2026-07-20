@@ -671,15 +671,15 @@ export function zoomMeetingStatusPreludeSource(params: ZoomMeetingStatusPreludeP
   } else if (!inCall && loginRequired) {
     manualActionReason = "zoom-login-required";
     manualActionMessage = tenantLoginRequired
-      ? "This Zoom tenant requires sign-in or email verification. Complete it in the OpenClaw browser profile, then retry."
-      : "Sign in to Zoom in the OpenClaw browser profile, then retry the meeting join.";
+      ? "This Zoom tenant requires sign-in or email verification. Complete it in the Nova browser profile, then retry."
+      : "Sign in to Zoom in the Nova browser profile, then retry the meeting join.";
   } else if (!inCall && lobbyWaiting) {
     manualActionReason = "zoom-admission-required";
-    manualActionMessage = "Admit the OpenClaw guest from the Zoom lobby, then retry speech.";
+    manualActionMessage = "Admit the Nova guest from the Zoom lobby, then retry speech.";
   } else if (!inCall && permissionRequired) {
     manualActionReason = "zoom-permission-required";
     manualActionMessage = allowMicrophone
-      ? "Allow microphone permission for Zoom in the OpenClaw browser profile, then retry."
+      ? "Allow microphone permission for Zoom in the Nova browser profile, then retry."
       : "Dismiss the Zoom device-permission prompt or continue without devices, then retry.";
   } else if (controlManualActionReason) {
     manualActionReason = controlManualActionReason;

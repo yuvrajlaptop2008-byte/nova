@@ -892,8 +892,8 @@ export async function maybeSendNodeWakeNudge(
       result = await sendApnsAlert({
         registration,
         nodeId,
-        title: "OpenClaw needs a quick reopen",
-        body: "Tap to reopen OpenClaw and restore the node connection.",
+        title: "Nova needs a quick reopen",
+        body: "Tap to reopen Nova and restore the node connection.",
         relayConfig: relay.relayConfig,
       });
     } else {
@@ -909,8 +909,8 @@ export async function maybeSendNodeWakeNudge(
       result = await sendApnsAlert({
         registration,
         nodeId,
-        title: "OpenClaw needs a quick reopen",
-        body: "Tap to reopen OpenClaw and restore the node connection.",
+        title: "Nova needs a quick reopen",
+        body: "Tap to reopen Nova and restore the node connection.",
         auth: auth.auth,
       });
     }

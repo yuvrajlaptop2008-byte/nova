@@ -169,7 +169,7 @@ export function buildThreadStartParams(
       ? { serviceTier: options.appServer.serviceTier }
       : {}),
     personality: CODEX_NATIVE_PERSONALITY_NONE,
-    serviceName: "OpenClaw",
+    serviceName: "Nova",
     ...(ringZeroActive ? { baseInstructions: CODEX_RING_ZERO_BASE_INSTRUCTIONS } : {}),
     config: buildCodexRuntimeThreadConfigForRun(params, options.config, {
       nativeCodeModeEnabled: options.nativeCodeModeEnabled,
@@ -421,7 +421,7 @@ export function buildCodexRingZeroThreadConfigPatch(
   if (!hostSystemAgentActive || !isSystemAgentOnlyCodexDynamicToolAllowlist(params.toolsAllow)) {
     return undefined;
   }
-  // Narrow OpenClaw allowlists already send environments: [] and disable
+  // Narrow Nova allowlists already send environments: [] and disable
   // native code mode. Also remove every configurable Codex-owned tool source;
   // upstream still adds its inert update_plan utility unconditionally.
   const mcpServers = Object.fromEntries(

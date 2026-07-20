@@ -943,7 +943,7 @@ describe("TelegramPollingSession", () => {
     await session.runUntilAbort();
 
     // Offset confirmation was removed because it could self-conflict with the runner.
-    // OpenClaw middleware still skips duplicates using the persisted update offset.
+    // Nova middleware still skips duplicates using the persisted update offset.
     expect(bot.api.getUpdates).not.toHaveBeenCalled();
   });
 
@@ -4113,12 +4113,11 @@ describe("TelegramPollingSession", () => {
       expect(deleteWebhook).toHaveBeenCalledTimes(2);
       // The conflict marks the transport dirty so the next cycle gets a fresh socket.
       expect(createTelegramTransport).toHaveBeenCalledTimes(1);
-      expectLogIncludes(log, "Another OpenClaw gateway, script, or Telegram poller");
+      expectLogIncludes(log, "Another Nova gateway, script, or Telegram poller");
       expect(
         statusPatches(setStatus).some(
           (patch) =>
-            patch.connected === false &&
-            String(patch.lastError).includes("Another OpenClaw gateway"),
+            patch.connected === false && String(patch.lastError).includes("Another Nova gateway"),
         ),
       ).toBe(true);
     } finally {
@@ -5002,12 +5001,12 @@ describe("TelegramPollingSession", () => {
 
     await session.runUntilAbort();
 
-    expectLogIncludes(log, "Another OpenClaw gateway, script, or Telegram poller");
+    expectLogIncludes(log, "Another Nova gateway, script, or Telegram poller");
     // The hint must reach channel status, not just the gateway log.
     expect(
       statusPatches(setStatus).some(
         (patch) =>
-          patch.connected === false && String(patch.lastError).includes("Another OpenClaw gateway"),
+          patch.connected === false && String(patch.lastError).includes("Another Nova gateway"),
       ),
     ).toBe(true);
   });

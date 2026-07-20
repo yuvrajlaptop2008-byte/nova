@@ -83,7 +83,7 @@ describe("buildRealtimeVoiceInstructions", () => {
       agentRuntime: createAgentRuntime(workspaceDir),
     });
 
-    expect(instructions).toContain("OpenClaw agent voice context:");
+    expect(instructions).toContain("Nova agent voice context:");
     expect(instructions).toContain("Consult behavior:");
     expect(instructions).toContain("Call openclaw_agent_consult before answering requests");
     expect(instructions).toContain("- Agent id: voice");
@@ -97,7 +97,7 @@ describe("buildRealtimeVoiceInstructions", () => {
 
   it("truncates injected context without splitting UTF-16 surrogate pairs", async () => {
     const agentId = "abc🚀tail";
-    const expectedContext = "OpenClaw agent voice context:\n\n- Agent id: abc";
+    const expectedContext = "Nova agent voice context:\n\n- Agent id: abc";
     const config = createConfig({
       agentContext: {
         enabled: true,

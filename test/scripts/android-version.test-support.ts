@@ -36,11 +36,10 @@ export function writeAndroidFixture(params: {
     `${JSON.stringify({ version: params.version, versionCode: params.versionCode }, null, 2)}\n`,
     "utf8",
   );
-  const releaseNotes =
-    "OpenClaw is now available on Android.\n\nConnect to your OpenClaw Gateway.\n";
+  const releaseNotes = "Nova is now available on Android.\n\nConnect to your Nova Gateway.\n";
   fs.writeFileSync(
     path.join(rootDir, "apps", "android", "CHANGELOG.md"),
-    params.changelog ?? `# OpenClaw Android Changelog\n\n## Unreleased\n\n${releaseNotes}`,
+    params.changelog ?? `# Nova Android Changelog\n\n## Unreleased\n\n${releaseNotes}`,
     "utf8",
   );
   fs.writeFileSync(

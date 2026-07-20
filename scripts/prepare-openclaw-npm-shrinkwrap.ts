@@ -127,7 +127,7 @@ export function prepareOpenClawNpmShrinkwrap(params: {
     throw new Error(`AI package name must be ${AI_PACKAGE_NAME}, found ${aiName}`);
   }
   if (aiVersion !== rootVersion) {
-    throw new Error(`AI package version ${aiVersion} does not match OpenClaw ${rootVersion}`);
+    throw new Error(`AI package version ${aiVersion} does not match Nova ${rootVersion}`);
   }
   if (!params.aiIntegrity.startsWith("sha512-")) {
     throw new Error("AI package integrity must use sha512");
@@ -144,7 +144,7 @@ export function prepareOpenClawNpmShrinkwrap(params: {
   const rootLockVersion = requireString(rootPackage.version, "npm shrinkwrap root version");
   if (rootLockVersion !== rootVersion) {
     throw new Error(
-      `npm shrinkwrap root version ${rootLockVersion} does not match OpenClaw ${rootVersion}`,
+      `npm shrinkwrap root version ${rootLockVersion} does not match Nova ${rootVersion}`,
     );
   }
 
@@ -192,9 +192,7 @@ export function assertPreparedOpenClawNpmShrinkwrap(params: {
   // npm 12 ignores dependency shrinkwraps. The packed manifest is the canonical runtime edge;
   // the shrinkwrap additionally pins registry integrity for npm clients that still honor it.
   if (rootManifest.dependencies?.[AI_PACKAGE_NAME] !== aiVersion) {
-    throw new Error(
-      `packed OpenClaw manifest must depend on exact ${AI_PACKAGE_NAME}@${aiVersion}`,
-    );
+    throw new Error(`packed Nova manifest must depend on exact ${AI_PACKAGE_NAME}@${aiVersion}`);
   }
   const expected = prepareOpenClawNpmShrinkwrap({
     aiIntegrity: params.aiIntegrity,
@@ -225,7 +223,7 @@ export function assertPreparedOpenClawNpmShrinkwrap(params: {
     JSON.stringify(actualPackages[AI_LOCK_PATH]) !== JSON.stringify(expectedPackages[AI_LOCK_PATH])
   ) {
     throw new Error(
-      `prepared OpenClaw npm shrinkwrap does not lock the exact ${AI_PACKAGE_NAME} tarball`,
+      `prepared Nova npm shrinkwrap does not lock the exact ${AI_PACKAGE_NAME} tarball`,
     );
   }
 }

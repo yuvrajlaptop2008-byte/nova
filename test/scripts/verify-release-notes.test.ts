@@ -39,9 +39,9 @@ function git(cwd: string, args: string[]): string {
     encoding: "utf8",
     env: {
       ...process.env,
-      GIT_AUTHOR_NAME: "OpenClaw Test",
+      GIT_AUTHOR_NAME: "Nova Test",
       GIT_AUTHOR_EMAIL: "test@openclaw.invalid",
-      GIT_COMMITTER_NAME: "OpenClaw Test",
+      GIT_COMMITTER_NAME: "Nova Test",
       GIT_COMMITTER_EMAIL: "test@openclaw.invalid",
     },
   }).trim();

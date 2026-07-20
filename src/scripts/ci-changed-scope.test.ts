@@ -104,7 +104,7 @@ describe("detectChangedScope", () => {
       "apps/.i18n/native-source.json",
       "apps/android/app/src/main/java/ai/openclaw/app/MainActivity.kt",
       "apps/ios/Sources/RootTabs.swift",
-      "apps/macos/Sources/OpenClaw/Settings.swift",
+      "apps/macos/Sources/Nova/Settings.swift",
       "apps/shared/OpenClawKit/Sources/OpenClawKit/Client.swift",
       "scripts/native-app-i18n.ts",
       "scripts/android-app-i18n.ts",

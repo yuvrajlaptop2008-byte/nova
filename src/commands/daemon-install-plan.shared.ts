@@ -95,7 +95,7 @@ function addUniquePathDir(dirs: string[], dir: string | undefined): void {
   dirs.push(dir);
 }
 
-/** Resolve the OpenClaw CLI binary directory from argv/PATH for daemon PATH. */
+/** Resolve the Nova CLI binary directory from argv/PATH for daemon PATH. */
 function resolveDaemonOpenClawBinDir(
   params: {
     argv?: string[];
@@ -143,7 +143,7 @@ function resolveDaemonOpenClawBinDir(
   return dirs.length > 0 ? dirs : undefined;
 }
 
-/** Merge Node and OpenClaw binary directories for the daemon service PATH. */
+/** Merge Node and Nova binary directories for the daemon service PATH. */
 export function resolveDaemonServicePathDirs(params: {
   nodePath?: string;
   argv?: string[];

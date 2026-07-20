@@ -144,7 +144,7 @@ async function yieldTranscriptScan(): Promise<void> {
   });
 }
 
-/** Attach OpenClaw metadata to a transcript message without dropping existing metadata. */
+/** Attach Nova metadata to a transcript message without dropping existing metadata. */
 export function attachOpenClawTranscriptMeta(
   message: unknown,
   meta: Record<string, unknown>,

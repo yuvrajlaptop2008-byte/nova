@@ -104,7 +104,7 @@ describe("prepareOpenClawNpmShrinkwrap", () => {
         },
         shrinkwrap: createShrinkwrap(),
       }),
-    ).toThrow("does not match OpenClaw");
+    ).toThrow("does not match Nova");
 
     const incomplete = createShrinkwrap();
     Reflect.deleteProperty(incomplete.packages, "node_modules/openai");
@@ -186,7 +186,7 @@ describe("prepareOpenClawNpmShrinkwrap", () => {
         },
         shrinkwrap: prepared,
       }),
-    ).toThrow("packed OpenClaw manifest must depend on exact @openclaw/ai");
+    ).toThrow("packed Nova manifest must depend on exact @openclaw/ai");
   });
 
   it("validates semver ranges and rejects unsupported dependency specs", () => {

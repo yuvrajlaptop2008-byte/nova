@@ -1,6 +1,6 @@
 /**
- * Builds the effective OpenClaw agent tool surface.
- * Assembles core, shell, channel, OpenClaw, plugin, and Tool Search tools, then
+ * Builds the effective Nova agent tool surface.
+ * Assembles core, shell, channel, Nova, plugin, and Tool Search tools, then
  * applies sandbox, profile, provider, sender, group, and sub-agent policy.
  */
 import path from "node:path";
@@ -361,7 +361,7 @@ type OpenClawCodingToolsOptions = {
   modelContextWindowTokens?: number;
   /** Resolved runtime model compatibility hints. */
   modelCompat?: ModelCompatConfig;
-  /** If false, keep OpenClaw web_search even when a provider-native search tool is active. */
+  /** If false, keep Nova web_search even when a provider-native search tool is active. */
   suppressManagedWebSearch?: boolean;
   /**
    * Auth mode for the current provider. We only need this for Anthropic OAuth
@@ -441,7 +441,7 @@ type OpenClawCodingToolsOptions = {
   toolSearchCatalogRef?: ToolSearchCatalogRef;
   /** Limits which tool families are materialized before the shared policy pipeline runs. */
   toolConstructionPlan?: OpenClawCodingToolConstructionPlan;
-  /** Ring-zero OpenClaw tool; set only by the OpenClaw agent runner. */
+  /** Ring-zero Nova tool; set only by the Nova agent runner. */
   systemAgentTool?: import("./tools/system-agent-tool.js").SystemAgentToolOptions;
   /** Trusted sender identity bit for command/channel-action auth and owner-gated plugin tools. */
   senderIsOwner?: boolean;
@@ -1160,7 +1160,7 @@ function createOpenClawCodingToolsInternal(options?: OpenClawCodingToolsOptions)
     );
   }
   options?.recordToolPrepStage?.("authorization-policy");
-  // Always normalize tool JSON Schemas before handing them to OpenClaw model runtime.
+  // Always normalize tool JSON Schemas before handing them to Nova model runtime.
   // Without this, some providers (notably OpenAI) will reject root-level union schemas.
   // Provider-specific cleaning: Gemini needs constraint keywords stripped, but Anthropic expects them.
   const normalized = authorizedTools.map((tool) =>

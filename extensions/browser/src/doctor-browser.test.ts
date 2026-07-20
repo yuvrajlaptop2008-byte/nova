@@ -65,8 +65,8 @@ describe("browser doctor readiness", () => {
 
     expect(noteFn).toHaveBeenCalledWith(
       [
-        "- OpenClaw-managed browser profile(s) are configured: openclaw.",
-        "- No Chromium-based browser executable was found on this host for OpenClaw-managed launch.",
+        "- Nova-managed browser profile(s) are configured: openclaw.",
+        "- No Chromium-based browser executable was found on this host for Nova-managed launch.",
         "- Install Chrome, Chromium, Brave, Edge, or set browser.executablePath explicitly.",
       ].join("\n"),
       "Browser",
@@ -96,7 +96,7 @@ describe("browser doctor readiness", () => {
 
     expect(noteFn).toHaveBeenCalledWith(
       [
-        "- OpenClaw-managed browser profile(s) are configured: openclaw.",
+        "- Nova-managed browser profile(s) are configured: openclaw.",
         "- No DISPLAY or WAYLAND_DISPLAY is set, and browser.headless is false. Managed browser launch needs a desktop session, Xvfb, or browser.headless: true.",
         "- The Gateway is running as root and browser.noSandbox is false. Chromium commonly requires browser.noSandbox: true in container/root runtimes.",
       ].join("\n"),

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { KeyedAsyncQueue } from "openclaw/plugin-sdk/keyed-async-queue";
-// OpenClaw gateway methods host the setup/repair conversation for clients.
+// Nova gateway methods host the setup/repair conversation for clients.
 import {
   buildSystemAgentSessionInvalidatedErrorDetails,
   ErrorCodes,
@@ -81,12 +81,12 @@ function getSystemAgentSessionQueue(
 
 async function runSystemAgentGatewayTask<T>(task: () => Promise<T>): Promise<T> {
   // Track every accepted RPC as active, never queued: restart draining snapshots
-  // active ids, so a queued OpenClaw request could otherwise outlive its socket.
+  // active ids, so a queued Nova request could otherwise outlive its socket.
   setCommandLaneConcurrency(CommandLane.SystemAgent, Number.MAX_SAFE_INTEGER);
   return await enqueueCommandInLane(CommandLane.SystemAgent, () =>
     // Bound expensive detection, activation, and agent turns without hiding
     // accepted work from restart draining. This also makes session eviction and
-    // setup writes atomic with respect to other OpenClaw gateway requests.
+    // setup writes atomic with respect to other Nova gateway requests.
     systemAgentGatewayExecutionQueue.enqueue(SYSTEM_AGENT_GATEWAY_EXECUTION_KEY, task),
   );
 }
@@ -125,7 +125,7 @@ export async function runExclusiveSystemAgentSetupActivation<T>(
 ): Promise<T> {
   if (systemAgentSetupActivationInProgress) {
     throw new SystemAgentSetupActivationBusyError(
-      "OpenClaw setup is already in progress; try again when it finishes.",
+      "Nova setup is already in progress; try again when it finishes.",
     );
   }
   systemAgentSetupActivationInProgress = true;
@@ -186,11 +186,11 @@ function queueDelegatedApproval(params: {
   }
   const manager = params.context.systemAgentApprovalManager;
   if (!manager) {
-    throw new Error("OpenClaw approval registry unavailable");
+    throw new Error("Nova approval registry unavailable");
   }
   const description = describeSystemAgentPersistentOperation(params.proposal.operation);
   const request: SystemAgentApprovalRequestPayload = {
-    title: "OpenClaw change",
+    title: "Nova change",
     description,
     command: description,
     proposalHash: params.proposal.hash,
@@ -230,7 +230,7 @@ function queueDelegatedApproval(params: {
       }
       await params.session.engine.resolveOperatorApproval(decision, params.proposal.hash);
     },
-    afterDecisionErrorLabel: "OpenClaw approval apply failed",
+    afterDecisionErrorLabel: "Nova approval apply failed",
   });
   return record.id;
 }
@@ -496,7 +496,7 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
           respond(
             false,
             undefined,
-            errorShape(ErrorCodes.INVALID_REQUEST, "OpenClaw caller identity unavailable."),
+            errorShape(ErrorCodes.INVALID_REQUEST, "Nova caller identity unavailable."),
           );
           return;
         }
@@ -505,7 +505,7 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
           respond(
             false,
             undefined,
-            errorShape(ErrorCodes.INVALID_REQUEST, "OpenClaw session belongs to another caller."),
+            errorShape(ErrorCodes.INVALID_REQUEST, "Nova session belongs to another caller."),
           );
           return;
         }
@@ -540,7 +540,7 @@ export const systemAgentHandlers: GatewayRequestHandlers = {
               undefined,
               errorShape(
                 ErrorCodes.UNAVAILABLE,
-                `OpenClaw requires working inference: ${inference.error}`,
+                `Nova requires working inference: ${inference.error}`,
               ),
             );
             return;

@@ -49,7 +49,7 @@ export type GuidedOnboardingDeps = {
   /**
    * "hatch" (default) runs the local custodian flow: question zero, quiet
    * failure collection, deterministic setup apply, then the agent TUI.
-   * "chat" preserves the legacy handoff into the OpenClaw system-agent chat —
+   * "chat" preserves the legacy handoff into the Nova system-agent chat —
    * remote-gateway onboarding requires it because setup must apply remotely.
    */
   handoffMode?: "hatch" | "chat";
@@ -184,8 +184,8 @@ async function runGuidedOnboardingFlow(
     }
   }
 
-  // Inference is the only prerequisite for OpenClaw. Use the caller's or
-  // current default workspace as isolated probe context; OpenClaw owns any
+  // Inference is the only prerequisite for Nova. Use the caller's or
+  // current default workspace as isolated probe context; Nova owns any
   // workspace choice and persistence after the live completion succeeds.
   const workspace = resolveUserPath(
     opts.workspace?.trim() ||
@@ -417,7 +417,7 @@ async function runGuidedOnboardingFlow(
     await prompter.note(t("wizard.guided.alreadySetUp"), t("wizard.guided.welcomeTitle"));
   } else {
     // Announced default: apply the same setup plan the conversational "yes"
-    // would, then hand off to the hatch instead of parking in the OpenClaw chat.
+    // would, then hand off to the hatch instead of parking in the Nova chat.
     const applySetup =
       deps.applySetup ?? (await import("../system-agent/setup-apply.js")).applySystemAgentSetup;
     const applyProgress = prompter.progress(t("wizard.guided.settingUp"));
@@ -431,7 +431,7 @@ async function runGuidedOnboardingFlow(
       }
       const appliedSnapshot = await readConfigFileSnapshot();
       if (!appliedSnapshot.valid) {
-        throw new Error("Setup wrote an invalid OpenClaw config.");
+        throw new Error("Setup wrote an invalid Nova config.");
       }
       persistedConfig = appliedSnapshot.sourceConfig ?? appliedSnapshot.config;
     } catch (error) {
@@ -460,7 +460,7 @@ async function runGuidedOnboardingFlow(
     if (recommendedConfig !== persistedConfig) {
       const latestSnapshot = await readConfigFileSnapshot();
       if (!latestSnapshot.valid) {
-        throw new Error("App recommendations could not update an invalid OpenClaw config.");
+        throw new Error("App recommendations could not update an invalid Nova config.");
       }
       const latestConfig = latestSnapshot.sourceConfig ?? latestSnapshot.config;
       const { mergeWizardConfigOntoLatest, writeWizardConfigFile } =

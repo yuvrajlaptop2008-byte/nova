@@ -16,7 +16,7 @@ export function assertSupportedAgentSchemaVersion(db: DatabaseSync, pathname: st
   const userVersion = readSqliteUserVersion(db);
   if (userVersion > OPENCLAW_AGENT_SCHEMA_VERSION) {
     throw createNewerSqliteSchemaVersionError(
-      "OpenClaw agent database",
+      "Nova agent database",
       pathname,
       userVersion,
       OPENCLAW_AGENT_SCHEMA_VERSION,
@@ -55,15 +55,15 @@ export function assertExistingAgentSchemaOwner(
   // Agent DB files are not interchangeable; opening another role/id would corrupt ownership.
   if (existing.role !== "agent") {
     throw new Error(
-      `OpenClaw agent database ${pathname} has schema role ${existing.role ?? "unknown"}; expected agent.`,
+      `Nova agent database ${pathname} has schema role ${existing.role ?? "unknown"}; expected agent.`,
     );
   }
   if (!existing.agentId) {
-    throw new Error(`OpenClaw agent database ${pathname} has no agent owner.`);
+    throw new Error(`Nova agent database ${pathname} has no agent owner.`);
   }
   if (normalizeAgentId(existing.agentId) !== agentId) {
     throw new Error(
-      `OpenClaw agent database ${pathname} belongs to agent ${existing.agentId}; requested agent ${agentId}.`,
+      `Nova agent database ${pathname} belongs to agent ${existing.agentId}; requested agent ${agentId}.`,
     );
   }
 }

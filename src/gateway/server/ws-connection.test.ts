@@ -352,7 +352,7 @@ describe("attachGatewayWsConnectionHandler", () => {
     "demotes local app startup abort code %i before the first frame",
     async (closeCode) => {
       const { socket, logWsControl } = await connectTestWs({
-        headers: { "user-agent": "OpenClaw/2607000290 CFNetwork/3860 Darwin/25" },
+        headers: { "user-agent": "Nova/2607000290 CFNetwork/3860 Darwin/25" },
         options: { isStartupPending: () => true },
       });
 
@@ -373,7 +373,7 @@ describe("attachGatewayWsConnectionHandler", () => {
     const logWsControl = createGatewayWsTestLogger();
     const { socket } = attachGatewayWsForTest({
       attach: attachGatewayWsConnectionHandler,
-      headers: { "user-agent": "OpenClaw/2607000290 CFNetwork/3860 Darwin/25" },
+      headers: { "user-agent": "Nova/2607000290 CFNetwork/3860 Darwin/25" },
       options: { isStartupPending: () => true, logWsControl: logWsControl as never },
     });
 

@@ -218,7 +218,7 @@ describe("sessions --json agentRuntime classifier (catalog #18)", () => {
     expect(agentRuntime.source).not.toBe("session-key");
   });
 
-  it("preserves locked Codex ownership ahead of stale OpenClaw session metadata", () => {
+  it("preserves locked Codex ownership ahead of stale Nova session metadata", () => {
     const agentRuntime = resolveModelAgentRuntimeMetadata({
       cfg: {
         agents: {

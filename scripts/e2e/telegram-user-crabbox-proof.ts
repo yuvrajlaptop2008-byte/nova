@@ -1,5 +1,5 @@
 #!/usr/bin/env -S node --import tsx
-// Telegram User Crabbox Proof script supports OpenClaw repository automation.
+// Telegram User Crabbox Proof script supports Nova repository automation.
 
 import {
   type ChildProcess,
@@ -193,7 +193,7 @@ const TELEGRAM_PROOF_CROP = {
 function usageText() {
   return [
     "Usage:",
-    "  node --import tsx scripts/e2e/telegram-user-crabbox-proof.ts [probe] [--text /status] [--expect OpenClaw]",
+    "  node --import tsx scripts/e2e/telegram-user-crabbox-proof.ts [probe] [--text /status] [--expect Nova]",
     "  node --import tsx scripts/e2e/telegram-user-crabbox-proof.ts start [--tdlib-url <url>]",
     "  node --import tsx scripts/e2e/telegram-user-crabbox-proof.ts send --session <session.json> --text <text>",
     "  node --import tsx scripts/e2e/telegram-user-crabbox-proof.ts run --session <session.json> -- <remote command>",
@@ -307,9 +307,9 @@ export function parseArgs(argvInput: string[]): Options {
     command,
     crabboxBin: trimToValue(process.env.OPENCLAW_TELEGRAM_USER_CRABBOX_BIN) ?? "crabbox",
     desktopChatTitle:
-      trimToValue(process.env.OPENCLAW_TELEGRAM_USER_DESKTOP_CHAT_TITLE) ?? "OpenClaw Testing",
+      trimToValue(process.env.OPENCLAW_TELEGRAM_USER_DESKTOP_CHAT_TITLE) ?? "Nova Testing",
     dryRun: false,
-    expect: ["OpenClaw"],
+    expect: ["Nova"],
     gatewayPort: 19_879,
     idleTimeout: "60m",
     keepBox: false,
@@ -474,7 +474,7 @@ function repoRoot() {
     !fs.existsSync(path.join(cwd, "package.json")) ||
     !fs.existsSync(path.join(cwd, "scripts/e2e/mock-openai-server.mjs"))
   ) {
-    throw new Error("Run from the OpenClaw repo root.");
+    throw new Error("Run from the Nova repo root.");
   }
   return cwd;
 }

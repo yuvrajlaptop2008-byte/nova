@@ -457,7 +457,7 @@ case "$install" in
     npm install --global --prefix "$npm_prefix" --ignore-scripts --omit=dev --no-audit --no-fund "$package_archive"
     package_dir=$npm_prefix/lib/node_modules/openclaw
     if [ ! -f "$package_dir/openclaw.mjs" ]; then
-      printf '%s\n' 'npm did not install the OpenClaw package root' >&2
+      printf '%s\n' 'npm did not install the Nova package root' >&2
       exit 2
     fi
     # Match bundle layout so the worker entry always lives under the versioned root.
@@ -522,7 +522,7 @@ function normalizeHandshake(artifact: WorkerInstallationArtifact): WorkerAdmissi
     throw new Error("Worker bundle hash must be a lowercase SHA-256 digest");
   }
   if (!openclawVersion) {
-    throw new Error("Worker OpenClaw version must be non-empty");
+    throw new Error("Worker Nova version must be non-empty");
   }
   if (
     protocolFeatures.length > WORKER_PROTOCOL_MAX_FEATURES ||

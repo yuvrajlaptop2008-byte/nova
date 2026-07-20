@@ -298,7 +298,7 @@ ${run.transcript}
     })
     .join("\n\n");
 
-  const prompt = `You are grading OpenClaw natural character conversation transcripts for naturalness, vibes, and funniness.
+  const prompt = `You are grading Nova natural character conversation transcripts for naturalness, vibes, and funniness.
 
 Scenario id: ${params.scenarioId}
 
@@ -415,7 +415,7 @@ function renderCharacterEvalReport(params: {
   judgments: readonly QaCharacterEvalJudgeResult[];
 }) {
   const lines = [
-    "# OpenClaw Character Eval Report",
+    "# Nova Character Eval Report",
     "",
     `- Started: ${params.startedAt.toISOString()}`,
     `- Finished: ${params.finishedAt.toISOString()}`,

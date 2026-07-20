@@ -1,4 +1,4 @@
-// Vllm plugin entrypoint registers its OpenClaw integration.
+// Vllm plugin entrypoint registers its Nova integration.
 import {
   definePluginEntry,
   type OpenClawPluginApi,

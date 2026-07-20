@@ -222,7 +222,7 @@ describe("createDiscordGatewayPlugin", () => {
     );
   });
 
-  it("leaves autoInteractions disabled so OpenClaw owns interaction handoff", () => {
+  it("leaves autoInteractions disabled so Nova owns interaction handoff", () => {
     const plugin = createPlugin();
 
     expect(

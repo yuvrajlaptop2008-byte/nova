@@ -202,7 +202,7 @@ describe("recordOutboundMessageForPromptContext", () => {
       messageId: 1498,
       text: "Channel announcement",
     });
-    expect(initial).toMatchObject({ sender: "OpenClaw (you)", senderId: "0" });
+    expect(initial).toMatchObject({ sender: "Nova (you)", senderId: "0" });
 
     const cache = createPromptContextCache();
     await cache.record({
@@ -224,10 +224,10 @@ describe("recordOutboundMessageForPromptContext", () => {
       messageId: "1498",
     });
     expect(merged).toMatchObject({
-      sender: "OpenClaw (you)",
+      sender: "Nova (you)",
       senderId: "0",
       sourceMessage: {
-        from: { id: 0, is_bot: true, first_name: "OpenClaw (you)" },
+        from: { id: 0, is_bot: true, first_name: "Nova (you)" },
         sender_chat: { id: -1001, type: "channel", title: "Announcements" },
       },
     });

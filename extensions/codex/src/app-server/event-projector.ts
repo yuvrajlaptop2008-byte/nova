@@ -361,7 +361,7 @@ export class CodexAppServerEventProjector {
     const turnId = this.turnId;
     const messagesSnapshot = promptSnapshot(this.params, turnId, this.options.upstreamUserText);
     // Codex owns the canonical thread. These mirror records keep enough local
-    // context for OpenClaw history, search, and future harness switching.
+    // context for Nova history, search, and future harness switching.
     if (reasoningText) {
       messagesSnapshot.push(
         attachCodexMirrorIdentity(

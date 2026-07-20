@@ -374,7 +374,7 @@ export function createAcpxRuntimeService(
       );
       if (startupReap.terminatedPids.length > 0) {
         ctx.logger.info(
-          `reaped ${startupReap.terminatedPids.length} stale OpenClaw-owned ACPX process${startupReap.terminatedPids.length === 1 ? "" : "es"}`,
+          `reaped ${startupReap.terminatedPids.length} stale Nova-owned ACPX process${startupReap.terminatedPids.length === 1 ? "" : "es"}`,
         );
       }
       warnOnIgnoredLegacyCompatibilityConfig({

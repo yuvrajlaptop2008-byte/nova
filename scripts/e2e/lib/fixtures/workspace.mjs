@@ -27,7 +27,7 @@ function writeOpenWebUiWorkspace() {
     process.env.OPENCLAW_WORKSPACE_DIR || path.join(process.env.HOME, ".openclaw", "workspace");
   write(
     path.join(workspace, "IDENTITY.md"),
-    "# Identity\n\n- Name: OpenClaw\n- Purpose: Open WebUI Docker compatibility smoke test assistant.\n",
+    "# Identity\n\n- Name: Nova\n- Purpose: Open WebUI Docker compatibility smoke test assistant.\n",
   );
   writeJson(path.join(workspace, ".openclaw", "workspace-state.json"), {
     version: 1,

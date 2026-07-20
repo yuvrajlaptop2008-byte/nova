@@ -1747,7 +1747,7 @@ describe("config cli", () => {
             appId: "app-id",
             appSecret: "secret",
             replyMode: "thread",
-            footer: "OpenClaw",
+            footer: "Nova",
           },
         },
       });

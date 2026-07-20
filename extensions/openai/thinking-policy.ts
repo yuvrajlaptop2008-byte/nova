@@ -103,7 +103,7 @@ function buildOpenAIThinkingProfile(params: {
   const codexSupportsUltra = authoritativeCodexEfforts
     ? authoritativeCodexEfforts.includes("ultra")
     : fallbackCodexUltra;
-  // OpenClaw owns its logical Ultra orchestration. Native Codex capabilities
+  // Nova owns its logical Ultra orchestration. Native Codex capabilities
   // come only from the selected ChatGPT route's catalog metadata.
   const supportsUltra =
     (isBare || isSol || isTerra || isLuna) &&

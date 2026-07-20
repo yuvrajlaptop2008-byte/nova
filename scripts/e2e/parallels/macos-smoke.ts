@@ -1,5 +1,5 @@
 #!/usr/bin/env -S pnpm tsx
-// Macos Smoke script supports OpenClaw repository automation.
+// Macos Smoke script supports Nova repository automation.
 import { readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -14,7 +14,7 @@ import {
   packageBuildCommitFromTgz,
   packageVersionFromTgz,
   parseMacosDsclUserHomeLine,
-  packOpenClaw,
+  packNova,
   parseMode,
   parseProvider,
   modelProviderConfigBatchJson,
@@ -109,7 +109,7 @@ interface MacosSummary {
 
 const guestPath =
   "/opt/homebrew/bin:/opt/homebrew/opt/node/bin:/usr/local/bin:/usr/local/sbin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin";
-const guestOpenClaw = "openclaw";
+const guestNova = "openclaw";
 const guestOpenClawEntry = '"$(npm root -g)/openclaw/openclaw.mjs"';
 const guestOpenClawEntryRunner = `node ${guestOpenClawEntry}`;
 const guestNode = "node";
@@ -364,7 +364,7 @@ class MacosSmoke {
       say(`Run logs: ${this.runDir}`);
 
       if (await this.needsHostTgz()) {
-        this.artifact = await packOpenClaw({
+        this.artifact = await packNova({
           destination: this.tgzDir,
           packageSpec: this.options.targetPackageSpec,
           requireControlUi: true,
@@ -462,7 +462,7 @@ class MacosSmoke {
       },
       guest: this.guest,
       guestNode,
-      guestOpenClaw,
+      guestNova,
       guestOpenClawEntry,
       runDir: this.runDir,
       vmName: this.options.vmName,
@@ -820,7 +820,7 @@ curl -fsSL --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 ${shell
         this.options.installUrl,
       )} -o /tmp/openclaw-install.sh
 bash /tmp/openclaw-install.sh --version ${shellQuote(this.installVersion)}
-${guestOpenClaw} --version`,
+${guestNova} --version`,
     );
   }
 
@@ -841,7 +841,7 @@ for attempt in 1 2; do
   echo "npm install attempt $attempt failed; retrying in 5s" >&2
   sleep 5
 done
-${guestOpenClaw} --version`);
+${guestNova} --version`);
       return;
     }
     if (!this.artifact || !this.server) {
@@ -853,7 +853,7 @@ curl -fsSL --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 ${shell
       tgzUrl,
     )} -o /tmp/${tempName}
 ${npmRegistryEnv}${guestNpm} install -g /tmp/${tempName}
-${guestOpenClaw} --version`);
+${guestNova} --version`);
   }
 
   private async verifyTargetVersion(): Promise<void> {
@@ -871,7 +871,7 @@ ${guestOpenClaw} --version`);
   }
 
   private verifyVersionContains(needle: string): void {
-    const version = this.guestExec([guestOpenClaw, "--version"]);
+    const version = this.guestExec([guestNova, "--version"]);
     if (!version.includes(needle)) {
       throw new Error(`version mismatch: expected substring ${needle}`);
     }
@@ -904,7 +904,7 @@ fi`);
     this.guestExec([
       "/usr/bin/env",
       `${this.auth.apiKeyEnv}=${this.auth.apiKeyValue}`,
-      guestOpenClaw,
+      guestNova,
       "onboard",
       "--non-interactive",
       "--mode",
@@ -997,7 +997,7 @@ sleep 1`,
 
   private verifyGateway(): void {
     for (let attempt = 1; attempt <= 8; attempt++) {
-      const result = this.guestOpenClaw(
+      const result = this.guestNova(
         ["gateway", "status", "--deep", "--require-rpc", "--timeout", "15000"],
         false,
       );
@@ -1013,16 +1013,16 @@ sleep 1`,
   }
 
   private showGatewayStatusCompat(): void {
-    const help = this.guestExec([guestOpenClaw, "gateway", "status", "--help"], { check: false });
+    const help = this.guestExec([guestNova, "gateway", "status", "--help"], { check: false });
     const args = help.includes("--require-rpc")
       ? ["gateway", "status", "--deep", "--require-rpc"]
       : ["gateway", "status", "--deep"];
-    if (!this.guestOpenClaw(args, false)) {
+    if (!this.guestNova(args, false)) {
       throw new Error("gateway status failed");
     }
   }
 
-  private guestOpenClaw(args: string[], check: boolean): boolean {
+  private guestNova(args: string[], check: boolean): boolean {
     const result = run(
       "prlctl",
       [
@@ -1039,7 +1039,7 @@ sleep 1`,
               `PATH=${guestPath}`,
             ]
           : ["--current-user", "/usr/bin/env", `PATH=${guestPath}`]),
-        guestOpenClaw,
+        guestNova,
         ...args,
       ],
       { check: false, quiet: true, timeoutMs: this.remainingPhaseTimeoutMs() },
@@ -1057,7 +1057,7 @@ sleep 1`,
 deadline=$((SECONDS + 120))
 while [ $SECONDS -lt $deadline ]; do
   if curl -fsSL --connect-timeout 2 --max-time 5 http://127.0.0.1:18789/ >/tmp/openclaw-dashboard-smoke.html 2>/dev/null; then
-    if grep -F '<title>OpenClaw Control</title>' /tmp/openclaw-dashboard-smoke.html >/dev/null &&
+    if grep -F '<title>Nova Control</title>' /tmp/openclaw-dashboard-smoke.html >/dev/null &&
       grep -F '<openclaw-app></openclaw-app>' /tmp/openclaw-dashboard-smoke.html >/dev/null; then
       asset_paths="$(
         sed -nE 's/.*<(script|link)[^>]*(src|href)=["'"'"']([^"'"'"']+)["'"'"'].*/\3/p' /tmp/openclaw-dashboard-smoke.html |

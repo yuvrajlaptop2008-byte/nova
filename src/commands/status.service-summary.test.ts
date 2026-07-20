@@ -27,7 +27,7 @@ function requireMockArg(mock: { mock: { calls: unknown[][] } }, label: string): 
 }
 
 describe("readServiceStatusSummary", () => {
-  it("marks OpenClaw-managed services as installed", async () => {
+  it("marks Nova-managed services as installed", async () => {
     const summary = await readServiceStatusSummary(
       createService({
         isLoaded: vi.fn(async () => true),
@@ -38,7 +38,7 @@ describe("readServiceStatusSummary", () => {
     );
 
     expect(summary.installed).toBe(true);
-    expect(summary.managedByOpenClaw).toBe(true);
+    expect(summary.managedByNova).toBe(true);
     expect(summary.externallyManaged).toBe(false);
     expect(summary.loadedText).toBe("enabled");
   });
@@ -52,7 +52,7 @@ describe("readServiceStatusSummary", () => {
     );
 
     expect(summary.installed).toBe(true);
-    expect(summary.managedByOpenClaw).toBe(false);
+    expect(summary.managedByNova).toBe(false);
     expect(summary.externallyManaged).toBe(true);
     expect(summary.loadedText).toBe("running (externally managed)");
   });
@@ -61,7 +61,7 @@ describe("readServiceStatusSummary", () => {
     const summary = await readServiceStatusSummary(createService({}), "Daemon");
 
     expect(summary.installed).toBe(false);
-    expect(summary.managedByOpenClaw).toBe(false);
+    expect(summary.managedByNova).toBe(false);
     expect(summary.externallyManaged).toBe(false);
     expect(summary.loadedText).toBe("disabled");
   });
@@ -73,7 +73,7 @@ describe("readServiceStatusSummary", () => {
       expect(summary.label).toBe("Gateway service");
       expect(summary.installed).toBe(false);
       expect(summary.loaded).toBe(false);
-      expect(summary.managedByOpenClaw).toBe(false);
+      expect(summary.managedByNova).toBe(false);
       expect(summary.externallyManaged).toBe(false);
       expect(summary.loadedText).toBe("not installed");
       expect(summary.runtime).toEqual({

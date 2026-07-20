@@ -799,7 +799,7 @@ export type PluginHookSubagentSpawningResult =
       /**
        * @deprecated Core now resolves thread-bound spawn routing from session
        * bindings and channel route projection. Keep returning this only for
-       * compatibility with older OpenClaw runtimes.
+       * compatibility with older Nova runtimes.
        */
       threadBindingReady?: boolean;
       /**

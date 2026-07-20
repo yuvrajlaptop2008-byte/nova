@@ -1,7 +1,7 @@
 import { createChannelInboundEnvelopeBuilder } from "openclaw/plugin-sdk/channel-inbound";
 import { deriveDurableFinalDeliveryRequirements } from "openclaw/plugin-sdk/channel-outbound";
 /**
- * Converts authorized ClickClack messages into OpenClaw agent/model replies and
+ * Converts authorized ClickClack messages into Nova agent/model replies and
  * routes resulting outbound text back to ClickClack.
  */
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";

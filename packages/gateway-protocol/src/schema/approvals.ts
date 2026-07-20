@@ -117,7 +117,7 @@ export const PluginApprovalPresentationSchema = closedObject({
   allowedDecisions: ApprovalAllowedDecisionsSchema,
 });
 
-/** Reviewer-safe OpenClaw system change. Exact operation stays host-local. */
+/** Reviewer-safe Nova system change. Exact operation stays host-local. */
 export const SystemAgentApprovalPresentationSchema = closedObject({
   kind: Type.Literal("system-agent"),
   title: Type.String({ minLength: 1, maxLength: 80 }),

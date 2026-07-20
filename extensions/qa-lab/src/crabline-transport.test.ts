@@ -65,7 +65,7 @@ describe("crabline transport", () => {
     });
   });
 
-  it("configures OpenClaw's Telegram plugin against a Crabline local provider server", async () => {
+  it("configures Nova's Telegram plugin against a Crabline local provider server", async () => {
     await withTempDir("qa-crabline-transport-", async (outputDir) => {
       const transport = await createQaCrablineTransportAdapter({
         outputDir,
@@ -277,7 +277,7 @@ describe("crabline transport", () => {
     });
   });
 
-  it("configures OpenClaw's Slack plugin against a Crabline local provider server", async () => {
+  it("configures Nova's Slack plugin against a Crabline local provider server", async () => {
     await withTempDir("qa-crabline-transport-", async (outputDir) => {
       const transport = await createQaCrablineTransportAdapter({
         outputDir,
@@ -385,7 +385,7 @@ describe("crabline transport", () => {
     });
   });
 
-  it("configures OpenClaw's WhatsApp plugin against a Crabline Baileys WebSocket server", async () => {
+  it("configures Nova's WhatsApp plugin against a Crabline Baileys WebSocket server", async () => {
     await withTempDir("qa-crabline-transport-", async (outputDir) => {
       const transport = await createQaCrablineTransportAdapter({
         outputDir,
@@ -735,7 +735,7 @@ describe("crabline transport", () => {
           "Matrix QA conversation id must be non-empty",
         );
         expect(() => transport.buildAgentDelivery({ target: "thread:/v1/main/%24event" })).toThrow(
-          "Matrix thread targets require OpenClaw QA thread forwarding",
+          "Matrix thread targets require Nova QA thread forwarding",
         );
         await expect(
           transport.state.addInboundMessage({

@@ -168,7 +168,7 @@ function createCodexSessionCatalogControlFromRequests(params: {
             limit: remaining,
             modelProviders: [],
             // Match Codex's resume picker/latest-session ordering so a session
-            // created outside OpenClaw enters the first catalog page immediately.
+            // created outside Nova enters the first catalog page immediately.
             sortKey: "updated_at",
             sortDirection: "desc",
             ...(cwd ? { cwd } : {}),
@@ -700,7 +700,7 @@ async function listAdoptedSessionEntries(params: {
         continue;
       }
       if (adopted.has(sourceThreadId)) {
-        throw new Error(`multiple OpenClaw sessions adopt Codex thread ${sourceThreadId}`);
+        throw new Error(`multiple Nova sessions adopt Codex thread ${sourceThreadId}`);
       }
       adopted.set(sourceThreadId, { key: sessionKey, sessionId, agentId, boundThreadId });
     }
@@ -747,7 +747,7 @@ async function clearCreatedAdoptionBinding(params: {
   } catch (readError) {
     throw new CodexAdoptionBindingCleanupError(
       [params.cause, ...(clearError ? [clearError] : []), readError],
-      `OpenClaw session creation failed and the Codex binding could not be verified for ${params.sourceThreadId}`,
+      `Nova session creation failed and the Codex binding could not be verified for ${params.sourceThreadId}`,
     );
   }
   // Pending state is the cleanup CAS token. Once lifecycle work changes it,
@@ -757,7 +757,7 @@ async function clearCreatedAdoptionBinding(params: {
   }
   throw new CodexAdoptionBindingCleanupError(
     [params.cause, ...(clearError ? [clearError] : [])],
-    `OpenClaw session creation failed and the Codex binding could not be cleared for ${params.sourceThreadId}`,
+    `Nova session creation failed and the Codex binding could not be cleared for ${params.sourceThreadId}`,
   );
 }
 
@@ -826,14 +826,14 @@ async function ensurePendingAdoptionBinding(params: {
     config: params.config,
   });
   if (!ownsGeneration) {
-    throw new Error(`failed to claim the OpenClaw session generation for ${params.sourceThreadId}`);
+    throw new Error(`failed to claim the Nova session generation for ${params.sourceThreadId}`);
   }
   const existing = await params.bindingStore.read(params.identity);
   if (existing) {
     if (matchesPendingAdoptionBinding(existing, params)) {
       return;
     }
-    throw new Error(`OpenClaw session is already bound to Codex thread ${existing.threadId}`);
+    throw new Error(`Nova session is already bound to Codex thread ${existing.threadId}`);
   }
   const binding = {
     threadId: params.sourceThreadId,
@@ -864,7 +864,7 @@ async function ensurePendingAdoptionBinding(params: {
   }
   const raced = await params.bindingStore.read(params.identity);
   if (!matchesPendingAdoptionBinding(raced, params)) {
-    throw new Error(`failed to bind OpenClaw session to Codex thread ${params.sourceThreadId}`);
+    throw new Error(`failed to bind Nova session to Codex thread ${params.sourceThreadId}`);
   }
 }
 
@@ -1004,7 +1004,7 @@ async function continueLocalCodexSessionInner(params: {
     // Catalog state can race archive/reset. Restore only the same locked generation
     // under the session-store write lock so a stale Open Chat cannot revive a replacement.
     const changedError = () =>
-      new CatalogParamsError("Codex OpenClaw session changed before it could be opened. Retry.");
+      new CatalogParamsError("Codex Nova session changed before it could be opened. Retry.");
     const restored = await params.api.runtime.agent.session.patchSessionEntry({
       sessionKey: existing.key,
       readConsistency: "latest",
@@ -1067,7 +1067,7 @@ async function continueLocalCodexSessionInner(params: {
   return { sessionKey: adopted.key, disposition: "forked" };
 }
 
-/** Creates one locked OpenClaw branch whose first harness run forks the Codex source. */
+/** Creates one locked Nova branch whose first harness run forks the Codex source. */
 async function continueLocalCodexSession(params: {
   api: OpenClawPluginApi;
   bindingStore: CodexAppServerBindingStore;
@@ -1108,7 +1108,7 @@ async function assertNoPendingSupervisionBranch(params: {
   for (const adopted of adoptedEntries) {
     if (adopted.entry.initializationPending === true) {
       throw new CatalogParamsError(
-        "Codex session cannot be archived while its OpenClaw branch is initializing",
+        "Codex session cannot be archived while its Nova branch is initializing",
       );
     }
     const sessionId = adopted.entry.sessionId?.trim();
@@ -1127,9 +1127,7 @@ async function assertNoPendingSupervisionBranch(params: {
       binding.supervisionSourceThreadId === params.threadId &&
       binding.pendingSupervisionBranch?.sourceThreadId === params.threadId
     ) {
-      throw new CatalogParamsError(
-        "Codex session cannot be archived until its OpenClaw branch starts",
-      );
+      throw new CatalogParamsError("Codex session cannot be archived until its Nova branch starts");
     }
   }
 }
@@ -1156,7 +1154,7 @@ async function archiveLocalCodexSession(params: {
           requireIdleThread(thread, "archive");
           if (await params.bindingStore.hasOtherThreadOwner(params.threadId)) {
             throw new CatalogParamsError(
-              "Codex session cannot be archived while it is attached to an OpenClaw session",
+              "Codex session cannot be archived while it is attached to an Nova session",
             );
           }
           await assertCodexArchiveDescendantsUnowned({
@@ -1280,7 +1278,7 @@ function registerCodexSessionCatalog(params: {
     continueSession: async (request) => {
       const config = params.getRuntimeConfig();
       if (!config) {
-        throw new Error("OpenClaw runtime config is unavailable");
+        throw new Error("Nova runtime config is unavailable");
       }
       if (request.hostId.startsWith("node:")) {
         return await continueNodeCodexSession({
@@ -1320,7 +1318,7 @@ function registerCodexSessionCatalog(params: {
       }
       const config = params.getRuntimeConfig();
       if (!config) {
-        throw new Error("OpenClaw runtime config is unavailable");
+        throw new Error("Nova runtime config is unavailable");
       }
       await archiveLocalCodexSession({
         bindingStore: params.bindingStore,

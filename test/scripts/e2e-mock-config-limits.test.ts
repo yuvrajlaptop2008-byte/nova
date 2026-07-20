@@ -140,7 +140,7 @@ async function withMockServer(
 }
 
 describe("mock OpenAI response markers", () => {
-  it("echoes dynamic OpenClaw E2E markers", async () => {
+  it("echoes dynamic Nova E2E markers", async () => {
     await withMockServer(mockOpenAiPath, {}, async (baseUrl) => {
       for (const marker of ["OPENCLAW_E2E_SEED_0_123", "OPENCLAW_E2E_ANDROID_OK"]) {
         const response = await fetch(`${baseUrl}/v1/responses`, {

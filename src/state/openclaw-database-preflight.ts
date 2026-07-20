@@ -44,7 +44,7 @@ type AgentRegistryDatabase = Pick<OpenClawStateKyselyDatabase, "agent_databases"
 export class OpenClawDatabaseSchemaPreflightError extends Error {
   constructor(readonly incompatibleDatabases: readonly IncompatibleOpenClawDatabase[]) {
     super(
-      `Gateway refused startup because ${incompatibleDatabases.length} OpenClaw database schema(s) are newer than this build. See ${OPENCLAW_DATABASE_SCHEMA_DOCS_URL}.`,
+      `Gateway refused startup because ${incompatibleDatabases.length} Nova database schema(s) are newer than this build. See ${OPENCLAW_DATABASE_SCHEMA_DOCS_URL}.`,
     );
     this.name = "OpenClawDatabaseSchemaPreflightError";
   }

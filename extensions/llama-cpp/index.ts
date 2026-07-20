@@ -65,7 +65,7 @@ export default definePluginEntry({
         },
         modelPicker: {
           label: "llama.cpp (local GGUF)",
-          hint: "Run a GGUF model in the OpenClaw process",
+          hint: "Run a GGUF model in the Nova process",
           methodId: "local",
         },
       },

@@ -171,7 +171,7 @@ export function resolveNodeRunner(): string {
   return "node";
 }
 
-/** Locate the installed OpenClaw package root that should receive update operations. */
+/** Locate the installed Nova package root that should receive update operations. */
 export async function resolveUpdateRoot(): Promise<string> {
   // Preserve the lexical package path from the invoking shim. pnpm 11 package
   // modules realpath into a shared store, which is not the install owner.
@@ -238,7 +238,7 @@ export async function runUpdateStep(params: {
   };
 }
 
-/** Ensure the configured source-update directory exists and points at an OpenClaw checkout. */
+/** Ensure the configured source-update directory exists and points at an Nova checkout. */
 export async function ensureGitCheckout(params: {
   dir: string;
   timeoutMs: number;
@@ -283,7 +283,7 @@ export async function ensureGitCheckout(params: {
   return null;
 }
 
-/** Detect the package manager that owns a global/package OpenClaw install. */
+/** Detect the package manager that owns a global/package Nova install. */
 export async function resolveGlobalManager(params: {
   root: string;
   installKind: "git" | "package" | "unknown";

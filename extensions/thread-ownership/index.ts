@@ -1,4 +1,4 @@
-// Thread Ownership plugin entrypoint registers its OpenClaw integration.
+// Thread Ownership plugin entrypoint registers its Nova integration.
 import { resolveLivePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
 import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
 import { escapeRegExp } from "openclaw/plugin-sdk/text-utility-runtime";

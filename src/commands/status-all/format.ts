@@ -51,7 +51,7 @@ type StatusGatewaySelf =
 type StatusManagedService = {
   label: string;
   installed: boolean | null;
-  managedByOpenClaw?: boolean;
+  managedByNova?: boolean;
   loadedText: string;
   runtimeShort?: string | null;
   runtime?: {
@@ -151,7 +151,7 @@ export function formatStatusTailscaleValue(params: {
 export function formatStatusServiceValue(params: {
   label: string;
   installed: boolean;
-  managedByOpenClaw?: boolean;
+  managedByNova?: boolean;
   loadedText: string;
   runtimeShort?: string | null;
   runtimeStatus?: string | null;
@@ -160,7 +160,7 @@ export function formatStatusServiceValue(params: {
   if (!params.installed) {
     return `${params.label} not installed`;
   }
-  const installedPrefix = params.managedByOpenClaw ? "installed · " : "";
+  const installedPrefix = params.managedByNova ? "installed · " : "";
   const runtimeSuffix = params.runtimeShort
     ? ` · ${params.runtimeShort}`
     : [
@@ -456,7 +456,7 @@ export function buildStatusGatewaySurfaceValues(params: {
     gatewayServiceValue: formatStatusServiceValue({
       label: params.gatewayService.label,
       installed: params.gatewayService.installed !== false,
-      managedByOpenClaw: params.gatewayService.managedByOpenClaw,
+      managedByNova: params.gatewayService.managedByNova,
       loadedText: params.gatewayService.loadedText,
       runtimeShort: params.gatewayService.runtimeShort,
       runtimeStatus: params.gatewayService.runtime?.status,
@@ -465,7 +465,7 @@ export function buildStatusGatewaySurfaceValues(params: {
     nodeServiceValue: formatStatusServiceValue({
       label: params.nodeService.label,
       installed: params.nodeService.installed !== false,
-      managedByOpenClaw: params.nodeService.managedByOpenClaw,
+      managedByNova: params.nodeService.managedByNova,
       loadedText: params.nodeService.loadedText,
       runtimeShort: params.nodeService.runtimeShort,
       runtimeStatus: params.nodeService.runtime?.status,

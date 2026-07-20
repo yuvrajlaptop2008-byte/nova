@@ -79,14 +79,14 @@ function usage() {
 
 Dispatches or consumes release validation runs, validates the prepared npm tarball,
 builds plugin publish plans, writes a green evidence bundle, then prints the exact
-OpenClaw Release Publish command only after everything is green.
+Nova Release Publish command only after everything is green.
 
 Options:
   --tag <tag>                         Release tag to validate.
   --workflow-ref <ref>                Trusted workflow ref. Default: main; matching Tideclaw branch required for alpha.
   --repo <owner/repo>                 GitHub repo. Default: ${DEFAULT_REPO}
   --full-release-run <id>             Reuse successful Full Release Validation run.
-  --npm-preflight-run <id>            Reuse successful OpenClaw NPM Release preflight run.
+  --npm-preflight-run <id>            Reuse successful Nova NPM Release preflight run.
   --windows-node-tag <tag>            Exact Windows Node release tag. Required for stable.
   --skip-dispatch                     Require both run ids; do not dispatch workflows.
   --skip-local-generated-check        Do not run local generated release baseline checks before dispatch.
@@ -248,7 +248,7 @@ export function parseArgs(argv) {
   }
   if (options.pluginPublishScope === "selected") {
     throw new Error(
-      "--plugin-publish-scope selected is only for plugin-only repair publishes; release candidates publish OpenClaw with --plugin-publish-scope all-publishable",
+      "--plugin-publish-scope selected is only for plugin-only repair publishes; release candidates publish Nova with --plugin-publish-scope all-publishable",
     );
   }
   if (options.pluginPublishScope === "all-publishable" && options.plugins.trim()) {
@@ -1469,7 +1469,7 @@ async function main() {
     allowShaPinnedWorkflowRef: true,
   });
   const npmRun = await waitForSuccessfulRun(options.repo, options.npmPreflightRunId, {
-    workflowName: "OpenClaw NPM Release",
+    workflowName: "Nova NPM Release",
     workflowRef: options.workflowRef,
   });
   const npmPreflightSource = validateNpmPreflightRunSource({

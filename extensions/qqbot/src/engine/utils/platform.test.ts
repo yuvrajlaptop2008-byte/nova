@@ -106,7 +106,7 @@ describe("qqbot local media path remapping", () => {
     expect(resolveQQBotPayloadLocalFilePath(mediaFile)).toBe(fs.realpathSync(mediaFile));
   });
 
-  it("allows structured payload files inside sibling OpenClaw media subdirectories", () => {
+  it("allows structured payload files inside sibling Nova media subdirectories", () => {
     // Core helpers such as `saveMediaBuffer(..., "outbound", ...)` place framework
     // attachments under sibling directories of `media/qqbot/`. The plugin must
     // trust the shared `~/.openclaw/media` root so auto-routed sends can access

@@ -47,7 +47,7 @@ export async function buildCodexSkillItems(params: {
           : targetExists && !params.overwrite
             ? MIGRATION_REASON_TARGET_EXISTS
             : undefined,
-        message: `Copy ${item.skill.sourceLabel} into this OpenClaw agent workspace.`,
+        message: `Copy ${item.skill.sourceLabel} into this Nova agent workspace.`,
         details: {
           skillName: item.name,
           sourceLabel: item.skill.sourceLabel,

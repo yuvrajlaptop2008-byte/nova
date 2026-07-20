@@ -379,7 +379,7 @@ function validateResetNonInteractiveGateway(params: {
  * Boolean false and undefined mean "not passed" (Commander coerces unset
  * booleans to false); explicit `--no-install-daemon` arrives as `false` via
  * resolveInstallDaemonFlag and is special-cased. `--modern` never reaches this
- * dispatch; the command layer routes it through the inference-gated OpenClaw.
+ * dispatch; the command layer routes it through the inference-gated Nova.
  */
 const GUIDED_SAFE_ONBOARD_KEYS = new Set([
   "workspace",
@@ -488,7 +488,7 @@ export async function setupWizardCommand(
   if (process.platform === "win32") {
     runtime.log(
       [
-        "Windows detected - OpenClaw runs great on WSL2!",
+        "Windows detected - Nova runs great on WSL2!",
         "Native Windows might be trickier.",
         "Quick setup: wsl --install (one command, one reboot)",
         "Guide: https://docs.openclaw.ai/windows",

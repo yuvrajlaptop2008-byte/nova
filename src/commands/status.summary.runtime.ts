@@ -219,7 +219,7 @@ function resolveSessionRuntimeLabel(params: {
     acpBackend: acpMeta?.backend,
   });
   const id = normalizeOptionalLowercaseString(runtime.id);
-  // OpenClaw/auto are generic labels; concrete harness ids give better operator signal.
+  // Nova/auto are generic labels; concrete harness ids give better operator signal.
   const resolvedHarness = id && id !== "openclaw" && id !== "auto" ? id : undefined;
   return resolveAgentRuntimeLabel({
     config: params.cfg,

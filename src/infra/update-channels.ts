@@ -1,4 +1,4 @@
-// Resolves OpenClaw update channels from config, tags, and versions.
+// Resolves Nova update channels from config, tags, and versions.
 import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import { parse as parseSemver } from "semver";
 import { normalizeLegacyDotBetaVersion } from "./semver.js";
@@ -42,7 +42,7 @@ export function normalizeUpdateChannel(value?: string | null): UpdateChannel | n
   return null;
 }
 
-/** Maps an OpenClaw update channel to the npm dist-tag used for package lookups. */
+/** Maps an Nova update channel to the npm dist-tag used for package lookups. */
 export function channelToNpmTag(channel: UpdateChannel): string {
   if (channel === "extended-stable") {
     return "extended-stable";

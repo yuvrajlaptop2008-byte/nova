@@ -75,7 +75,7 @@ export type CompactEmbeddedAgentSessionParams = {
   agentHarnessId?: string;
   /** Prevent compaction from changing the persisted session runtime or model. */
   modelSelectionLocked?: boolean;
-  /** OpenClaw-owned runtime policy prepared for this compaction path. */
+  /** Nova-owned runtime policy prepared for this compaction path. */
   runtimePlan?: AgentRuntimePlan;
   /** Host-prepared route and credential selection for native harness compaction. */
   runtimeAuthPlan?: AgentRuntimeAuthPlan;

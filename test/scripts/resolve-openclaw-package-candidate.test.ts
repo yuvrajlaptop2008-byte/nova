@@ -120,7 +120,7 @@ describe("resolve-openclaw-package-candidate", () => {
     expect(refPackageBuild).toContain('"--allow-unreleased-changelog"');
   });
 
-  it("accepts only OpenClaw release package specs for npm candidates", () => {
+  it("accepts only Nova release package specs for npm candidates", () => {
     for (const spec of [
       "openclaw@beta",
       "openclaw@alpha",
@@ -406,7 +406,7 @@ describe("resolve-openclaw-package-candidate", () => {
     for (const filename of unsafeFilenames) {
       await expect(
         moveNewestPackedTarballForTest(dir, JSON.stringify([{ filename }]), "openclaw-current.tgz"),
-      ).rejects.toThrow("npm pack reported unsafe OpenClaw tarball filename");
+      ).rejects.toThrow("npm pack reported unsafe Nova tarball filename");
     }
   });
 
@@ -422,7 +422,7 @@ describe("resolve-openclaw-package-candidate", () => {
           ["npm notice", filename].join("\n"),
           "openclaw-current.tgz",
         ),
-      ).rejects.toThrow("npm pack reported unsafe OpenClaw tarball filename");
+      ).rejects.toThrow("npm pack reported unsafe Nova tarball filename");
     }
   });
 

@@ -7,20 +7,20 @@ import type { AgentCoreRuntimeDeps } from "../../packages/agent-core/src/runtime
 import type { CompleteSimpleFn, StreamFn } from "../../packages/llm-core/src/index.js";
 import { completeSimple, streamSimple } from "./llm.js";
 
-/** Runtime adapter that lets the package agent-core use OpenClaw LLM helpers. */
+/** Runtime adapter that lets the package agent-core use Nova LLM helpers. */
 export const openClawAgentCoreRuntime = {
   completeSimple: completeSimple as unknown as CompleteSimpleFn,
   streamSimple: streamSimple as unknown as StreamFn,
 } satisfies AgentCoreRuntimeDeps;
 
-/** Agent-core class preconfigured with OpenClaw runtime dependencies. */
+/** Agent-core class preconfigured with Nova runtime dependencies. */
 export class Agent extends CoreAgent {
   constructor(options: CoreAgentOptions = {}) {
     super({ runtime: openClawAgentCoreRuntime, ...options });
   }
 }
 
-// OpenClaw-owned reusable agent core
+// Nova-owned reusable agent core
 export { runAgentLoop } from "../../packages/agent-core/src/index.js";
 // Documented proxy stream API stays until this entrypoint's announced
 // public demotion window (registry: plugin-sdk-agent-core-public-demotion).

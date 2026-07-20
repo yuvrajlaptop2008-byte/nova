@@ -1,4 +1,4 @@
-// OpenClaw test instance tests cover spawned test instance lifecycle.
+// Nova test instance tests cover spawned test instance lifecycle.
 import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";

@@ -1,5 +1,5 @@
 /**
- * OpenClaw system prompt renderer.
+ * Nova system prompt renderer.
  *
  * Assembles runtime, workspace, tooling, memory, delegation, channel, and cache-boundary prompt sections.
  */
@@ -544,7 +544,7 @@ function buildMessagingSection(params: {
     "- Cross-session: `sessions_send(sessionKey, message)`.",
     subagentOrchestrationGuidance,
     completionEventGuidance,
-    "- Provider messaging: never exec/curl; OpenClaw routes.",
+    "- Provider messaging: never exec/curl; Nova routes.",
     params.availableTools.has("message")
       ? [
           "",
@@ -621,8 +621,8 @@ function buildDocsSection(params: {
     docsPath ? "Mirror: https://docs.openclaw.ai" : undefined,
     sourcePath ? `Source: ${sourcePath}` : "Source: https://github.com/openclaw/openclaw",
     docsPath
-      ? `OpenClaw behavior questions: docs first via \`${params.readToolName}\`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.`
-      : "OpenClaw behavior questions: docs mirror first when web exists. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
+      ? `Nova behavior questions: docs first via \`${params.readToolName}\`/local search. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.`
+      : "Nova behavior questions: docs mirror first when web exists. AGENTS/project/workspace/profile/memory = instructions/user memory, not product design truth.",
     "Config field: `gateway(config.schema.lookup)` exact path. Broader: `docs/gateway/configuration.md`, `docs/gateway/configuration-reference.md`.",
     sourcePath
       ? "If docs are silent/stale, say so and inspect local source."
@@ -728,7 +728,7 @@ export function buildAgentSystemPrompt(params: {
   proactiveSubagentOrchestration?: boolean;
   /** Whether ACP-specific routing guidance should be included. Defaults to true. */
   acpEnabled?: boolean;
-  /** Prompt surface controls runtime-specific fallback fragments. Defaults to OpenClaw main. */
+  /** Prompt surface controls runtime-specific fallback fragments. Defaults to Nova main. */
   promptSurface?: AgentPromptSurfaceKind;
   /** Registered runtime slash/native command names such as `codex`. */
   nativeCommandNames?: string[];
@@ -802,7 +802,7 @@ export function buildAgentSystemPrompt(params: {
     openclaw: "System setup/config expert; writes need human approval",
     gateway: "Read gateway config/schema",
     agents_list: acpSpawnRuntimeEnabled
-      ? "List allowed OpenClaw subagent ids; not ACP ids"
+      ? "List allowed Nova subagent ids; not ACP ids"
       : "List allowed subagent ids",
     sessions_list: "List other sessions/subagents; filters/last",
     sessions_history: "Read other session/subagent history",
@@ -910,7 +910,7 @@ export function buildAgentSystemPrompt(params: {
   });
 
   const hasGateway = availableTools.has("gateway");
-  const hasOpenClaw = availableTools.has("openclaw");
+  const hasNova = availableTools.has("openclaw");
   const readToolName = resolveToolName("read");
   const execToolName = resolveToolName("exec");
   const processToolName = resolveToolName("process");
@@ -1023,7 +1023,7 @@ export function buildAgentSystemPrompt(params: {
 
   // For "none" mode, return just the basic identity line
   if (promptMode === "none") {
-    return ["You are a personal assistant running inside OpenClaw.", modelIdentityLine]
+    return ["You are a personal assistant running inside Nova.", modelIdentityLine]
       .filter(Boolean)
       .join("\n");
   }
@@ -1043,7 +1043,7 @@ export function buildAgentSystemPrompt(params: {
     capabilityToolNames: [...availableTools].toSorted(),
     renderOpenClawToolWorkflowHints,
     hasGateway,
-    hasOpenClaw,
+    hasNova,
     readToolName,
     execToolName,
     processToolName,
@@ -1078,7 +1078,7 @@ export function buildAgentSystemPrompt(params: {
   });
   const stablePrefix = cacheStablePromptPrefix(stablePrefixCacheKey, () => {
     const lines = [
-      "You are a personal assistant running inside OpenClaw.",
+      "You are a personal assistant running inside Nova.",
       "",
       "## Tooling",
       "Tools policy-filtered. Names case-sensitive; call exact.",
@@ -1170,11 +1170,11 @@ export function buildAgentSystemPrompt(params: {
         fallback: [],
       }),
       ...safetySection,
-      "## OpenClaw Control",
+      "## Nova Control",
       "Do not invent commands.",
-      ...(hasOpenClaw
+      ...(hasNova
         ? [
-            "Config, channels, plugins, new agents, model/provider, updates: ask `openclaw`. Never write own config; OpenClaw is system expert.",
+            "Config, channels, plugins, new agents, model/provider, updates: ask `openclaw`. Never write own config; Nova is system expert.",
           ]
         : [
             "Config read: `gateway` (`config.get|config.schema.lookup`). Write/restart unavailable; ask human.",
@@ -1268,7 +1268,7 @@ export function buildAgentSystemPrompt(params: {
       }),
       ...bootstrapSystemPromptSections,
       "## Workspace Files (injected)",
-      "User-editable; OpenClaw loads below as Project Context.",
+      "User-editable; Nova loads below as Project Context.",
       "",
       ...buildAssistantOutputDirectivesSection({ isMinimal, sourceMessageToolOnly }),
     ];

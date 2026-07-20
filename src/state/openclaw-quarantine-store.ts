@@ -38,9 +38,7 @@ function configureQuarantineWriter(database: DatabaseSync, storePath: string): v
   `);
   const userVersion = readQuarantineSchemaVersion(database, storePath);
   if (userVersion > OPENCLAW_QUARANTINE_SCHEMA_VERSION) {
-    throw new Error(
-      `OpenClaw quarantine store ${storePath} uses newer schema version ${userVersion}.`,
-    );
+    throw new Error(`Nova quarantine store ${storePath} uses newer schema version ${userVersion}.`);
   }
   if (userVersion === OPENCLAW_QUARANTINE_SCHEMA_VERSION) {
     return;
@@ -65,7 +63,7 @@ function readQuarantineSchemaVersion(database: DatabaseSync, storePath: string):
     | undefined;
   const userVersion = row?.user_version;
   if (typeof userVersion !== "number" || !Number.isInteger(userVersion)) {
-    throw new Error(`OpenClaw quarantine store ${storePath} has an invalid schema version.`);
+    throw new Error(`Nova quarantine store ${storePath} has an invalid schema version.`);
   }
   return userVersion;
 }
@@ -113,7 +111,7 @@ export function readOpenClawDatabaseQuarantine(
     }
     if (userVersion !== OPENCLAW_QUARANTINE_SCHEMA_VERSION) {
       throw new Error(
-        `OpenClaw quarantine store ${storePath} uses newer schema version ${userVersion}.`,
+        `Nova quarantine store ${storePath} uses newer schema version ${userVersion}.`,
       );
     }
     const row = database
@@ -132,7 +130,7 @@ export function readOpenClawDatabaseQuarantine(
       typeof row.quarantined_at !== "number" ||
       !Number.isInteger(row.quarantined_at)
     ) {
-      throw new Error(`OpenClaw quarantine store ${storePath} contains an invalid row.`);
+      throw new Error(`Nova quarantine store ${storePath} contains an invalid row.`);
     }
     return { kind: row.kind, quarantinedAt: row.quarantined_at, reason: row.reason };
   } finally {

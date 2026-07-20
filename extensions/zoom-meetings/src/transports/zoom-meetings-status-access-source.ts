@@ -8,10 +8,10 @@ export function zoomMeetingStatusAccessSource(): string {
     /complete (?:the )?captcha|security check|verify (?:that )?you(?:'re| are) (?:a )?human/i.test(pageTextLower);
   if (identityVerified && !inCall && passcodeRequired) {
     controlManualActionReason = "zoom-passcode-required";
-    controlManualActionMessage = "Enter the Zoom meeting passcode in the OpenClaw browser profile, then retry joining.";
+    controlManualActionMessage = "Enter the Zoom meeting passcode in the Nova browser profile, then retry joining.";
   } else if (identityVerified && !inCall && captchaRequired) {
     controlManualActionReason = "zoom-captcha-required";
-    controlManualActionMessage = "Complete Zoom's security check in the OpenClaw browser profile, then retry joining.";
+    controlManualActionMessage = "Complete Zoom's security check in the Nova browser profile, then retry joining.";
   }
 `;
 }

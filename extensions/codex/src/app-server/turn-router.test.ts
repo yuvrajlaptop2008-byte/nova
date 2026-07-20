@@ -529,7 +529,7 @@ describe("CodexAppServerTurnRouter", () => {
         contentItems: [
           {
             type: "inputText",
-            text: "OpenClaw did not register a handler for this app-server tool call.",
+            text: "Nova did not register a handler for this app-server tool call.",
           },
         ],
         success: false,
@@ -931,7 +931,7 @@ describe("CodexAppServerTurnRouter", () => {
         contentItems: [
           {
             type: "inputText",
-            text: "OpenClaw did not register a handler for this app-server tool call.",
+            text: "Nova did not register a handler for this app-server tool call.",
           },
         ],
         success: false,

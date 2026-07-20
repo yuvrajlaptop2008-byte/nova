@@ -128,7 +128,7 @@ function collectGatewayServiceStartRepairIssues(
     // reinstall/repair before pretending restart succeeded.
     issues.push({
       code: "version-mismatch",
-      message: `service was installed by OpenClaw ${serviceVersion}, current CLI is ${VERSION}`,
+      message: `service was installed by Nova ${serviceVersion}, current CLI is ${VERSION}`,
     });
   }
   const servicePort =
@@ -353,10 +353,7 @@ const GATEWAY_SERVICE_REGISTRY: Record<SupportedGatewayServicePlatform, GatewayS
   },
 };
 
-function assertGatewayServiceMutationOwnedByOpenClaw(
-  action: string,
-  env?: GatewayServiceEnv,
-): void {
+function assertGatewayServiceMutationOwnedByNova(action: string, env?: GatewayServiceEnv): void {
   assertGatewayServiceMutationAllowed(action, process.env);
   if (env && env !== process.env) {
     assertGatewayServiceMutationAllowed(action, env);
@@ -368,36 +365,33 @@ function withGatewayServiceMutationGuards(service: GatewayService): GatewayServi
     ...service,
     stage: async (args) => {
       // Service mutations rewrite durable launchd/systemd/schtasks files, so
-      // block them when config was produced by a newer OpenClaw.
-      assertGatewayServiceMutationOwnedByOpenClaw("rewrite the gateway service", args.env);
+      // block them when config was produced by a newer Nova.
+      assertGatewayServiceMutationOwnedByNova("rewrite the gateway service", args.env);
       await assertFutureConfigActionAllowed("rewrite the gateway service");
       return await service.stage(args);
     },
     install: async (args) => {
-      assertGatewayServiceMutationOwnedByOpenClaw(
-        "install or rewrite the gateway service",
-        args.env,
-      );
+      assertGatewayServiceMutationOwnedByNova("install or rewrite the gateway service", args.env);
       await assertFutureConfigActionAllowed("install or rewrite the gateway service");
       return await service.install(args);
     },
     uninstall: async (args) => {
-      assertGatewayServiceMutationOwnedByOpenClaw("uninstall the gateway service", args.env);
+      assertGatewayServiceMutationOwnedByNova("uninstall the gateway service", args.env);
       await assertFutureConfigActionAllowed("uninstall the gateway service");
       return await service.uninstall(args);
     },
     start: async (args) => {
-      assertGatewayServiceMutationOwnedByOpenClaw("start the gateway service", args.env);
+      assertGatewayServiceMutationOwnedByNova("start the gateway service", args.env);
       await assertFutureConfigActionAllowed("start the gateway service");
       return await service.start(args);
     },
     stop: async (args) => {
-      assertGatewayServiceMutationOwnedByOpenClaw("stop the gateway service", args.env);
+      assertGatewayServiceMutationOwnedByNova("stop the gateway service", args.env);
       await assertFutureConfigActionAllowed("stop the gateway service");
       return await service.stop(args);
     },
     restart: async (args) => {
-      assertGatewayServiceMutationOwnedByOpenClaw("restart the gateway service", args.env);
+      assertGatewayServiceMutationOwnedByNova("restart the gateway service", args.env);
       await assertFutureConfigActionAllowed("restart the gateway service");
       return await service.restart(args);
     },

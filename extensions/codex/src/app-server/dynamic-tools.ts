@@ -1,5 +1,5 @@
 /**
- * Bridges OpenClaw runtime tools into Codex app-server dynamic tool specs and
+ * Bridges Nova runtime tools into Codex app-server dynamic tool specs and
  * tool-call responses.
  */
 import { createHash } from "node:crypto";
@@ -370,10 +370,10 @@ export type CodexDynamicToolBridge = {
   };
 };
 
-/** Namespace attached to OpenClaw-owned dynamic tools exposed to Codex. */
+/** Namespace attached to Nova-owned dynamic tools exposed to Codex. */
 const CODEX_OPENCLAW_DYNAMIC_TOOL_NAMESPACE = "openclaw";
 
-// Keep OpenClaw control-path tools directly callable even when Codex tool_search
+// Keep Nova control-path tools directly callable even when Codex tool_search
 // is unavailable or resolves a connector-only universe. Developer instructions
 // still steer normal Codex subagents to native spawn_agent.
 const ALWAYS_DIRECT_DYNAMIC_TOOL_NAMES = new Set([
@@ -414,7 +414,7 @@ function invalidateComputerFrame(contextEpoch: {
 }
 
 /**
- * Creates dynamic tool specs and a call handler that executes OpenClaw tools,
+ * Creates dynamic tool specs and a call handler that executes Nova tools,
  * applies hooks/middleware, and records delivery/media telemetry.
  */
 export function createCodexDynamicToolBridge(params: {
@@ -521,8 +521,8 @@ export function createCodexDynamicToolBridge(params: {
       if (!toolEntry) {
         const executedArguments = jsonObjectToRecord(call.arguments);
         const message = registeredToolNames.has(call.tool)
-          ? `OpenClaw tool is not available for this turn: ${call.tool}`
-          : `Unknown OpenClaw tool: ${call.tool}`;
+          ? `Nova tool is not available for this turn: ${call.tool}`
+          : `Unknown Nova tool: ${call.tool}`;
         finalizeToolTerminalPresentation({
           toolCallId: call.callId,
           runId: toolResultHookContext.runId,
@@ -793,7 +793,7 @@ export function createCodexDynamicToolBridge(params: {
             : resolveToolExecutionErrorKind(error));
         const errorMessage = formatToolExecutionErrorMessage(
           error,
-          "OpenClaw dynamic tool call failed.",
+          "Nova dynamic tool call failed.",
         );
         executionPrevented =
           executionPrevented ||
@@ -937,7 +937,7 @@ function createCodexDynamicToolSpecs(params: {
   for (const entry of params.entries) {
     const functionSpec = createCodexDynamicToolFunctionSpec({ entry });
     if (entry.name === "openclaw" && params.directToolNames.has(entry.name)) {
-      // OpenClaw is ring-zero and its whole turn surface. Keep its canonical
+      // Nova is ring-zero and its whole turn surface. Keep its canonical
       // root name even though generic direct-only tools use a model namespace.
       specs.push(functionSpec);
       continue;
@@ -1397,7 +1397,7 @@ function convertToolContents(
   if (totalTextChars <= maxChars) {
     return content.flatMap(convertToolContent);
   }
-  const noticeText = `...(OpenClaw truncated dynamic tool result: original ${totalTextChars} chars, showing ${maxChars}; rerun with narrower args.)`;
+  const noticeText = `...(Nova truncated dynamic tool result: original ${totalTextChars} chars, showing ${maxChars}; rerun with narrower args.)`;
   const notice = `\n${noticeText}`;
   const textBudget = Math.max(0, maxChars - notice.length);
   let remainingTextBudget = textBudget;

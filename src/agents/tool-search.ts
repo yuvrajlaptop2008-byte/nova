@@ -1,7 +1,7 @@
 /**
  * Tool Search catalog compaction.
  *
- * Presents large OpenClaw/MCP/client tool inventories through search, describe, call, and optional code-mode tools.
+ * Presents large Nova/MCP/client tool inventories through search, describe, call, and optional code-mode tools.
  */
 import { spawn } from "node:child_process";
 import os from "node:os";
@@ -738,7 +738,7 @@ function toCatalogEntry(
     label: tool.label,
     description: tool.description ?? "",
     parameters: tool.parameters,
-    // Only locally loaded OpenClaw/core tools may declare model-visible output
+    // Only locally loaded Nova/core tools may declare model-visible output
     // contracts. MCP and client metadata remains untrusted and deferred.
     ...(source === "openclaw" && (tool as AnyAgentTool).outputSchema
       ? { outputSchema: (tool as AnyAgentTool).outputSchema }
@@ -2525,7 +2525,7 @@ export function createToolSearchTools(ctx: ToolSearchToolContext): AnyAgentTool[
     {
       name: TOOL_CALL_RAW_TOOL_NAME,
       label: "Tool Call",
-      description: "Call an exact Tool Search result id or name through OpenClaw.",
+      description: "Call an exact Tool Search result id or name through Nova.",
       parameters: Type.Object({
         id: Type.String({ description: "Tool search result id or tool name." }),
         args: Type.Optional(

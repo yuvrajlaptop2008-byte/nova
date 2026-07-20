@@ -79,13 +79,13 @@ export function buildBrowserDoctorReport(params: {
       label: "Chrome extension relay",
       status: status.running ? "pass" : "fail",
       summary: status.running
-        ? "OpenClaw Chrome extension is connected"
-        : "OpenClaw Chrome extension is not connected",
+        ? "Nova Chrome extension is connected"
+        : "Nova Chrome extension is not connected",
       ...(status.running
         ? {}
         : {
             fixHint:
-              "Install the OpenClaw Chrome extension (openclaw browser extension path), run openclaw browser extension pair, and paste the pairing string into the extension popup.",
+              "Install the Nova Chrome extension (openclaw browser extension path), run openclaw browser extension pair, and paste the pairing string into the extension popup.",
           }),
     });
   } else {

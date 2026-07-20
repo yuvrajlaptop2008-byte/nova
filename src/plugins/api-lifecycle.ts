@@ -8,7 +8,7 @@ type FunctionPropertyNames<T> = Extract<
   string
 >;
 
-/** Names of plugin API methods exposed on the OpenClaw plugin API. */
+/** Names of plugin API methods exposed on the Nova plugin API. */
 type PluginApiMethodName = FunctionPropertyNames<OpenClawPluginApi>;
 
 /** Lifecycle policy for whether a plugin API method can be called after registration. */

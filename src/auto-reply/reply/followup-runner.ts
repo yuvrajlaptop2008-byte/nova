@@ -539,7 +539,7 @@ export function createFollowupRunner(params: {
       deliveredAnyPayload =
         (await sendDispatcherPayload({
           text:
-            "Follow-up completed, but OpenClaw could not deliver it to the originating " +
+            "Follow-up completed, but Nova could not deliver it to the originating " +
             "channel. The reply content was not forwarded to this channel to avoid " +
             "cross-channel misdelivery.",
           isError: true,

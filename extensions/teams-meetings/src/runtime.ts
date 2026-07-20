@@ -118,8 +118,8 @@ export class TeamsMeetingsRuntime {
           audioBridgeUnavailable: "Realtime speech requires an active Chrome audio bridge.",
           browserUnverified: "Microsoft Teams browser state has not been verified yet.",
           manualActionFallback:
-            "Resolve the Microsoft Teams browser prompt before asking OpenClaw to speak.",
-          microphoneMuted: "Turn on the OpenClaw Teams microphone before asking OpenClaw to speak.",
+            "Resolve the Microsoft Teams browser prompt before asking Nova to speak.",
+          microphoneMuted: "Turn on the Nova Teams microphone before asking Nova to speak.",
           microphoneMutedReason: "teams-microphone-muted",
           notInCall: "Microsoft Teams has not reported that the browser guest is in the call.",
           notInCallReason: "not-in-call",

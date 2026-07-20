@@ -959,7 +959,7 @@ function escapeTableCell(value: string): string {
 
 export function renderQaConfidenceMarkdownReport(report: QaConfidenceReport): string {
   const lines = [
-    `# OpenClaw QA Confidence Report - ${report.profile}`,
+    `# Nova QA Confidence Report - ${report.profile}`,
     "",
     `- Generated at: ${report.generatedAt}`,
     `- Verdict: ${report.pass ? "pass" : "fail"}`,
@@ -1271,7 +1271,7 @@ async function buildQaConfidenceSelfTestSummary(
 
 function renderQaConfidenceSelfTestMarkdownReport(summary: QaConfidenceSelfTestSummary): string {
   const lines = [
-    "# OpenClaw QA Confidence Self-Test",
+    "# Nova QA Confidence Self-Test",
     "",
     `- Generated at: ${summary.generatedAt}`,
     `- Verdict: ${summary.pass ? "pass" : "fail"}`,

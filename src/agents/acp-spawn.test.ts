@@ -1281,7 +1281,7 @@ describe("spawnAcpDirect", () => {
     expect(agentCall?.params?.timeout).toBe(172_800);
   });
 
-  it("rejects OpenClaw config agent ids when runtime=acp targets a native agent", async () => {
+  it("rejects Nova config agent ids when runtime=acp targets a native agent", async () => {
     replaceSpawnConfig({
       ...createDefaultSpawnConfig(),
       acp: {
@@ -1316,7 +1316,7 @@ describe("spawnAcpDirect", () => {
     });
     expect(result).toHaveProperty(
       "error",
-      'agentId "pleres" is an OpenClaw config agent, not an ACP harness. Use runtime="subagent" or omit runtime for OpenClaw config agents. Use runtime="acp" only with external ACP harness ids such as codex, claude, droid, gemini, or opencode, or configure agents.list[].runtime.type="acp" with runtime.acp.agent.',
+      'agentId "pleres" is an Nova config agent, not an ACP harness. Use runtime="subagent" or omit runtime for Nova config agents. Use runtime="acp" only with external ACP harness ids such as codex, claude, droid, gemini, or opencode, or configure agents.list[].runtime.type="acp" with runtime.acp.agent.',
     );
     expect(hoisted.initializeSessionMock).not.toHaveBeenCalled();
     expectGatewayMethodNotCalled("agent");
@@ -1361,7 +1361,7 @@ describe("spawnAcpDirect", () => {
     expect(agentCall?.params).not.toHaveProperty("attachments");
   });
 
-  it("maps OpenClaw ACP runtime agent aliases to their configured harness id", async () => {
+  it("maps Nova ACP runtime agent aliases to their configured harness id", async () => {
     replaceSpawnConfig({
       ...createDefaultSpawnConfig(),
       agents: {

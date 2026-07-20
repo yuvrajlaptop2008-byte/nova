@@ -116,7 +116,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     ...(options.local ? [{ name: "auth", description: "Run provider auth/login flow" }] : []),
     { name: "agent", description: "Switch agent (or open picker)" },
     { name: "agents", description: "Open agent picker" },
-    { name: "openclaw", description: "Return to OpenClaw" },
+    { name: "openclaw", description: "Return to Nova" },
     { name: "session", description: "Switch session (or open picker)" },
     { name: "sessions", description: "Open session picker" },
     {

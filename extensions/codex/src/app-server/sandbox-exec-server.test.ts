@@ -43,7 +43,7 @@ function echoFirstInputLineScript(prefix: string): string {
   ].join(" ");
 }
 
-describe("OpenClaw Codex sandbox exec-server", () => {
+describe("Nova Codex sandbox exec-server", () => {
   it("reports unavailable app-server remote environment support without exposing an environment", async () => {
     const sandbox = createSandboxContext({});
     const client = {

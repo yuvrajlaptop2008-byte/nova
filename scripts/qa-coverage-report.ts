@@ -1,4 +1,4 @@
-// Qa Coverage Report script supports OpenClaw repository automation.
+// Qa Coverage Report script supports Nova repository automation.
 import { booleanFlag, parseFlagArgs, stringFlag, stringListFlag } from "./lib/arg-utils.mjs";
 
 type Options = {

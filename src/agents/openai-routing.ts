@@ -72,7 +72,7 @@ export function resolveOpenAIImplicitAgentRuntime(params: {
   });
   if (!resolution) {
     // Endpoint and adapter ownership stays in the provider artifact. Without
-    // that policy, keep credentials and traffic on the core OpenClaw runtime.
+    // that policy, keep credentials and traffic on the core Nova runtime.
     return "openclaw";
   }
   return resolution.kind !== "incompatible" && resolution.defaultRuntimeId === "codex"

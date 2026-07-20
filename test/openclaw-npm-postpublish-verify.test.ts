@@ -1,5 +1,5 @@
 import { generateKeyPairSync, sign } from "node:crypto";
-// OpenClaw npm postpublish tests validate postpublish verification behavior.
+// Nova npm postpublish tests validate postpublish verification behavior.
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -401,7 +401,7 @@ describe("npm registry provenance verification", () => {
           verificationCalls += 1;
         },
       }),
-    ).rejects.toThrow("does not bind 2026.3.23 to the trusted OpenClaw GitHub release workflow");
+    ).rejects.toThrow("does not bind 2026.3.23 to the trusted Nova GitHub release workflow");
     expect(verificationCalls).toBe(0);
   });
 
@@ -438,7 +438,7 @@ describe("npm registry provenance verification", () => {
           attempts += 1;
           if (attempts === 1) {
             throw new Error(
-              "npm provenance attestation does not bind 2026.3.23 to the trusted OpenClaw GitHub release workflow.",
+              "npm provenance attestation does not bind 2026.3.23 to the trusted Nova GitHub release workflow.",
             );
           }
           if (attempts === 2) {
@@ -727,11 +727,11 @@ describe("collectInstalledPluginSdkZodArtifactErrors", () => {
 
 describe("normalizeInstalledBinaryVersion", () => {
   it("accepts decorated CLI version output", () => {
-    expect(normalizeInstalledBinaryVersion("OpenClaw 2026.4.8 (9ece252)")).toBe("2026.4.8");
-    expect(normalizeInstalledBinaryVersion("OpenClaw 2026.4.8-beta.1 (9ece252)")).toBe(
+    expect(normalizeInstalledBinaryVersion("Nova 2026.4.8 (9ece252)")).toBe("2026.4.8");
+    expect(normalizeInstalledBinaryVersion("Nova 2026.4.8-beta.1 (9ece252)")).toBe(
       "2026.4.8-beta.1",
     );
-    expect(normalizeInstalledBinaryVersion("OpenClaw 2026.4.8-alpha.1 (9ece252)")).toBe(
+    expect(normalizeInstalledBinaryVersion("Nova 2026.4.8-alpha.1 (9ece252)")).toBe(
       "2026.4.8-alpha.1",
     );
   });

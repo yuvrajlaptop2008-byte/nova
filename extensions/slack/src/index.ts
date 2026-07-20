@@ -1,4 +1,4 @@
-// Slack plugin entrypoint registers its OpenClaw integration.
+// Slack plugin entrypoint registers its Nova integration.
 export {
   listEnabledSlackAccounts,
   listSlackAccountIds,

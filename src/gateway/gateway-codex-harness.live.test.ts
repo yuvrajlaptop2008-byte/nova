@@ -635,7 +635,7 @@ async function verifyCodexCodeModeOnlyDynamicToolProbe(params: {
     sessionKey: params.sessionKey,
     message: [
       "Code-mode-only bridge probe.",
-      "Before replying, call the OpenClaw sessions_list tool exactly once.",
+      "Before replying, call the Nova sessions_list tool exactly once.",
       "Use limit=1 and includeLastMessage=false.",
       `After the tool result returns, reply exactly ${expectedToken} and nothing else.`,
     ].join("\n"),
@@ -1151,7 +1151,7 @@ async function verifyCodexGuardianProbe(params: {
   const allowStatus = findGuardianReviewStatus(allowResult.events);
   if (allowStatus === "denied") {
     // Guardian policy is owned by Codex and may reject even low-risk escalations.
-    // The OpenClaw contract is that the review completes and the agent receives
+    // The Nova contract is that the review completes and the agent receives
     // a final response instead of hanging on approval plumbing.
     expect(allowResult.text.toLowerCase()).toMatch(/approv|permission|guardian|reject|denied/);
     expect(allowReview?.data?.status).toBe("denied");
@@ -1198,7 +1198,7 @@ async function verifyCodexGuardianProbe(params: {
     requireEvents: false,
   });
   // The approve/deny call is Codex policy-owned and may change independently.
-  // OpenClaw's strict projection contract is covered by the allow probe above.
+  // Nova's strict projection contract is covered by the allow probe above.
   // Riskier prompts may be refused or ask back before Codex creates a review
   // event, depending on current policy/model behavior.
   if (review?.data?.status === "denied") {

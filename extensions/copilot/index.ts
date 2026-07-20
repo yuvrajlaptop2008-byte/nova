@@ -1,4 +1,4 @@
-// Copilot plugin entrypoint registers its OpenClaw integration.
+// Copilot plugin entrypoint registers its Nova integration.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
 import { createCopilotAgentHarness, type CopilotSessionBinding } from "./harness.js";

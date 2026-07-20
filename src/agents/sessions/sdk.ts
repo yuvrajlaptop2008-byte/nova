@@ -96,7 +96,7 @@ export interface CreateAgentSessionOptions {
   /**
    * Optional allowlist of tool names.
    *
-   * When omitted, OpenClaw enables the default built-in tools (read, bash, edit, write)
+   * When omitted, Nova enables the default built-in tools (read, bash, edit, write)
    * and leaves extension/custom tools enabled unless `noTools` changes that default.
    * When provided, only the listed tool names are enabled.
    */
@@ -220,7 +220,7 @@ function getAttributionHeaders(
   if (model.provider === "openrouter" || baseUrl.includes("openrouter.ai")) {
     return {
       "HTTP-Referer": "https://openclaw.ai",
-      "X-OpenRouter-Title": "OpenClaw",
+      "X-OpenRouter-Title": "Nova",
       "X-OpenRouter-Categories": "cli-agent",
     };
   }

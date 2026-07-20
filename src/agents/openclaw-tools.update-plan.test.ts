@@ -1,4 +1,4 @@
-// Verifies update_plan registration gates and base OpenClaw tool inclusion policy.
+// Verifies update_plan registration gates and base Nova tool inclusion policy.
 import { afterEach, describe, expect, it } from "vitest";
 import type { OpenClawConfig } from "../config/config.js";
 import { setEmbeddedMode } from "../infra/embedded-mode.js";
@@ -50,7 +50,7 @@ describe("openclaw-tools update_plan gating", () => {
     setEmbeddedMode(false);
   });
 
-  it("keeps concrete OpenClaw tool names in the factory descriptor catalog", () => {
+  it("keeps concrete Nova tool names in the factory descriptor catalog", () => {
     const emittedNames = createFastToolNames({
       agentSessionKey: "agent:main:main",
       config: {

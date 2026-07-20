@@ -191,7 +191,7 @@ function unauthorizedHintForMessage(message: string): string | null {
   return null;
 }
 
-/** Creates the default Canvas CLI dependency bundle backed by the OpenClaw gateway CLI. */
+/** Creates the default Canvas CLI dependency bundle backed by the Nova gateway CLI. */
 export function createDefaultCanvasCliDependencies(): CanvasCliDependencies {
   const nodesCallOpts = (cmd: Command, defaults?: { timeoutMs?: number }) =>
     cmd

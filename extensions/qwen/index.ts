@@ -1,4 +1,4 @@
-// Qwen plugin entrypoint registers its OpenClaw integration.
+// Qwen plugin entrypoint registers its Nova integration.
 import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
 import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
 import { applyQwenNativeStreamingUsageCompat } from "./api.js";

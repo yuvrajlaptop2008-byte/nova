@@ -412,7 +412,7 @@ describe("kitchen-sink plugin assertions", () => {
     }
   });
 
-  it("bounds irrelevant OpenClaw home traversal during log scans", () => {
+  it("bounds irrelevant Nova home traversal during log scans", () => {
     const parent = mkdtempSync(path.join(tmpdir(), "openclaw-kitchen-sink-scan-"));
     const home = path.join(parent, "home");
     const scratchRoot = path.join(parent, "scratch");

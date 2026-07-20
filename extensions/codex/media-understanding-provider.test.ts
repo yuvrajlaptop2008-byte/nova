@@ -235,9 +235,9 @@ describe("codex media understanding provider", () => {
       cwd: "/tmp/openclaw-agent",
       approvalPolicy: "on-request",
       sandbox: "read-only",
-      serviceName: "OpenClaw",
+      serviceName: "Nova",
       developerInstructions:
-        "You are OpenClaw's bounded image-understanding worker. Describe only the provided image content. Do not call tools, edit files, or ask follow-up questions.",
+        "You are Nova's bounded image-understanding worker. Describe only the provided image content. Do not call tools, edit files, or ask follow-up questions.",
       config: {
         "features.apps": false,
         "features.goals": false,
@@ -531,9 +531,9 @@ describe("codex media understanding provider", () => {
       cwd: "/tmp/openclaw-agent",
       approvalPolicy: "on-request",
       sandbox: "read-only",
-      serviceName: "OpenClaw",
+      serviceName: "Nova",
       developerInstructions:
-        "You are OpenClaw's bounded structured-extraction worker. Return only the requested extraction. Do not call tools, edit files, ask follow-up questions, or include secrets.",
+        "You are Nova's bounded structured-extraction worker. Return only the requested extraction. Do not call tools, edit files, ask follow-up questions, or include secrets.",
       config: {
         "features.apps": false,
         "features.goals": false,

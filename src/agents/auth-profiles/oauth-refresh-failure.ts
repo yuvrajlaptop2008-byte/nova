@@ -221,7 +221,7 @@ export function buildOAuthRefreshFailureLoginCommand(
   if (sanitizedProvider === "claude-cli") {
     // claude-cli is not a standalone provider id; it is the Anthropic provider
     // accessed via the CLI auth method. Refresh the local Claude CLI session
-    // first, then re-register that auth method with OpenClaw.
+    // first, then re-register that auth method with Nova.
     const claudeLoginCommand = formatCliCommand("claude auth login");
     const openclawLoginCommand = formatCliCommand(
       sanitizedProfileId

@@ -46,7 +46,7 @@ function createMissingLlamaCppProviderError(): Error {
       "Unknown memory embedding provider: local.",
       "Local GGUF embeddings are provided by the official llama.cpp provider plugin.",
       "Install it with: openclaw plugins install @openclaw/llama-cpp-provider",
-      "Then restart OpenClaw and retry: openclaw memory status --deep",
+      "Then restart Nova and retry: openclaw memory status --deep",
     ].join("\n"),
   );
 }

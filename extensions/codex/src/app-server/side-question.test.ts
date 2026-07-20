@@ -1184,7 +1184,7 @@ describe("runCodexAppServerSideQuestion", () => {
     });
     expect(toolResponse).toEqual({
       success: false,
-      contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: web_search" }],
+      contentItems: [{ type: "inputText", text: "Unknown Nova tool: web_search" }],
     });
     expect(toolExecuteMock).not.toHaveBeenCalled();
   });
@@ -1221,7 +1221,7 @@ describe("runCodexAppServerSideQuestion", () => {
     });
     expect(toolResponse).toEqual({
       success: false,
-      contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: web_search" }],
+      contentItems: [{ type: "inputText", text: "Unknown Nova tool: web_search" }],
     });
     expect(toolExecuteMock).not.toHaveBeenCalled();
   });
@@ -1238,7 +1238,7 @@ describe("runCodexAppServerSideQuestion", () => {
     });
     expect(toolResponse).toEqual({
       success: false,
-      contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: web_search" }],
+      contentItems: [{ type: "inputText", text: "Unknown Nova tool: web_search" }],
     });
     expect(toolExecuteMock).not.toHaveBeenCalled();
   });
@@ -1265,7 +1265,7 @@ describe("runCodexAppServerSideQuestion", () => {
     });
     expect(toolResponse).toEqual({
       success: false,
-      contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: web_search" }],
+      contentItems: [{ type: "inputText", text: "Unknown Nova tool: web_search" }],
     });
     expect(toolExecuteMock).not.toHaveBeenCalled();
     expect(resolveCodexProviderWebSearchSupportForClientMock).not.toHaveBeenCalled();
@@ -1293,13 +1293,13 @@ describe("runCodexAppServerSideQuestion", () => {
     });
     expect(toolResponse).toEqual({
       success: false,
-      contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: web_search" }],
+      contentItems: [{ type: "inputText", text: "Unknown Nova tool: web_search" }],
     });
     expect(toolExecuteMock).not.toHaveBeenCalled();
     expect(resolveCodexProviderWebSearchSupportForClientMock).not.toHaveBeenCalled();
   });
 
-  it("rejects /btw before forking when the current OpenClaw session is sandboxed", async () => {
+  it("rejects /btw before forking when the current Nova session is sandboxed", async () => {
     await expect(
       runCodexAppServerSideQuestion(
         sideParams({
@@ -1308,7 +1308,7 @@ describe("runCodexAppServerSideQuestion", () => {
         }),
       ),
     ).rejects.toThrow(
-      "Codex-native /btw side-question mode is unavailable because OpenClaw sandboxing is active for this session.",
+      "Codex-native /btw side-question mode is unavailable because Nova sandboxing is active for this session.",
     );
 
     expect(getSharedCodexAppServerClientMock).not.toHaveBeenCalled();
@@ -1329,7 +1329,7 @@ describe("runCodexAppServerSideQuestion", () => {
         }),
       ),
     ).rejects.toThrow(
-      "Codex-native /btw side-question mode is unavailable because OpenClaw sandboxing is active for this session.",
+      "Codex-native /btw side-question mode is unavailable because Nova sandboxing is active for this session.",
     );
 
     expect(getSharedCodexAppServerClientMock).not.toHaveBeenCalled();
@@ -1344,7 +1344,7 @@ describe("runCodexAppServerSideQuestion", () => {
         }),
       ),
     ).rejects.toThrow(
-      "Codex-native /btw side-question mode is unavailable because OpenClaw exec host=node is active for this session.",
+      "Codex-native /btw side-question mode is unavailable because Nova exec host=node is active for this session.",
     );
 
     expect(getSharedCodexAppServerClientMock).not.toHaveBeenCalled();
@@ -2226,7 +2226,7 @@ describe("runCodexAppServerSideQuestion", () => {
     expect(activeDiagnosticToolKeys(diagnosticEvents)).toEqual(new Set());
   });
 
-  it("bridges side-thread dynamic tool requests to OpenClaw tools", async () => {
+  it("bridges side-thread dynamic tool requests to Nova tools", async () => {
     const client = createFakeClient();
     let toolResponse: unknown;
     client.request.mockImplementation(async (method: string) => {
@@ -2330,7 +2330,7 @@ describe("runCodexAppServerSideQuestion", () => {
     expect(computerExecute).not.toHaveBeenCalled();
     expect(toolResponse).toEqual({
       success: false,
-      contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: computer" }],
+      contentItems: [{ type: "inputText", text: "Unknown Nova tool: computer" }],
     });
   });
 

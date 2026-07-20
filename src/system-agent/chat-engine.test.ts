@@ -422,7 +422,7 @@ describe("SystemAgentChatEngine", () => {
       agentDraft: "hatch",
     });
     expect(reply.text).toContain("Your agent is hatching");
-    expect(reply.text).toContain("Settings → Ask OpenClaw");
+    expect(reply.text).toContain("Settings → Ask Nova");
   });
 
   it("hatches into a newly created agent and carries its id", async () => {
@@ -628,7 +628,7 @@ describe("SystemAgentChatEngine", () => {
     expect(reply.handoff).toBeUndefined();
     expect(reply.sensitive).toBeUndefined();
     expect(reply.text).toContain("replace the inference route powering this session");
-    expect(reply.text).toContain("Exit OpenClaw and run `openclaw onboard`");
+    expect(reply.text).toContain("Exit Nova and run `openclaw onboard`");
   });
 
   it("keeps the current inference route when model provider setup is declined", async () => {
@@ -2114,7 +2114,7 @@ describe("SystemAgentChatEngine", () => {
   });
 });
 
-describe("OpenClaw agent loop backends", () => {
+describe("Nova agent loop backends", () => {
   it("runs a configured claude-cli model through the CLI loop with the ring-zero MCP tool", async () => {
     useTempStateDir();
     const config = {

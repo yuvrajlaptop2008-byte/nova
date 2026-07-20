@@ -36,19 +36,19 @@ describe("buildCliAgentSystemPrompt", () => {
     expect(prompt).not.toContain("Do not poll `subagents list` / `sessions_list` in a loop");
   });
 
-  it("uses CLI backend tool fallback instead of OpenClaw tool assumptions", () => {
+  it("uses CLI backend tool fallback instead of Nova tool assumptions", () => {
     const prompt = buildCliAgentSystemPrompt({
       workspaceDir: "/tmp/openclaw",
       tools: [],
       modelDisplay: "test/model",
     });
 
-    expect(prompt).not.toContain("OpenClaw lists the standard tools above");
+    expect(prompt).not.toContain("Nova lists the standard tools above");
     expect(prompt).not.toContain("This runtime enables:");
     expect(prompt).not.toContain("For long waits, avoid rapid poll loops");
     expect(prompt).not.toContain("Larger work: use `sessions_spawn`");
     expect(prompt).not.toContain("Do not poll `subagents list` / `sessions_list` in a loop");
-    expect(prompt).toContain("No OpenClaw tool list is injected");
+    expect(prompt).toContain("No Nova tool list is injected");
   });
 
   it("describes bundled exec as synchronous node execution", () => {
@@ -120,7 +120,7 @@ describe("buildCliAgentSystemPrompt", () => {
 
   it("includes CLI-scoped plugin command guidance", () => {
     // Plugin command guidance is surface-filtered; CLI prompts must not leak
-    // OpenClaw-main command text into external CLI backends.
+    // Nova-main command text into external CLI backends.
     registerPluginCommand("demo-plugin", {
       name: "demo_cli",
       description: "Demo CLI command",
@@ -130,7 +130,7 @@ describe("buildCliAgentSystemPrompt", () => {
           surfaces: ["cli_backend"],
         },
         {
-          text: "OpenClaw-only command guidance.",
+          text: "Nova-only command guidance.",
           surfaces: ["openclaw_main"],
         },
       ],
@@ -144,7 +144,7 @@ describe("buildCliAgentSystemPrompt", () => {
     });
 
     expect(prompt).toContain("CLI-only command guidance.");
-    expect(prompt).not.toContain("OpenClaw-only command guidance.");
+    expect(prompt).not.toContain("Nova-only command guidance.");
   });
 
   it("includes session identity in runtime when provided", () => {

@@ -101,16 +101,16 @@ const commandSignalHandlers = new Map(
 function usage() {
   return `Usage: node scripts/e2e/kitchen-sink-rpc-walk.mjs
 
-Runs the external Kitchen Sink plugin RPC walk against a built OpenClaw entry.
+Runs the external Kitchen Sink plugin RPC walk against a built Nova entry.
 
 Environment:
-  OPENCLAW_ENTRY                         Built OpenClaw entrypoint. Defaults to dist/index.mjs or dist/index.js.
+  OPENCLAW_ENTRY                         Built Nova entrypoint. Defaults to dist/index.mjs or dist/index.js.
   OPENCLAW_KITCHEN_SINK_NPM_SPEC         Plugin package spec. Default: npm:@openclaw/kitchen-sink@latest.
   OPENCLAW_KITCHEN_SINK_PLUGIN_ID        Plugin id. Default: openclaw-kitchen-sink-fixture.
   OPENCLAW_KITCHEN_SINK_PERSONALITY      Plugin fixture personality. Default: conformance.
   OPENCLAW_KITCHEN_SINK_RPC_PORT         Gateway loopback port. Default: OS-selected free port.
   OPENCLAW_KITCHEN_SINK_RPC_READY_MS     Gateway readiness timeout.
-  OPENCLAW_KITCHEN_SINK_RPC_COMMAND_MS   OpenClaw command timeout.
+  OPENCLAW_KITCHEN_SINK_RPC_COMMAND_MS   Nova command timeout.
   OPENCLAW_KITCHEN_SINK_RPC_INSTALL_MS   Plugin install timeout.
   OPENCLAW_KITCHEN_SINK_RPC_CALL_MS      RPC call timeout.
   OPENCLAW_KITCHEN_SINK_RPC_FETCH_MS     HTTP readiness probe timeout.
@@ -652,7 +652,7 @@ export function signalProcessGroup(
   }
 }
 
-async function runOpenClaw(runner, args, env, options = {}) {
+async function runNova(runner, args, env, options = {}) {
   const config = resolveKitchenSinkRpcConfig(env);
   const command = await resolveOpenClawCommand(runner, args, env, {
     stdio: ["ignore", "pipe", "pipe"],
@@ -949,7 +949,7 @@ async function rpcCallViaCli(method, params, options) {
   const config = resolveKitchenSinkRpcConfig(options.env);
   let stdout;
   try {
-    ({ stdout } = await runOpenClaw(
+    ({ stdout } = await runNova(
       options.runner,
       [
         "gateway",
@@ -2583,7 +2583,7 @@ export async function main() {
   let sampleTimer;
   try {
     console.log(`Kitchen Sink RPC walk using ${PLUGIN_SPEC} via ${runner.label}`);
-    await runOpenClaw(runner, ["plugins", "install", PLUGIN_SPEC, "--force"], env, {
+    await runNova(runner, ["plugins", "install", PLUGIN_SPEC, "--force"], env, {
       ...commandResourceOptions,
       requireResourceSample: true,
       resourceLabel: "plugins install",
@@ -2592,14 +2592,14 @@ export async function main() {
     runner = resolveOpenClawRunner();
     console.log(`Kitchen Sink RPC runtime runner: ${runner.label}`);
     configureKitchenSink(env, port);
-    await runOpenClaw(runner, ["plugins", "enable", PLUGIN_ID], env, {
+    await runNova(runner, ["plugins", "enable", PLUGIN_ID], env, {
       ...commandResourceOptions,
       resourceLabel: "plugins enable",
       timeoutMs: 60000,
     });
     const inspect = parseJsonOutput(
       (
-        await runOpenClaw(runner, ["plugins", "inspect", PLUGIN_ID, "--runtime", "--json"], env, {
+        await runNova(runner, ["plugins", "inspect", PLUGIN_ID, "--runtime", "--json"], env, {
           ...commandResourceOptions,
           resourceLabel: "plugins inspect",
         })

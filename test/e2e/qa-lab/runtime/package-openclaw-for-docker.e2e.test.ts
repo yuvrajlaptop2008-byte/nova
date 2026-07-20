@@ -1,4 +1,4 @@
-// Package OpenClaw For Docker tests cover QA Lab package artifact evidence.
+// Package Nova For Docker tests cover QA Lab package artifact evidence.
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -657,7 +657,7 @@ describe("package-openclaw-for-docker", () => {
           restoreChangelog: async () => {},
           runCaptureImpl: async () => `${filename}\n`,
         }),
-      ).rejects.toThrow("npm pack reported unsafe OpenClaw tarball filename");
+      ).rejects.toThrow("npm pack reported unsafe Nova tarball filename");
     }
   });
 
@@ -673,7 +673,7 @@ describe("package-openclaw-for-docker", () => {
           restoreChangelog: async () => {},
           runCaptureImpl: async () => "npm notice\n",
         }),
-      ).rejects.toThrow("missing packed OpenClaw tarball");
+      ).rejects.toThrow("missing packed Nova tarball");
 
       await expect(
         packOpenClawPackageForDocker("/repo", outputDir, {

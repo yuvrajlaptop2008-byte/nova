@@ -376,7 +376,7 @@ describe("ExtensionRelayBridge", () => {
     );
     await flush();
 
-    // Tab 1 leaves the OpenClaw group.
+    // Tab 1 leaves the Nova group.
     handlers.onMessage(JSON.stringify({ type: "tabs", tabs: [] }));
     await flush();
 
@@ -455,7 +455,7 @@ describe("ExtensionRelayBridge", () => {
       requestId: 43,
       ok: false,
       error:
-        "Send to OpenClaw needs the extension relay hosted by the Gateway (pair on the Gateway host or use direct Gateway pairing). Node-hosted relays are not supported yet.",
+        "Send to Nova needs the extension relay hosted by the Gateway (pair on the Gateway host or use direct Gateway pairing). Node-hosted relays are not supported yet.",
     });
   });
 

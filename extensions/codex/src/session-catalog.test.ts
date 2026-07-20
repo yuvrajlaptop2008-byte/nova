@@ -1320,7 +1320,7 @@ describe("Codex supervision catalog", () => {
     expect(runtime.nodes.list).not.toHaveBeenCalled();
   });
 
-  it("enriches only the local source row with its adopted OpenClaw session", async () => {
+  it("enriches only the local source row with its adopted Nova session", async () => {
     const control = createControl({
       listPage: vi.fn(async () => ({
         sessions: [{ threadId: "source-thread", status: "active", archived: false }],
@@ -1810,7 +1810,7 @@ describe("Codex supervision actions", () => {
     const control = createEligibleControl();
 
     await expect(archiveTestSession({ control, runtime })).rejects.toThrow(
-      "cannot be archived while its OpenClaw branch is initializing",
+      "cannot be archived while its Nova branch is initializing",
     );
     expect(control.readThread).not.toHaveBeenCalled();
     expect(control.archiveThread).not.toHaveBeenCalled();
@@ -1830,7 +1830,7 @@ describe("Codex supervision actions", () => {
     });
 
     await expect(archiveTestSession({ control, bindingStore, runtime })).rejects.toThrow(
-      "cannot be archived until its OpenClaw branch starts",
+      "cannot be archived until its Nova branch starts",
     );
     expect(control.archiveThread).not.toHaveBeenCalled();
 
@@ -1908,7 +1908,7 @@ describe("Codex supervision actions", () => {
     }
     expect(archiveResult.error).toBeInstanceOf(Error);
     expect((archiveResult.error as Error).message).toContain(
-      "cannot be archived until its OpenClaw branch starts",
+      "cannot be archived until its Nova branch starts",
     );
     expect(control.archiveThread).not.toHaveBeenCalled();
   });
@@ -2088,7 +2088,7 @@ describe("Codex supervision actions", () => {
         control: createEligibleControl(),
         threadId: "thread-1",
       }),
-    ).rejects.toThrow("OpenClaw session is already bound to Codex thread thread-1");
+    ).rejects.toThrow("Nova session is already bound to Codex thread thread-1");
     expect(entries).toEqual([]);
   });
 
@@ -2354,7 +2354,7 @@ describe("Codex supervision actions", () => {
         control,
         threadId: "thread-1",
       }),
-    ).rejects.toThrow("failed to bind OpenClaw session to Codex thread thread-1");
+    ).rejects.toThrow("failed to bind Nova session to Codex thread thread-1");
     expect(entries).toEqual([]);
     expect(createSessionEntry).toHaveBeenCalledOnce();
     expect(transcriptMirrorMocks.importCodexThreadHistoryToTranscript).toHaveBeenCalledOnce();
@@ -2700,7 +2700,7 @@ describe("Codex supervision actions", () => {
     expect(pinnedConnectionMocks.releaseClient).toHaveBeenCalledWith(pinnedConnectionMocks.client);
   });
 
-  it("rejects archive while another OpenClaw session owns the native thread", async () => {
+  it("rejects archive while another Nova session owns the native thread", async () => {
     const bindingStore = createCodexTestBindingStore();
     await bindingStore.mutate(
       { kind: "conversation", bindingId: "bound-chat" },
@@ -2712,13 +2712,13 @@ describe("Codex supervision actions", () => {
     const control = createEligibleControl();
 
     await expect(archiveTestSession({ bindingStore, control })).rejects.toThrow(
-      "attached to an OpenClaw session",
+      "attached to an Nova session",
     );
     expect(control.readThread).toHaveBeenCalledWith("thread-1", false);
     expect(control.archiveThread).not.toHaveBeenCalled();
   });
 
-  it("rejects archive when a paginated spawned descendant has an OpenClaw owner", async () => {
+  it("rejects archive when a paginated spawned descendant has an Nova owner", async () => {
     const bindingStore = createCodexTestBindingStore();
     await bindingStore.mutate(
       { kind: "conversation", bindingId: "descendant-chat" },
@@ -2739,7 +2739,7 @@ describe("Codex supervision actions", () => {
     });
 
     await expect(archiveTestSession({ bindingStore, control })).rejects.toThrow(
-      "spawned descendant is owned by an OpenClaw session",
+      "spawned descendant is owned by an Nova session",
     );
     expect(control.listDescendantPage).toHaveBeenNthCalledWith(1, {
       ancestorThreadId: "thread-1",

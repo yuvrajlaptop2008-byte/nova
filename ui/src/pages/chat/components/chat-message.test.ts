@@ -142,7 +142,7 @@ function renderAssistantMessages(
     renderMessageGroup(group, {
       showReasoning: true,
       showToolCalls: true,
-      assistantName: "OpenClaw",
+      assistantName: "Nova",
       assistantAvatar: null,
       ...opts,
     }),
@@ -167,7 +167,7 @@ function renderAssistantMessageEntries(
     renderMessageGroup(group, {
       showReasoning: true,
       showToolCalls: true,
-      assistantName: "OpenClaw",
+      assistantName: "Nova",
       assistantAvatar: null,
       ...opts,
     }),
@@ -199,7 +199,7 @@ function renderGroupedMessage(
     renderMessageGroup(group, {
       showReasoning: true,
       showToolCalls: true,
-      assistantName: "OpenClaw",
+      assistantName: "Nova",
       assistantAvatar: null,
       ...opts,
     }),
@@ -272,7 +272,7 @@ function renderMessageGroups(
       renderMessageGroup(group, {
         showReasoning: true,
         showToolCalls: true,
-        assistantName: "OpenClaw",
+        assistantName: "Nova",
         assistantAvatar: null,
         ...opts,
       }),
@@ -1265,7 +1265,7 @@ describe("grouped chat rendering", () => {
       renderMessageGroup(group, {
         showReasoning: true,
         showToolCalls: true,
-        assistantName: "OpenClaw",
+        assistantName: "Nova",
         assistantAvatar: null,
         userName: "Local User",
       }),
@@ -1304,7 +1304,7 @@ describe("grouped chat rendering", () => {
         {
           showReasoning: true,
           showToolCalls: true,
-          assistantName: "OpenClaw",
+          assistantName: "Nova",
         },
       ),
       container,
@@ -1343,7 +1343,7 @@ describe("grouped chat rendering", () => {
       renderMessageGroup(group, {
         showReasoning: true,
         showToolCalls: true,
-        assistantName: "OpenClaw",
+        assistantName: "Nova",
       }),
       container,
     );
@@ -1388,7 +1388,7 @@ describe("grouped chat rendering", () => {
       renderMessageGroup(group, {
         showReasoning: true,
         showToolCalls: true,
-        assistantName: "OpenClaw",
+        assistantName: "Nova",
       }),
       container,
     );
@@ -1416,7 +1416,7 @@ describe("grouped chat rendering", () => {
       renderMessageGroup(group, {
         showReasoning: true,
         showToolCalls: true,
-        assistantName: "OpenClaw",
+        assistantName: "Nova",
         assistantAvatar: null,
       }),
       container,
@@ -2767,7 +2767,7 @@ describe("grouped chat rendering", () => {
           {
             type: "openclaw_pairing_qr",
             image_url: "data:image/png;base64,cXJwbmc=",
-            alt: "OpenClaw pairing QR code",
+            alt: "Nova pairing QR code",
             expiresAtMs: Date.now() + 1_000,
           },
         ],
@@ -2778,7 +2778,7 @@ describe("grouped chat rendering", () => {
 
     const image = container.querySelector<HTMLImageElement>(".chat-message-image");
     expect(image?.getAttribute("src")).toBe("data:image/png;base64,cXJwbmc=");
-    expect(image?.getAttribute("alt")).toBe("OpenClaw pairing QR code");
+    expect(image?.getAttribute("alt")).toBe("Nova pairing QR code");
     await vi.advanceTimersByTimeAsync(999);
     expect(onRequestUpdate).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(1);
@@ -2790,7 +2790,7 @@ describe("grouped chat rendering", () => {
         {
           type: "openclaw_pairing_qr",
           image_url: "data:image/png;base64,ZXhwaXJlZA==",
-          alt: "OpenClaw pairing QR code",
+          alt: "Nova pairing QR code",
           expiresAtMs: Date.now() - 1,
         },
       ],

@@ -690,7 +690,7 @@ describeLive("gateway live (cli backend)", () => {
             const continuitySessionId = nativeHistory.sessionId;
             expect(continuitySessionId).toBeTruthy();
             if (!continuitySessionId) {
-              throw new Error("Claude CLI continuity probe could not resolve its OpenClaw session");
+              throw new Error("Claude CLI continuity probe could not resolve its Nova session");
             }
             continuityOwner = {
               backendId: providerId,

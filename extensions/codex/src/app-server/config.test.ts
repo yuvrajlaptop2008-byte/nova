@@ -1941,7 +1941,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("maps normalized OpenClaw auto exec mode to guardian-reviewed local execution", () => {
+  it("maps normalized Nova auto exec mode to guardian-reviewed local execution", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "auto",
@@ -2017,7 +2017,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
   });
 
   it.each(["deny", "allowlist"] as const)(
-    "blocks Codex app-server local execution for normalized OpenClaw %s exec mode",
+    "blocks Codex app-server local execution for normalized Nova %s exec mode",
     (execMode) => {
       expect(() =>
         resolveRuntimeForTest({
@@ -2030,7 +2030,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     },
   );
 
-  it("maps normalized OpenClaw ask exec mode away from Codex yolo", () => {
+  it("maps normalized Nova ask exec mode away from Codex yolo", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "ask",
@@ -2141,7 +2141,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("fails closed when normalized OpenClaw ask mode cannot use user approvals", () => {
+  it("fails closed when normalized Nova ask mode cannot use user approvals", () => {
     expect(() =>
       resolveRuntimeForTest({
         pluginConfig: {},
@@ -2175,7 +2175,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     { execMode: "ask", policies: ["never"] },
     { execMode: "ask", policies: ["untrusted"] },
   ] as const)(
-    "fails closed when normalized OpenClaw $execMode mode can only use $policies approvals",
+    "fails closed when normalized Nova $execMode mode can only use $policies approvals",
     ({ execMode, policies }) => {
       expect(() =>
         resolveRuntimeForTest({
@@ -2189,7 +2189,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     },
   );
 
-  it("keeps normalized OpenClaw full exec mode on default Codex yolo", () => {
+  it("keeps normalized Nova full exec mode on default Codex yolo", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "full",
@@ -2232,7 +2232,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("uses user approvals when normalized OpenClaw auto mode cannot use Codex auto-review", () => {
+  it("uses user approvals when normalized Nova auto mode cannot use Codex auto-review", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {},
       execMode: "auto",
@@ -2272,7 +2272,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     },
   );
 
-  it("keeps normalized OpenClaw auto mode when legacy app-server yolo was schema-defaulted", () => {
+  it("keeps normalized Nova auto mode when legacy app-server yolo was schema-defaulted", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {
         appServer: {
@@ -2306,7 +2306,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     });
   });
 
-  it("forces guarded policy fields for normalized OpenClaw auto mode", () => {
+  it("forces guarded policy fields for normalized Nova auto mode", () => {
     const runtime = resolveRuntimeForTest({
       pluginConfig: {
         appServer: {
@@ -2396,7 +2396,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
     ).toThrow("legacy full exec security with ask requires Codex app-server danger-full-access");
   });
 
-  it("clamps legacy full exec with ask when an OpenClaw sandbox is active", () => {
+  it("clamps legacy full exec with ask when an Nova sandbox is active", () => {
     const config = {
       tools: {
         exec: {

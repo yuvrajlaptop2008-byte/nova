@@ -267,7 +267,7 @@ function createTwoCalendarAppPolicyContext() {
 setupRunAttemptTestHooks();
 
 describe("Codex app-server thread lifecycle bindings", () => {
-  it("resumes the same restricted OpenClaw thread so turn two retains native memory", async () => {
+  it("resumes the same restricted Nova thread so turn two retains native memory", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     await writeCodexAppServerBinding(sessionFile, {
@@ -349,7 +349,7 @@ describe("Codex app-server thread lifecycle bindings", () => {
     expect(binding?.ringZeroClientInstanceId).toEqual(expect.any(String));
   });
 
-  it("starts a fresh restricted OpenClaw thread for a new app-server client", async () => {
+  it("starts a fresh restricted Nova thread for a new app-server client", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const params = createParams(sessionFile, workspaceDir);
@@ -395,7 +395,7 @@ describe("Codex app-server thread lifecycle bindings", () => {
     expect((await readCodexAppServerBinding(sessionFile))?.threadId).toBe("thread-ring-zero-2");
   });
 
-  it("retires a warm OpenClaw binding when resume MCP attestation fails", async () => {
+  it("retires a warm Nova binding when resume MCP attestation fails", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const params = createParams(sessionFile, workspaceDir);
@@ -453,7 +453,7 @@ describe("Codex app-server thread lifecycle bindings", () => {
     expect(await readCodexAppServerBinding(sessionFile)).toBeUndefined();
   });
 
-  it("fails closed before starting OpenClaw when inherited MCP enumeration fails", async () => {
+  it("fails closed before starting Nova when inherited MCP enumeration fails", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     await writeCodexAppServerBinding(sessionFile, {
@@ -493,7 +493,7 @@ describe("Codex app-server thread lifecycle bindings", () => {
     { name: "legacy managed MDM", layer: { name: { type: "legacyManagedConfigTomlFromMdm" } } },
     { name: "unknown future", layer: { name: { type: "futureManaged" } } },
     { name: "malformed", layer: { name: {} } },
-  ])("fails closed on $name config layers before OpenClaw thread/start", async ({ layer }) => {
+  ])("fails closed on $name config layers before Nova thread/start", async ({ layer }) => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const params = createParams(sessionFile, workspaceDir);
@@ -521,7 +521,7 @@ describe("Codex app-server thread lifecycle bindings", () => {
   });
 
   it.each(["hooks", "managed_hooks"] as const)(
-    "fails closed on non-empty %s requirements before OpenClaw thread/start",
+    "fails closed on non-empty %s requirements before Nova thread/start",
     async (requirementsKey) => {
       const sessionFile = path.join(tempDir, "session.jsonl");
       const workspaceDir = path.join(tempDir, "workspace");
@@ -599,7 +599,7 @@ describe("Codex app-server thread lifecycle bindings", () => {
     { name: "a newly raced server", attestation: { data: [{ name: "raced" }] } },
     { name: "a malformed inventory", attestation: { data: "invalid" } },
     { name: "an inventory RPC failure", attestation: new Error("inventory failed") },
-  ])("retires the cold OpenClaw thread when attestation finds $name", async ({ attestation }) => {
+  ])("retires the cold Nova thread when attestation finds $name", async ({ attestation }) => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     await writeCodexAppServerBinding(sessionFile, {

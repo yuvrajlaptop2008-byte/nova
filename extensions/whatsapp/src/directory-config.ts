@@ -138,7 +138,7 @@ async function completeStandaloneCleanup(cleanup: ManagedStandaloneCleanup): Pro
   if (cleanup.sock && !cleanup.socketClosed) {
     await closeWhatsAppSocketAndWait(
       cleanup.sock,
-      "OpenClaw WhatsApp standalone directory socket close",
+      "Nova WhatsApp standalone directory socket close",
     );
     cleanup.socketClosed = true;
   }

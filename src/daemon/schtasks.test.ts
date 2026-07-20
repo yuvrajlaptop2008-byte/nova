@@ -49,18 +49,15 @@ describe("scheduled task runtime derivation", () => {
   }
 
   function taskQueryOutput(lines: string[]): string {
-    return [
-      "TaskName: \\OpenClaw Gateway",
-      "Last Run Time: 1/8/2026 1:23:45 AM",
-      ...lines,
-      "",
-    ].join("\r\n");
+    return ["TaskName: \\Nova Gateway", "Last Run Time: 1/8/2026 1:23:45 AM", ...lines, ""].join(
+      "\r\n",
+    );
   }
 
   it.each(["Ready", "Running"])("parses %s status metadata", async (status) => {
     const runtime = await readRuntimeFromQueryOutput(
       [
-        "TaskName: \\OpenClaw Gateway",
+        "TaskName: \\Nova Gateway",
         `Status: ${status}`,
         "Last Run Time: 1/8/2026 1:23:45 AM",
         "Last Run Result: 0x0",
@@ -76,7 +73,7 @@ describe("scheduled task runtime derivation", () => {
   it("parses 'Last Result' key variant (without 'Run') (#47726)", async () => {
     const runtime = await readRuntimeFromQueryOutput(
       [
-        "TaskName: \\OpenClaw Gateway",
+        "TaskName: \\Nova Gateway",
         "Status: Running",
         "Last Run Time: 2026/3/16 8:34:15",
         "Last Result: 267009",
@@ -336,7 +333,7 @@ describe("readScheduledTaskCommand", () => {
       {
         scriptLines: [
           "@echo off",
-          "rem OpenClaw Gateway",
+          "rem Nova Gateway",
           "cd /d C:\\Projects\\openclaw",
           "set NODE_ENV=production",
           "set OPENCLAW_PORT=18789",
@@ -391,15 +388,15 @@ describe("readScheduledTaskCommand", () => {
       {
         scriptLines: [
           "@echo off",
-          '"\\\\fileserver\\OpenClaw Share\\node.exe" "\\\\fileserver\\OpenClaw Share\\dist\\index.js" gateway --port 18789',
+          '"\\\\fileserver\\Nova Share\\node.exe" "\\\\fileserver\\Nova Share\\dist\\index.js" gateway --port 18789',
         ],
       },
       async (env) => {
         const result = await readScheduledTaskCommand(env);
         expect(result).toEqual({
           programArguments: [
-            "\\\\fileserver\\OpenClaw Share\\node.exe",
-            "\\\\fileserver\\OpenClaw Share\\dist\\index.js",
+            "\\\\fileserver\\Nova Share\\node.exe",
+            "\\\\fileserver\\Nova Share\\dist\\index.js",
             "gateway",
             "--port",
             "18789",

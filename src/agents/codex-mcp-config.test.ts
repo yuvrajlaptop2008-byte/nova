@@ -1,4 +1,4 @@
-// Covers conversion from OpenClaw bundle-MCP config into Codex app-server
+// Covers conversion from Nova bundle-MCP config into Codex app-server
 // thread config patches.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildCodexMcpServersConfig, loadCodexBundleMcpThreadConfig } from "./codex-mcp-config.js";
@@ -31,7 +31,7 @@ afterEach(() => {
 });
 
 describe("buildCodexMcpServersConfig", () => {
-  it("normalizes OpenClaw MCP servers into Codex app-server mcp_servers shape", () => {
+  it("normalizes Nova MCP servers into Codex app-server mcp_servers shape", () => {
     // Authorization is represented as Codex's bearer env var, while other env
     // placeholders become env_http_headers for per-thread substitution.
     expect(

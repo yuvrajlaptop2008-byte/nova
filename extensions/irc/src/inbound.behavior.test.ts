@@ -59,7 +59,7 @@ function createAccount(overrides?: Partial<ResolvedIrcAccount>): ResolvedIrcAcco
     accountId: "default",
     enabled: true,
     server: "irc.example.com",
-    nick: "OpenClaw",
+    nick: "Nova",
     config: {
       dmPolicy: "pairing",
       allowFrom: [],
@@ -122,7 +122,7 @@ describe("irc inbound behavior", () => {
     expect(sendReply).toHaveBeenCalledWith(
       "alice",
       [
-        "OpenClaw: access not configured.",
+        "Nova: access not configured.",
         "",
         "Your IRC id: alice!ident@example.com",
         "Pairing code:",

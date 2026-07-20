@@ -5,7 +5,7 @@ import type { RunEmbeddedAgentParams } from "./params.js";
 export type RunEmbeddedAgentInternalParams = RunEmbeddedAgentParams & {
   onSuccessfulAuthBinding?: (binding: AgentExecutionAuthBinding) => void;
   authProfileStateMode?: "read-write" | "read-only";
-  /** Ring-zero tool override, supplied only by the OpenClaw orchestrator. */
+  /** Ring-zero tool override, supplied only by the Nova orchestrator. */
   systemAgentTool?: SystemAgentToolOptions;
 };
 

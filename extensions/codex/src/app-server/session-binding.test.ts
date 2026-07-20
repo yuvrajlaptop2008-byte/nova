@@ -780,7 +780,7 @@ describe("Codex app-server binding store", () => {
     expect(values.size).toBe(1);
   });
 
-  it("reclaims a stale stable generation only for the current OpenClaw session", async () => {
+  it("reclaims a stale stable generation only for the current Nova session", async () => {
     const { state, values } = createStateStore();
     const store = createCodexAppServerBindingStore(state);
     const previous = {

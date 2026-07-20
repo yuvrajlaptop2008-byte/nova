@@ -1,11 +1,11 @@
-// Filesystem script supports OpenClaw repository automation.
+// Filesystem script supports Nova repository automation.
 import { mkdirSync, mkdtempSync } from "node:fs";
 import { access, mkdir, open, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { repoRoot } from "./host-command.ts";
 
 const DEFAULT_TEXT_FILE_TAIL_BYTES = 4 * 1024 * 1024;
-const OPENCLAW_VERSION_PATTERN = /OpenClaw\s+([0-9][^\s]*)/gi;
+const OPENCLAW_VERSION_PATTERN = /Nova\s+([0-9][^\s]*)/gi;
 
 export async function exists(filePath: string): Promise<boolean> {
   try {

@@ -647,7 +647,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(authProfileStore.profiles[authProfileId]).toHaveProperty("keyRef");
   });
 
-  it("starts active OpenClaw sandbox threads with Codex native execution disabled", async () => {
+  it("starts active Nova sandbox threads with Codex native execution disabled", async () => {
     testing.setOpenClawCodingToolsFactoryForTests(() => [
       createRuntimeDynamicTool("exec"),
       createRuntimeDynamicTool("process"),
@@ -712,7 +712,7 @@ describe("runCodexAppServerAttempt", () => {
     ]);
   });
 
-  it("routes native Codex execution through an OpenClaw sandbox exec-server when opted in", async () => {
+  it("routes native Codex execution through an Nova sandbox exec-server when opted in", async () => {
     const appServer = {
       ...createThreadLifecycleAppServerOptions(),
       sandbox: "danger-full-access" as const,
@@ -1059,7 +1059,7 @@ describe("runCodexAppServerAttempt", () => {
     }
   });
 
-  it("starts Codex threads without duplicate OpenClaw workspace tools by default", async () => {
+  it("starts Codex threads without duplicate Nova workspace tools by default", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const appServer = createThreadLifecycleAppServerOptions();
@@ -1305,7 +1305,7 @@ describe("runCodexAppServerAttempt", () => {
           text: "Unscoped structured command guidance.",
         },
         {
-          text: "OpenClaw main command guidance.",
+          text: "Nova main command guidance.",
           surfaces: ["openclaw_main"],
         },
       ],
@@ -1319,10 +1319,10 @@ describe("runCodexAppServerAttempt", () => {
     expect(instructions).toContain("Codex app-server command guidance.");
     expect(instructions).not.toContain("Legacy global command guidance.");
     expect(instructions).not.toContain("Unscoped structured command guidance.");
-    expect(instructions).not.toContain("OpenClaw main command guidance.");
+    expect(instructions).not.toContain("Nova main command guidance.");
   });
 
-  it("passes OpenClaw skills as turn collaboration developer instructions", async () => {
+  it("passes Nova skills as turn collaboration developer instructions", async () => {
     const llmInput = vi.fn();
     initializeGlobalHookRunner(
       createMockPluginRegistry([{ hookName: "llm_input", handler: llmInput }]),
@@ -1373,17 +1373,17 @@ describe("runCodexAppServerAttempt", () => {
     };
     const collaborationInstructions =
       turnStartParams.collaborationMode?.settings?.developer_instructions ?? "";
-    expect(collaborationInstructions).toContain("## OpenClaw Skills");
+    expect(collaborationInstructions).toContain("## Nova Skills");
     expect(collaborationInstructions).toContain("<available_skills>");
     const inputText = turnStartParams.input?.[0]?.text ?? "";
-    expect(inputText).not.toContain("## OpenClaw Skills");
+    expect(inputText).not.toContain("## Nova Skills");
     expect(inputText).not.toContain("<available_skills>");
     expect(inputText).toBe("hello");
     const [llmInputPayload] = mockCall(llmInput, "llm_input") as [{ prompt?: string }, unknown];
     expect(llmInputPayload.prompt).toBe(inputText);
     const compiledContext = trajectoryEvents.find((event) => event.type === "context.compiled");
     expect(compiledContext?.data?.prompt).toBe(inputText);
-    expect(compiledContext?.data?.systemPrompt).toContain("## OpenClaw Skills");
+    expect(compiledContext?.data?.systemPrompt).toContain("## Nova Skills");
     expect(trajectoryEvents.find((event) => event.type === "prompt.submitted")?.data?.prompt).toBe(
       inputText,
     );
@@ -1423,7 +1423,7 @@ describe("runCodexAppServerAttempt", () => {
     ]);
     expect(firstResponse).toMatchObject({
       success: false,
-      contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: python" }],
+      contentItems: [{ type: "inputText", text: "Unknown Nova tool: python" }],
     });
     expect(replayedResponse).toEqual(firstResponse);
     await harness.completeTurn({ threadId: "thread-1", turnId: "turn-1" });
@@ -1446,7 +1446,7 @@ describe("runCodexAppServerAttempt", () => {
         toolCallId: "call-1",
         isError: true,
         result: {
-          content: [{ type: "text", text: "Unknown OpenClaw tool: python" }],
+          content: [{ type: "text", text: "Unknown Nova tool: python" }],
         },
       },
     });
@@ -1497,7 +1497,7 @@ describe("runCodexAppServerAttempt", () => {
         input?: Array<{ text?: string }>;
       };
       const inputText = turnStartParams.input?.[0]?.text ?? "";
-      expect(inputText).toContain("OpenClaw delivery metadata:");
+      expect(inputText).toContain("Nova delivery metadata:");
       expect(inputText).toContain(
         "This delivery metadata is runtime routing guidance, not the user's request.",
       );
@@ -1675,7 +1675,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(snapshotJson).toContain("without a matching tool.result");
   });
 
-  it("keeps OpenClaw control-path tools direct when code-mode-only is enabled", () => {
+  it("keeps Nova control-path tools direct when code-mode-only is enabled", () => {
     const tools = [
       createRuntimeDynamicTool("message"),
       createRuntimeDynamicTool("web_search"),
@@ -1764,10 +1764,10 @@ describe("runCodexAppServerAttempt", () => {
     expect(registeredToolNames).toContain("message");
     expect(registeredToolNames).toContain("heartbeat_respond");
     expect(normalInstructions).not.toContain(
-      "Deferred searchable OpenClaw dynamic tools available: heartbeat_respond",
+      "Deferred searchable Nova dynamic tools available: heartbeat_respond",
     );
     expect(heartbeatInstructions).toContain(
-      "Deferred searchable OpenClaw dynamic tools available: heartbeat_respond.",
+      "Deferred searchable Nova dynamic tools available: heartbeat_respond.",
     );
     for (const bridge of [normalBridge, heartbeatBridge, nextNormalBridge]) {
       const heartbeat = flattenSpecsWithNamespace(bridge.specs).find(
@@ -1859,7 +1859,7 @@ describe("runCodexAppServerAttempt", () => {
       contentItems: [
         {
           type: "inputText",
-          text: "OpenClaw tool is not available for this turn: message",
+          text: "Nova tool is not available for this turn: message",
         },
       ],
     });
@@ -2306,7 +2306,7 @@ describe("runCodexAppServerAttempt", () => {
     const threadStart = harness.requests.find((request) => request.method === "thread/start");
     const threadStartParams = threadStart?.params as { developerInstructions?: string } | undefined;
     const wrappedPluginSystemContext = (text: string) =>
-      `---\n\nOpenClaw plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
+      `---\n\nNova plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
     expect(threadStartParams?.developerInstructions).toContain(
       `${wrappedPluginSystemContext("pre system")}\n\ncustom codex system\n\n${wrappedPluginSystemContext("post system")}`,
     );
@@ -2364,7 +2364,7 @@ describe("runCodexAppServerAttempt", () => {
       (turnStart?.params as { input?: Array<{ text?: string }> } | undefined)?.input?.[0]?.text ??
       "";
 
-    expect(inputText).toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).toContain("Nova assembled context for this turn:");
     expect(inputText).toContain("older next-step anchor: keep the handoff checklist");
     expect(inputText).toContain("we are fixing the Opik default project");
     expect(inputText).toContain("Opik default project context");
@@ -2409,7 +2409,7 @@ describe("runCodexAppServerAttempt", () => {
       "";
 
     expect(inputText.length).toBeLessThanOrEqual(1 << 20);
-    expect(inputText).toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).toContain("Nova assembled context for this turn:");
     expect(inputText).toContain("recent continuity anchor: resume the database migration");
     expect(inputText).toContain("Current user request:");
     expect(inputText).toContain("current prompt survives");
@@ -2508,7 +2508,7 @@ describe("runCodexAppServerAttempt", () => {
       (turnStart?.params as { input?: Array<{ text?: string }> } | undefined)?.input?.[0]?.text ??
       "";
 
-    expect(inputText).not.toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).not.toContain("Nova assembled context for this turn:");
     expect(inputText).not.toContain("we were discussing the Sonnet leak screenshots");
     expect(inputText).not.toContain("David Ondrej was mentioned in that prior thread");
     expect(inputText).not.toContain("Current user request:");
@@ -2658,7 +2658,7 @@ describe("runCodexAppServerAttempt", () => {
       (turnStart?.params as { input?: Array<{ text?: string }> } | undefined)?.input?.[0]?.text ??
       "";
 
-    expect(inputText).toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).toContain("Nova assembled context for this turn:");
     expect(inputText).not.toContain("old native-owned context");
     expect(inputText).toContain("we were discussing the Sonnet leak screenshots");
     expect(inputText).toContain("David Ondrej was mentioned in that prior thread");
@@ -2708,7 +2708,7 @@ describe("runCodexAppServerAttempt", () => {
       (turnStart?.params as { input?: Array<{ text?: string }> } | undefined)?.input?.[0]?.text ??
       "";
 
-    expect(inputText).not.toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).not.toContain("Nova assembled context for this turn:");
     expect(inputText).not.toContain("codex mirrored user echo");
     expect(inputText).not.toContain("codex mirrored assistant echo");
     expect(inputText).toContain("continue from the real user message");
@@ -2751,7 +2751,7 @@ describe("runCodexAppServerAttempt", () => {
     const inputText =
       (turnStart?.params as { input?: Array<{ text?: string }> } | undefined)?.input?.[0]?.text ??
       "";
-    expect(inputText).not.toContain("OpenClaw assembled context for this turn:");
+    expect(inputText).not.toContain("Nova assembled context for this turn:");
     expect(inputText).not.toContain("steered into active native turn");
     expect(inputText).toContain("continue after steering");
   });
@@ -2792,7 +2792,7 @@ describe("runCodexAppServerAttempt", () => {
     const firstInputText =
       (firstTurnStart?.params as { input?: Array<{ text?: string }> } | undefined)?.input?.[0]
         ?.text ?? "";
-    expect(firstInputText).toContain("OpenClaw assembled context for this turn:");
+    expect(firstInputText).toContain("Nova assembled context for this turn:");
     expect(firstInputText).toContain("we were discussing the Sonnet leak screenshots");
     expect(firstInputText).toContain("is the previous message trustworthy?");
 
@@ -2810,7 +2810,7 @@ describe("runCodexAppServerAttempt", () => {
     const secondInputText =
       (secondTurnStart?.params as { input?: Array<{ text?: string }> } | undefined)?.input?.[0]
         ?.text ?? "";
-    expect(secondInputText).not.toContain("OpenClaw assembled context for this turn:");
+    expect(secondInputText).not.toContain("Nova assembled context for this turn:");
     expect(secondInputText).not.toContain("we were discussing the Sonnet leak screenshots");
     expect(secondInputText).not.toContain("is the previous message trustworthy?");
     expect(secondInputText).toContain("continue from there");
@@ -2848,7 +2848,7 @@ describe("runCodexAppServerAttempt", () => {
       threadDeveloperInstructions,
     } = await buildCodexTurnContextForTest(params, workspaceDir);
 
-    expect(threadDeveloperInstructions).toContain("OpenClaw Workspace Instructions");
+    expect(threadDeveloperInstructions).toContain("Nova Workspace Instructions");
     expect(threadDeveloperInstructions).not.toContain(soulGuidance);
     expect(threadDeveloperInstructions).not.toContain(identityGuidance);
     expect(threadDeveloperInstructions).toContain(toolGuidance);
@@ -2859,7 +2859,7 @@ describe("runCodexAppServerAttempt", () => {
 
     expect(collaborationInstructions).toContain("# Collaboration Mode: Default");
     expect(collaborationInstructions).toContain("request_user_input availability");
-    expect(collaborationInstructions).toContain("OpenClaw Agent Soul");
+    expect(collaborationInstructions).toContain("Nova Agent Soul");
     expect(collaborationInstructions).toContain("<AGENT_SOUL>");
     expect(collaborationInstructions).toContain("</AGENT_SOUL>");
     expect(collaborationInstructions).toContain(soulGuidance);
@@ -2868,7 +2868,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(collaborationInstructions).toContain(userProfile);
     expect(collaborationInstructions).toContain("## Memory Recall");
     expect(collaborationInstructions).toContain("MEMORY.md + memory/*.md");
-    expect(collaborationInstructions).toContain("OpenClaw Workspace Memory");
+    expect(collaborationInstructions).toContain("Nova Workspace Memory");
     expect(collaborationInstructions).toContain(
       "MEMORY.md exists in the active agent workspace as a memory file, not an instruction file",
     );
@@ -2881,7 +2881,7 @@ describe("runCodexAppServerAttempt", () => {
       "If the needed memory tool is deferred and not currently callable, use `tool_search` to load it, then call that memory tool.",
     );
     expect(collaborationInstructions).not.toContain(memorySummary);
-    expect(inputText).not.toContain("OpenClaw runtime context for this turn:");
+    expect(inputText).not.toContain("Nova runtime context for this turn:");
     expect(inputText).not.toContain("does not override Codex system/developer instructions");
     expect(inputText).not.toContain("not developer policy");
     expect(inputText).not.toContain(soulGuidance);
@@ -2889,7 +2889,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(inputText).not.toContain(toolGuidance);
     expect(inputText).not.toContain(userProfile);
     expect(inputText).not.toContain(memorySummary);
-    expect(inputText).not.toContain("OpenClaw Workspace Memory");
+    expect(inputText).not.toContain("Nova Workspace Memory");
     expect(inputText).not.toContain("MEMORY.md exists in the active agent workspace");
     expect(inputText).not.toContain("memory_search");
     expect(inputText).not.toContain("memory_get");
@@ -2960,7 +2960,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(collaborationInstructions).toContain("MEMORY.md + memory/*.md");
     expect(collaborationInstructions).toContain("memory_search");
     expect(collaborationInstructions).toContain("memory_get");
-    expect(collaborationInstructions).not.toContain("OpenClaw Workspace Memory");
+    expect(collaborationInstructions).not.toContain("Nova Workspace Memory");
     expect(collaborationInstructions).not.toContain(datedMemory);
     expect(inputText).toBe("hello");
     expect(inputText).not.toContain(datedMemory);
@@ -2987,7 +2987,7 @@ describe("runCodexAppServerAttempt", () => {
     );
 
     expect(collaborationInstructions).not.toContain("## Memory Recall");
-    expect(collaborationInstructions).toContain("OpenClaw Workspace Memory");
+    expect(collaborationInstructions).toContain("Nova Workspace Memory");
     expect(collaborationInstructions).not.toContain("Use `tool_search` first");
     expect(collaborationInstructions).not.toContain(memorySummary);
     expect(inputText).toBe("hello");
@@ -3026,7 +3026,7 @@ describe("runCodexAppServerAttempt", () => {
       developerInstructions?: string;
     };
     expect(threadStartParams.config?.instructions).toBeUndefined();
-    expect(threadStartParams.developerInstructions).toContain("OpenClaw Workspace Instructions");
+    expect(threadStartParams.developerInstructions).toContain("Nova Workspace Instructions");
     expect(threadStartParams.developerInstructions).toContain(toolGuidance);
     expect(threadStartParams.developerInstructions).not.toContain(agentsGuidance);
     expect(threadStartParams.developerInstructions).not.toContain(soulGuidance);
@@ -3044,7 +3044,7 @@ describe("runCodexAppServerAttempt", () => {
     };
     const collaborationInstructions =
       turnStartParams.collaborationMode?.settings?.developer_instructions ?? "";
-    expect(collaborationInstructions).toContain("OpenClaw Agent Soul");
+    expect(collaborationInstructions).toContain("Nova Agent Soul");
     expect(collaborationInstructions).toContain("<AGENT_SOUL>");
     expect(collaborationInstructions).toContain("</AGENT_SOUL>");
     expect(collaborationInstructions).toContain(soulGuidance);
@@ -3082,7 +3082,7 @@ describe("runCodexAppServerAttempt", () => {
       input?: Array<{ text?: string }>;
     };
     const inputText = turnStartParams.input?.[0]?.text ?? "";
-    expect(inputText).not.toContain("OpenClaw Workspace Memory");
+    expect(inputText).not.toContain("Nova Workspace Memory");
     expect(inputText).not.toContain("memory_search");
     expect(inputText).toContain(memorySummary);
 
@@ -3111,12 +3111,12 @@ describe("runCodexAppServerAttempt", () => {
 
     const { collaborationInstructions, inputText, systemPromptReport } =
       await buildCodexTurnContextForTest(params, workspaceDir);
-    expect(inputText).not.toContain("OpenClaw Workspace Memory");
+    expect(inputText).not.toContain("Nova Workspace Memory");
     expect(inputText).not.toContain("memory_get");
     expect(inputText).not.toContain("memory_search");
     expect(inputText).not.toContain(memorySummary);
     expect(collaborationInstructions).toContain("## Memory Recall");
-    expect(collaborationInstructions).toContain("OpenClaw Workspace Memory");
+    expect(collaborationInstructions).toContain("Nova Workspace Memory");
     expect(collaborationInstructions).toContain("memory_get");
     expect(collaborationInstructions).not.toContain("memory_search");
     expect(collaborationInstructions).not.toContain(memorySummary);
@@ -3209,10 +3209,10 @@ describe("runCodexAppServerAttempt", () => {
 
     const { collaborationInstructions, inputText, systemPromptReport } =
       await buildCodexTurnContextForTest(params, workspaceDir);
-    expect(inputText).not.toContain("OpenClaw Workspace Memory");
+    expect(inputText).not.toContain("Nova Workspace Memory");
     expect(inputText).not.toContain(memorySummary);
     expect(inputText).toContain(hookContext);
-    expect(collaborationInstructions).toContain("OpenClaw Workspace Memory");
+    expect(collaborationInstructions).toContain("Nova Workspace Memory");
     expect(collaborationInstructions).not.toContain(memorySummary);
 
     const fileStats = new Map(
@@ -3264,10 +3264,10 @@ describe("runCodexAppServerAttempt", () => {
 
     const { collaborationInstructions, inputText, systemPromptReport } =
       await buildCodexTurnContextForTest(params, workspaceDir);
-    expect(inputText).not.toContain("OpenClaw Workspace Memory");
+    expect(inputText).not.toContain("Nova Workspace Memory");
     expect(inputText).not.toContain(rootMemory);
     expect(inputText).toContain(nestedMemory);
-    expect(collaborationInstructions).toContain("OpenClaw Workspace Memory");
+    expect(collaborationInstructions).toContain("Nova Workspace Memory");
     expect(collaborationInstructions).not.toContain(rootMemory);
     expect(collaborationInstructions).not.toContain(nestedMemory);
 
@@ -3307,8 +3307,8 @@ describe("runCodexAppServerAttempt", () => {
     const { collaborationInstructions, inputText, systemPromptReport } =
       await buildCodexTurnContextForTest(params, workspaceDir);
     expect(collaborationInstructions).not.toContain("## Memory Recall");
-    expect(collaborationInstructions).not.toContain("OpenClaw Workspace Memory");
-    expect(inputText).not.toContain("OpenClaw Workspace Memory");
+    expect(collaborationInstructions).not.toContain("Nova Workspace Memory");
+    expect(inputText).not.toContain("Nova Workspace Memory");
     expect(inputText).toContain(memorySummary);
 
     const fileStats = new Map(
@@ -3436,11 +3436,11 @@ describe("runCodexAppServerAttempt", () => {
     const collaborationInstructions =
       turnStartParams.collaborationMode?.settings?.developer_instructions ?? "";
 
-    expect(collaborationInstructions).toContain("This is an OpenClaw heartbeat turn");
+    expect(collaborationInstructions).toContain("This is an Nova heartbeat turn");
     expect(collaborationInstructions).not.toContain("HEARTBEAT.md exists");
   });
 
-  it("keeps lightweight cron Codex turns out of OpenClaw bootstrap context", async () => {
+  it("keeps lightweight cron Codex turns out of Nova bootstrap context", async () => {
     const sessionFile = path.join(tempDir, "session.jsonl");
     const workspaceDir = path.join(tempDir, "workspace");
     const exactCommand =
@@ -3486,7 +3486,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(result.systemPromptReport?.skills.hash).toMatch(/^[a-f0-9]{64}$/u);
   });
 
-  it("keeps lightweight cron delivery hints byte-for-byte without OpenClaw prompt context", async () => {
+  it("keeps lightweight cron delivery hints byte-for-byte without Nova prompt context", async () => {
     const sessionFile = path.join(tempDir, "session-lightweight-cron-delivery.jsonl");
     const workspaceDir = path.join(tempDir, "workspace-lightweight-cron-delivery");
     const exactPrompt =
@@ -3630,7 +3630,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(result.toolMetas.filter((meta) => meta.isError === true)).toHaveLength(2);
   });
 
-  it("promotes implicit Codex yolo approval policy when OpenClaw tool policy exists", async () => {
+  it("promotes implicit Codex yolo approval policy when Nova tool policy exists", async () => {
     initializeGlobalHookRunner(
       createMockPluginRegistry([{ hookName: "before_tool_call", handler: vi.fn() }]),
     );
@@ -3649,7 +3649,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(startParams?.approvalPolicy).toBe("untrusted");
     expect(startParams?.sandbox).toBe("danger-full-access");
     expect(info).toHaveBeenCalledWith(
-      "codex app-server approval policy promoted for OpenClaw tool policy",
+      "codex app-server approval policy promoted for Nova tool policy",
       {
         from: "never",
         to: "untrusted",
@@ -3659,7 +3659,7 @@ describe("runCodexAppServerAttempt", () => {
     );
   });
 
-  it("keeps explicit Codex yolo mode unpromoted when OpenClaw tool policy exists", async () => {
+  it("keeps explicit Codex yolo mode unpromoted when Nova tool policy exists", async () => {
     initializeGlobalHookRunner(
       createMockPluginRegistry([{ hookName: "before_tool_call", handler: vi.fn() }]),
     );
@@ -3706,7 +3706,7 @@ describe("runCodexAppServerAttempt", () => {
     expect(turnParams?.sandboxPolicy).toEqual({ type: "dangerFullAccess" });
   });
 
-  it("keeps normalized full exec mode unpromoted when OpenClaw tool policy exists", async () => {
+  it("keeps normalized full exec mode unpromoted when Nova tool policy exists", async () => {
     initializeGlobalHookRunner(
       createMockPluginRegistry([{ hookName: "before_tool_call", handler: vi.fn() }]),
     );

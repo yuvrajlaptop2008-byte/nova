@@ -118,7 +118,7 @@ export async function buildOnboardingWelcome(params: {
   }
   if (!defaultModel) {
     throw new Error(
-      "OpenClaw onboarding requires working inference first. Run `openclaw onboard` to configure and verify a default model.",
+      "Nova onboarding requires working inference first. Run `openclaw onboard` to configure and verify a default model.",
     );
   }
 
@@ -127,7 +127,7 @@ export async function buildOnboardingWelcome(params: {
 
   params.engine.propose({ kind: "setup", workspace });
   const welcome = [
-    "## Hi, I'm OpenClaw — let's hatch your agent.",
+    "## Hi, I'm Nova — let's hatch your agent.",
     "",
     "No menus here: tell me what you want and I'll do the configuring. I looked around this machine:",
     "",

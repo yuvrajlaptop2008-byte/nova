@@ -1,4 +1,4 @@
-// OpenClaw state database tests cover state DB migrations and persistence.
+// Nova state database tests cover state DB migrations and persistence.
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -2446,7 +2446,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
       path: databasePath,
     });
     expect(repairOpenClawStateDatabaseSchema(options)).toEqual({
-      changes: ["Migrated shared state operator approvals → OpenClaw system changes"],
+      changes: ["Migrated shared state operator approvals → Nova system changes"],
       warnings: [],
     });
 

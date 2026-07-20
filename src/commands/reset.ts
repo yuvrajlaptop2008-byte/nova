@@ -34,7 +34,7 @@ type ResetOptions = {
 
 async function stopGatewayIfRunning(runtime: RuntimeEnv) {
   if (isNixMode) {
-    // Nix mode owns service lifecycle outside OpenClaw-managed launchd/systemd
+    // Nix mode owns service lifecycle outside Nova-managed launchd/systemd
     // installs, so reset should not try to stop a service it did not create.
     return;
   }

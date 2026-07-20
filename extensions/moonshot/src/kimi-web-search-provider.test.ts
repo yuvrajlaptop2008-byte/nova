@@ -61,7 +61,7 @@ describe("kimi web search provider", () => {
         throw new Error("Expected tool definition");
       }
 
-      const result = await tool.execute({ query: "OpenClaw docs" });
+      const result = await tool.execute({ query: "Nova docs" });
 
       expect(result.error).toBe("missing_kimi_api_key");
       expectStringFieldContains(
@@ -194,7 +194,7 @@ describe("kimi web search provider", () => {
 
   it("accepts final responses backed by Kimi web search tool replay", async () => {
     const toolArguments = JSON.stringify({
-      query: "OpenClaw GitHub repository",
+      query: "Nova GitHub repository",
       usage: { total_tokens: 1200 },
     });
     const fetchMock = vi
@@ -225,7 +225,7 @@ describe("kimi web search provider", () => {
           choices: [
             {
               finish_reason: "stop",
-              message: { content: "OpenClaw is available on GitHub." },
+              message: { content: "Nova is available on GitHub." },
             },
           ],
         }),
@@ -236,7 +236,7 @@ describe("kimi web search provider", () => {
       const result = await executeKimiSearch("kimi grounded tool replay");
 
       expect(result.provider).toBe("kimi");
-      expectStringFieldContains(result, "content", "OpenClaw is available on GitHub.");
+      expectStringFieldContains(result, "content", "Nova is available on GitHub.");
       expect(result.citations).toEqual([]);
       expect(result).not.toHaveProperty("error");
     });
@@ -245,11 +245,11 @@ describe("kimi web search provider", () => {
   it("accepts final responses with search result citations", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse({
-        search_results: [{ title: "OpenClaw", url: "https://github.com/openclaw/openclaw" }],
+        search_results: [{ title: "Nova", url: "https://github.com/openclaw/openclaw" }],
         choices: [
           {
             finish_reason: "stop",
-            message: { content: "OpenClaw is on GitHub." },
+            message: { content: "Nova is on GitHub." },
           },
         ],
       }),
@@ -260,7 +260,7 @@ describe("kimi web search provider", () => {
       const result = await executeKimiSearch("kimi grounded citation");
 
       expect(result.provider).toBe("kimi");
-      expectStringFieldContains(result, "content", "OpenClaw is on GitHub.");
+      expectStringFieldContains(result, "content", "Nova is on GitHub.");
       expect(result.citations).toEqual(["https://github.com/openclaw/openclaw"]);
       expect(result).not.toHaveProperty("error");
     });

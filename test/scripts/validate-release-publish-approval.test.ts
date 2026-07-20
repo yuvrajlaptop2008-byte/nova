@@ -55,7 +55,7 @@ function writeApproval(overrides: Record<string, unknown> = {}) {
     `${JSON.stringify({
       version: 1,
       repository: "openclaw/openclaw",
-      workflow: "OpenClaw Release Publish",
+      workflow: "Nova Release Publish",
       parentRunId: "123",
       workflowBranch: "release/2026.6.21",
       releaseTag: "v2026.6.21",
@@ -73,7 +73,7 @@ function approvalRun(overrides: Record<string, unknown> = {}) {
     headBranch: "release/2026.6.21",
     status: "in_progress",
     url: "https://github.com/openclaw/openclaw/actions/runs/123",
-    workflowName: "OpenClaw Release Publish",
+    workflowName: "Nova Release Publish",
     ...overrides,
   };
 }
@@ -87,7 +87,7 @@ function writeClawHubApproval(overrides: Record<string, unknown> = {}) {
       version: 2,
       kind: "clawhub-bootstrap",
       repository: "openclaw/openclaw",
-      workflow: "OpenClaw Release Publish",
+      workflow: "Nova Release Publish",
       parentRunId: "123",
       parentRunAttempt: 2,
       workflowBranch: "main",

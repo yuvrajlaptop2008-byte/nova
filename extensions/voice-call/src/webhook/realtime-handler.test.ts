@@ -1341,7 +1341,7 @@ describe("RealtimeCallHandler path routing", () => {
             "native-cancelled",
             {
               status: "cancelled",
-              message: "OpenClaw cancelled this consult before completion. Do not restart it.",
+              message: "Nova cancelled this consult before completion. Do not restart it.",
             },
             undefined,
           );
@@ -1431,7 +1431,7 @@ describe("RealtimeCallHandler path routing", () => {
         await waitForRealtimeTest(() => {
           expect(sendUserMessage).toHaveBeenCalledTimes(1);
           expect(requireFirstMockCall(sendUserMessage.mock.calls, "user message")).toEqual([
-            "Internal OpenClaw consult result is ready.\nDo not call tools for this internal result.\nSpeak the following answer to the caller now, briefly and naturally:\nI created the smoke test file.",
+            "Internal Nova consult result is ready.\nDo not call tools for this internal result.\nSpeak the following answer to the caller now, briefly and naturally:\nI created the smoke test file.",
           ]);
         });
       } finally {

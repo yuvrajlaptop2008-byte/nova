@@ -1,4 +1,4 @@
-// Removes transient runtime state from restorable OpenClaw database snapshots.
+// Removes transient runtime state from restorable Nova database snapshots.
 import type { DatabaseSync } from "node:sqlite";
 
 function tableExists(database: DatabaseSync, tableName: string): boolean {

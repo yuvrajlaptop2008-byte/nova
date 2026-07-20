@@ -672,7 +672,7 @@ export async function maybeRepairGatewayServiceConfig(
     })
   ) {
     note(
-      "Update-mode doctor detected gateway service drift but left the live systemd unit unchanged. Review the service file and run `openclaw gateway install --force` when you want OpenClaw to replace operator-owned systemd directives.",
+      "Update-mode doctor detected gateway service drift but left the live systemd unit unchanged. Review the service file and run `openclaw gateway install --force` when you want Nova to replace operator-owned systemd directives.",
       "Gateway service config",
     );
     return cfg;
@@ -919,7 +919,7 @@ export async function maybeScanExtraGatewayServices(
         note(failed.map((line) => `- ${line}`).join("\n"), "Legacy gateway cleanup skipped");
       }
       if (removed.length > 0) {
-        runtime.log("Legacy gateway services removed. Installing OpenClaw gateway next.");
+        runtime.log("Legacy gateway services removed. Installing Nova gateway next.");
       }
     }
   }

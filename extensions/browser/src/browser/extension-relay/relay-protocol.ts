@@ -1,11 +1,11 @@
 /**
- * Wire protocol between the extension relay server and the OpenClaw Chrome
+ * Wire protocol between the extension relay server and the Nova Chrome
  * extension. The extension stays a dumb transport: it attaches chrome.debugger,
- * forwards CDP traffic, and manages the OpenClaw tab group. All CDP target
+ * forwards CDP traffic, and manages the Nova tab group. All CDP target
  * semantics (Target.* synthesis for Playwright) live server-side in the bridge.
  */
 
-/** Tab snapshot reported by the extension for tabs shared with OpenClaw. */
+/** Tab snapshot reported by the extension for tabs shared with Nova. */
 export type RelayTabInfo = {
   tabId: number;
   url: string;
@@ -107,7 +107,7 @@ export type RelayCommandBody =
   | { type: "attach"; tabId: number }
   /** Detach chrome.debugger from a tab (tab left the group or client detached). */
   | { type: "detach"; tabId: number }
-  /** Open a new tab inside the OpenClaw tab group. Result: { tabId: number }. */
+  /** Open a new tab inside the Nova tab group. Result: { tabId: number }. */
   | { type: "createTab"; url: string; background?: boolean }
   /** Close a shared tab. Result: {}. */
   | { type: "closeTab"; tabId: number }

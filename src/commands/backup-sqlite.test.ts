@@ -208,7 +208,7 @@ describe("SQLite backup commands", () => {
     expect(runtime.errors).toEqual([]);
   });
 
-  it("requires exactly one named OpenClaw database source", async () => {
+  it("requires exactly one named Nova database source", async () => {
     const runtime = createRuntimeCapture();
 
     await expect(

@@ -5481,7 +5481,7 @@ describe("task-registry", () => {
     });
   });
 
-  it("cancels childless codex-native tasks without routing through OpenClaw subagent sessions", async () => {
+  it("cancels childless codex-native tasks without routing through Nova subagent sessions", async () => {
     await withTaskRegistryTempDir(async () => {
       resetTaskRegistryForTests();
       const task = createTaskRecord({
@@ -5518,7 +5518,7 @@ describe("task-registry", () => {
     });
   });
 
-  it("cancels childless copilot-native tasks without routing through OpenClaw subagent sessions", async () => {
+  it("cancels childless copilot-native tasks without routing through Nova subagent sessions", async () => {
     await withTaskRegistryTempDir(async () => {
       resetTaskRegistryForTests();
       const task = createTaskRecord({

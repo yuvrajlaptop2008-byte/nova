@@ -2087,7 +2087,7 @@ describe("handleFeishuMessage command authorization", () => {
               {
                 key: "@_openclaw",
                 id: { open_id: mentionedOpenId },
-                name: "OpenClaw",
+                name: "Nova",
               },
             ]
           : undefined,
@@ -2114,7 +2114,7 @@ describe("handleFeishuMessage command authorization", () => {
                         key: "@_openclaw",
                         id: "ou-openclaw",
                         id_type: "open_id",
-                        name: "OpenClaw",
+                        name: "Nova",
                       },
                     ]
                   : [],
@@ -2236,7 +2236,7 @@ describe("handleFeishuMessage command authorization", () => {
           {
             key: "@_openclaw",
             id: { open_id: "ou-loop-self" },
-            name: "OpenClaw",
+            name: "Nova",
           },
         ],
       },

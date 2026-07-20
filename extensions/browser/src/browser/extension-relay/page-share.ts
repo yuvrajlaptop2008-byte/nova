@@ -7,7 +7,7 @@ import {
 import type { PageSharePayload } from "./relay-protocol.js";
 
 export const PAGE_SHARE_GATEWAY_REQUIRED_ERROR =
-  "Send to OpenClaw needs the extension relay hosted by the Gateway (pair on the Gateway host or use direct Gateway pairing). Node-hosted relays are not supported yet.";
+  "Send to Nova needs the extension relay hosted by the Gateway (pair on the Gateway host or use direct Gateway pairing). Node-hosted relays are not supported yet.";
 
 type PageShareSink = {
   enqueueSystemEvent(text: string, opts: { sessionKey: string }): unknown;
@@ -46,7 +46,7 @@ export async function deliverPageShare(payload: PageSharePayload): Promise<void>
     source: "browser",
   });
   const header = [
-    "Page shared from the OpenClaw Chrome extension.",
+    "Page shared from the Nova Chrome extension.",
     ...(note ? [`Note: ${note}`] : []),
   ].join("\n");
   const text = `${header}\n\n${wrapped}`;

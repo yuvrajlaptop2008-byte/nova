@@ -1,4 +1,4 @@
-// OpenClaw agent database stores agent-scoped persisted runtime state.
+// Nova agent database stores agent-scoped persisted runtime state.
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { clearNodeSqliteKyselyCacheForDatabase } from "../infra/kysely-sync.js";
@@ -67,7 +67,7 @@ export { resolveOpenClawAgentSqlitePath } from "./openclaw-agent-db.paths.js";
  *
  * Each opened agent database is schema-owned by one normalized agent id, cached
  * per pathname, protected with private file modes, and registered in the shared
- * OpenClaw state database for discovery and maintenance.
+ * Nova state database for discovery and maintenance.
  */
 const OPENCLAW_AGENT_DB_SLOW_OPEN_MS = 1_000;
 // Each WAL database consumes roughly three file descriptors, so the fixed cap
@@ -112,7 +112,7 @@ function logSlowAgentDatabaseOpen(params: {
   if (params.elapsedMs < OPENCLAW_AGENT_DB_SLOW_OPEN_MS) {
     return;
   }
-  agentDbLog.warn("slow OpenClaw agent database open", {
+  agentDbLog.warn("slow Nova agent database open", {
     agentId: params.agentId,
     elapsedMs: params.elapsedMs,
     path: params.path,
@@ -158,7 +158,7 @@ export function openOpenClawAgentDatabase(
   if (cached?.db.isOpen) {
     if (cached.agentId !== agentId) {
       throw new Error(
-        `OpenClaw agent database ${pathname} is already open for agent ${cached.agentId}; requested agent ${agentId}.`,
+        `Nova agent database ${pathname} is already open for agent ${cached.agentId}; requested agent ${agentId}.`,
       );
     }
     cachedDatabases.delete(pathname);
@@ -366,7 +366,7 @@ function evictLruAgentDatabaseHandles(): void {
       // unregisters them, while eviction closes this process-local handle.
       closeCachedOpenClawAgentDatabase(database, { eviction: true });
       cachedDatabases.delete(pathname);
-      agentDbLog.debug("evicted OpenClaw agent database handle", {
+      agentDbLog.debug("evicted Nova agent database handle", {
         agentId: database.agentId,
         openHandles: cachedDatabases.size,
         path: pathname,

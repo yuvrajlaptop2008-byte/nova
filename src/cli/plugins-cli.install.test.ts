@@ -2226,7 +2226,7 @@ describe("plugins cli install", () => {
     expect(installPluginFromClawHub).not.toHaveBeenCalled();
   });
 
-  it("uses bundled OpenClaw package specs instead of pinning stale managed npm overrides", async () => {
+  it("uses bundled Nova package specs instead of pinning stale managed npm overrides", async () => {
     const cfg = createEmptyPluginConfig();
     const enabledCfg = createEnabledPluginConfig("discord");
     const bundledPath = "/app/dist/extensions/discord";
@@ -2272,7 +2272,7 @@ describe("plugins cli install", () => {
     expect(record.spec).toBe("@openclaw/discord@2026.5.20");
     expect(record.sourcePath).toBe(bundledPath);
     expect(record.installPath).toBe(bundledPath);
-    expect(runtimeLogsContain("ships with the current OpenClaw build")).toBe(true);
+    expect(runtimeLogsContain("ships with the current Nova build")).toBe(true);
     expect(runtimeLogsContain("npm:@openclaw/discord@2026.5.20")).toBe(true);
   });
 

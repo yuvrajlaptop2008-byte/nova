@@ -390,7 +390,7 @@ describe("startWhatsAppQaDriverSession", () => {
     });
 
     sock.ev.emit("messages.upsert", {
-      messages: [incomingMessage("12345@lid", "OpenClaw status stale", "stale-message")],
+      messages: [incomingMessage("12345@lid", "Nova status stale", "stale-message")],
     });
 
     const observedAfter = new Date("2026-06-04T23:46:59.166Z");
@@ -398,17 +398,17 @@ describe("startWhatsAppQaDriverSession", () => {
     const waited = session.waitForMessage({
       observedAfter,
       timeoutMs: 1_000,
-      match: (message) => message.text.includes("OpenClaw status"),
+      match: (message) => message.text.includes("Nova status"),
     });
 
     vi.setSystemTime(new Date("2026-06-04T23:47:00.000Z"));
     sock.ev.emit("messages.upsert", {
-      messages: [incomingMessage("12345@lid", "OpenClaw status fresh", "fresh-message")],
+      messages: [incomingMessage("12345@lid", "Nova status fresh", "fresh-message")],
     });
 
     await expect(waited).resolves.toMatchObject({
       messageId: "fresh-message",
-      text: "OpenClaw status fresh",
+      text: "Nova status fresh",
     });
 
     await session.close();

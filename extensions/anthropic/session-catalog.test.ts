@@ -471,7 +471,7 @@ describe("Claude session catalog", () => {
         pluginExtensions: { anthropic: { sessionCatalog: { sourceThreadId: sessionId } } },
       }),
     },
-  ])("links a catalog row to an existing OpenClaw session via $label", async ({ entry }) => {
+  ])("links a catalog row to an existing Nova session via $label", async ({ entry }) => {
     const home = await createHome();
     process.env.HOME = home;
     const sessionId = "claude-bound-session";

@@ -312,7 +312,7 @@ describe("release validation no-push transport", () => {
       ["plugin_prerelease", "Dispatch and monitor plugin prerelease"],
       ["release_checks", "Dispatch and monitor release checks"],
       ["npm_telegram", "Dispatch and monitor npm Telegram E2E"],
-      ["performance", "Dispatch and monitor OpenClaw Performance"],
+      ["performance", "Dispatch and monitor Nova Performance"],
     ] as const) {
       const dispatch = step(job(full, jobName), stepName);
       expect(dispatch.env?.PARENT_WORKFLOW_SHA, jobName).toBe("${{ github.sha }}");
@@ -602,7 +602,7 @@ describe("release validation no-push transport", () => {
     expect(dockerProducer.outputs?.package_file_name).toContain("file_name");
     expect(dockerProducer.outputs?.package_source_sha).toContain("source_sha");
 
-    const packageIdentity = step(dockerProducer, "Validate OpenClaw package artifact identity");
+    const packageIdentity = step(dockerProducer, "Validate Nova package artifact identity");
     expect(packageIdentity.env).toMatchObject({
       ARTIFACT_DIGEST: "${{ inputs.package_artifact_digest }}",
       ARTIFACT_ID: "${{ inputs.package_artifact_id }}",
@@ -617,11 +617,11 @@ describe("release validation no-push transport", () => {
     expect(packageIdentity.run).toContain("artifact_digest=$ARTIFACT_DIGEST");
     for (const [name, condition] of [
       [
-        "Download current-run OpenClaw Docker E2E package",
+        "Download current-run Nova Docker E2E package",
         "inputs.package_artifact_run_id == github.run_id",
       ],
       [
-        "Download previous-run OpenClaw Docker E2E package",
+        "Download previous-run Nova Docker E2E package",
         "inputs.package_artifact_run_id != github.run_id",
       ],
     ] as const) {
@@ -665,7 +665,7 @@ describe("release validation no-push transport", () => {
       'OPENCLAW_SHARED_IMAGE_PACKAGE_SHA256="$PACKAGE_SHA256"',
     );
     expect(packDockerArtifact.run).toContain("archive_sha256=");
-    const validatePackage = step(dockerProducer, "Validate OpenClaw Docker E2E package");
+    const validatePackage = step(dockerProducer, "Validate Nova Docker E2E package");
     expect(validatePackage.env).toMatchObject({
       EXPECTED_PACKAGE_FILE_NAME: "${{ inputs.package_file_name }}",
       EXPECTED_PACKAGE_SHA256: "${{ inputs.package_sha256 }}",
@@ -758,7 +758,7 @@ describe("release validation no-push transport", () => {
       const consumer = job(workflow, name);
       expect(consumer.needs).toContain("docker_e2e_image_ready");
       expect(consumer.env?.OPENCLAW_DOCKER_E2E_REQUIRE_LOCAL_IMAGE).toContain("no-push-artifact");
-      expect(step(consumer, "Download OpenClaw Docker E2E package").with).toMatchObject({
+      expect(step(consumer, "Download Nova Docker E2E package").with).toMatchObject({
         "artifact-ids": "${{ needs.prepare_docker_e2e_image.outputs.package_artifact_id }}",
         "github-token": "${{ github.token }}",
         "run-id": "${{ needs.prepare_docker_e2e_image.outputs.package_artifact_run_id }}",

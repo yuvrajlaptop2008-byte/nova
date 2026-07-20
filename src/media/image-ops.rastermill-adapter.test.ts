@@ -34,7 +34,7 @@ describe("image ops Rastermill adapter", () => {
     expect(photonModuleFactory).not.toHaveBeenCalled();
   });
 
-  it("configures Rastermill with OpenClaw limits, temp root, and command resolution", async () => {
+  it("configures Rastermill with Nova limits, temp root, and command resolution", async () => {
     const encode = vi.fn(async () => ({ data: Buffer.from("jpeg") }));
     const createRastermill = vi.fn((_options: unknown) => ({ encode }));
     const resolveSystemBin = vi.fn(() => "/usr/bin/tool");

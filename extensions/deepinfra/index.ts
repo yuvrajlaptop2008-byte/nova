@@ -1,4 +1,4 @@
-// Deepinfra plugin entrypoint registers its OpenClaw integration.
+// Deepinfra plugin entrypoint registers its Nova integration.
 import {
   type ProviderCatalogContext,
   type ConfiguredProviderCatalogEntry,

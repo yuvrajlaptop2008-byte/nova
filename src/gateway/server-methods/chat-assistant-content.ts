@@ -54,7 +54,7 @@ async function buildPairingQrAssistantContentBlock(
     type: "openclaw_pairing_qr",
     image_url: imageUrl,
     terminalText,
-    alt: "OpenClaw pairing QR code",
+    alt: "Nova pairing QR code",
     expiresAtMs: qr.expiresAtMs,
     sensitive: true,
   };

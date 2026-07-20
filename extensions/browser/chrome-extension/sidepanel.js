@@ -131,14 +131,14 @@ function updateState(state) {
         action: "share",
         title: "Keep the boundary visible",
         detail:
-          "Sharing adds this tab to the OpenClaw group. The copilot can act here, but nowhere else.",
+          "Sharing adds this tab to the Nova group. The copilot can act here, but nowhere else.",
       });
       break;
     case "needs-pairing":
       setGate({
         title: "Pair the extension first",
         detail:
-          "Open the OpenClaw toolbar popup and paste the output of openclaw browser extension pair.",
+          "Open the Nova toolbar popup and paste the output of openclaw browser extension pair.",
       });
       break;
     case "approval":

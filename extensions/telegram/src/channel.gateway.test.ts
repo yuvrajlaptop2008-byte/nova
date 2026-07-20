@@ -29,7 +29,7 @@ const tempRoots: string[] = [];
 const startupBotInfo: TelegramBotInfo = {
   id: 123456,
   is_bot: true,
-  first_name: "OpenClaw",
+  first_name: "Nova",
   username: "openclaw_bot",
   can_join_groups: true,
   can_read_all_group_messages: false,

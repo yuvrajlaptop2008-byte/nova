@@ -92,7 +92,7 @@ describe("OpenAI provider policy artifact", () => {
   });
 
   it.each(["gpt-5.6", "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"])(
-    "exposes logical Ultra for %s on the OpenClaw runtime",
+    "exposes logical Ultra for %s on the Nova runtime",
     (modelId) => {
       const levels = resolveThinkingProfile({
         provider: "openai",
@@ -868,7 +868,7 @@ describe("OpenAI provider policy artifact", () => {
     }
   });
 
-  it("preserves explicit official completions and keeps them on OpenClaw", () => {
+  it("preserves explicit official completions and keeps them on Nova", () => {
     expect(
       resolveModelRoutes({
         provider: "openai",

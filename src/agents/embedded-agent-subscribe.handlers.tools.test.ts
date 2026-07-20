@@ -2607,7 +2607,7 @@ describe("handleToolExecutionEnd timeout metadata", () => {
         type: "tool_execution_start",
         toolName: "exec",
         toolCallId: "tool-exec-repo-raw-command",
-        args: { command: "git status", workdir: "/Users/agent/Projects/OpenClaw" },
+        args: { command: "git status", workdir: "/Users/agent/Projects/Nova" },
       } as never,
     );
 

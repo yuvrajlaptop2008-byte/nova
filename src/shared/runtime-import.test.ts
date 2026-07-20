@@ -56,9 +56,9 @@ describe("runtime-import", () => {
     expect(
       await captureRuntimeImportSpecifier(
         "file:///C:/Users/alice/openclaw/dist/subagent-registry.js",
-        ["D:\\OpenClaw\\dist\\subagent-registry.runtime.js"],
+        ["D:\\Nova\\dist\\subagent-registry.runtime.js"],
       ),
-    ).toBe("file:///D:/OpenClaw/dist/subagent-registry.runtime.js");
+    ).toBe("file:///D:/Nova/dist/subagent-registry.runtime.js");
   });
 
   it("keeps non-Windows import paths unchanged", () => {

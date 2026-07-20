@@ -24,7 +24,7 @@ function preserveOpenClawOverflowError(error: unknown, maxBytes: number): never 
   throw error;
 }
 
-/** Read a pinned descriptor without changing OpenClaw's user-facing overflow error. */
+/** Read a pinned descriptor without changing Nova's user-facing overflow error. */
 export async function readFileDescriptorBounded(fd: number, maxBytes: number): Promise<Buffer> {
   try {
     return await readFileDescriptorBoundedFsSafe(fd, maxBytes);

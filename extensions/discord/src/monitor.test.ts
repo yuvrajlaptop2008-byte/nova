@@ -232,14 +232,14 @@ describe("DiscordMessageListener", () => {
 
 describe("discord allowlist helpers", () => {
   it("normalizes slugs", () => {
-    expect(normalizeDiscordSlug("Friends of OpenClaw")).toBe("friends-of-openclaw");
+    expect(normalizeDiscordSlug("Friends of Nova")).toBe("friends-of-openclaw");
     expect(normalizeDiscordSlug("#General")).toBe("general");
     expect(normalizeDiscordSlug("Dev__Chat")).toBe("dev-chat");
   });
 
   it("matches ids by default and names only when enabled", () => {
     const allow = expectNormalizedAllowList(
-      ["123", "steipete", "Friends of OpenClaw"],
+      ["123", "steipete", "Friends of Nova"],
       ["discord:", "user:", "guild:", "channel:"],
     );
     expect(allowListMatches(allow, { id: "123" }, { allowNameMatching: false })).toBe(true);
@@ -287,7 +287,7 @@ describe("discord guild/channel resolution", () => {
       "123": { slug: "friends-of-openclaw" },
     });
     const resolved = resolveDiscordGuildEntry({
-      guild: fakeGuild("123", "Friends of OpenClaw"),
+      guild: fakeGuild("123", "Friends of Nova"),
       guildEntries,
     });
     expect(resolved?.id).toBe("123");
@@ -311,7 +311,7 @@ describe("discord guild/channel resolution", () => {
       "friends-of-openclaw": { slug: "friends-of-openclaw" },
     });
     const resolved = resolveDiscordGuildEntry({
-      guild: fakeGuild("123", "Friends of OpenClaw"),
+      guild: fakeGuild("123", "Friends of Nova"),
       guildEntries,
     });
     expect(resolved?.id).toBe("123");
@@ -323,7 +323,7 @@ describe("discord guild/channel resolution", () => {
       "*": { requireMention: false },
     });
     const resolved = resolveDiscordGuildEntry({
-      guild: fakeGuild("123", "Friends of OpenClaw"),
+      guild: fakeGuild("123", "Friends of Nova"),
       guildEntries,
     });
     expect(resolved?.id).toBe("123");
@@ -672,7 +672,7 @@ describe("discord group DM gating", () => {
       resolveGroupDmAllow({
         channels: ["openclaw-dm"],
         channelId: "1",
-        channelName: "OpenClaw DM",
+        channelName: "Nova DM",
         channelSlug: "openclaw-dm",
       }),
     ).toBe(true);

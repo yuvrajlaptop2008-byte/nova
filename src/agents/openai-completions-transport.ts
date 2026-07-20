@@ -1055,7 +1055,7 @@ function getCompletionsContentDeltas(content: unknown): CompletionsReasoningDelt
   if (!text) {
     return [];
   }
-  // Preserve provider reasoning as OpenClaw thinking blocks so channel/UI
+  // Preserve provider reasoning as Nova thinking blocks so channel/UI
   // surfaces can decide whether to show it instead of leaking it as answer text.
   if (type.includes("thinking") || type.includes("reasoning")) {
     return [{ kind: "thinking", signature: "content", text }];

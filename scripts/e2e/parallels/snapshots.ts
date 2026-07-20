@@ -1,4 +1,4 @@
-// Snapshots script supports OpenClaw repository automation.
+// Snapshots script supports Nova repository automation.
 import { expectDefined } from "@openclaw/normalization-core";
 import { die, run } from "./host-command.ts";
 import type { Mode } from "./types.ts";

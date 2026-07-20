@@ -564,7 +564,7 @@ async function auditGatewayRuntime(
   if (isBunRuntime(execPath)) {
     issues.push({
       code: SERVICE_AUDIT_CODES.gatewayRuntimeBun,
-      message: "Gateway service uses Bun; OpenClaw runtime state requires node:sqlite.",
+      message: "Gateway service uses Bun; Nova runtime state requires node:sqlite.",
       detail: execPath,
       level: "recommended",
     });
@@ -633,7 +633,7 @@ function auditGatewayServiceVersion(command: GatewayServiceCommand, issues: Serv
 
   issues.push({
     code: SERVICE_AUDIT_CODES.gatewayServiceVersionMismatch,
-    message: `Gateway service was installed by OpenClaw ${serviceVersion}; current CLI is ${VERSION}.`,
+    message: `Gateway service was installed by Nova ${serviceVersion}; current CLI is ${VERSION}.`,
     detail: command?.sourcePath,
     level: "recommended",
   });

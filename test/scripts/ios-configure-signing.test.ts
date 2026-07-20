@@ -58,13 +58,13 @@ describe.sequential("scripts/ios-configure-signing.sh", () => {
     cleanupTempDirs(tempDirs);
   });
 
-  it("uses the canonical app bundle ID for the canonical OpenClaw team", () => {
+  it("uses the canonical app bundle ID for the canonical Nova team", () => {
     const stdout = runConfigureSigning("FWJYW4S8P8");
     const generated = readGeneratedSigning();
 
     expect(stdout).toContain("team=FWJYW4S8P8 app=ai.openclawfoundation.app");
     expect(generated).toContain("OPENCLAW_DEVELOPMENT_TEAM = FWJYW4S8P8");
-    expect(generated).toContain("OPENCLAW_CODE_SIGN_ENTITLEMENTS = Sources/OpenClaw.entitlements");
+    expect(generated).toContain("OPENCLAW_CODE_SIGN_ENTITLEMENTS = Sources/Nova.entitlements");
     expect(generated).toContain("OPENCLAW_APP_BUNDLE_ID = ai.openclawfoundation.app");
     expect(generated).toContain("OPENCLAW_SHARE_BUNDLE_ID = ai.openclawfoundation.app.share");
     expect(generated).toContain("OPENCLAW_APP_GROUP_ID = group.ai.openclawfoundation.app.shared");

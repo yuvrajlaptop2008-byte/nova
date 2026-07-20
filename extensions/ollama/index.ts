@@ -1,4 +1,4 @@
-// Ollama plugin entrypoint registers its OpenClaw integration.
+// Ollama plugin entrypoint registers its Nova integration.
 import { collectConfiguredModelRefValues } from "@openclaw/model-catalog-core/configured-model-refs";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { resolvePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";

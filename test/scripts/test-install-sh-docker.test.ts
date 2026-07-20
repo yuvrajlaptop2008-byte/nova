@@ -664,7 +664,7 @@ describe("test-install-sh-docker", () => {
         "set -euo pipefail",
         'case "${1:-}" in',
         "  --version)",
-        "    printf 'OpenClaw v2026.6.21-beta.1\\r\\n'",
+        "    printf 'Nova v2026.6.21-beta.1\\r\\n'",
         "    ;;",
         "  --help)",
         "    printf 'usage\\n'",
@@ -685,7 +685,7 @@ describe("test-install-sh-docker", () => {
         [
           "set -euo pipefail",
           "source scripts/docker/install-sh-common/cli-verify.sh",
-          "printf 'parsed=%s\\n' \"$(extract_openclaw_semver 'OpenClaw v2026.6.21-beta.1+build.7')\"",
+          "printf 'parsed=%s\\n' \"$(extract_openclaw_semver 'Nova v2026.6.21-beta.1+build.7')\"",
           "verify_installed_cli openclaw 2026.6.21-beta.1",
         ].join("\n"),
       ],
@@ -1020,7 +1020,7 @@ printf 'status=%s\\n' "$status"
     expect(workflow).toContain(
       "git for-each-ref --format='%(refname:short)' --contains \"$selected_sha\" refs/remotes/origin",
     );
-    expect(workflow).toContain("reachable from an OpenClaw branch or release tag");
+    expect(workflow).toContain("reachable from an Nova branch or release tag");
   });
 
   it("downloads the OpenShell installer completely before execution", () => {
@@ -1681,7 +1681,7 @@ mkdir -p "$BUN_INSTALL/bin"
 cat >"$BUN_INSTALL/bin/openclaw" <<'OPENCLAW'
 #!/usr/bin/env bash
 if [ "\${1:-}" = "--version" ]; then
-  echo "OpenClaw 2026.6.17"
+  echo "Nova 2026.6.17"
 else
   printf '[{"id":"google"},{"id":"openai"},{"id":"xai"}]\n'
 fi

@@ -22,7 +22,7 @@ export function createZoomMeetingsSession(params: {
     participantIdentity:
       resolved.transport === "chrome-node"
         ? "Zoom guest in Chrome on a paired node"
-        : "Zoom guest in the OpenClaw Chrome profile",
+        : "Zoom guest in the Nova Chrome profile",
     realtime: {
       enabled: resolved.mode === "agent" || resolved.mode === "bidi",
       strategy: resolved.mode === "bidi" ? "bidi" : "agent",

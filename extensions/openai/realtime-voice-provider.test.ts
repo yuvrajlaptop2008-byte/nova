@@ -320,7 +320,7 @@ describe("buildOpenAIRealtimeVoiceProvider", () => {
     expect(bridge.supportsToolResultSuppression).toBe(true);
   });
 
-  it("adds OpenClaw attribution headers to native realtime websocket requests", () => {
+  it("adds Nova attribution headers to native realtime websocket requests", () => {
     vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
     const provider = buildOpenAIRealtimeVoiceProvider();
     const bridge = provider.createBridge({
@@ -490,7 +490,7 @@ describe("buildOpenAIRealtimeVoiceProvider", () => {
     expect(FakeWebSocket.instances).toHaveLength(0);
   });
 
-  it("returns browser-safe OpenClaw attribution headers for native WebRTC offers", async () => {
+  it("returns browser-safe Nova attribution headers for native WebRTC offers", async () => {
     vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
     fetchWithSsrFGuardMock.mockResolvedValueOnce({
       response: createJsonResponse({

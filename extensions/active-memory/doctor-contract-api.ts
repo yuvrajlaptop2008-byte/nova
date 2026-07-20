@@ -59,7 +59,7 @@ async function readLegacyToggleEntries(filePath: string): Promise<ActiveMemoryTo
   }
 }
 
-/** State migrations exposed to OpenClaw doctor for Active Memory. */
+/** State migrations exposed to Nova doctor for Active Memory. */
 export const stateMigrations: PluginDoctorStateMigration[] = [
   {
     id: "active-memory-session-toggles-json-to-plugin-state",

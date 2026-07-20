@@ -93,7 +93,7 @@ export const sessionDispatchHandlers: GatewayRequestHandlers = {
         undefined,
         errorShape(
           ErrorCodes.INVALID_REQUEST,
-          `cloud worker dispatch requires the OpenClaw runtime, not ${sessionRuntime}`,
+          `cloud worker dispatch requires the Nova runtime, not ${sessionRuntime}`,
         ),
       );
       return;

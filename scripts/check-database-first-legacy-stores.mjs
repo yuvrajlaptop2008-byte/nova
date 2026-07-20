@@ -15,9 +15,9 @@ import {
 import { resolveRepoRoot, runAsScript, toLine, unwrapExpression } from "./lib/ts-guard-utils.mjs";
 
 const databaseFirstLegacyStoreSourceRoots = ["src", "extensions", "packages"];
-const databaseFirstNativeSourceRoots = ["apps/macos/Sources/OpenClaw"];
+const databaseFirstNativeSourceRoots = ["apps/macos/Sources/Nova"];
 const nativeLegacyPortGuardianMigrationPath =
-  "apps/macos/Sources/OpenClaw/PortGuardianRecordStore.swift";
+  "apps/macos/Sources/Nova/PortGuardianRecordStore.swift";
 const nativeLegacyPortGuardianFilenamePattern = /\bport-guard\.(?:json|lock)\b/u;
 
 const legacyWriteCallees = new Set([

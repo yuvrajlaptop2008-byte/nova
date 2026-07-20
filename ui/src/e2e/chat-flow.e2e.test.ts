@@ -2110,7 +2110,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       await page.getByText("First token visible.").waitFor({ timeout: 10_000 });
       await gateway.resolveDeferred("chat.startup", {
         agentsList: {
-          agents: [{ id: "ops", name: "OpenClaw" }],
+          agents: [{ id: "ops", name: "Nova" }],
           defaultId: "ops",
           mainKey: "main",
           scope: "agent",

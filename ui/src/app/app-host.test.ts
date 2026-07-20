@@ -221,7 +221,7 @@ type ShellEpochState = {
   disconnectedCallback: () => void;
 };
 
-describe("OpenClaw app lifecycle", () => {
+describe("Nova app lifecycle", () => {
   it("hides revealed login credentials when the app connection epoch ends", () => {
     const app = document.createElement("openclaw-app") as unknown as AppLifecycleState;
     app.loginShowGatewayToken = true;
@@ -267,7 +267,7 @@ describe("OpenClaw app lifecycle", () => {
   });
 });
 
-describe("OpenClaw shell source initialization", () => {
+describe("Nova shell source initialization", () => {
   it("clears retained presentation and source ownership when its context epoch ends", () => {
     const shell = document.createElement("openclaw-app-shell") as unknown as ShellEpochState;
     const client = {} as GatewayBrowserClient;
@@ -340,7 +340,7 @@ describe("OpenClaw shell source initialization", () => {
   });
 });
 
-describe("OpenClaw shell settings search", () => {
+describe("Nova shell settings search", () => {
   it("loads config and schema for a non-empty query", async () => {
     const runtimeConfig = {
       ensureLoaded: vi.fn(() => Promise.resolve()),
@@ -425,7 +425,7 @@ describe("OpenClaw shell settings search", () => {
   );
 });
 
-describe("OpenClaw shell keyboard shortcuts", () => {
+describe("Nova shell keyboard shortcuts", () => {
   it("resolves onboarding mode from the active route search", () => {
     expect(resolveOnboardingMode("?onboarding=1")).toBe(true);
     expect(resolveOnboardingMode("?onboarding=true")).toBe(true);
@@ -970,7 +970,7 @@ describe("OpenClaw shell keyboard shortcuts", () => {
   });
 });
 
-describe("OpenClaw shell update affordance", () => {
+describe("Nova shell update affordance", () => {
   it("renders a floating card only while desktop navigation is collapsed", () => {
     const container = document.createElement("div");
     const shared = {

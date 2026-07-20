@@ -141,7 +141,7 @@ describe("runQaGatewayCliCommand", () => {
         cwd: process.cwd(),
         env: process.env,
       }),
-    ).rejects.toThrow("OpenClaw CLI exited 7: fixture failure");
+    ).rejects.toThrow("Nova CLI exited 7: fixture failure");
   });
 
   it.each(["stdout", "stderr"] as const)(
@@ -359,7 +359,7 @@ describe("buildQaRuntimeEnv", () => {
     expect(env.OPENAI_API_KEY).toBe("openai-explicit");
   });
 
-  it("preserves Codex CLI auth home for live frontier runs while sandboxing OpenClaw home", async () => {
+  it("preserves Codex CLI auth home for live frontier runs while sandboxing Nova home", async () => {
     const hostHome = await mkdtemp(path.join(os.tmpdir(), "qa-host-home-"));
     cleanups.push(async () => {
       await rm(hostHome, { recursive: true, force: true });
@@ -379,7 +379,7 @@ describe("buildQaRuntimeEnv", () => {
     expect(env.CODEX_HOME).toBe(codexHome);
   });
 
-  it("forwards host HOME for live Claude CLI runs while keeping OpenClaw home sandboxed", async () => {
+  it("forwards host HOME for live Claude CLI runs while keeping Nova home sandboxed", async () => {
     const hostHome = await mkdtemp(path.join(os.tmpdir(), "qa-host-home-"));
     cleanups.push(async () => {
       await rm(hostHome, { recursive: true, force: true });
@@ -398,7 +398,7 @@ describe("buildQaRuntimeEnv", () => {
     expect(env.OPENCLAW_STATE_DIR).toBe("/tmp/openclaw-qa/state");
   });
 
-  it("can forward host HOME for browser-backed QA runs while keeping OpenClaw home sandboxed", async () => {
+  it("can forward host HOME for browser-backed QA runs while keeping Nova home sandboxed", async () => {
     const hostHome = await mkdtemp(path.join(os.tmpdir(), "qa-host-home-"));
     cleanups.push(async () => {
       await rm(hostHome, { recursive: true, force: true });

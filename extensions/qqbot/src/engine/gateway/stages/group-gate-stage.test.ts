@@ -98,7 +98,7 @@ describe("runGroupGateStage", () => {
     event.mentions = [
       {
         member_openid: "BOT_OPENID",
-        username: "OpenClaw",
+        username: "Nova",
       },
     ];
 

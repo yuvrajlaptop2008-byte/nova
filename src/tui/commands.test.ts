@@ -58,7 +58,7 @@ describe("getSlashCommands", () => {
     const openclaw = commands.find((command) => command.name === "openclaw");
     expect(status?.description).toBe("Show current status.");
     expect(gatewayStatus?.description).toBe("Show gateway status summary");
-    expect(openclaw?.description).toBe("Return to OpenClaw");
+    expect(openclaw?.description).toBe("Return to Nova");
   });
 
   it("distinguishes new-session and reset command descriptions", () => {

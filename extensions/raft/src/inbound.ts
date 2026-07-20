@@ -94,7 +94,7 @@ export async function dispatchRaftWake(params: {
           route: { agentId: route.agentId, sessionKey: route.sessionKey },
           ctxPayload,
           // Raft's bridge only transports wake hints. The agent owns CLI delivery
-          // after it reads the pending Raft messages, so OpenClaw must not emit a
+          // after it reads the pending Raft messages, so Nova must not emit a
           // duplicate synthetic reply through the channel dispatcher.
           delivery: {
             deliver: async () => ({ visibleReplySent: false }),

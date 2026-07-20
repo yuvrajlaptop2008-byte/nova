@@ -184,7 +184,7 @@ export async function createWebhookForChannel(params: {
     }).rest;
     const created = await createChannelWebhook(rest, params.channelId, {
       body: {
-        name: "OpenClaw Agents",
+        name: "Nova Agents",
       },
     });
     const webhookId = normalizeOptionalString(created?.id) ?? "";

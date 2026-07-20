@@ -152,7 +152,7 @@ describe("scripts/lib/openclaw-e2e-instance.sh", () => {
 
     expect(result.status).not.toBe(0);
     expect(result.stdout).not.toContain("value=");
-    expect(result.stderr).toContain("Invalid OpenClaw test-state base64 payload");
+    expect(result.stderr).toContain("Invalid Nova test-state base64 payload");
   });
 
   it("fails when the test-state payload decodes to an empty script", () => {
@@ -620,7 +620,7 @@ describe("scripts/lib/openclaw-e2e-instance.sh", () => {
       expect(result.status).toBe(124);
       expect(elapsedMs).toBeLessThan(4_000);
       expect(result.stderr).toContain("using Node watchdog");
-      expect(result.stderr).toContain("OpenClaw E2E command timed out after 200ms");
+      expect(result.stderr).toContain("Nova E2E command timed out after 200ms");
     } finally {
       fs.rmSync(tempDir, { force: true, recursive: true });
     }
@@ -992,7 +992,7 @@ exit 1
     }
   });
 
-  it("wraps logged OpenClaw E2E commands with the configured timeout", () => {
+  it("wraps logged Nova E2E commands with the configured timeout", () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-e2e-instance-run-logged-"));
     const logLabel = path.basename(tempDir);
     const logDir = path.join(tempDir, "logs");
@@ -1104,7 +1104,7 @@ exit 1
       expect(result.status).toBe(1);
       expect(result.stdout).toContain("recent command tail");
       expect(result.stdout).not.toContain("DO_NOT_PRINT_OLD_COMMAND_LOG");
-      const logFile = expectDefined(fs.readdirSync(logDir)[0], "OpenClaw E2E command log file");
+      const logFile = expectDefined(fs.readdirSync(logDir)[0], "Nova E2E command log file");
       expect(fs.readFileSync(path.join(logDir, logFile), "utf8")).toContain(
         "DO_NOT_PRINT_OLD_COMMAND_LOG",
       );
@@ -1159,7 +1159,7 @@ exit 1
     }
   });
 
-  it("wraps package-installed OpenClaw CLI calls with the configured timeout", () => {
+  it("wraps package-installed Nova CLI calls with the configured timeout", () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-e2e-instance-openclaw-cli-"));
     try {
       const timeoutArgsPath = path.join(tempDir, "timeout-args.txt");

@@ -119,7 +119,7 @@ Keep this file empty unless you want a tiny checklist. Keep it small.
   it("recognizes the current docs page boilerplate template as repairable", async () => {
     const findings = await collectFindingsForContent(`# HEARTBEAT.md template
 
-\`HEARTBEAT.md\` lives in the agent workspace. Keep the file empty, or with only Markdown comments and headings, when you want OpenClaw to skip heartbeat model calls.
+\`HEARTBEAT.md\` lives in the agent workspace. Keep the file empty, or with only Markdown comments and headings, when you want Nova to skip heartbeat model calls.
 
 The default runtime template is:
 

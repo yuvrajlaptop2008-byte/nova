@@ -1,4 +1,4 @@
-// Featherless plugin entrypoint registers its OpenClaw integration.
+// Featherless plugin entrypoint registers its Nova integration.
 import type {
   ProviderResolveDynamicModelContext,
   ProviderRuntimeModel,

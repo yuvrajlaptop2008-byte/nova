@@ -46,7 +46,7 @@ export {
 } from "./http-auth-utils.js";
 
 export const OPENCLAW_MODEL_ID = "openclaw";
-/** Default OpenAI-compatible model alias that targets the default OpenClaw agent. */
+/** Default OpenAI-compatible model alias that targets the default Nova agent. */
 export const OPENCLAW_DEFAULT_MODEL_ID = "openclaw/default";
 
 class UnknownGatewayAgentError extends Error {

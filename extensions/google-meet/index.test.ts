@@ -913,7 +913,7 @@ describe("google-meet plugin", () => {
     expect(config.chrome).toEqual({
       audioBackend: "blackhole-2ch",
       launch: true,
-      guestName: "OpenClaw Agent",
+      guestName: "Nova Agent",
       reuseExistingTab: true,
       autoJoin: true,
       joinTimeoutMs: 30000,
@@ -1462,7 +1462,7 @@ describe("google-meet plugin", () => {
       type: "string",
       enum: ["agent", "bidi", "transcribe"],
       description:
-        "Join mode. agent uses realtime transcription, the configured OpenClaw agent, and regular TTS. bidi uses the realtime voice model directly. transcribe joins observe-only.",
+        "Join mode. agent uses realtime transcription, the configured Nova agent, and regular TTS. bidi uses the realtime voice model directly. transcribe joins observe-only.",
     });
   });
 
@@ -3970,7 +3970,7 @@ describe("google-meet plugin", () => {
                 lobbyWaiting: true,
                 manualActionRequired: true,
                 manualActionReason: "meet-admission-required",
-                manualActionMessage: "Admit the OpenClaw browser participant in Google Meet.",
+                manualActionMessage: "Admit the Nova browser participant in Google Meet.",
                 title: "Meet",
                 url: "https://meet.google.com/abc-defg-hij",
               }),
@@ -5358,7 +5358,7 @@ describe("google-meet plugin", () => {
                     inCall: false,
                     manualActionRequired: true,
                     manualActionReason: "meet-admission-required",
-                    manualActionMessage: "Admit the OpenClaw browser participant in Google Meet.",
+                    manualActionMessage: "Admit the Nova browser participant in Google Meet.",
                     title: "Meet",
                     url: "https://meet.google.com/abc-defg-hij?authuser=me%40example.com&hl=en",
                   }),
@@ -5590,7 +5590,7 @@ describe("google-meet plugin", () => {
               inCall: false,
               manualActionRequired: true,
               manualActionReason: "meet-admission-required",
-              manualActionMessage: "Admit the OpenClaw browser participant in Google Meet.",
+              manualActionMessage: "Admit the Nova browser participant in Google Meet.",
               title: "Meet",
               url: "https://meet.google.com/abc-defg-hij?authuser=me%40example.com&hl=en",
             }),
@@ -6953,7 +6953,7 @@ describe("google-meet plugin", () => {
           manualActionRequired: true,
           manualActionReason: "google-login-required",
           manualActionMessage:
-            "Sign in to Google in the OpenClaw browser profile, then retry the Meet join.",
+            "Sign in to Google in the Nova browser profile, then retry the Meet join.",
           title: "Sign in - Google Accounts",
           url: "https://accounts.google.com/signin",
         },

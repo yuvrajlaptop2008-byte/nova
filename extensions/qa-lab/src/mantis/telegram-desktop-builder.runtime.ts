@@ -453,7 +453,7 @@ MANTIS_TELEGRAM_READY
     echo "$gateway_pid" >"$out/openclaw-gateway.pid"
     sleep 12
     if ! kill -0 "$gateway_pid" >/dev/null 2>&1; then
-      echo "OpenClaw gateway exited during startup." >&2
+      echo "Nova gateway exited during startup." >&2
       wait "$gateway_pid" || true
       exit 1
     fi
@@ -532,7 +532,7 @@ function renderReport(summary: MantisTelegramDesktopBuilderSummary) {
     "- Remote metadata: `remote-metadata.json`",
     "- Remote command log: `telegram-desktop-builder-command.log`",
     "- Telegram Desktop log: `telegram-desktop.log`",
-    "- OpenClaw gateway log: `openclaw-gateway.log`",
+    "- Nova gateway log: `openclaw-gateway.log`",
     summary.error ? `- Error: ${summary.error}` : undefined,
     "",
   ].filter((line) => line !== undefined);
@@ -730,7 +730,7 @@ export async function runMantisTelegramDesktopBuilder(
       throw toErrorObject(remoteRunError);
     }
     if (gatewaySetup && !gatewaySetupCompleted) {
-      throw new Error("Telegram desktop builder did not report a live OpenClaw gateway.");
+      throw new Error("Telegram desktop builder did not report a live Nova gateway.");
     }
     summary = {
       artifacts: {

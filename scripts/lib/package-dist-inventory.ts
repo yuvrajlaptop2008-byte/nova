@@ -140,7 +140,7 @@ export async function writePackageDistInventory(packageRoot: string): Promise<st
 async function writePackageInstallGuardMarker(packageRoot: string): Promise<void> {
   const markerPath = path.join(packageRoot, PACKAGE_INSTALL_GUARD_RELATIVE_PATH);
   await fs.mkdir(path.dirname(markerPath), { recursive: true });
-  await fs.writeFile(markerPath, "OpenClaw package preinstall has not completed.\n", "utf8");
+  await fs.writeFile(markerPath, "Nova package preinstall has not completed.\n", "utf8");
 }
 
 export async function writePackageDistInventoryForPublish(packageRoot: string): Promise<string[]> {

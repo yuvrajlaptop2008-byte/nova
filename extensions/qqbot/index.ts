@@ -1,4 +1,4 @@
-// Qqbot plugin entrypoint registers its OpenClaw integration.
+// Qqbot plugin entrypoint registers its Nova integration.
 import {
   defineBundledChannelEntry,
   loadBundledEntryExportSync,

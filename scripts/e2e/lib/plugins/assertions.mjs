@@ -140,7 +140,7 @@ function readRequiredOpenClawConfig() {
     return readJson(configPath);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`failed to read OpenClaw config ${configPath}: ${message}`, { cause: error });
+    throw new Error(`failed to read Nova config ${configPath}: ${message}`, { cause: error });
   }
 }
 

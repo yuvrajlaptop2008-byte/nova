@@ -27,7 +27,7 @@ import type {
 import { matchEventFilter, normalizeApprovalId, toConversation, toText } from "./channel-shared.js";
 
 /**
- * Runtime bridge between MCP tools and the OpenClaw Gateway channel APIs.
+ * Runtime bridge between MCP tools and the Nova Gateway channel APIs.
  *
  * The bridge owns readiness, event cursoring, pending approval state, and the
  * narrow request methods that channel MCP tools expose to external clients.
@@ -142,7 +142,7 @@ export class OpenClawChannelBridge {
       password: bootstrap.auth.password,
       preauthHandshakeTimeoutMs: bootstrap.preauthHandshakeTimeoutMs,
       clientName: GATEWAY_CLIENT_NAMES.CLI,
-      clientDisplayName: "OpenClaw MCP",
+      clientDisplayName: "Nova MCP",
       clientVersion: VERSION,
       mode: GATEWAY_CLIENT_MODES.CLI,
       caps: [GATEWAY_CLIENT_CAPS.APPROVALS],

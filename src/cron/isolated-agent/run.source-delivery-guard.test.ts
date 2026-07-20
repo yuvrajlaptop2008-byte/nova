@@ -387,7 +387,7 @@ describe("executeCronRun sourceDelivery mapping", () => {
     expect(args.messageChannel).toBe("messagechat");
   });
 
-  it("forwards an explicit OpenClaw runtime override to cron execution", async () => {
+  it("forwards an explicit Nova runtime override to cron execution", async () => {
     mockRunCronFallbackPassthrough();
     const cronSession = makeCronSession() as MutableCronSession;
     cronSession.sessionEntry.agentRuntimeOverride = "openclaw";

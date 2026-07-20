@@ -37,7 +37,7 @@ export function buildOpenRouterSpeechProvider(): SpeechProviderPlugin {
     baseUrlPolicy: { kind: "canonical", aliases: ["https://openrouter.ai/v1"] },
     extraHeaders: {
       "HTTP-Referer": "https://openclaw.ai",
-      "X-OpenRouter-Title": "OpenClaw",
+      "X-OpenRouter-Title": "Nova",
     },
     apiErrorLabel: "OpenRouter TTS API error",
     missingApiKeyError: "OpenRouter API key missing",

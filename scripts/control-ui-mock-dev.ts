@@ -1,4 +1,4 @@
-// Control Ui Mock Dev script supports OpenClaw repository automation.
+// Control Ui Mock Dev script supports Nova repository automation.
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -50,7 +50,7 @@ const boardFixtureHtml = `<!doctype html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenClaw Board Fixture</title>
+    <title>Nova Board Fixture</title>
     <link rel="stylesheet" href="/src/styles.css" />
     <style>
       body { margin: 0; min-width: 320px; min-height: 100vh; background: #0f1115; }
@@ -606,7 +606,7 @@ function buildConfigMocks() {
   };
   const schema = {
     type: "object",
-    title: "OpenClaw config",
+    title: "Nova config",
     properties: {
       logging: {
         type: "object",

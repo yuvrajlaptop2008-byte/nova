@@ -1,4 +1,4 @@
-// Powershell script supports OpenClaw repository automation.
+// Powershell script supports Nova repository automation.
 import { modelProviderConfigBatchJson, providerIdFromModelId } from "./provider-auth.ts";
 
 export function psSingleQuote(value: string): string {
@@ -44,9 +44,9 @@ export function windowsAgentTurnConfigPatchScript(modelId: string): string {
   });
   return `$agentTurnConfigPatchPath = $env:OPENCLAW_CONFIG_PATH
 if (-not $agentTurnConfigPatchPath) { $agentTurnConfigPatchPath = Join-Path $env:USERPROFILE '.openclaw\\openclaw.json' }
-$agentTurnVersionText = Invoke-OpenClaw --version 2>$null | Out-String
+$agentTurnVersionText = Invoke-Nova --version 2>$null | Out-String
 $agentTurnRuntimePolicySupported = $false
-if ($agentTurnVersionText -match 'OpenClaw\\s+(\\d{4})\\.(\\d{1,2})\\.(\\d{1,2})') {
+if ($agentTurnVersionText -match 'Nova\\s+(\\d{4})\\.(\\d{1,2})\\.(\\d{1,2})') {
   $agentTurnYear = [int]$Matches[1]
   $agentTurnMonth = [int]$Matches[2]
   $agentTurnDay = [int]$Matches[3]
@@ -173,7 +173,7 @@ function Resolve-OpenClawCommand {
   }
   throw 'openclaw command not found in PATH, APPDATA npm, or npm global prefix'
 }
-function Invoke-OpenClaw {
+function Invoke-Nova {
   param([Parameter(ValueFromRemainingArguments = $true)][string[]] $OpenClawArgs)
   $command = Resolve-OpenClawCommand
   $previousErrorActionPreference = $ErrorActionPreference

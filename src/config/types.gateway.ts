@@ -258,7 +258,7 @@ export type GatewayTailscaleConfig = {
   /**
    * When `mode="serve"` and an externally configured Tailscale Funnel route
    * already covers the gateway port, skip re-applying `tailscale serve` on
-   * startup. Lets operators manage Funnel exposure outside OpenClaw without
+   * startup. Lets operators manage Funnel exposure outside Nova without
    * losing it across gateway restarts.
    */
   preserveFunnel?: boolean;

@@ -351,12 +351,12 @@ describe("installPluginFromNpmSpec e2e", () => {
     const rootDir = await makeTempDir("npm-plugin-compatible-version-e2e");
     const npmRoot = path.join(rootDir, "managed-npm");
     const packageName = `compatible-plugin-${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
-    const compatibleOpenClaw = {
+    const compatibleNova = {
       extensions: ["./dist/index.js"],
       install: { minHostVersion: ">=2026.4.25" },
       compat: { pluginApi: ">=2026.5.10-beta.1" },
     };
-    const incompatibleOpenClaw = {
+    const incompatibleNova = {
       extensions: ["./dist/index.js"],
       install: { minHostVersion: ">=2026.4.25" },
       compat: { pluginApi: ">=2026.5.27" },
@@ -367,14 +367,14 @@ describe("installPluginFromNpmSpec e2e", () => {
         pluginId: packageName,
         version: "2026.5.26",
         rootDir,
-        openclaw: compatibleOpenClaw,
+        openclaw: compatibleNova,
       }),
       await packPlugin({
         packageName,
         pluginId: packageName,
         version: "2026.5.27",
         rootDir,
-        openclaw: incompatibleOpenClaw,
+        openclaw: incompatibleNova,
       }),
     ];
     const registry = await startStaticRegistry([{ packageName, latest: "2026.5.27", versions }]);

@@ -370,7 +370,7 @@ async function maybeRepairStaleLocalBundledPluginInstallRecords(
   return stale.map((record) => record.pluginId);
 }
 
-/** Relinks managed npm plugin packages to the current OpenClaw host packages. */
+/** Relinks managed npm plugin packages to the current Nova host packages. */
 export async function maybeRepairManagedNpmOpenClawPeerLinks(
   params: PluginRegistryDoctorRepairParams,
 ): Promise<boolean> {
@@ -394,7 +394,7 @@ export async function maybeRepairManagedNpmOpenClawPeerLinks(
     if (issues.length > 0) {
       note(
         [
-          "Managed npm OpenClaw host peer links need repair:",
+          "Managed npm Nova host peer links need repair:",
           ...issues.map((issue) => `- ${issue.packageName}: ${issue.reason}`),
           `Repair with ${formatCliCommand("openclaw doctor --fix")} to relink managed npm plugin packages.`,
         ].join("\n"),
@@ -437,7 +437,7 @@ export async function maybeRepairManagedNpmOpenClawPeerLinks(
 
   if (repaired > 0) {
     note(
-      `Repaired OpenClaw host peer link(s) for ${repaired} managed npm plugin package(s).`,
+      `Repaired Nova host peer link(s) for ${repaired} managed npm plugin package(s).`,
       "Plugin registry",
     );
   }
@@ -446,7 +446,7 @@ export async function maybeRepairManagedNpmOpenClawPeerLinks(
     .map((message) => `- ${message.message}`);
   if (warnings.length > 0) {
     note(
-      ["Could not repair all managed npm OpenClaw host peer links:", ...warnings].join("\n"),
+      ["Could not repair all managed npm Nova host peer links:", ...warnings].join("\n"),
       "Plugin registry",
     );
   }
@@ -577,7 +577,7 @@ export function pluginRegistryIssueToHealthFinding(
       return {
         checkId: PLUGIN_REGISTRY_CHECK_ID,
         severity: "warning",
-        message: `Managed npm package ${issue.packageName} has a broken OpenClaw peer link: ${issue.reason}.`,
+        message: `Managed npm package ${issue.packageName} has a broken Nova peer link: ${issue.reason}.`,
         path: issue.packageDir,
         target: issue.packageName,
         fixHint: "Run `openclaw doctor --fix` to relink managed npm plugin packages.",

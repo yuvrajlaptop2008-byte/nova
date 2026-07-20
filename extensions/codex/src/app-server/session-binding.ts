@@ -57,7 +57,7 @@ export type CodexAppServerBindingIdentity =
   | { kind: "session"; agentId: string; sessionId: string; sessionKey?: string }
   | { kind: "conversation"; bindingId: string };
 
-/** Resolves the same agent scope OpenClaw uses for transcript/session ownership. */
+/** Resolves the same agent scope Nova uses for transcript/session ownership. */
 export function sessionBindingIdentity(params: {
   sessionId: string;
   sessionKey?: string;
@@ -74,7 +74,7 @@ export function sessionBindingIdentity(params: {
   };
 }
 
-/** Builds the terminal coordination error used when a newer OpenClaw session owns the binding. */
+/** Builds the terminal coordination error used when a newer Nova session owns the binding. */
 export function createCodexSessionGenerationSupersededError(
   sessionId: string,
 ): AgentHarnessSessionSupersededError {
@@ -176,15 +176,15 @@ const threadBindingSchema = z
     clientId: optionalStringSchema,
     cwd: z.string(),
     // Private runtime ownership. Only the supervision catalog creates this
-    // marker; public OpenClaw session metadata must never authorize user-home access.
+    // marker; public Nova session metadata must never authorize user-home access.
     connectionScope: z.literal("supervision").optional(),
     supervisionSourceThreadId: z.string().trim().min(1).optional(),
     authProfileId: optionalStringSchema,
     model: optionalStringSchema,
     // Codex App Server owns selection for supervised and adopted threads. Keep
-    // this marker across resumes so OpenClaw never substitutes a default or fallback.
+    // this marker across resumes so Nova never substitutes a default or fallback.
     preserveNativeModel: z.literal(true).optional().catch(undefined),
-    // Continue creates the OpenClaw Chat before native execution. This closed
+    // Continue creates the Nova Chat before native execution. This closed
     // snapshot state is materialized only inside the fully configured harness.
     pendingSupervisionBranch: pendingSupervisionBranchSchema.optional(),
     modelProvider: z
@@ -530,7 +530,7 @@ export type CodexAppServerBindingStore = {
   withLease<T>(identity: CodexAppServerBindingIdentity, run: () => Promise<T>): Promise<T>;
 };
 
-/** Lets the authoritative OpenClaw session generation claim a stale stable binding row. */
+/** Lets the authoritative Nova session generation claim a stale stable binding row. */
 export async function reclaimCurrentCodexSessionGeneration(params: {
   bindingStore: CodexAppServerBindingStore;
   identity: Extract<CodexAppServerBindingIdentity, { kind: "session" }>;
@@ -912,7 +912,7 @@ export function createCodexAppServerBindingStore(
         if (!expectedSessionId) {
           throw new Error("Codex session generation adoption requires the previous session id");
         }
-        // Context-engine compaction rotates the physical OpenClaw session before
+        // Context-engine compaction rotates the physical Nova session before
         // secondary native compaction. Compare both generations so a delayed hook
         // cannot move a newer binding back to its stale predecessor.
         return await transactKey(key, (current) => {

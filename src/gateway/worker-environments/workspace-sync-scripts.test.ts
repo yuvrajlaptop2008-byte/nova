@@ -351,7 +351,7 @@ describe("remote workspace manifest script", () => {
       ["add", ".gitignore"],
       [
         "-c",
-        "user.name=OpenClaw Test",
+        "user.name=Nova Test",
         "-c",
         "user.email=test@openclaw.invalid",
         "commit",
@@ -551,7 +551,7 @@ describe("remote workspace manifest script", () => {
       ["add", ".gitignore"],
       [
         "-c",
-        "user.name=OpenClaw Test",
+        "user.name=Nova Test",
         "-c",
         "user.email=test@openclaw.invalid",
         "commit",
@@ -630,7 +630,7 @@ describe("remote workspace manifest script", () => {
       ["add", "."],
       [
         "-c",
-        "user.name=OpenClaw Test",
+        "user.name=Nova Test",
         "-c",
         "user.email=test@openclaw.invalid",
         "commit",

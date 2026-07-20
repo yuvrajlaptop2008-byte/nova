@@ -641,15 +641,15 @@ export function teamsMeetingStatusPreludeSource(params: TeamsMeetingStatusPrelud
   } else if (!inCall && loginRequired) {
     manualActionReason = "teams-login-required";
     manualActionMessage = tenantLoginRequired
-      ? "This Teams tenant requires sign-in or email verification. Complete it in the OpenClaw browser profile, then retry."
-      : "Sign in to Microsoft Teams in the OpenClaw browser profile, then retry the meeting join.";
+      ? "This Teams tenant requires sign-in or email verification. Complete it in the Nova browser profile, then retry."
+      : "Sign in to Microsoft Teams in the Nova browser profile, then retry the meeting join.";
   } else if (!inCall && lobbyWaiting) {
     manualActionReason = "teams-admission-required";
-    manualActionMessage = "Admit the OpenClaw guest from the Microsoft Teams lobby, then retry speech.";
+    manualActionMessage = "Admit the Nova guest from the Microsoft Teams lobby, then retry speech.";
   } else if (!inCall && permissionRequired) {
     manualActionReason = "teams-permission-required";
     manualActionMessage = allowMicrophone
-      ? "Allow microphone permission for Teams in the OpenClaw browser profile, then retry."
+      ? "Allow microphone permission for Teams in the Nova browser profile, then retry."
       : "Dismiss the Teams device-permission prompt or continue without devices, then retry.";
   } else if (!inCall && controlManualActionReason) {
     manualActionReason = controlManualActionReason;

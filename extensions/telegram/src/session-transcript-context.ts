@@ -9,7 +9,7 @@ export async function buildTelegramSessionTranscriptPromptEntries(
 ) {
   const entries = await readRecentUserAssistantTextForSession(params);
   return entries.map((entry) => {
-    const sender = entry.role === "assistant" ? "OpenClaw" : "User";
+    const sender = entry.role === "assistant" ? "Nova" : "User";
     const message = {
       ...(entry.id ? { message_id: `session:${entry.id}` } : {}),
       sender: entry.sourceChannel ? `${sender} (${entry.sourceChannel})` : sender,

@@ -89,7 +89,7 @@ describe("full-release-validation-at-sha", () => {
     expect(parseArgs(["--target-ref", "v2026.7.1-beta.5"]).targetRef).toBe("v2026.7.1-beta.5");
     expect(parseArgs(["--target-ref", "v2026.7.1"]).targetRef).toBe("v2026.7.1");
     expect(() => parseArgs(["--target-ref", "feature/not-release"])).toThrow(
-      "canonical OpenClaw release branch or tag",
+      "canonical Nova release branch or tag",
     );
   });
 

@@ -142,7 +142,7 @@ type RegisterNativeHookRelayParams = {
   channelId?: string;
   requester?: PluginHookToolRequesterContext;
   allowedEvents?: readonly NativeHookRelayEvent[];
-  /** Whether this relay should run OpenClaw loop detection from native PreToolUse hooks. */
+  /** Whether this relay should run Nova loop detection from native PreToolUse hooks. */
   preToolUseLoopDetection?: boolean;
   ttlMs?: number;
   command?: NativeHookRelayCommandOptions;
@@ -407,7 +407,7 @@ const nativeHookRelayProviderAdapters: Record<
               ? { behavior: "allow" }
               : {
                   behavior: "deny",
-                  message: message?.trim() || "Denied by OpenClaw",
+                  message: message?.trim() || "Denied by Nova",
                 },
         },
       })}\n`,
@@ -848,7 +848,7 @@ async function resolveNativeHookRelayPreToolUseApproval(
       handled: true,
       outcome: "denied",
       reason:
-        "OpenClaw tool policy rewrote Codex app-server approval params; refusing original request.",
+        "Nova tool policy rewrote Codex app-server approval params; refusing original request.",
     };
   }
   return {
@@ -1475,7 +1475,7 @@ async function runNativeHookRelayPreToolUse(params: {
     // Codex app-server may continue with the original params when updatedInput
     // is unsupported, so rewrites must fail closed here.
     return params.adapter.renderPreToolUseBlockResponse(
-      "OpenClaw tool policy rewrote Codex app-server approval params; refusing original request.",
+      "Nova tool policy rewrote Codex app-server approval params; refusing original request.",
     );
   }
   return params.adapter.renderNoopResponse(params.invocation.event);
@@ -2246,7 +2246,7 @@ function resolveOpenClawCliExecutable(): string {
       return resolved;
     }
   }
-  throw new Error("Cannot resolve OpenClaw CLI executable path for native hook relay");
+  throw new Error("Cannot resolve Nova CLI executable path for native hook relay");
 }
 
 function normalizeAllowedEvents(

@@ -366,7 +366,7 @@ describe("native app i18n inventory", () => {
     expect(entries.some((entry) => entry.source === "Run now")).toBe(true);
     expect(entries.some((entry) => entry.source === "Loading chat")).toBe(true);
     expect(
-      entries.some((entry) => entry.surface === "android" && entry.source === "Search OpenClaw"),
+      entries.some((entry) => entry.surface === "android" && entry.source === "Search Nova"),
     ).toBe(true);
     expect(
       entries.some(
@@ -386,14 +386,13 @@ describe("native app i18n inventory", () => {
       ),
     ).toBe(true);
     expect(entries.some((entry) => entry.source === "What would you like to work on?")).toBe(true);
-    expect(entries.some((entry) => entry.source === "Check OpenClaw status")).toBe(true);
+    expect(entries.some((entry) => entry.source === "Check Nova status")).toBe(true);
     expect(entries.some((entry) => entry.source === "What can I control here?")).toBe(true);
     expect(entries.some((entry) => entry.source === "Help me start voice chat")).toBe(true);
     expect(
       entries.some(
         (entry) =>
-          entry.source ===
-          "Summarize the current OpenClaw status and tell me what needs attention.",
+          entry.source === "Summarize the current Nova status and tell me what needs attention.",
       ),
     ).toBe(true);
     expect(
@@ -409,8 +408,8 @@ describe("native app i18n inventory", () => {
       ),
     ).toBe(true);
     expect(entries.some((entry) => entry.source === "DIARY")).toBe(true);
-    expect(entries.some((entry) => entry.source === "ask OpenClaw $prompt")).toBe(true);
-    expect(entries.some((entry) => entry.source === "OpenClaw is paused")).toBe(true);
+    expect(entries.some((entry) => entry.source === "ask Nova $prompt")).toBe(true);
+    expect(entries.some((entry) => entry.source === "Nova is paused")).toBe(true);
     expect(
       entries.some((entry) => entry.source === "Choose system, light, or dark appearance"),
     ).toBe(true);
@@ -447,7 +446,7 @@ describe("native app i18n inventory", () => {
     expect(
       entries.some(
         (entry) =>
-          entry.source === 'OpenClaw needs ${labels.joinToString(", ")} permissions to continue.',
+          entry.source === 'Nova needs ${labels.joinToString(", ")} permissions to continue.',
       ),
     ).toBe(true);
     expect(
@@ -471,7 +470,7 @@ describe("native app i18n inventory", () => {
       entries.some(
         (entry) =>
           entry.source ===
-          "Writes a rotating, local-only log under ~/Library/Logs/OpenClaw/. Enable only while actively debugging.",
+          "Writes a rotating, local-only log under ~/Library/Logs/Nova/. Enable only while actively debugging.",
       ),
     ).toBe(true);
     expect(
@@ -486,7 +485,7 @@ describe("native app i18n inventory", () => {
         [
           "Your AI-powered setup helper. It can check status, fix config, ",
           "Cron changes require operator.admin. Setup codes intentionally do not grant it. ",
-          "Writes a rotating, local-only log under ~/Library/Logs/OpenClaw/. ",
+          "Writes a rotating, local-only log under ~/Library/Logs/Nova/. ",
           "Paste the token configured on the gateway host. ",
         ].includes(entry.source),
       ),
@@ -507,7 +506,7 @@ describe("native app i18n inventory", () => {
       entries.some(
         (entry) =>
           entry.source ===
-          "Approve this device on the gateway.\n1) `%1$@`\n2) `/pair approve` in your OpenClaw chat\n%2$@\nOpenClaw will also retry automatically when you return to this app.",
+          "Approve this device on the gateway.\n1) `%1$@`\n2) `/pair approve` in your Nova chat\n%2$@\nNova will also retry automatically when you return to this app.",
       ),
     ).toBe(true);
     expect(
@@ -534,7 +533,7 @@ describe("native app i18n inventory", () => {
     expect(
       entries.some((entry) =>
         entry.source.startsWith(
-          "Exec approvals can only be reviewed while OpenClaw is open and connected.",
+          "Exec approvals can only be reviewed while Nova is open and connected.",
         ),
       ),
     ).toBe(true);
@@ -1090,7 +1089,7 @@ describe("native app i18n inventory", () => {
         kind: "conditional-branch",
         line: 89,
         path: "apps/android/app/src/main/java/ai/openclaw/app/AppLanguage.kt",
-        source: "OpenClaw translations · $languageTag",
+        source: "Nova translations · $languageTag",
         surface: "android",
       },
       {

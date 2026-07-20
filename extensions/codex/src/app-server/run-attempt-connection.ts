@@ -53,7 +53,7 @@ function applyStoredBindingPermissions(params: {
   if (params.execPolicyTouched || params.binding?.connectionScope === "supervision") {
     return params.appServer;
   }
-  // `/codex permissions` owns per-session policy. Explicit OpenClaw exec config
+  // `/codex permissions` owns per-session policy. Explicit Nova exec config
   // and supervised private connections remain authoritative when present.
   return {
     ...params.appServer,
@@ -268,7 +268,7 @@ export async function prepareCodexAttemptConnection({ params, options }: CodexRu
     agentDir,
   });
   if (configuredAppServer.approvalPolicy === "never" && appServer.approvalPolicy === "untrusted") {
-    embeddedAgentLog.info("codex app-server approval policy promoted for OpenClaw tool policy", {
+    embeddedAgentLog.info("codex app-server approval policy promoted for Nova tool policy", {
       from: "never",
       to: "untrusted",
       beforeToolCallHook: beforeToolCallPolicy.hasBeforeToolCallHook,

@@ -1,4 +1,4 @@
-// OpenClaw operation tests cover rescue operation planning and execution.
+// Nova operation tests cover rescue operation planning and execution.
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -392,7 +392,7 @@ describe("parseSystemAgentOperation", () => {
           },
         },
       ),
-    ).rejects.toThrow("Exit OpenClaw and run `openclaw onboard`");
+    ).rejects.toThrow("Exit Nova and run `openclaw onboard`");
 
     expect(applySetup).not.toHaveBeenCalled();
   });
@@ -989,13 +989,13 @@ describe("parseSystemAgentOperation", () => {
     expect(result).toEqual({ applied: false });
     expect(isPersistentSystemAgentOperation({ kind: "doctor-fix" })).toBe(false);
     expect(runDoctor).not.toHaveBeenCalled();
-    expect(lines.join("\n")).toContain("Exit OpenClaw");
+    expect(lines.join("\n")).toContain("Exit Nova");
     expect(lines.join("\n")).toContain("openclaw doctor --fix");
     expect(lines.join("\n")).not.toContain("[openclaw] running: doctor.fix");
     await expect(fs.access(path.join(tempDir, "audit", "system-agent.jsonl"))).rejects.toThrow();
   });
 
-  it("returns from the agent TUI back to OpenClaw", async () => {
+  it("returns from the agent TUI back to Nova", async () => {
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runTui = vi.fn(async () => ({
       exitReason: "return-to-system-agent" as const,
@@ -1045,7 +1045,7 @@ describe("parseSystemAgentOperation", () => {
     });
   });
 
-  it("re-enters the OpenClaw shell when the agent TUI returns without a request", async () => {
+  it("re-enters the Nova shell when the agent TUI returns without a request", async () => {
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runTui = vi.fn(async () => ({
       exitReason: "return-to-system-agent" as const,

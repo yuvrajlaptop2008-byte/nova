@@ -37,7 +37,7 @@ type ResolvedNonInteractiveApiKey = NonNullable<
 
 const GENERIC_NON_INTERACTIVE_AUTH_CHOICES = ["oauth", "setup-token", "token", "apiKey"];
 
-/** Applies a local non-interactive auth choice to the pending OpenClaw config. */
+/** Applies a local non-interactive auth choice to the pending Nova config. */
 export async function applyNonInteractiveAuthChoice(params: {
   nextConfig: OpenClawConfig;
   authChoice: AuthChoice;

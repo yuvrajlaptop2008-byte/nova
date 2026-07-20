@@ -194,7 +194,7 @@ describe("collectClawHubPublishablePluginPackages", () => {
   });
 });
 
-describe("OpenClaw dual-published plugin metadata", () => {
+describe("Nova dual-published plugin metadata", () => {
   const dualPublishedPlugins = [
     {
       extensionId: "cohere",

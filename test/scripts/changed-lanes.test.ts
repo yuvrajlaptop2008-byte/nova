@@ -1714,7 +1714,7 @@ describe("scripts/changed-lanes", () => {
       "apps/android/fastlane/metadata/android/en-US/release_notes.txt",
       "apps/android/version.json",
       "apps/ios/CHANGELOG.md",
-      "apps/macos/Sources/OpenClaw/Resources/Info.plist",
+      "apps/macos/Sources/Nova/Resources/Info.plist",
       "docs/.generated/config-baseline.counts.json",
       "docs/.generated/config-baseline.sha256",
       "package.json",

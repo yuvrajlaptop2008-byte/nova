@@ -272,15 +272,14 @@ export const fa: TranslationMap = {
     errorTitle: "پنل بارگیری نشد",
     genericSubtitle: "هنگام بارگذاری این پنل مشکلی پیش آمد.",
     staleTitle: "نسخه جدیدی در دسترس است",
-    staleSubtitle:
-      "OpenClaw در پس‌زمینه به‌روزرسانی شد. برای دریافت جدیدترین پنل، دوباره بارگذاری کنید.",
+    staleSubtitle: "Nova در پس‌زمینه به‌روزرسانی شد. برای دریافت جدیدترین پنل، دوباره بارگذاری کنید.",
     retry: "تلاش دوباره",
   },
   nodes: {
     pairing: {
       button: "جفت‌سازی دستگاه همراه",
       adminRequired: "برای ایجاد کدهای راه‌اندازی، دسترسی مدیر لازم است.",
-      title: "موبایل OpenClaw",
+      title: "موبایل Nova",
       subtitle: "برای اتصال یک تلفن جدید، این کد QR را در برنامه موبایل اسکن کنید.",
       generating: "در حال ایجاد کد راه‌اندازی امن…",
       accessTitle: "دسترسی موبایل",
@@ -293,14 +292,14 @@ export const fa: TranslationMap = {
       transportLimitedHint:
         "این URL مربوط به Gateway از ws:// با متن ساده استفاده می‌کند. از wss:// یا Tailscale Serve استفاده کنید، سپس برای دسترسی کامل یک کد جدید ایجاد کنید.",
       failed: "امکان ایجاد کد راه‌اندازی وجود نداشت.",
-      qrAlt: "کد QR جفت‌سازی موبایل OpenClaw",
+      qrAlt: "کد QR جفت‌سازی موبایل Nova",
       qrUnavailable: "کد QR در دسترس نیست. به‌جای آن کد راه‌اندازی را کپی کنید.",
       copySetupCode: "کپی کد راه‌اندازی",
       newCode: "کد جدید",
       showSetupCode: "نمایش کد راه‌اندازی",
       pending: "درخواست‌های دستگاه در انتظار بررسی: {count}",
       review: "بازبینی",
-      waiting: "برنامه‌های رسمی موبایل OpenClaw پس از اسکن به‌صورت خودکار متصل می‌شوند.",
+      waiting: "برنامه‌های رسمی موبایل Nova پس از اسکن به‌صورت خودکار متصل می‌شوند.",
       help: "راهنمای جفت‌سازی",
       manageDevices: "مدیریت دستگاه‌ها",
     },
@@ -445,11 +444,11 @@ export const fa: TranslationMap = {
     ownerSession: "جلسه",
     ownerWorkboard: "Workboard",
     title: "Worktreeهای مدیریت‌شده",
-    subtitle: "checkoutهای ایزولهٔ مخزن که متعلق به OpenClaw هستند.",
+    subtitle: "checkoutهای ایزولهٔ مخزن که متعلق به Nova هستند.",
     cleanNow: "اکنون پاک‌سازی کن",
     cleanupTitle: "پاک‌سازی",
     cleanupSubtitle:
-      "OpenClaw برای آزاد کردن فضای دیسک، به‌طور دوره‌ای worktreeهای قدیمی را حذف می‌کند. میزان شدت اجرای پاک‌سازی را تنظیم کنید.",
+      "Nova برای آزاد کردن فضای دیسک، به‌طور دوره‌ای worktreeهای قدیمی را حذف می‌کند. میزان شدت اجرای پاک‌سازی را تنظیم کنید.",
     cleanupMaxCount: "حداکثر تعداد worktreeها",
     cleanupMaxCountHelp:
       "حداکثر تعداد worktreeهای مدیریت‌شده که در همه مخزن‌ها نگه داشته می‌شوند. ابتدا از worktreeهای قدیمی‌تر snapshot گرفته می‌شود و سپس حذف می‌شوند. برای غیرفعال کردن محدودیت تعداد، مقدار را روی 0 تنظیم کنید.",
@@ -1395,7 +1394,7 @@ export const fa: TranslationMap = {
     },
   },
   approvalPage: {
-    brandName: "OpenClaw",
+    brandName: "Nova",
     eyebrow: "Operator approval",
     loadingTitle: "Loading approval",
     loadingDescription: "Checking the current approval state with the Gateway.",
@@ -1404,7 +1403,7 @@ export const fa: TranslationMap = {
       "This approval could not be found or this device is not authorized to review it.",
     connectionErrorTitle: "Connection interrupted",
     connectionErrorDescription:
-      "OpenClaw cannot confirm or record a decision while disconnected. Reconnect to check the current status.",
+      "Nova cannot confirm or record a decision while disconnected. Reconnect to check the current status.",
     retry: "Retry",
     execTitle: "Command approval",
     pending: "Waiting for your decision",
@@ -1749,7 +1748,7 @@ export const fa: TranslationMap = {
   modelSetup: {
     heading: "هوش مصنوعی خود را متصل کنید",
     intro:
-      "OpenClaw از دسترسی فعلی شما به هوش مصنوعی دوباره استفاده می‌کند — ورود از طریق CLI، کلید API یا ورود به حساب ارائه‌دهنده.",
+      "Nova از دسترسی فعلی شما به هوش مصنوعی دوباره استفاده می‌کند — ورود از طریق CLI، کلید API یا ورود به حساب ارائه‌دهنده.",
     loading: "در حال بررسی دسترسی‌های موجود به هوش مصنوعی در این Gateway…",
     retry: "تلاش مجدد",
     checkAgain: "بررسی مجدد",
@@ -1762,7 +1761,7 @@ export const fa: TranslationMap = {
     },
     access: {
       adminRequired: "راه‌اندازی مدل به دسترسی operator.admin نیاز دارد.",
-      gatewayTooOld: "Gateway از نسخه قدیمی‌تری از OpenClaw استفاده می‌کند",
+      gatewayTooOld: "Gateway از نسخه قدیمی‌تری از Nova استفاده می‌کند",
     },
     candidates: {
       title: "موارد یافت‌شده در این Gateway",
@@ -1863,12 +1862,12 @@ export const fa: TranslationMap = {
     confirmReplace:
       "پیش از جایگزینی، از فایل‌های موجود در مقصد در گزارش انتقال نسخه پشتیبان تهیه می‌شود.",
     confirmBackup:
-      "OpenClaw پیش از کپی‌کردن حافظه، یک نسخه پشتیبان تأییدشده قبل از واردسازی ایجاد می‌کند.",
+      "Nova پیش از کپی‌کردن حافظه، یک نسخه پشتیبان تأییدشده قبل از واردسازی ایجاد می‌کند.",
     confirmImport: "وارد کردن حافظه",
     disconnected: "برای وارد کردن حافظه به Gateway متصل شوید.",
     title: "وارد کردن حافظه دستیار",
     subtitle:
-      "پیش از کپی‌کردن در OpenClaw، حافظه یکپارچه Codex و حافظه خودکار Claude Code را بررسی کنید.",
+      "پیش از کپی‌کردن در Nova، حافظه یکپارچه Codex و حافظه خودکار Claude Code را بررسی کنید.",
     agent: "عامل مقصد",
     replaceExisting: "جایگزینی موارد واردشده موجود",
     replaceHint:
@@ -1877,7 +1876,7 @@ export const fa: TranslationMap = {
   onboarding: {
     memoryImport: {
       title: "حافظه دستیار خود را همراه بیاورید",
-      body: "OpenClaw حافظه‌ای از دستیارهای کدنویسی دیگر پیدا کرد. آن را به فضای کاری عامل خود وارد می‌کنید؟",
+      body: "Nova حافظه‌ای از دستیارهای کدنویسی دیگر پیدا کرد. آن را به فضای کاری عامل خود وارد می‌کنید؟",
       plannedCount: "{count} مورد آماده وارد کردن",
       alreadyImported: "قبلاً واردشده: {count}",
       sourceUnavailable: "مسیر منبع در دسترس نیست",
@@ -1893,7 +1892,7 @@ export const fa: TranslationMap = {
       unknownError: "درخواست ناموفق بود",
       doneTitle: "وارد کردن حافظه پایان یافت",
       doneBody:
-        "{migrated} مورد منتقل شد، {skipped} مورد نادیده گرفته شد. می‌توانید راه‌اندازی OpenClaw را ادامه دهید.",
+        "{migrated} مورد منتقل شد، {skipped} مورد نادیده گرفته شد. می‌توانید راه‌اندازی Nova را ادامه دهید.",
     },
   },
   mcpPage: {
@@ -1980,7 +1979,7 @@ export const fa: TranslationMap = {
       notes: "ثبت یادداشت‌ها در Markdown، Obsidian، Notion یا Bear.",
     },
     noInstalledTitle: "هیچ افزونه اختیاری نصب نشده است",
-    noInstalledBody: "برای گسترش OpenClaw، یک افزونه ویژه را کشف کنید یا در ClawHub جستجو کنید.",
+    noInstalledBody: "برای گسترش Nova، یک افزونه ویژه را کشف کنید یا در ClawHub جستجو کنید.",
     noInstalledMatchTitle: "هیچ افزونه نصب‌شده‌ای مطابقت ندارد",
     noMatchBody: "جستجوی دیگری را امتحان کنید.",
     filterAll: "همه",
@@ -2026,7 +2025,7 @@ export const fa: TranslationMap = {
     detailPluginId: "شناسهٔ افزونه",
     offlineTitle: "Gateway آفلاین است",
     offlineBody: "برای مرور افزونه‌های نصب‌شده و پیشنهادی متصل شوید.",
-    optionalCapability: "قابلیت اختیاری OpenClaw.",
+    optionalCapability: "قابلیت اختیاری Nova.",
     enabled: "فعال",
     disabled: "غیرفعال",
     available: "در دسترس",
@@ -2058,7 +2057,7 @@ export const fa: TranslationMap = {
     disabledRestart: "{name} غیرفعال شد. برای اعمال تغییر، راه‌اندازی مجدد Gateway لازم است.",
   },
   aboutPage: {
-    productName: "OpenClaw",
+    productName: "Nova",
     tagline: "دستیار هوش مصنوعی شخصی شما که روی دستگاه‌های خودتان اجرا می‌شود.",
     waveHello: "برای Clawd دست تکان دهید",
     linksLabel: "انجمن و منابع",
@@ -2067,7 +2066,7 @@ export const fa: TranslationMap = {
     linkGitHub: "GitHub",
     linkDiscord: "Discord",
     linkChangelog: "تغییرات",
-    license: "© 2026 بنیاد OpenClaw — مجوز MIT.",
+    license: "© 2026 بنیاد Nova — مجوز MIT.",
     artifactTitle: "Control UI",
     artifactSubtitle: "هویتی که هنگام ساخت این آرتیفکت مرورگر در آن تعبیه شده است.",
     artifactDetails: "جزئیات ساخت Control UI",
@@ -2248,7 +2247,7 @@ export const fa: TranslationMap = {
     selfLearning: {
       pitchTitle: "فعال‌سازی خودآموزی",
       pitchBody:
-        "OpenClaw اصلاحات و اجراهای مهم تکمیل‌شده را بررسی می‌کند و سپس برای این برد، پیش‌نویس پیشنهادهای مهارت را می‌سازد. این فرایند توکن‌های پس‌زمینه بیشتری مصرف می‌کند و پیش‌نویس‌ها به‌صورت پیشنهادهای در انتظار ارائه می‌شوند.",
+        "Nova اصلاحات و اجراهای مهم تکمیل‌شده را بررسی می‌کند و سپس برای این برد، پیش‌نویس پیشنهادهای مهارت را می‌سازد. این فرایند توکن‌های پس‌زمینه بیشتری مصرف می‌کند و پیش‌نویس‌ها به‌صورت پیشنهادهای در انتظار ارائه می‌شوند.",
       enable: "فعال‌سازی خودآموزی",
       enabling: "در حال فعال‌سازی…",
       updateError: "تنظیمات خودآموزی به‌روزرسانی نشد.",
@@ -3524,7 +3523,7 @@ export const fa: TranslationMap = {
         stepDevUi:
           "اگر از pnpm ui:dev استفاده می کنید، UI توسعه را بر اساس checkout فعلی دوباره بسازید یا راه اندازی کنید.",
         stepRestart:
-          "پس از به روزرسانی OpenClaw، Gateway را دوباره راه اندازی کنید تا پروتکل فعلی را سرو کند.",
+          "پس از به روزرسانی Nova، Gateway را دوباره راه اندازی کنید تا پروتکل فعلی را سرو کند.",
       },
       network: {
         title: "اتصال برقرار نشد",
@@ -3560,7 +3559,7 @@ export const fa: TranslationMap = {
       remoteViewOnly: "این نشست روی یک گره جفت‌شده قرار دارد و فقط قابل مشاهده است.",
       unsupportedViewOnly: "این منبع نشست خارجی فقط قابل مشاهده است.",
       sessionMenu: "External session actions",
-      openInOpenClaw: "Open in OpenClaw",
+      openInNova: "Open in Nova",
       openInTerminal: "Open in terminal",
       terminalUnavailable: "Terminal opening is unavailable for this session.",
     },
@@ -3615,7 +3614,7 @@ export const fa: TranslationMap = {
     followUpModeOverriding: "بازنویسی پیش‌فرض سرور ({mode})",
     followUpModeReset: "بازنشانی به پیش‌فرض سرور",
     catalogOpenTarget: "Open Codex/Claude sessions in",
-    catalogOpenTargetViewer: "OpenClaw viewer",
+    catalogOpenTargetViewer: "Nova viewer",
     catalogOpenTargetTerminal: "Terminal",
     onboardingDisabled: "در طول راه‌اندازی غیرفعال است",
     gatewayStatus: "وضعیت Gateway: {status}",
@@ -4054,7 +4053,7 @@ export const fa: TranslationMap = {
       filters: "فیلترها",
       shownOf: "{shown} از {total}",
       emptyTitle: "هنوز وظیفه زمان‌بندی‌شده‌ای نیست",
-      emptyHint: "توضیح دهید OpenClaw چه کاری و چه زمانی انجام دهد — طبق زمان‌بندی اجرا می‌شود.",
+      emptyHint: "توضیح دهید Nova چه کاری و چه زمانی انجام دهد — طبق زمان‌بندی اجرا می‌شود.",
       noMatching: "هیچ وظیفه‌ای با فیلترهای فعلی مطابقت ندارد.",
       loadMore: "بارگیری بیشتر",
       loading: "در حال بارگذاری...",
@@ -4121,7 +4120,7 @@ export const fa: TranslationMap = {
     detail: {
       tabsLabel: "جزئیات خودکارسازی",
       newTitle: "وظیفهٔ زمان‌بندی‌شدهٔ جدید",
-      newSubtitle: "توضیح دهید OpenClaw چه کاری باید انجام دهد، سپس زمان اجرای آن را انتخاب کنید.",
+      newSubtitle: "توضیح دهید Nova چه کاری باید انجام دهد، سپس زمان اجرای آن را انتخاب کنید.",
       back: "همه خودکارسازی‌ها",
       settingsTab: "تنظیمات",
       historyTitle: "تاریخچهٔ اجرا",
@@ -4194,7 +4193,7 @@ export const fa: TranslationMap = {
       descriptionPlaceholder: "زمینه اختیاری برای این کار",
       agentPlaceholder: "main یا ops",
       agentHelp: "برای انتخاب یک عامل شناخته‌شده شروع به تایپ کنید، یا یک مورد سفارشی وارد کنید.",
-      promptPlaceholder: "توضیح دهید OpenClaw چه کاری باید انجام دهد...",
+      promptPlaceholder: "توضیح دهید Nova چه کاری باید انجام دهد...",
       repeat: "تکرار",
       repeatInterval: "بازه",
       repeatOnce: "یک‌بار",

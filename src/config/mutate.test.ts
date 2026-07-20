@@ -535,7 +535,7 @@ describe("config mutate helpers", () => {
           draft.gateway = { ...draft.gateway, port: 19001 };
         },
       }),
-    ).rejects.toThrow("OpenClaw Nix overview: https://docs.openclaw.ai/install/nix");
+    ).rejects.toThrow("Nova Nix overview: https://docs.openclaw.ai/install/nix");
 
     expect(ioMocks.writeConfigFile).not.toHaveBeenCalled();
   });

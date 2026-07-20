@@ -199,7 +199,7 @@ describe("runParallelMcpSearch", () => {
     expect(headerOf(requireEndpointCall(2), "MCP-Protocol-Version")).toBe("2025-06-18");
     // No bearer token on the anonymous free path.
     expect(headerOf(requireEndpointCall(0), "Authorization")).toBeUndefined();
-    // Every call identifies OpenClaw at the HTTP layer (not just node).
+    // Every call identifies Nova at the HTTP layer (not just node).
     for (const call of endpointMockState.calls) {
       expect(headerOf(call, "User-Agent")).toMatch(/^openclaw-parallel\//);
     }

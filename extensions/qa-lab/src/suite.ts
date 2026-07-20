@@ -1062,7 +1062,7 @@ async function writeQaSuiteArtifacts(params: {
         }
       : crablineChannelDriverSelection;
   const report = renderQaMarkdownReport({
-    title: "OpenClaw QA Scenario Suite",
+    title: "Nova QA Scenario Suite",
     startedAt: params.startedAt,
     finishedAt: params.finishedAt,
     checks: [],

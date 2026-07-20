@@ -134,7 +134,7 @@ describe("SQLite CLI maintenance ownership", () => {
 
         expect(result.status).not.toBe(0);
         expect(`${result.stderr}\n${result.stdout}`).toContain(
-          "outside the active OpenClaw state directory",
+          "outside the active Nova state directory",
         );
         expect(fs.existsSync(externalStorePath)).toBe(false);
       },

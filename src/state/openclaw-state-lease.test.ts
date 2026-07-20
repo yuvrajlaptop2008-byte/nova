@@ -16,7 +16,7 @@ afterEach(() => {
   closeOpenClawStateDatabaseForTest();
 });
 
-describe("OpenClaw state lease", () => {
+describe("Nova state lease", () => {
   it("rechecks exact ownership inside the caller's write transaction", async () => {
     await withOpenClawTestState({ label: "core-state-lease" }, async () => {
       await expect(

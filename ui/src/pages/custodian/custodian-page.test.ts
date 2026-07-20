@@ -506,7 +506,7 @@ describe("custodian page", () => {
     const question = {
       id: "access",
       header: "Access",
-      question: "How should OpenClaw work?",
+      question: "How should Nova work?",
       options: [{ label: "Full access", recommended: true }, { label: "Ask first" }],
       isOther: false,
     };
@@ -541,7 +541,7 @@ describe("custodian page", () => {
     const question = {
       id: "access",
       header: "Access",
-      question: "How should OpenClaw work?",
+      question: "How should Nova work?",
       options: [{ label: "Full access", recommended: true }, { label: "Ask first" }],
       isOther: false,
     };
@@ -585,7 +585,7 @@ describe("custodian page", () => {
   it("requests the normal caretaker greeting outside onboarding", async () => {
     const request = vi.fn().mockResolvedValue({
       sessionId: "control-ui-onboarding-00000000-0000-4000-8000-000000000001",
-      reply: "OpenClaw here. Everything is healthy.",
+      reply: "Nova here. Everything is healthy.",
       action: "none",
     });
     const { context } = createContext(request);

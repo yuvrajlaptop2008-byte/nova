@@ -50,7 +50,7 @@ export function resolveDiscordRealtimeWakeNames(params: {
   const configuredAgentNames = [agent?.name, agent?.identity?.name]
     .map((name) => normalizeSupportedRealtimeVoiceActivationName(name))
     .filter((name): name is string => Boolean(name));
-  const productWakeNames = [normalizeSupportedRealtimeVoiceActivationName("OpenClaw")].filter(
+  const productWakeNames = [normalizeSupportedRealtimeVoiceActivationName("Nova")].filter(
     (name): name is string => Boolean(name),
   );
   const defaults =

@@ -274,7 +274,7 @@ describe("scripts/openclaw-cross-os-release-checks", () => {
 
   it("requires dashboard root markers and same-origin asset URLs", () => {
     const html = [
-      "<title>OpenClaw Control</title>",
+      "<title>Nova Control</title>",
       "<openclaw-app></openclaw-app>",
       '<link rel="stylesheet" href="/assets/index.css">',
       '<script type="module" src="assets/index.js"></script>',
@@ -340,7 +340,7 @@ describe("scripts/openclaw-cross-os-release-checks", () => {
     ).toEqual(["gateway", "status"]);
   });
 
-  it("gives the Windows packaged updater wrapper enough headroom for OpenClaw timeout output", () => {
+  it("gives the Windows packaged updater wrapper enough headroom for Nova timeout output", () => {
     expect(CROSS_OS_WINDOWS_PACKAGED_UPGRADE_STEP_TIMEOUT_SECONDS).toBeLessThanOrEqual(10 * 60);
     expect(CROSS_OS_WINDOWS_PACKAGED_UPGRADE_WRAPPER_TIMEOUT_MS).toBeGreaterThan(
       CROSS_OS_WINDOWS_PACKAGED_UPGRADE_STEP_TIMEOUT_SECONDS * 1000,
@@ -1372,7 +1372,7 @@ describe("scripts/openclaw-cross-os-release-checks", () => {
   it("wraps installed Windows CLI cmd fallbacks without Node shell argv", () => {
     expect(
       resolveInstalledCliInvocation(
-        win32.join(String.raw`C:\OpenClaw Prefix`, "openclaw.cmd"),
+        win32.join(String.raw`C:\Nova Prefix`, "openclaw.cmd"),
         ["gateway", "run", "--port", "1234"],
         {
           comSpec: String.raw`C:\Windows\System32\cmd.exe`,
@@ -1381,12 +1381,7 @@ describe("scripts/openclaw-cross-os-release-checks", () => {
       ),
     ).toEqual({
       command: String.raw`C:\Windows\System32\cmd.exe`,
-      args: [
-        "/d",
-        "/s",
-        "/c",
-        String.raw`""C:\OpenClaw Prefix\openclaw.cmd" gateway run --port 1234"`,
-      ],
+      args: ["/d", "/s", "/c", String.raw`""C:\Nova Prefix\openclaw.cmd" gateway run --port 1234"`],
       shell: false,
       windowsVerbatimArguments: true,
     });
@@ -2145,11 +2140,11 @@ describe("scripts/openclaw-cross-os-release-checks", () => {
     const packageRoot = mkdtempSync(join(tmpdir(), "openclaw-cross-os-stage-debris-"));
     try {
       mkdirSync(
-        join(packageRoot, "dist", "Extensions", "demo", ".OpenClaw-Install-Stage", "node_modules"),
+        join(packageRoot, "dist", "Extensions", "demo", ".Nova-Install-Stage", "node_modules"),
         { recursive: true },
       );
       writeFileSync(
-        join(packageRoot, "dist", "Extensions", "demo", ".OpenClaw-Install-Stage", "package.json"),
+        join(packageRoot, "dist", "Extensions", "demo", ".Nova-Install-Stage", "package.json"),
         "{}\n",
         "utf8",
       );

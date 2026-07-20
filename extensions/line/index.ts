@@ -1,4 +1,4 @@
-// Line plugin entrypoint registers its OpenClaw integration.
+// Line plugin entrypoint registers its Nova integration.
 import {
   defineBundledChannelEntry,
   type OpenClawPluginCommandDefinition,

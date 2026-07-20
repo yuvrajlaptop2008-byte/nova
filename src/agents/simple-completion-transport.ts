@@ -2,7 +2,7 @@ import type { ApiRegistry } from "@openclaw/ai";
 /**
  * Simple completion transport preparation.
  *
- * Registers provider-specific stream functions and rewrites models that need OpenClaw-managed transport semantics.
+ * Registers provider-specific stream functions and rewrites models that need Nova-managed transport semantics.
  */
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { Api, Model } from "../llm/types.js";
@@ -111,7 +111,7 @@ function prepareCodexSimpleTransportModel<TApi extends Api>(
   }
 
   // Static Codex provider catalogs intentionally omit credentials; the simple
-  // completion path must use OpenClaw's transport so resolved request auth is applied.
+  // completion path must use Nova's transport so resolved request auth is applied.
   const transportModel = {
     ...model,
     baseUrl: normalizeCodexResponsesBaseUrlForOpenAISdk(model.baseUrl),

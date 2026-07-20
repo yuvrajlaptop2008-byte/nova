@@ -219,7 +219,7 @@ describe("synology-chat account resolution", () => {
     expect(account.dangerouslyAllowInheritedWebhookPath).toBe(false);
     expect(account.dmPolicy).toBe("allowlist");
     expect(account.rateLimitPerMinute).toBe(30);
-    expect(account.botName).toBe("OpenClaw");
+    expect(account.botName).toBe("Nova");
   });
 
   it("uses env var fallbacks", () => {

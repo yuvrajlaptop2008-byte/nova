@@ -50,7 +50,7 @@ const isSupportedNodeVersion = (version) => {
 const ensureSupportedRuntimeVersion = () => {
   if (process.versions.bun) {
     process.stderr.write(
-      "openclaw: the Bun runtime is unsupported because OpenClaw requires node:sqlite.\n" +
+      "openclaw: the Bun runtime is unsupported because Nova requires node:sqlite.\n" +
         `Use Node.js ${SUPPORTED_NODE_RANGE}; Bun remains supported for installs and package scripts.\n`,
     );
     process.exit(1);
@@ -587,7 +587,7 @@ function tryOutputLauncherVersion(argv) {
     }
     const version = resolveLauncherVersion();
     const commit = resolveLauncherCommit();
-    process.stdout.write(commit ? `OpenClaw ${version} (${commit})\n` : `OpenClaw ${version}\n`);
+    process.stdout.write(commit ? `Nova ${version} (${commit})\n` : `Nova ${version}\n`);
     return true;
   } catch {
     return false;

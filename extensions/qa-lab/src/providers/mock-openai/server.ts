@@ -716,7 +716,7 @@ async function buildResponsesPayload(
         path: "dreaming-shadow-trial-report.md",
         content: [
           "Candidate: The user prefers release reports that include exact verification commands and remaining risk.",
-          "Trial prompt: Prepare a release readiness reply for a local OpenClaw QA change.",
+          "Trial prompt: Prepare a release readiness reply for a local Nova QA change.",
           "Baseline outcome: mentions tests passed but omits the exact command and remaining risk.",
           "Candidate outcome: includes the exact verification command and calls out the remaining review risk.",
           "Verdict: helpful",
@@ -1212,12 +1212,12 @@ async function buildResponsesPayload(
     if (
       !taskEvidenceText ||
       (!taskEvidenceText.includes("# Personal task ledger") &&
-        !taskEvidenceText.includes("Task: prepare a local OpenClaw PR readiness note."))
+        !taskEvidenceText.includes("Task: prepare a local Nova PR readiness note."))
     ) {
       return buildToolCallEventsWithArgs("read", { path: "PERSONAL_TASK_LEDGER.md" });
     }
     if (
-      taskEvidenceText.includes("Task: prepare a local OpenClaw PR readiness note.") &&
+      taskEvidenceText.includes("Task: prepare a local Nova PR readiness note.") &&
       taskEvidenceText.includes("Done: local evidence captured in personal-task-status.txt.")
     ) {
       return buildToolCallEventsWithArgs("write", {

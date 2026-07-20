@@ -158,7 +158,7 @@ export function resolveQQBotAccount(
   };
 }
 
-/** Apply account config updates back into the OpenClaw config object. */
+/** Apply account config updates back into the Nova config object. */
 export function applyQQBotAccountConfig(
   cfg: OpenClawConfig,
   accountId: string,

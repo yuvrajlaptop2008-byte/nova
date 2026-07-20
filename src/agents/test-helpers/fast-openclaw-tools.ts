@@ -1,5 +1,5 @@
 /**
- * Fast OpenClaw tool-bundle mock.
+ * Fast Nova tool-bundle mock.
  *
  * Provides lightweight built-in tool stubs for inventory-heavy tests.
  */

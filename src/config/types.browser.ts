@@ -12,7 +12,7 @@ export type BrowserProfileConfig = {
   mcpArgs?: string[];
   /**
    * Profile driver (default: openclaw). "extension" attaches to the user's
-   * signed-in browser through the OpenClaw Chrome extension relay.
+   * signed-in browser through the Nova Chrome extension relay.
    */
   driver?: "openclaw" | "clawd" | "existing-session" | "extension";
   /** If true, launch this profile in headless mode. Falls back to browser.headless. */

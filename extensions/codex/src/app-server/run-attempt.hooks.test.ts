@@ -148,9 +148,7 @@ describe("runCodexAppServerAttempt hooks and model diagnostics", () => {
     expect(llmInputPayload.prompt).toBe("hello");
     expect(llmInputPayload.imagesCount).toBe(0);
     expect(llmInputPayload.historyMessages).toEqual([]);
-    expect(llmInputPayload.systemPrompt).toContain(
-      "You are a personal agent running inside OpenClaw.",
-    );
+    expect(llmInputPayload.systemPrompt).toContain("You are a personal agent running inside Nova.");
     expect(llmInputPayload.systemPrompt).not.toContain(CODEX_GPT5_BEHAVIOR_CONTRACT);
     expect(llmInputContext.runId).toBe("run-1");
     expect(llmInputContext.sessionId).toBe("session-1");
@@ -355,7 +353,7 @@ describe("runCodexAppServerAttempt hooks and model diagnostics", () => {
       expect(JSON.stringify(startedContent?.inputMessages)).toContain("hello");
       expect(JSON.stringify(startedContent?.inputMessages)).not.toContain("existing context");
       expect(startedContent?.systemPrompt).toContain(
-        "You are a personal agent running inside OpenClaw.",
+        "You are a personal agent running inside Nova.",
       );
       expect(completed).toMatchObject({ callId: expectedCallId, observationUnit: "turn" });
       expect(JSON.stringify(completed)).not.toContain("hello back");

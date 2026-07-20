@@ -37,7 +37,7 @@ function buildModel<TApi extends Api>(
 
 describe("provider transport stream contracts", () => {
   it("covers the supported transport api alias matrix", () => {
-    // Supported APIs can be projected to OpenClaw transport aliases when needed.
+    // Supported APIs can be projected to Nova transport aliases when needed.
     const cases = [
       {
         api: "openai-responses" as const,
@@ -153,7 +153,7 @@ describe("provider transport stream contracts", () => {
     expect(prepareTransportAwareSimpleModel(model)).toBe(model);
   });
 
-  it("keeps OpenAI API-key default streams on OpenClaw transport", () => {
+  it("keeps OpenAI API-key default streams on Nova transport", () => {
     const cases = [
       buildModel("openai-responses", {
         id: "gpt-5.4",
@@ -176,7 +176,7 @@ describe("provider transport stream contracts", () => {
     }
   });
 
-  it("routes localService models through the OpenClaw simple-completion transport", () => {
+  it("routes localService models through the Nova simple-completion transport", () => {
     const model = attachModelProviderLocalService(
       buildModel("openai-completions", {
         id: "google/gemma-4-E2B-it",
@@ -197,7 +197,7 @@ describe("provider transport stream contracts", () => {
     expect(preparedModel.id).toBe("google/gemma-4-E2B-it");
   });
 
-  it("keeps Codex defaults on the OpenClaw transport until OpenClaw preserves attribution", () => {
+  it("keeps Codex defaults on the Nova transport until Nova preserves attribution", () => {
     const model = buildModel("openai-chatgpt-responses", {
       id: "gpt-5.4",
       provider: "openai",

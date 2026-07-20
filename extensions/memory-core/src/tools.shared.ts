@@ -136,14 +136,14 @@ export function buildMemorySearchUnavailableResult(
     (isQuotaError
       ? "Memory search is unavailable because the embedding provider quota is exhausted."
       : isMissingNodeSqlite
-        ? "Memory search is unavailable because this OpenClaw Node runtime does not provide SQLite support."
+        ? "Memory search is unavailable because this Nova Node runtime does not provide SQLite support."
         : "Memory search is unavailable due to an embedding/provider error.");
   const action =
     overrides?.action ??
     (isQuotaError
       ? "Top up or switch embedding provider, then retry memory_search."
       : isMissingNodeSqlite
-        ? "Run OpenClaw with a Node runtime that includes node:sqlite, then retry memory_search."
+        ? "Run Nova with a Node runtime that includes node:sqlite, then retry memory_search."
         : "Check embedding provider configuration and retry memory_search.");
   return {
     results: [],

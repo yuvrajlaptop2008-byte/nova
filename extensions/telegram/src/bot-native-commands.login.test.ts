@@ -172,7 +172,7 @@ describe("registerTelegramNativeCommands /login", () => {
 
     expect(loginFlow).not.toHaveBeenCalled();
     expect(sendMessage.mock.calls.map((call) => String(call[1]))).toContain(
-      "Only a configured OpenClaw owner can start Codex login from Telegram.",
+      "Only a configured Nova owner can start Codex login from Telegram.",
     );
   });
 

@@ -1030,7 +1030,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       programArguments: gatewayProgramArguments,
       environment: {
         OPENCLAW_SERVICE_VERSION: "2026.5.25",
-        OPENCLAW_WINDOWS_TASK_NAME: "OpenClaw Gateway Work",
+        OPENCLAW_WINDOWS_TASK_NAME: "Nova Gateway Work",
       },
     });
     mocks.auditGatewayServiceConfig.mockResolvedValue({
@@ -1038,7 +1038,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [
         {
           code: "gateway-service-version-mismatch",
-          message: "Gateway service was installed by an older OpenClaw version.",
+          message: "Gateway service was installed by an older Nova version.",
           level: "recommended",
         },
       ],
@@ -1055,7 +1055,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
     await runNonInteractiveRepair({ updateInProgress: true });
 
     expectNoteContaining(
-      "Gateway service was installed by an older OpenClaw version.",
+      "Gateway service was installed by an older Nova version.",
       "Gateway service config",
     );
     expect(mocks.stage).not.toHaveBeenCalled();
@@ -1085,7 +1085,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [
         {
           code: "gateway-service-version-mismatch",
-          message: "Gateway service was installed by an older OpenClaw version.",
+          message: "Gateway service was installed by an older Nova version.",
           level: "recommended",
         },
       ],
@@ -1123,7 +1123,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [
         {
           code: "gateway-service-version-mismatch",
-          message: "Gateway service was installed by an older OpenClaw version.",
+          message: "Gateway service was installed by an older Nova version.",
           level: "recommended",
         },
       ],
@@ -1180,7 +1180,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [
         {
           code: "gateway-service-version-mismatch",
-          message: "Gateway service was installed by an older OpenClaw version.",
+          message: "Gateway service was installed by an older Nova version.",
           level: "recommended",
         },
       ],
@@ -1376,7 +1376,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [
         {
           code: "gateway-service-version-mismatch",
-          message: "Gateway service was installed by an older OpenClaw version.",
+          message: "Gateway service was installed by an older Nova version.",
           level: "recommended",
         },
       ],
@@ -1769,7 +1769,7 @@ describe("maybeScanExtraGatewayServices", () => {
     });
     expectNoteContaining("clawdbot-gateway.service", "Legacy gateway removed");
     expect(runtime.log).toHaveBeenCalledWith(
-      "Legacy gateway services removed. Installing OpenClaw gateway next.",
+      "Legacy gateway services removed. Installing Nova gateway next.",
     );
   });
 
@@ -1795,7 +1795,7 @@ describe("maybeScanExtraGatewayServices", () => {
       );
       expect(mocks.uninstallLegacySystemdUnits).not.toHaveBeenCalled();
       expect(runtime.log).not.toHaveBeenCalledWith(
-        "Legacy gateway services removed. Installing OpenClaw gateway next.",
+        "Legacy gateway services removed. Installing Nova gateway next.",
       );
     });
   });

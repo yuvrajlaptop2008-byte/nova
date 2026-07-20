@@ -65,7 +65,7 @@ export type RunCliAgentParams = {
    * background answers and must not reuse or mutate normal agent sessions.
    */
   executionMode?: CliBackendExecutionMode;
-  /** Persist the successful CLI assistant reply into the OpenClaw session transcript. */
+  /** Persist the successful CLI assistant reply into the Nova session transcript. */
   persistAssistantTranscript?: boolean;
   /** Session store path used when assistant transcript persistence is enabled. */
   storePath?: string;

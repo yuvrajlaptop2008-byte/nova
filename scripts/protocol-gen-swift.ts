@@ -1,4 +1,4 @@
-// Protocol Gen Swift script supports OpenClaw repository automation.
+// Protocol Gen Swift script supports Nova repository automation.
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

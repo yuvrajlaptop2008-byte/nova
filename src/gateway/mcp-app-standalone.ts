@@ -406,7 +406,7 @@ function runStandaloneMcpAppHost(config: { protocolVersion: string; viewPath: st
       initializeAccepted = true;
       respond(message.id, {
         protocolVersion: config.protocolVersion,
-        hostInfo: { name: "OpenClaw standalone host", version: "1.0.0" },
+        hostInfo: { name: "Nova standalone host", version: "1.0.0" },
         hostCapabilities: {
           sandbox: { csp: payload.csp ?? {} },
           ...(payload.serverTools === true ? { serverTools: {} } : {}),
@@ -518,7 +518,7 @@ function standaloneHostHtml(): { html: string; scriptHash: string } {
     html: `<!doctype html>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OpenClaw MCP App</title>
+<title>Nova MCP App</title>
 <style>html,body{height:100%;margin:0;background:#fff;color:#111;font:14px system-ui,sans-serif}main{height:100%}iframe{display:block;width:100%;height:600px;border:0}.error{padding:16px;color:#b91c1c}</style>
 <main id="host" aria-live="polite"></main>
 <script>${escapedSource}</script>`,

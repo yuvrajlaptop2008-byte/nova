@@ -1,5 +1,5 @@
 /**
- * Bridges Codex app-server approval requests into OpenClaw policy hooks and
+ * Bridges Codex app-server approval requests into Nova policy hooks and
  * plugin approval UX.
  */
 import {
@@ -267,7 +267,7 @@ function recordNativeToolFailureDisposition(
   }
 }
 
-/** Converts an OpenClaw approval outcome into the app-server method response. */
+/** Converts an Nova approval outcome into the app-server method response. */
 function buildApprovalResponse(
   method: string,
   requestParams: JsonObject | undefined,
@@ -480,7 +480,7 @@ async function runOpenClawToolPolicyForApprovalRequest(params: {
     return {
       outcome: "denied",
       reason:
-        "OpenClaw tool policy rewrote Codex app-server approval params; refusing original request.",
+        "Nova tool policy rewrote Codex app-server approval params; refusing original request.",
     };
   }
   if (outcome.approvalResolution) {
@@ -616,7 +616,7 @@ async function runNativeRelayToolPolicyForApprovalRequest(params: {
     return {
       handled: true,
       blocked: true,
-      reason: `OpenClaw native hook relay unavailable for Codex app-server approval: ${formatCodexDisplayText(
+      reason: `Nova native hook relay unavailable for Codex app-server approval: ${formatCodexDisplayText(
         formatErrorMessage(error),
       )}`,
       failureDisposition: "failed",
@@ -663,7 +663,7 @@ function readNativeRelayPreToolUseDecision(response: NativeHookRelayProcessRespo
       reason:
         sanitizeRelayDecisionReason(response?.stderr) ||
         sanitizeRelayDecisionReason(response?.stdout) ||
-        "OpenClaw native hook relay failed for Codex app-server approval.",
+        "Nova native hook relay failed for Codex app-server approval.",
       failureDisposition: response?.failureDisposition ?? "failed",
     };
   }
@@ -678,7 +678,7 @@ function readNativeRelayPreToolUseDecision(response: NativeHookRelayProcessRespo
       blocked: true,
       reason:
         readString(output, "permissionDecisionReason") ||
-        "OpenClaw native hook policy denied Codex app-server approval.",
+        "Nova native hook policy denied Codex app-server approval.",
       ...(response.failureDisposition ? { failureDisposition: response.failureDisposition } : {}),
     };
   }
@@ -687,8 +687,8 @@ function readNativeRelayPreToolUseDecision(response: NativeHookRelayProcessRespo
   return {
     blocked: true,
     reason: output
-      ? "OpenClaw native hook relay returned a non-deny Codex app-server approval decision."
-      : "OpenClaw native hook relay returned an unreadable Codex app-server approval result.",
+      ? "Nova native hook relay returned a non-deny Codex app-server approval decision."
+      : "Nova native hook relay returned an unreadable Codex app-server approval result.",
     failureDisposition: "failed",
   };
 }
@@ -822,7 +822,7 @@ function requestedPermissions(requestParams: JsonObject | undefined): JsonObject
 function unsupportedApprovalResponse(): JsonValue {
   return {
     decision: "decline",
-    reason: "OpenClaw codex app-server bridge does not grant native approvals yet.",
+    reason: "Nova codex app-server bridge does not grant native approvals yet.",
   };
 }
 

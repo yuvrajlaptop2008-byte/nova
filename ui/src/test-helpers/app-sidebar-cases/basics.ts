@@ -14,12 +14,12 @@ import "../../components/app-sidebar.ts";
 await import("../../components/viewer-facepile.ts");
 
 describe("AppSidebar update card wiring", () => {
-  it("shows OpenClaw in the default sidebar entries", async () => {
+  it("shows Nova in the default sidebar entries", async () => {
     const gateway = createGateway({} as GatewayBrowserClient);
     const { sidebar } = await mountSidebar(gateway, createSessions("main", ["agent:main:main"]));
 
     const link = sidebar.querySelector<HTMLAnchorElement>('.nav-item[href="/custodian"]');
-    expect(link?.textContent?.trim()).toBe("OpenClaw");
+    expect(link?.textContent?.trim()).toBe("Nova");
   });
 
   it("renders the update card in the footer after the attention slot and forwards its action", async () => {

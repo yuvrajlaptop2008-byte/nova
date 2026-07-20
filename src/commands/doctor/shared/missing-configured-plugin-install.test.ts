@@ -559,7 +559,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     ]);
   });
 
-  it("installs a missing configured OpenClaw channel plugin from npm by default", async () => {
+  it("installs a missing configured Nova channel plugin from npm by default", async () => {
     mocks.listChannelPluginCatalogEntries.mockReturnValue([
       {
         id: "matrix",
@@ -858,7 +858,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expect(result.warnings).toStrictEqual([]);
   });
 
-  it("falls back to npm when an OpenClaw channel plugin artifact is unavailable on ClawHub", async () => {
+  it("falls back to npm when an Nova channel plugin artifact is unavailable on ClawHub", async () => {
     mocks.installPluginFromClawHub.mockResolvedValueOnce({
       ok: false,
       code: "artifact_unavailable",
@@ -898,7 +898,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     expect(result.warnings).toStrictEqual([]);
   });
 
-  it("does not fall back from ClawHub to non-OpenClaw npm packages", async () => {
+  it("does not fall back from ClawHub to non-Nova npm packages", async () => {
     mocks.installPluginFromClawHub.mockResolvedValueOnce({
       ok: false,
       code: "artifact_download_unavailable",
@@ -932,7 +932,7 @@ describe("repairMissingConfiguredPluginInstalls", () => {
     ]);
   });
 
-  it("honors npm-first catalog metadata for missing OpenClaw channel plugins", async () => {
+  it("honors npm-first catalog metadata for missing Nova channel plugins", async () => {
     mocks.installPluginFromNpmSpec.mockResolvedValueOnce({
       ok: true,
       pluginId: "twitch",

@@ -125,7 +125,7 @@ describe("Matrix QA CLI runtime", () => {
     }
   });
 
-  it("prefers the ESM OpenClaw CLI entrypoint when present", async () => {
+  it("prefers the ESM Nova CLI entrypoint when present", async () => {
     const root = await mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "matrix-qa-cli-entry-"));
     try {
       await mkdir(path.join(root, "dist"));

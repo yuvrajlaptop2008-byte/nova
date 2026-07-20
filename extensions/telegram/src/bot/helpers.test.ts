@@ -596,7 +596,7 @@ describe("describeReplyTarget", () => {
             },
             {
               type: "photo",
-              caption: { text: "Chart", credit: "OpenClaw" },
+              caption: { text: "Chart", credit: "Nova" },
             },
           ],
         },
@@ -604,7 +604,7 @@ describe("describeReplyTarget", () => {
       },
     } as never);
 
-    expect(result?.body).toBe("Run summary\n1.\nCI clean\na^2+b^2=c^2\nChart\nOpenClaw");
+    expect(result?.body).toBe("Run summary\n1.\nCI clean\na^2+b^2=c^2\nChart\nNova");
     expect(result?.quoteSourceText).toBeUndefined();
   });
 

@@ -1,4 +1,4 @@
-// OpenClaw prepack tests validate package prepack output.
+// Nova prepack tests validate package prepack output.
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";

@@ -174,7 +174,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
       );
       await expect
         .poll(() => trimmedTextContents(pinnedItems))
-        .toEqual(["OpenClaw", "Usage", "Automations", "Plugins"]);
+        .toEqual(["Nova", "Usage", "Automations", "Plugins"]);
       await expect.poll(() => sidebar.locator(".sidebar-brand").count()).toBe(1);
       // Desktop renders no topbar row: the sidebar owns navigation.
       await expect.poll(() => page.locator(".topbar").isVisible()).toBe(false);
@@ -291,7 +291,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
       await expect
         .poll(() => trimmedTextContents(settingsLinks))
         .toEqual([
-          "Ask OpenClaw",
+          "Ask Nova",
           "Approvals",
           "Infrastructure",
           "Advanced",
@@ -350,7 +350,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
       await expect.poll(() => settingsSearch.inputValue()).toBe("");
       await captureSettingsSidebarProof(settingsSidebar, "01g-settings-search-reset.png");
       await holdUiProof(page);
-      await settingsSidebar.getByRole("link", { name: "Ask OpenClaw" }).click();
+      await settingsSidebar.getByRole("link", { name: "Ask Nova" }).click();
       await expect.poll(() => new URL(page.url()).pathname).toBe("/custodian");
       await expect
         .poll(() => page.locator(".shell").getAttribute("class"))
@@ -387,7 +387,7 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
         .not.toContain("Workboard");
       const tasksItem = menu.getByRole("menuitemcheckbox", { name: "Tasks" });
       await expect.poll(() => tasksItem.getAttribute("aria-checked")).toBe("false");
-      const custodianItem = menu.getByRole("menuitemcheckbox", { name: "OpenClaw" });
+      const custodianItem = menu.getByRole("menuitemcheckbox", { name: "Nova" });
       await expect.poll(() => custodianItem.getAttribute("aria-checked")).toBe("true");
       await expect
         .poll(() => custodianItem.evaluate((element) => element === document.activeElement))
@@ -411,14 +411,14 @@ describeControlUiE2e("Control UI sidebar customization mocked Gateway E2E", () =
       await moreButton.click();
       await expect
         .poll(() => trimmedTextContents(moreMenu.getByRole("menuitem")))
-        .toContain("OpenClaw");
+        .toContain("Nova");
       await captureUiProof(page, "03-persisted-customization.png");
 
       await moreMenu.getByRole("menuitem", { name: "Edit pinned items" }).click();
       await menu.getByRole("menuitem", { name: "Reset pinned items" }).click();
       await expect
         .poll(() => trimmedTextContents(pinnedItems))
-        .toEqual(["OpenClaw", "Usage", "Automations", "Plugins"]);
+        .toEqual(["Nova", "Usage", "Automations", "Plugins"]);
 
       // The sidebar search field is the command palette entry point.
       const searchButton = sidebar.locator(".sidebar-search");

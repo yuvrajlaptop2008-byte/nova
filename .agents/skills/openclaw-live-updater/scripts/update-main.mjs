@@ -1351,7 +1351,7 @@ function isOriginalMacBundle(bundlePath, originalStat) {
 }
 
 function runBuildWithPreservedMacApp(runCommand, checkout, sleep = defaultSleep) {
-  const appBundle = path.join(checkout, "dist/OpenClaw.app");
+  const appBundle = path.join(checkout, "dist/Nova.app");
   if (!existsSync(appBundle)) {
     runCommand("pnpm", ["build"], checkout);
     return;
@@ -1792,7 +1792,7 @@ export function findExactMacTarget(processes, executable) {
 
 function defaultVerifyMacTarget(checkout) {
   execFileSync("sleep", ["10"]);
-  const executable = path.join(checkout, "dist/OpenClaw.app/Contents/MacOS/OpenClaw");
+  const executable = path.join(checkout, "dist/Nova.app/Contents/MacOS/Nova");
   const processes = execFileSync("ps", ["axww", "-o", "pid=,command="], {
     encoding: "utf8",
   });

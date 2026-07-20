@@ -1,5 +1,5 @@
 // Docker E2E aggregate scheduler.
-// Builds shared Docker images, prepares one OpenClaw npm tarball, assigns lanes
+// Builds shared Docker images, prepares one Nova npm tarball, assigns lanes
 // to bare/functional images, and runs lanes through weighted resource pools.
 import { spawn } from "node:child_process";
 import fs from "node:fs";
@@ -981,7 +981,7 @@ async function prepareOpenClawPackage(baseEnv, logDir) {
     baseEnv.OPENCLAW_CURRENT_PACKAGE_TGZ = packageTgz;
     baseEnv.OPENCLAW_BUNDLED_CHANNEL_HOST_BUILD = "0";
     baseEnv.OPENCLAW_NPM_ONBOARD_HOST_BUILD = "0";
-    console.log(`==> OpenClaw package: ${packageTgz}`);
+    console.log(`==> Nova package: ${packageTgz}`);
     return;
   }
 
@@ -989,7 +989,7 @@ async function prepareOpenClawPackage(baseEnv, logDir) {
   await mkdir(packDir, { recursive: true });
   const packageTgz = path.join(packDir, "openclaw-current.tgz");
   await runForeground(
-    "Prepare OpenClaw package once",
+    "Prepare Nova package once",
     `node scripts/package-openclaw-for-docker.mjs --allow-unreleased-changelog --output-dir ${shellQuote(packDir)} --output-name openclaw-current.tgz`,
     baseEnv,
   );
@@ -1000,7 +1000,7 @@ async function prepareOpenClawPackage(baseEnv, logDir) {
   baseEnv.OPENCLAW_CURRENT_PACKAGE_TGZ = packageTgz;
   baseEnv.OPENCLAW_BUNDLED_CHANNEL_HOST_BUILD = "0";
   baseEnv.OPENCLAW_NPM_ONBOARD_HOST_BUILD = "0";
-  console.log(`==> OpenClaw package: ${baseEnv.OPENCLAW_CURRENT_PACKAGE_TGZ}`);
+  console.log(`==> Nova package: ${baseEnv.OPENCLAW_CURRENT_PACKAGE_TGZ}`);
 }
 
 function e2eImageForLane(poolLane, baseEnv) {
@@ -1640,7 +1640,7 @@ async function main() {
       await prepareOpenClawPackage(baseEnv, logDir);
     });
   } else {
-    console.log("==> OpenClaw package: not needed for selected lanes");
+    console.log("==> Nova package: not needed for selected lanes");
   }
 
   if (buildEnabled) {

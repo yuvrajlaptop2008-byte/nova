@@ -216,17 +216,17 @@ describe("Canvas tool", () => {
           catalogId: "https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json",
         },
       }),
-      /OpenClaw currently supports v0\.8 only/,
+      /Nova currently supports v0\.8 only/,
     ],
     [
       "legacy createSurface JSONL",
       JSON.stringify({ createSurface: { surfaceId: "main", root: "root" } }),
-      /OpenClaw currently supports v0\.8 only/,
+      /Nova currently supports v0\.8 only/,
     ],
     [
       "A2UI v0.9 deleteSurface JSONL",
       JSON.stringify({ version: "v0.9", deleteSurface: { surfaceId: "main" } }),
-      /OpenClaw currently supports v0\.8 only/,
+      /Nova currently supports v0\.8 only/,
     ],
     [
       "an unsupported explicit A2UI version",

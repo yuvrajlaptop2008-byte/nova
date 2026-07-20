@@ -1,4 +1,4 @@
-// Control Ui I18N script supports OpenClaw repository automation.
+// Control Ui I18N script supports Nova repository automation.
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
@@ -106,7 +106,7 @@ const TRANSLATION_PROVIDER_DEFAULTS: Record<TranslationProvider, Omit<Model, "id
 const LOCALE_ENTRIES: readonly LocaleEntry[] = CONTROL_UI_LOCALE_ENTRIES;
 
 const DEFAULT_GLOSSARY: readonly GlossaryEntry[] = [
-  { source: "OpenClaw", target: "OpenClaw" },
+  { source: "Nova", target: "Nova" },
   { source: "Gateway", target: "Gateway" },
   { source: "Control UI", target: "Control UI" },
   { source: "Skills", target: "Skills" },

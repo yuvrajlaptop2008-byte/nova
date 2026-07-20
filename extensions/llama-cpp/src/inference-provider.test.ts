@@ -106,7 +106,7 @@ afterEach(async () => {
 });
 
 describe("llama.cpp inference provider", () => {
-  it("maps OpenClaw history and tool results into the model chat template history", () => {
+  it("maps Nova history and tool results into the model chat template history", () => {
     const context = {
       systemPrompt: "Be concise.",
       messages: [

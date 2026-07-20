@@ -366,7 +366,7 @@ describe("prepareModelForSimpleCompletion", () => {
       "https://proxy.example.test/openai/codex",
     ],
   ])(
-    "uses OpenClaw transport for OpenAI Codex-response simple completions with baseUrl %s",
+    "uses Nova transport for OpenAI Codex-response simple completions with baseUrl %s",
     (baseUrl, expectedBaseUrl) => {
       const model: Model<"openai-chatgpt-responses"> = {
         id: "gpt-5.5",

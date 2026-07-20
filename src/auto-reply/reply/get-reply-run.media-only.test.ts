@@ -2404,9 +2404,9 @@ describe("runPreparedReply media-only handling", () => {
     );
 
     const call = requireLastRunReplyAgentCall();
-    expect(call?.commandBody).toBe("[OpenClaw room event]");
+    expect(call?.commandBody).toBe("[Nova room event]");
     expect(call?.transcriptCommandBody).toBe("#35676 Keśava: No wtf");
-    expect(call?.followupRun.prompt).toBe("[OpenClaw room event]");
+    expect(call?.followupRun.prompt).toBe("[Nova room event]");
     expect(call?.followupRun.transcriptPrompt).toBe("#35676 Keśava: No wtf");
     expect(call?.followupRun.currentInboundEventKind).toBe("room_event");
     expect(call?.followupRun.currentInboundAudio).toBe(true);
@@ -2448,7 +2448,7 @@ describe("runPreparedReply media-only handling", () => {
     expect(call?.followupRun.currentInboundContext?.text).toContain(
       "#35675 obviyus ->#35674: Are you fr fr",
     );
-    expect(call?.followupRun.currentInboundContext?.text).toContain("[OpenClaw room event]");
+    expect(call?.followupRun.currentInboundContext?.text).toContain("[Nova room event]");
     expect(call?.followupRun.currentInboundContext?.text).toContain(
       ROOM_EVENT_MESSAGE_TOOL_DIRECTIVE,
     );
@@ -2506,7 +2506,7 @@ describe("runPreparedReply media-only handling", () => {
     expect(call.shouldFollowup).toBe(true);
     expect(call.isActive).toBe(true);
     expect(call.resolvedQueue.mode).toBe("steer");
-    expect(call.followupRun.prompt).toBe("[OpenClaw room event]");
+    expect(call.followupRun.prompt).toBe("[Nova room event]");
     expect(call.followupRun.currentInboundEventKind).toBe("room_event");
     expect(call.followupRun.abortSignal).toBe(abortController.signal);
     expect(call.followupRun.currentInboundContext?.text).toContain("Current event:");
@@ -2824,8 +2824,8 @@ describe("runPreparedReply media-only handling", () => {
     const call = requireLastRunReplyAgentCall();
     expect(call?.commandBody).toContain(heartbeatPrompt);
     expect(call?.followupRun.prompt).toContain(heartbeatPrompt);
-    expect(call?.transcriptCommandBody).toBe("[OpenClaw heartbeat poll]");
-    expect(call?.followupRun.transcriptPrompt).toBe("[OpenClaw heartbeat poll]");
+    expect(call?.transcriptCommandBody).toBe("[Nova heartbeat poll]");
+    expect(call?.followupRun.transcriptPrompt).toBe("[Nova heartbeat poll]");
     expect(call?.followupRun.userTurnTranscriptRecorder?.message).toMatchObject({
       provenance: { kind: "internal_system", sourceTool: "heartbeat" },
     });
@@ -3319,8 +3319,8 @@ describe("runPreparedReply media-only handling", () => {
       expect(call?.commandBody).toContain("telegram-user-1");
       expect(call?.followupRun.prompt).toContain("A new session was started via /new or /reset.");
       expect(call?.followupRun.prompt).toContain("Sender (untrusted metadata):");
-      expect(call?.transcriptCommandBody).toBe(`[OpenClaw session ${startupAction}]`);
-      expect(call?.followupRun.transcriptPrompt).toBe(`[OpenClaw session ${startupAction}]`);
+      expect(call?.transcriptCommandBody).toBe(`[Nova session ${startupAction}]`);
+      expect(call?.followupRun.transcriptPrompt).toBe(`[Nova session ${startupAction}]`);
       expect(call?.followupRun.transcriptPrompt).not.toContain("Sender (untrusted metadata):");
     },
   );

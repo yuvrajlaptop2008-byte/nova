@@ -1,5 +1,5 @@
 /**
- * Runtime seam for tests and lazy imports that need OpenClaw tool creation
+ * Runtime seam for tests and lazy imports that need Nova tool creation
  * without depending on the full tool module path.
  */
 export { createOpenClawTools } from "./openclaw-tools.js";

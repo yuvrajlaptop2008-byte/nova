@@ -16,10 +16,10 @@ type ChannelId = import("../channels/plugins/types.core.js").ChannelId;
 export type PluginCommandDiagnosticsSession = {
   /** Stable host session key when available. */
   sessionKey?: string;
-  /** Ephemeral OpenClaw session id when available. */
+  /** Ephemeral Nova session id when available. */
   sessionId?: string;
   /**
-   * Deprecated transcript locator for this OpenClaw session when available.
+   * Deprecated transcript locator for this Nova session when available.
    *
    * SQLite-backed sessions use a `sqlite:<agentId>:<sessionId>:<storePath>`
    * marker, not a filesystem path. Use session id/key plus transcript-runtime
@@ -65,7 +65,7 @@ export type PluginCommandContext = {
   /** Ephemeral host session id for the active conversation when available. */
   sessionId?: string;
   /**
-   * Deprecated transcript locator for the active OpenClaw session when available.
+   * Deprecated transcript locator for the active Nova session when available.
    *
    * SQLite-backed sessions use a `sqlite:<agentId>:<sessionId>:<storePath>`
    * marker, not a filesystem path. Use session id/key plus transcript-runtime
@@ -78,7 +78,7 @@ export type PluginCommandContext = {
   args?: string;
   /** The full normalized command body */
   commandBody: string;
-  /** Current OpenClaw configuration */
+  /** Current Nova configuration */
   config: OpenClawConfig;
   /** Raw "From" value (channel-scoped id) */
   from?: string;

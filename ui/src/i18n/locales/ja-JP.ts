@@ -275,14 +275,14 @@ export const ja_JP: TranslationMap = {
     genericSubtitle: "このパネルの読み込み中に問題が発生しました。",
     staleTitle: "新しいバージョンが利用可能です",
     staleSubtitle:
-      "OpenClaw がバックグラウンドで更新されました。最新のパネルを表示するには再読み込みしてください。",
+      "Nova がバックグラウンドで更新されました。最新のパネルを表示するには再読み込みしてください。",
     retry: "再試行",
   },
   nodes: {
     pairing: {
       button: "モバイルデバイスをペアリング",
       adminRequired: "セットアップコードを作成するには管理者アクセスが必要です。",
-      title: "OpenClaw mobile",
+      title: "Nova mobile",
       subtitle:
         "新しいスマートフォンを接続するには、モバイルアプリでこのQRコードをスキャンしてください。",
       generating: "安全なセットアップコードを作成しています…",
@@ -296,14 +296,14 @@ export const ja_JP: TranslationMap = {
       transportLimitedHint:
         "このGateway URLは平文のws://を使用しています。wss://またはTailscale Serveを使用してから、フルアクセス用の新しいコードを作成してください。",
       failed: "セットアップコードを作成できませんでした。",
-      qrAlt: "OpenClaw mobile ペアリングQRコード",
+      qrAlt: "Nova mobile ペアリングQRコード",
       qrUnavailable: "QRを利用できません。代わりにセットアップコードをコピーしてください。",
       copySetupCode: "セットアップコードをコピー",
       newCode: "新しいコード",
       showSetupCode: "セットアップコードを表示",
       pending: "レビュー待ちのデバイスリクエスト: {count}",
       review: "レビュー",
-      waiting: "公式の OpenClaw mobile アプリはスキャン後に自動的に接続します。",
+      waiting: "公式の Nova mobile アプリはスキャン後に自動的に接続します。",
       help: "ペアリングのヘルプ",
       manageDevices: "デバイスを管理",
     },
@@ -451,11 +451,11 @@ export const ja_JP: TranslationMap = {
     ownerSession: "セッション",
     ownerWorkboard: "Workboard",
     title: "管理対象ワークツリー",
-    subtitle: "OpenClaw が所有する分離されたリポジトリのチェックアウト。",
+    subtitle: "Nova が所有する分離されたリポジトリのチェックアウト。",
     cleanNow: "今すぐクリーンアップ",
     cleanupTitle: "クリーンアップ",
     cleanupSubtitle:
-      "OpenClaw は、ディスク容量を確保するために古い worktree を定期的に削除します。クリーンアップの実行基準を調整できます。",
+      "Nova は、ディスク容量を確保するために古い worktree を定期的に削除します。クリーンアップの実行基準を調整できます。",
     cleanupMaxCount: "worktree の最大数",
     cleanupMaxCountHelp:
       "すべてのリポジトリで保持する管理対象 worktree の最大数です。古い worktree から順にスナップショットが作成され、削除されます。件数制限を無効にするには 0 に設定します。",
@@ -1403,7 +1403,7 @@ export const ja_JP: TranslationMap = {
     },
   },
   approvalPage: {
-    brandName: "OpenClaw",
+    brandName: "Nova",
     eyebrow: "Operator approval",
     loadingTitle: "Loading approval",
     loadingDescription: "Checking the current approval state with the Gateway.",
@@ -1412,7 +1412,7 @@ export const ja_JP: TranslationMap = {
       "This approval could not be found or this device is not authorized to review it.",
     connectionErrorTitle: "Connection interrupted",
     connectionErrorDescription:
-      "OpenClaw cannot confirm or record a decision while disconnected. Reconnect to check the current status.",
+      "Nova cannot confirm or record a decision while disconnected. Reconnect to check the current status.",
     retry: "Retry",
     execTitle: "Command approval",
     pending: "Waiting for your decision",
@@ -1759,7 +1759,7 @@ export const ja_JP: TranslationMap = {
   modelSetup: {
     heading: "AIに接続",
     intro:
-      "OpenClawは、CLIログイン、APIキー、プロバイダーへのサインインなど、既にお持ちのAIアクセスを再利用します。",
+      "Novaは、CLIログイン、APIキー、プロバイダーへのサインインなど、既にお持ちのAIアクセスを再利用します。",
     loading: "このGatewayで利用可能なAIアクセスを確認しています…",
     retry: "再試行",
     checkAgain: "再確認",
@@ -1772,7 +1772,7 @@ export const ja_JP: TranslationMap = {
     },
     access: {
       adminRequired: "モデルの設定にはoperator.adminアクセスが必要です。",
-      gatewayTooOld: "Gatewayで実行中のOpenClawのバージョンが古いです",
+      gatewayTooOld: "Gatewayで実行中のNovaのバージョンが古いです",
     },
     candidates: {
       title: "このGatewayで検出",
@@ -1874,12 +1874,11 @@ export const ja_JP: TranslationMap = {
     confirmReplace:
       "既存のコピー先ファイルは、置き換える前に移行レポート内にバックアップされます。",
     confirmBackup:
-      "OpenClaw は、メモリをコピーする前に検証済みのインポート前バックアップを作成します。",
+      "Nova は、メモリをコピーする前に検証済みのインポート前バックアップを作成します。",
     confirmImport: "メモリをインポート",
     disconnected: "メモリをインポートするには Gateway に接続してください。",
     title: "アシスタントのメモリをインポート",
-    subtitle:
-      "Codex の統合メモリと Claude Code の自動メモリを確認してから、OpenClaw にコピーします。",
+    subtitle: "Codex の統合メモリと Claude Code の自動メモリを確認してから、Nova にコピーします。",
     agent: "コピー先エージェント",
     replaceExisting: "既存のインポートを置き換える",
     replaceHint: "競合を再度プレビューし、置き換える前に各項目のバックアップを保持します。",
@@ -1887,7 +1886,7 @@ export const ja_JP: TranslationMap = {
   onboarding: {
     memoryImport: {
       title: "アシスタントのメモリを引き継ぐ",
-      body: "OpenClaw が他のコーディングアシスタントのメモリを検出しました。エージェントのワークスペースにインポートしますか？",
+      body: "Nova が他のコーディングアシスタントのメモリを検出しました。エージェントのワークスペースにインポートしますか？",
       plannedCount: "{count} 件をインポートできます",
       alreadyImported: "インポート済み: {count} 件",
       sourceUnavailable: "ソースパスを利用できません",
@@ -1903,7 +1902,7 @@ export const ja_JP: TranslationMap = {
       unknownError: "リクエストに失敗しました",
       doneTitle: "メモリのインポートが完了しました",
       doneBody:
-        "{migrated} 件を移行し、{skipped} 件をスキップしました。OpenClaw のセットアップを続行できます。",
+        "{migrated} 件を移行し、{skipped} 件をスキップしました。Nova のセットアップを続行できます。",
     },
   },
   mcpPage: {
@@ -1993,7 +1992,7 @@ export const ja_JP: TranslationMap = {
       notes: "Markdown、Obsidian、Notion、Bear にメモを取り込みます。",
     },
     noInstalledTitle: "オプションのプラグインはインストールされていません",
-    noInstalledBody: "注目のプラグインを見つけるか、ClawHub を検索して OpenClaw を拡張しましょう。",
+    noInstalledBody: "注目のプラグインを見つけるか、ClawHub を検索して Nova を拡張しましょう。",
     noInstalledMatchTitle: "一致するインストール済みプラグインはありません",
     noMatchBody: "別の検索を試してください。",
     filterAll: "すべて",
@@ -2039,7 +2038,7 @@ export const ja_JP: TranslationMap = {
     detailPluginId: "プラグイン ID",
     offlineTitle: "Gatewayがオフラインです",
     offlineBody: "接続して、インストール済みおよびおすすめのプラグインを閲覧してください。",
-    optionalCapability: "任意のOpenClaw機能です。",
+    optionalCapability: "任意のNova機能です。",
     enabled: "有効",
     disabled: "無効",
     available: "利用可能",
@@ -2072,7 +2071,7 @@ export const ja_JP: TranslationMap = {
     disabledRestart: "{name} を無効化しました。変更を適用するには Gateway の再起動が必要です。",
   },
   aboutPage: {
-    productName: "OpenClaw",
+    productName: "Nova",
     tagline: "あなた自身のデバイスで動作する、パーソナルAIアシスタント。",
     waveHello: "Clawdに手を振って挨拶",
     linksLabel: "コミュニティとリソース",
@@ -2081,7 +2080,7 @@ export const ja_JP: TranslationMap = {
     linkGitHub: "GitHub",
     linkDiscord: "Discord",
     linkChangelog: "変更履歴",
-    license: "© 2026 OpenClaw Foundation — MIT License.",
+    license: "© 2026 Nova Foundation — MIT License.",
     artifactTitle: "Control UI",
     artifactSubtitle: "このブラウザーアーティファクトのビルド時に埋め込まれた ID。",
     artifactDetails: "Control UI のビルド詳細",
@@ -2261,7 +2260,7 @@ export const ja_JP: TranslationMap = {
     selfLearning: {
       pitchTitle: "自己学習を有効にする",
       pitchBody:
-        "OpenClaw は修正内容や完了した重要な実行をレビューし、このボード向けのスキル提案の下書きを作成します。追加のバックグラウンドトークンを消費し、下書きは保留中の提案として追加されます。",
+        "Nova は修正内容や完了した重要な実行をレビューし、このボード向けのスキル提案の下書きを作成します。追加のバックグラウンドトークンを消費し、下書きは保留中の提案として追加されます。",
       enable: "自己学習を有効にする",
       enabling: "有効化中…",
       updateError: "自己学習の設定を更新できませんでした。",
@@ -3540,7 +3539,7 @@ export const ja_JP: TranslationMap = {
           "openclaw dashboard で提供元の dashboard を開き直し、UI と Gateway が同じインストールから来るようにします。",
         stepDevUi:
           "pnpm ui:dev を使用している場合は、現在の checkout に対して開発 UI を再ビルドまたは再起動します。",
-        stepRestart: "OpenClaw 更新後に Gateway を再起動し、現在のプロトコルを提供させます。",
+        stepRestart: "Nova 更新後に Gateway を再起動し、現在のプロトコルを提供させます。",
       },
       network: {
         title: "接続できません",
@@ -3576,7 +3575,7 @@ export const ja_JP: TranslationMap = {
       remoteViewOnly: "このセッションはペアリング済みノード上にあり、表示専用です。",
       unsupportedViewOnly: "この外部セッションソースは表示専用です。",
       sessionMenu: "External session actions",
-      openInOpenClaw: "Open in OpenClaw",
+      openInNova: "Open in Nova",
       openInTerminal: "Open in terminal",
       terminalUnavailable: "Terminal opening is unavailable for this session.",
     },
@@ -3631,7 +3630,7 @@ export const ja_JP: TranslationMap = {
     followUpModeOverriding: "サーバーのデフォルトを上書き中 ({mode})",
     followUpModeReset: "サーバーの既定値にリセット",
     catalogOpenTarget: "Open Codex/Claude sessions in",
-    catalogOpenTargetViewer: "OpenClaw viewer",
+    catalogOpenTargetViewer: "Nova viewer",
     catalogOpenTargetTerminal: "Terminal",
     onboardingDisabled: "セットアップ中は無効",
     gatewayStatus: "Gateway ステータス: {status}",
@@ -4071,7 +4070,7 @@ export const ja_JP: TranslationMap = {
       filters: "フィルター",
       shownOf: "{total} 件中 {shown} 件",
       emptyTitle: "スケジュールされたタスクはまだありません",
-      emptyHint: "OpenClaw に何をいつ実行させるかを記述すると、スケジュールに従って実行されます。",
+      emptyHint: "Nova に何をいつ実行させるかを記述すると、スケジュールに従って実行されます。",
       noMatching: "現在のフィルターに一致するタスクはありません。",
       loadMore: "さらに読み込む",
       loading: "読み込み中...",
@@ -4138,7 +4137,7 @@ export const ja_JP: TranslationMap = {
     detail: {
       tabsLabel: "自動化の詳細",
       newTitle: "新規スケジュールタスク",
-      newSubtitle: "OpenClaw に何をさせるかを記述し、実行するタイミングを選択します。",
+      newSubtitle: "Nova に何をさせるかを記述し、実行するタイミングを選択します。",
       back: "すべての自動化",
       settingsTab: "設定",
       historyTitle: "実行履歴",
@@ -4211,7 +4210,7 @@ export const ja_JP: TranslationMap = {
       descriptionPlaceholder: "このジョブの任意のコンテキスト",
       agentPlaceholder: "main または ops",
       agentHelp: "入力を始めると既知のエージェントを選択でき、カスタム値を入力することもできます。",
-      promptPlaceholder: "OpenClaw に実行させたいことを記述...",
+      promptPlaceholder: "Nova に実行させたいことを記述...",
       repeat: "繰り返し",
       repeatInterval: "間隔",
       repeatOnce: "1回",

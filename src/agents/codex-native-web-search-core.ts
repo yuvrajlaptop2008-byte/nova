@@ -253,7 +253,7 @@ export function patchCodexNativeWebSearchPayload(params: {
   return { status: "injected" };
 }
 
-/** Returns whether the managed OpenClaw web-search tool should be hidden. */
+/** Returns whether the managed Nova web-search tool should be hidden. */
 export function shouldSuppressManagedWebSearchTool(params: {
   config?: OpenClawConfig;
   modelProvider?: string;

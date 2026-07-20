@@ -172,7 +172,7 @@ describe("parallel web search provider", () => {
 
   it("partitions Parallel cache keys by resolved endpoint", () => {
     const base = {
-      objective: "Find OpenClaw on GitHub",
+      objective: "Find Nova on GitHub",
       searchQueries: ["openclaw github"],
       count: 5,
     };
@@ -192,7 +192,7 @@ describe("parallel web search provider", () => {
   it("partitions Parallel cache keys by resolved result count", () => {
     const base = {
       endpoint: "https://api.parallel.ai/v1/search",
-      objective: "Find OpenClaw on GitHub",
+      objective: "Find Nova on GitHub",
       searchQueries: ["openclaw github"],
     };
     expect(testing.buildParallelCacheKey({ ...base, count: 5 })).not.toBe(
@@ -208,26 +208,26 @@ describe("parallel web search provider", () => {
     expect(
       testing.buildParallelCacheKey({
         ...base,
-        objective: "Find OpenClaw on GitHub",
+        objective: "Find Nova on GitHub",
         searchQueries: ["openclaw github"],
       }),
     ).not.toBe(
       testing.buildParallelCacheKey({
         ...base,
-        objective: "Find the OpenClaw release notes",
+        objective: "Find the Nova release notes",
         searchQueries: ["openclaw github"],
       }),
     );
     expect(
       testing.buildParallelCacheKey({
         ...base,
-        objective: "Find OpenClaw on GitHub",
+        objective: "Find Nova on GitHub",
         searchQueries: ["openclaw github"],
       }),
     ).not.toBe(
       testing.buildParallelCacheKey({
         ...base,
-        objective: "Find OpenClaw on GitHub",
+        objective: "Find Nova on GitHub",
         searchQueries: ["openclaw github", "openclaw repository"],
       }),
     );
@@ -236,7 +236,7 @@ describe("parallel web search provider", () => {
   it("partitions Parallel cache keys by caller-provided session id", () => {
     const base = {
       endpoint: "https://api.parallel.ai/v1/search",
-      objective: "Find OpenClaw on GitHub",
+      objective: "Find Nova on GitHub",
       searchQueries: ["openclaw github"],
       count: 5,
     };
@@ -251,7 +251,7 @@ describe("parallel web search provider", () => {
   it("partitions Parallel cache keys by client_model so per-model results never bleed", () => {
     const base = {
       endpoint: "https://api.parallel.ai/v1/search",
-      objective: "Find OpenClaw on GitHub",
+      objective: "Find Nova on GitHub",
       searchQueries: ["openclaw github"],
       count: 5,
     };
@@ -264,7 +264,7 @@ describe("parallel web search provider", () => {
   });
 
   it("normalizes objectives by trimming and capping at 5000 chars", () => {
-    expect(testing.normalizeParallelObjective("  Find OpenClaw  ")).toBe("Find OpenClaw");
+    expect(testing.normalizeParallelObjective("  Find Nova  ")).toBe("Find Nova");
     expect(testing.normalizeParallelObjective(undefined)).toBeUndefined();
     expect(testing.normalizeParallelObjective("")).toBeUndefined();
     expect((testing.normalizeParallelObjective("x".repeat(6000)) ?? "").length).toBe(5000);
@@ -397,11 +397,11 @@ describe("parallel web search provider", () => {
     if (!tool) {
       throw new Error("Expected tool definition");
     }
-    expect(await tool.execute({ objective: "Find OpenClaw on GitHub" })).toMatchObject({
+    expect(await tool.execute({ objective: "Find Nova on GitHub" })).toMatchObject({
       error: "invalid_search_queries",
     });
     expect(
-      await tool.execute({ objective: "Find OpenClaw on GitHub", search_queries: [] }),
+      await tool.execute({ objective: "Find Nova on GitHub", search_queries: [] }),
     ).toMatchObject({ error: "invalid_search_queries" });
     expect(endpointMockState.calls).toHaveLength(0);
   });
@@ -428,12 +428,12 @@ describe("parallel web search provider", () => {
     if (!tool) {
       throw new Error("Expected tool definition");
     }
-    const result = await tool.execute({ query: "OpenClaw GitHub", count: 3 });
+    const result = await tool.execute({ query: "Nova GitHub", count: 3 });
     expect(endpointMockState.calls).toHaveLength(1);
     const body = readMockedBody(endpointMockState.calls[0]) as Record<string, unknown>;
     expect(body).not.toHaveProperty("objective");
     expect(body).toMatchObject({
-      search_queries: ["OpenClaw GitHub"],
+      search_queries: ["Nova GitHub"],
       advanced_settings: { max_results: 3 },
     });
     expect(result).not.toHaveProperty("objective");
@@ -513,7 +513,7 @@ describe("parallel web search provider", () => {
       throw new Error("Expected tool definition");
     }
     const result = await tool.execute({
-      objective: "Find the OpenClaw repository on GitHub",
+      objective: "Find the Nova repository on GitHub",
       search_queries: ["openclaw github", "openclaw repository"],
     });
 
@@ -522,7 +522,7 @@ describe("parallel web search provider", () => {
     expect(call.url).toBe("https://api.parallel.ai/v1/search");
     expect(call.timeoutSeconds).toBe(5);
     expect(readMockedBody(call)).toEqual({
-      objective: "Find the OpenClaw repository on GitHub",
+      objective: "Find the Nova repository on GitHub",
       search_queries: ["openclaw github", "openclaw repository"],
       advanced_settings: { max_results: 3 },
     });
@@ -556,14 +556,14 @@ describe("parallel web search provider", () => {
       throw new Error("Expected tool definition");
     }
     const result = await tool.execute({
-      objective: "Find the OpenClaw repository on GitHub",
+      objective: "Find the Nova repository on GitHub",
       search_queries: ["openclaw github"],
       session_id: "session-caller-supplied",
       client_model: "claude-opus-4-7",
     });
     const body = readMockedBody(endpointMockState.calls[0]) as Record<string, unknown>;
     expect(body).toMatchObject({
-      objective: "Find the OpenClaw repository on GitHub",
+      objective: "Find the Nova repository on GitHub",
       search_queries: ["openclaw github"],
       session_id: "session-caller-supplied",
       client_model: "claude-opus-4-7",
@@ -571,7 +571,7 @@ describe("parallel web search provider", () => {
     expect(result).toMatchObject({ sessionId: "session-caller-supplied" });
   });
 
-  it("always sends max_results matching the OpenClaw web_search default when no count is provided", async () => {
+  it("always sends max_results matching the Nova web_search default when no count is provided", async () => {
     endpointMockState.responses.push(
       new Response(JSON.stringify({ search_id: "x", session_id: "y", results: [] }), {
         status: 200,
@@ -587,14 +587,14 @@ describe("parallel web search provider", () => {
       throw new Error("Expected tool definition");
     }
     await tool.execute({
-      objective: "Find OpenClaw",
+      objective: "Find Nova",
       search_queries: ["openclaw"],
     });
     expect(endpointMockState.calls).toHaveLength(1);
     const body = readMockedBody(endpointMockState.calls[0]) as {
       advanced_settings?: { max_results?: number };
     };
-    // OpenClaw's web_search default is 5 results; Parallel's own default is 10.
+    // Nova's web_search default is 5 results; Parallel's own default is 10.
     // Sending an explicit max_results keeps result volume consistent across providers.
     expect(body.advanced_settings?.max_results).toBe(5);
   });

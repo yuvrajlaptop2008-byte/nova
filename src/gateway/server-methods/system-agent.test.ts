@@ -1,4 +1,4 @@
-// OpenClaw gateway tests cover activation serialization and chat sessions.
+// Nova gateway tests cover activation serialization and chat sessions.
 
 import { expectDefined } from "@openclaw/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -286,7 +286,7 @@ describe("openclaw.setup.activate", () => {
           payload: undefined,
           error: {
             code: "UNAVAILABLE",
-            message: "OpenClaw setup is already in progress; try again when it finishes.",
+            message: "Nova setup is already in progress; try again when it finishes.",
             retryable: true,
           },
         },
@@ -436,7 +436,7 @@ describe("openclaw.chat", () => {
       ok: false,
       error: {
         code: "UNAVAILABLE",
-        message: "OpenClaw requires working inference: no configured model",
+        message: "Nova requires working inference: no configured model",
       },
     });
     expect(call.error).not.toHaveProperty("details");

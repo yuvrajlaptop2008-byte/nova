@@ -52,7 +52,7 @@ export function buildEmbeddedSystemPrompt(params: {
   proactiveSubagentOrchestration?: boolean;
   /** Whether ACP-specific routing guidance should be included. Defaults to true. */
   acpEnabled?: boolean;
-  /** Prompt surface controls runtime-specific fallback fragments. Defaults to OpenClaw main. */
+  /** Prompt surface controls runtime-specific fallback fragments. Defaults to Nova main. */
   promptSurface?: AgentPromptSurfaceKind;
   /** Registered runtime slash/native command names such as `codex`. */
   nativeCommandNames?: string[];

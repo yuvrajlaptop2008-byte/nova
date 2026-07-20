@@ -168,7 +168,7 @@ describe("codesign-mac-app temp file hygiene", () => {
     mkdirSync(binDir);
     mkdirSync(captureDir);
     writeFileSync(path.join(app, "Contents", "MacOS", "openclaw-mlx-tts"), "#!/bin/sh\n");
-    writeFileSync(path.join(app, "Contents", "MacOS", "OpenClaw"), "#!/bin/sh\n");
+    writeFileSync(path.join(app, "Contents", "MacOS", "Nova"), "#!/bin/sh\n");
     installFakeCodesign(binDir);
 
     const result = spawnSync("bash", [scriptPath, app], {
@@ -191,7 +191,7 @@ describe("codesign-mac-app temp file hygiene", () => {
     const signLines = readFileSync(logPath, "utf8").trim().split("\n");
     expect(signLines).toHaveLength(3);
     expect(signLines[0]).toContain(`${path.join(app, "Contents", "MacOS", "openclaw-mlx-tts")}\t`);
-    expect(signLines[1]).toContain(`${path.join(app, "Contents", "MacOS", "OpenClaw")}\t`);
+    expect(signLines[1]).toContain(`${path.join(app, "Contents", "MacOS", "Nova")}\t`);
     expect(signLines[2]).toContain(`${app}\t`);
     for (const line of signLines) {
       const [, , entitlementPath, copiedEntitlementsPath] = line.split("\t");

@@ -2053,7 +2053,7 @@ describe("qa cli runtime", () => {
   it("prints a markdown tool coverage report from runtime tool fixtures", async () => {
     await runQaCoverageReportCommand({ repoRoot: process.cwd(), tools: true });
 
-    expectWriteContains(stdoutWrite, "# OpenClaw Runtime Tool Coverage");
+    expectWriteContains(stdoutWrite, "# Nova Runtime Tool Coverage");
     expectWriteContains(stdoutWrite, "codex-native-workspace");
   });
 
@@ -2078,7 +2078,7 @@ describe("qa cli runtime", () => {
         ),
       ) as { transcripts?: Array<{ userTurnCount?: number }> };
 
-      expect(report).toContain("# OpenClaw JSONL Replay Report - openclaw vs codex");
+      expect(report).toContain("# Nova JSONL Replay Report - openclaw vs codex");
       expect(report).toContain("| plan-mode-boundaries.jsonl | 3 |  | none, none, none |");
       expect(summary.transcripts).toHaveLength(7);
     } finally {

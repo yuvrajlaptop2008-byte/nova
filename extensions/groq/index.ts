@@ -4,7 +4,7 @@ import {
   streamSimple,
   type AssistantMessageEvent,
 } from "openclaw/plugin-sdk/llm";
-// Groq plugin entrypoint registers its OpenClaw integration.
+// Groq plugin entrypoint registers its Nova integration.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
 import { groqMediaUnderstandingProvider } from "./media-understanding-provider.js";

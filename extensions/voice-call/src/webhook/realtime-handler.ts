@@ -224,7 +224,7 @@ function buildForcedConsultSpeechPrompt(result: string): string {
       ? trimmed
       : `${truncateUtf16Safe(trimmed, FORCED_CONSULT_RESULT_MAX_CHARS - 16).trimEnd()} [truncated]`;
   return [
-    "Internal OpenClaw consult result is ready.",
+    "Internal Nova consult result is ready.",
     "Do not call tools for this internal result.",
     "Speak the following answer to the caller now, briefly and naturally:",
     bounded,
@@ -1331,7 +1331,7 @@ export class RealtimeCallHandler {
         }
         await submitFinalToolResult({
           status: "cancelled",
-          message: "OpenClaw cancelled this consult before completion. Do not restart it.",
+          message: "Nova cancelled this consult before completion. Do not restart it.",
         });
         return;
       }
@@ -1339,7 +1339,7 @@ export class RealtimeCallHandler {
         if (forcedConsult.completedAt || forcedMatch.kind === "already_delivered") {
           await submitFinalToolResult({
             status: "already_delivered",
-            message: "OpenClaw already delivered this consult result internally. Do not repeat it.",
+            message: "Nova already delivered this consult result internally. Do not repeat it.",
           });
           return;
         }

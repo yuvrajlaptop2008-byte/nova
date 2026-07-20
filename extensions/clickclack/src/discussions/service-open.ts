@@ -162,7 +162,7 @@ export async function openClickClackDiscussionBinding(
     return undefined;
   }
   if (!entry.sessionId?.trim()) {
-    throw new Error("OpenClaw session does not yet have a concrete session id");
+    throw new Error("Nova session does not yet have a concrete session id");
   }
   const client = params.clientFactory(account);
   const workspaces = await client.workspaces();
@@ -414,7 +414,7 @@ export async function openClickClackDiscussionBinding(
           `failed to archive superseded discussion channel ${channel.id}: ${String(archiveError)}`,
         );
       }
-      throw new Error("OpenClaw session changed while opening its ClickClack discussion");
+      throw new Error("Nova session changed while opening its ClickClack discussion");
     }
     try {
       store.set(sessionKey, nextBinding);

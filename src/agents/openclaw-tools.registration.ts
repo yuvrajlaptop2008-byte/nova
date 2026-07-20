@@ -1,5 +1,5 @@
 /**
- * OpenClaw-owned tool registration filters.
+ * Nova-owned tool registration filters.
  *
  * Keeps optional tool gating separate from tool construction so config and execution contracts decide exposure.
  */
@@ -10,7 +10,7 @@ import { isToolAllowedByPolicyName } from "./tool-policy-match.js";
 import type { AnyAgentTool } from "./tools/common.js";
 
 /**
- * Registration helpers for optional OpenClaw-owned tools.
+ * Registration helpers for optional Nova-owned tools.
  *
  * This keeps model/runtime gating separate from tool construction so callers can
  * assemble candidate tools first, then filter by config and execution contract.
@@ -33,7 +33,7 @@ function isUpdatePlanToolEnabledForOpenClawTools(params: {
   return params.config?.tools?.experimental?.planTool !== false;
 }
 
-/** Decides whether update_plan should be included in the assembled OpenClaw tool set. */
+/** Decides whether update_plan should be included in the assembled Nova tool set. */
 export function shouldIncludeUpdatePlanToolForOpenClawTools(params: {
   config?: OpenClawConfig;
   agentSessionKey?: string;

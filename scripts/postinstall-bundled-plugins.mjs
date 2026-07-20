@@ -940,14 +940,14 @@ export function pruneOpenClawCompileCache(params = {}) {
           if (isCompileCachePrunePermissionDenied(error)) {
             continue;
           }
-          log.warn?.(`[postinstall] could not prune OpenClaw compile cache: ${String(error)}`);
+          log.warn?.(`[postinstall] could not prune Nova compile cache: ${String(error)}`);
         }
       }
     } catch (error) {
       if (isCompileCachePrunePermissionDenied(error)) {
         continue;
       }
-      log.warn?.(`[postinstall] could not prune OpenClaw compile cache: ${String(error)}`);
+      log.warn?.(`[postinstall] could not prune Nova compile cache: ${String(error)}`);
     }
   }
 }

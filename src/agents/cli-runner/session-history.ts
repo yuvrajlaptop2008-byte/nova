@@ -178,7 +178,7 @@ function renderHistoryMessage(message: unknown): string | undefined {
   return text ? `${role}: ${text}` : undefined;
 }
 
-/** Builds a reseed prompt that carries prior OpenClaw transcript context. */
+/** Builds a reseed prompt that carries prior Nova transcript context. */
 export function buildCliSessionHistoryPrompt(params: {
   messages: unknown[];
   prompt: string;
@@ -208,7 +208,7 @@ export function buildCliSessionHistoryPrompt(params: {
     .join("\n\n")
     .trim();
 
-  const truncationMarker = "[OpenClaw reseed history truncated; older turns dropped]";
+  const truncationMarker = "[Nova reseed history truncated; older turns dropped]";
   const renderTruncatedSummaryWithTail = (renderedSummary: string): string => {
     const tailBudget =
       tailRaw.length > 0 ? Math.min(tailRaw.length, Math.floor(maxHistoryChars / 2)) : 0;
@@ -265,7 +265,7 @@ export function buildCliSessionHistoryPrompt(params: {
   }
 
   return [
-    "Continue this conversation using the OpenClaw transcript below as prior session history.",
+    "Continue this conversation using the Nova transcript below as prior session history.",
     "Treat it as authoritative context for this fresh CLI session.",
     "",
     "<conversation_history>",

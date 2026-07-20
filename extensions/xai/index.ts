@@ -1,5 +1,5 @@
 import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-// Xai plugin entrypoint registers its OpenClaw integration.
+// Xai plugin entrypoint registers its Nova integration.
 import type { OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
 import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
 import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";

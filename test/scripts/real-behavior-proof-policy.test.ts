@@ -226,7 +226,7 @@ describe("real-behavior-proof-policy", () => {
           "## Real behavior proof",
           "",
           "- Behavior addressed: The gateway dropped the configured Discord channel during startup.",
-          "- Real environment tested: macOS 15.4, Node 24, local OpenClaw gateway.",
+          "- Real environment tested: macOS 15.4, Node 24, local Nova gateway.",
           "- Exact steps or command run after this patch: pnpm openclaw gateway restart",
           "- Evidence after fix: ![after](https://github.com/user-attachments/assets/gateway-ready)",
           "- Observed result after fix: The gateway stayed connected and Discord reported ready.",
@@ -315,7 +315,7 @@ describe("real-behavior-proof-policy", () => {
       "  - `levels: off, minimal, low, medium, adaptive, high`",
       "  - `lowSupported: true`",
       "  - `fallbackFromLow: low`",
-      "  - `local command version: OpenClaw 2026.5.21`",
+      "  - `local command version: Nova 2026.5.21`",
       "",
       "## Out-of-scope Follow-ups",
       "- No live systemd cron schedule was tested.",
@@ -337,7 +337,7 @@ describe("real-behavior-proof-policy", () => {
       "",
       "## Evidence",
       "",
-      "- Real environment tested: Local macOS source checkout, Node v24.8.0, OpenClaw 2026.5.21 (c8a35c4), local `openclaw` shim pointed at the freshly built checkout. No channel credentials or provider API keys were used.",
+      "- Real environment tested: Local macOS source checkout, Node v24.8.0, Nova 2026.5.21 (c8a35c4), local `openclaw` shim pointed at the freshly built checkout. No channel credentials or provider API keys were used.",
       "- Exact steps or command run after this patch:",
       "  1. Built the local checkout with `node scripts/build-all.mjs`.",
       "  2. Updated `/Users/example/.local/bin/openclaw` to run this checkout's `openclaw.mjs` and verified `/Users/example/.local/bin/openclaw --version`.",
@@ -347,7 +347,7 @@ describe("real-behavior-proof-policy", () => {
       "  - `levels: off, minimal, low, medium, adaptive, high`",
       "  - `lowSupported: true`",
       "  - `fallbackFromLow: low`",
-      "  - `local command version: OpenClaw 2026.5.21 (c8a35c4)`",
+      "  - `local command version: Nova 2026.5.21 (c8a35c4)`",
       "",
       "## Out-of-scope Follow-ups",
       "- No live systemd cron schedule is added in this PR.",
@@ -491,7 +491,7 @@ describe("real-behavior-proof-policy", () => {
     expect(evaluateClawSweeperExactHeadProof({ pullRequest, comments }).passed).toBe(true);
   });
 
-  it("accepts exact OpenClaw ClawSweeper bot pass verdict markers when GitHub omits the app source", () => {
+  it("accepts exact Nova ClawSweeper bot pass verdict markers when GitHub omits the app source", () => {
     const pullRequest = {
       number: 83581,
       head: {

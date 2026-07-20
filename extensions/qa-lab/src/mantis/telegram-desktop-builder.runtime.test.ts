@@ -27,7 +27,7 @@ describe("mantis Telegram desktop builder runtime", () => {
     await fs.rm(repoRoot, { force: true, recursive: true });
   });
 
-  it("leases a desktop box, installs Telegram Desktop, configures OpenClaw, and keeps the gateway lease", async () => {
+  it("leases a desktop box, installs Telegram Desktop, configures Nova, and keeps the gateway lease", async () => {
     const commands: { args: readonly string[]; command: string; env?: NodeJS.ProcessEnv }[] = [];
     const runner = vi.fn(
       async (command: string, args: readonly string[], options: { env?: NodeJS.ProcessEnv }) => {

@@ -476,7 +476,7 @@ describe("Code Mode", () => {
 
     const description = compacted.tools[0]?.description ?? "";
     expect(description).toContain('"openclaw:catalog-owner:tool_071"');
-    expect(description).not.toContain("additional OpenClaw/plugin tools omitted");
+    expect(description).not.toContain("additional Nova/plugin tools omitted");
   });
 
   it("keeps declared-output tools indexed when truncation drops unknown-output lines", () => {
@@ -501,9 +501,9 @@ describe("Code Mode", () => {
     });
 
     const description = compacted.tools[0]?.description ?? "";
-    const indexStart = description.indexOf("OpenClaw/plugin tool quick index");
+    const indexStart = description.indexOf("Nova/plugin tool quick index");
     const index = indexStart >= 0 ? description.slice(indexStart) : "";
-    expect(index).toContain("additional OpenClaw/plugin tools omitted");
+    expect(index).toContain("additional Nova/plugin tools omitted");
     expect(index).toContain("zzz_contracted_tool");
     expect(index).toContain("-> { ok: boolean }");
   });
@@ -535,7 +535,7 @@ describe("Code Mode", () => {
     });
 
     const description = compacted.tools[0]?.description ?? "";
-    const indexStart = description.indexOf("OpenClaw/plugin tool quick index");
+    const indexStart = description.indexOf("Nova/plugin tool quick index");
     const index = indexStart >= 0 ? description.slice(indexStart) : "";
     expect(index.length).toBeLessThanOrEqual(8_000);
     // The oversized line is skipped, but every short declared contract survives.
@@ -564,14 +564,14 @@ describe("Code Mode", () => {
         catalogRef,
       });
       const description = compacted.tools[0]?.description ?? "";
-      const start = description.indexOf("OpenClaw/plugin tool quick index");
+      const start = description.indexOf("Nova/plugin tool quick index");
       return start >= 0 ? description.slice(start) : "";
     };
     const first = build();
     for (let i = 0; i < 5; i += 1) {
       expect(build()).toBe(first);
     }
-    expect(first).toContain("additional OpenClaw/plugin tools omitted");
+    expect(first).toContain("additional Nova/plugin tools omitted");
   });
 
   it("bounds the model-visible native tool index", () => {
@@ -590,10 +590,10 @@ describe("Code Mode", () => {
     });
 
     const description = compacted.tools[0]?.description ?? "";
-    const indexStart = description.indexOf("OpenClaw/plugin tool quick index");
+    const indexStart = description.indexOf("Nova/plugin tool quick index");
     const index = indexStart >= 0 ? description.slice(indexStart) : "";
     expect(index.length).toBeLessThanOrEqual(8_000);
-    expect(index).toContain("additional OpenClaw/plugin tools omitted");
+    expect(index).toContain("additional Nova/plugin tools omitted");
     expect(index).not.toContain("fake_099");
   });
 

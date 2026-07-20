@@ -305,7 +305,7 @@ describe("openclaw live updater", () => {
     });
   });
 
-  test("ignores restart-window logs emitted by a foreign OpenClaw checkout", () => {
+  test("ignores restart-window logs emitted by a foreign Nova checkout", () => {
     const root = mkdtempSync(path.join(tmpdir(), "openclaw-log-attribution-"));
     const sourceRoot = path.join(root, "managed/openclaw/dist");
     const foreignRoot = path.join(root, "worktree/openclaw");
@@ -642,7 +642,7 @@ describe("openclaw live updater", () => {
     expect(result.url).toBeNull();
   });
 
-  test("accepts supported OpenClaw GitHub origins", () => {
+  test("accepts supported Nova GitHub origins", () => {
     expect(originMatches("https://github.com/openclaw/openclaw.git")).toBe(true);
     expect(originMatches("git@github.com:openclaw/openclaw.git")).toBe(true);
     expect(originMatches("https://github.com/example/openclaw.git")).toBe(false);
@@ -900,7 +900,7 @@ describe("openclaw live updater", () => {
       macUiVerification: false,
     });
     expect(
-      classifyActions(["package.json", "apps/macos/Sources/OpenClaw/AppDelegate.swift"], {
+      classifyActions(["package.json", "apps/macos/Sources/Nova/AppDelegate.swift"], {
         buildProvenanceKnown: true,
         buildRequired: true,
         nodeModulesPresent: true,
@@ -932,8 +932,8 @@ describe("openclaw live updater", () => {
   });
 
   test("accepts only the delayed exact target bundle process", () => {
-    const executable = "/Users/steipete/openclaw/dist/OpenClaw.app/Contents/MacOS/OpenClaw";
-    const foreign = "41 /tmp/agent/OpenClaw.app/Contents/MacOS/OpenClaw";
+    const executable = "/Users/steipete/openclaw/dist/Nova.app/Contents/MacOS/Nova";
+    const foreign = "41 /tmp/agent/Nova.app/Contents/MacOS/Nova";
     expect(findExactMacTarget(foreign, executable)).toBeNull();
     expect(findExactMacTarget(`${foreign}\n42 ${executable} --attach-only`, executable)).toEqual({
       executable,
@@ -980,8 +980,8 @@ describe("openclaw live updater", () => {
 
   test("fast-forwards, builds exact SHA, restarts Gateway, then proves exact Mac target", () => {
     const { root, mirror, seed } = makeFixture({ includeSeed: true });
-    mkdirSync(path.join(seed, "apps/macos/Sources/OpenClaw"), { recursive: true });
-    writeFileSync(path.join(seed, "apps/macos/Sources/OpenClaw/App.swift"), "// changed\n");
+    mkdirSync(path.join(seed, "apps/macos/Sources/Nova"), { recursive: true });
+    writeFileSync(path.join(seed, "apps/macos/Sources/Nova/App.swift"), "// changed\n");
     git(seed, "add", ".");
     git(seed, "commit", "-m", "mac change");
     git(seed, "push");
@@ -997,7 +997,7 @@ describe("openclaw live updater", () => {
       {
         runCommand: commands.runCommand,
         verifyMacTarget: () => ({
-          executable: path.join(mirror, "dist/OpenClaw.app/Contents/MacOS/OpenClaw"),
+          executable: path.join(mirror, "dist/Nova.app/Contents/MacOS/Nova"),
           pid: 123,
         }),
       },
@@ -1005,7 +1005,7 @@ describe("openclaw live updater", () => {
 
     expect(output.updated).toBe(true);
     expect(output.afterSha).toBe(git(seed, "rev-parse", "HEAD"));
-    expect(output.buildChangedPaths).toEqual(["apps/macos/Sources/OpenClaw/App.swift"]);
+    expect(output.buildChangedPaths).toEqual(["apps/macos/Sources/Nova/App.swift"]);
     expect(output.actions).toEqual({
       dependencyInstall: true,
       gatewayBuild: true,
@@ -1034,7 +1034,7 @@ describe("openclaw live updater", () => {
       "pnpm openclaw health --verbose --json",
     ]);
     expect(output.macTarget?.executable).toBe(
-      path.join(mirror, "dist/OpenClaw.app/Contents/MacOS/OpenClaw"),
+      path.join(mirror, "dist/Nova.app/Contents/MacOS/Nova"),
     );
   });
 
@@ -1199,7 +1199,7 @@ describe("openclaw live updater", () => {
   test("preserves the signed Mac bundle while a Gateway build replaces dist", () => {
     const { root, mirror } = makeFixture();
     mkdirSync(path.join(mirror, "node_modules"));
-    const appBundle = path.join(mirror, "dist/OpenClaw.app");
+    const appBundle = path.join(mirror, "dist/Nova.app");
     const appMarker = path.join(appBundle, "Contents/signature-marker");
     mkdirSync(path.dirname(appMarker), { recursive: true });
     writeFileSync(appMarker, "signed\n");
@@ -1228,7 +1228,7 @@ describe("openclaw live updater", () => {
   test("restores the Mac bundle when the Gateway build fails", () => {
     const { root, mirror } = makeFixture();
     mkdirSync(path.join(mirror, "node_modules"));
-    const appMarker = path.join(mirror, "dist/OpenClaw.app/Contents/signature-marker");
+    const appMarker = path.join(mirror, "dist/Nova.app/Contents/signature-marker");
     mkdirSync(path.dirname(appMarker), { recursive: true });
     writeFileSync(appMarker, "signed\n");
 
@@ -1250,7 +1250,7 @@ describe("openclaw live updater", () => {
   test("accepts a delayed external restore of the exact preserved Mac bundle", () => {
     const { root, mirror } = makeFixture();
     mkdirSync(path.join(mirror, "node_modules"));
-    const appBundle = path.join(mirror, "dist/OpenClaw.app");
+    const appBundle = path.join(mirror, "dist/Nova.app");
     const appMarker = path.join(appBundle, "Contents/signature-marker");
     mkdirSync(path.dirname(appMarker), { recursive: true });
     writeFileSync(appMarker, "signed\n");
@@ -1296,7 +1296,7 @@ describe("openclaw live updater", () => {
   test("preserves a build failure after an external Mac bundle restore", () => {
     const { root, mirror } = makeFixture();
     mkdirSync(path.join(mirror, "node_modules"));
-    const appBundle = path.join(mirror, "dist/OpenClaw.app");
+    const appBundle = path.join(mirror, "dist/Nova.app");
     const appMarker = path.join(appBundle, "Contents/signature-marker");
     mkdirSync(path.dirname(appMarker), { recursive: true });
     writeFileSync(appMarker, "signed\n");
@@ -1815,8 +1815,8 @@ describe("openclaw live updater", () => {
 
   test("retains failed exact-bundle Mac proof for the next heartbeat", () => {
     const { root, mirror, seed } = makeFixture({ includeSeed: true });
-    mkdirSync(path.join(seed, "apps/macos/Sources/OpenClaw"), { recursive: true });
-    writeFileSync(path.join(seed, "apps/macos/Sources/OpenClaw/App.swift"), "// changed\n");
+    mkdirSync(path.join(seed, "apps/macos/Sources/Nova"), { recursive: true });
+    writeFileSync(path.join(seed, "apps/macos/Sources/Nova/App.swift"), "// changed\n");
     git(seed, "add", ".");
     git(seed, "commit", "-m", "mac change");
     git(seed, "push");
@@ -1862,8 +1862,8 @@ describe("openclaw live updater", () => {
 
   test("records pending Mac work before Gateway maintenance can fail", () => {
     const { root, mirror, seed } = makeFixture({ includeSeed: true });
-    mkdirSync(path.join(seed, "apps/macos/Sources/OpenClaw"), { recursive: true });
-    writeFileSync(path.join(seed, "apps/macos/Sources/OpenClaw/App.swift"), "// changed\n");
+    mkdirSync(path.join(seed, "apps/macos/Sources/Nova"), { recursive: true });
+    writeFileSync(path.join(seed, "apps/macos/Sources/Nova/App.swift"), "// changed\n");
     git(seed, "add", ".");
     git(seed, "commit", "-m", "mac change");
     git(seed, "push");

@@ -1,4 +1,4 @@
-// OpenClaw launcher E2E tests validate launcher process behavior.
+// Nova launcher E2E tests validate launcher process behavior.
 import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import fs from "node:fs/promises";
@@ -255,7 +255,7 @@ describe("openclaw launcher", () => {
     expect(result.status).toBe(1);
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain(
-      "the Bun runtime is unsupported because OpenClaw requires node:sqlite",
+      "the Bun runtime is unsupported because Nova requires node:sqlite",
     );
   });
 
@@ -315,7 +315,7 @@ describe("openclaw launcher", () => {
     });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toBe("OpenClaw 1.2.3-test (abcdef0)\n");
+    expect(result.stdout).toBe("Nova 1.2.3-test (abcdef0)\n");
     expect(result.stderr).toBe("");
   });
 
@@ -429,7 +429,7 @@ describe("openclaw launcher", () => {
       expect(result.status).toBe(1);
       expect(result.stdout).toBe("");
       expect(result.stderr).toContain(
-        "the Bun runtime is unsupported because OpenClaw requires node:sqlite",
+        "the Bun runtime is unsupported because Nova requires node:sqlite",
       );
     },
   );

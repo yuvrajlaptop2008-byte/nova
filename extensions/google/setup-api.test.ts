@@ -153,7 +153,7 @@ describe("google gemini cli backend config", () => {
 });
 
 describe("google gemini cli backend auth bridge", () => {
-  it("materializes selected OpenClaw OAuth credentials into a persistent profile-scoped Gemini CLI home", async () => {
+  it("materializes selected Nova OAuth credentials into a persistent profile-scoped Gemini CLI home", async () => {
     const backend = buildGoogleGeminiCliBackend();
     const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-test-workspace-"));
     let home: string | undefined;

@@ -281,7 +281,7 @@ export async function createCopilotToolBridge(
  * Builds the full `createOpenClawCodingTools` options bag mirroring the
  * PI in-tree call at `src/agents/pi-embedded-runner/run/attempt.ts:1029-1117`.
  *
- * Why PI parity matters: bridged OpenClaw tools register with the SDK
+ * Why PI parity matters: bridged Nova tools register with the SDK
  * as `overridesBuiltInTool: true, skipPermission: true` (see
  * `convertOpenClawToolToSdkTool` below). That means the wrapped-tool
  * enforcement layer
@@ -587,7 +587,7 @@ function convertOpenClawToolToSdkTool(
       );
     }
 
-    // OpenClaw tools throw for execution failures. Error-shaped details remain
+    // Nova tools throw for execution failures. Error-shaped details remain
     // lifecycle metadata; successful content uses the SDK's MCP converter.
     const sdkResult = convertMcpCallToolResult({ content: result.content });
     const sanitizedResult = sanitizeToolResult(result);
@@ -632,26 +632,26 @@ function convertOpenClawToolToSdkTool(
     description: sourceTool.description,
     handler,
     name: sourceTool.name,
-    // OpenClaw owns its bridged tools by design (the harness docs:
-    // "OpenClaw still owns ... OpenClaw dynamic tools (bridged)"). The bundled
+    // Nova owns its bridged tools by design (the harness docs:
+    // "Nova still owns ... Nova dynamic tools (bridged)"). The bundled
     // Copilot CLI ships built-in tools whose names (edit, read, write, bash,
-    // ...) collide with OpenClaw's coding-tool set. Mark every bridged tool as
+    // ...) collide with Nova's coding-tool set. Mark every bridged tool as
     // an explicit override so the SDK accepts the registration rather than
     // throwing "External tool 'edit' conflicts with a built-in tool of the
-    // same name." OpenClaw's tool layer is the source of truth for these
+    // same name." Nova's tool layer is the source of truth for these
     // names within a copilot attempt.
     overridesBuiltInTool: true,
     parameters: sourceTool.parameters as Record<string, unknown> | undefined,
-    // Bridged OpenClaw tools enforce their own permission/policy decisions
+    // Bridged Nova tools enforce their own permission/policy decisions
     // inside `wrapToolWithBeforeToolCallHook` (see
     // `src/agents/pi-tools.before-tool-call.ts` — the same hook PI itself
     // uses, providing loop detection, trusted plugin policies,
     // before-tool-call hooks, and two-phase plugin approvals via the
     // gateway). Asking the SDK to fire `onPermissionRequest` for
-    // `kind: "custom-tool"` would either short-circuit OpenClaw's richer
+    // `kind: "custom-tool"` would either short-circuit Nova's richer
     // enforcement (if we allow-all) or block every call (if we
     // reject-all) — neither matches PI parity. The in-tree codex harness
-    // takes the same approach: bridged OpenClaw tools are wrapped with
+    // takes the same approach: bridged Nova tools are wrapped with
     // `wrapToolWithBeforeToolCallHook` and the SDK gate is bypassed
     // (see `extensions/codex/src/app-server/dynamic-tools.ts`).
     skipPermission: true,

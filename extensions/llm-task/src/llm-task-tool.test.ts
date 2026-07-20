@@ -329,7 +329,7 @@ describe("llm-task tool (json-only)", () => {
     expect(call.agentHarnessRuntimeOverride).toBe("codex");
   });
 
-  it("lets an explicit OpenClaw model runtime own Luna Ultra", async () => {
+  it("lets an explicit Nova model runtime own Luna Ultra", async () => {
     mockEmbeddedRunJson({ ok: true });
     const config = {
       agents: {

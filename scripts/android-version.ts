@@ -1,4 +1,4 @@
-// Android Version script supports OpenClaw repository automation.
+// Android Version script supports Nova repository automation.
 import { resolveAndroidVersion } from "./lib/android-version.ts";
 import { parseVersionQueryArgs } from "./lib/version-script-args.ts";
 

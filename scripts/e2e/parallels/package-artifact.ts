@@ -1,4 +1,4 @@
-// Package Artifact script supports OpenClaw repository automation.
+// Package Artifact script supports Nova repository automation.
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -137,7 +137,7 @@ async function ensureCurrentBuildUnlocked(input: {
   }
 }
 
-export async function packOpenClaw(input: {
+export async function packNova(input: {
   destination: string;
   packageSpec?: string;
   requireControlUi?: boolean;

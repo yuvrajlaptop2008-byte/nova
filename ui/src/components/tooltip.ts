@@ -1,4 +1,4 @@
-// Control UI adapter for Web Awesome tooltips. OpenClaw keeps its terse
+// Control UI adapter for Web Awesome tooltips. Nova keeps its terse
 // wrapper API; Web Awesome owns popup positioning, rendering, and dismissal.
 import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
 import type WaTooltip from "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";

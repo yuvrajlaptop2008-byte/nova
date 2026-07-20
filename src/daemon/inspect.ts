@@ -1,4 +1,4 @@
-/** Inspects installed platform services for extra OpenClaw or legacy gateway jobs. */
+/** Inspects installed platform services for extra Nova or legacy gateway jobs. */
 import fs from "node:fs/promises";
 import path from "node:path";
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
@@ -204,7 +204,7 @@ function isOpenClawGatewayTaskName(name: string): boolean {
     return false;
   }
   // Windows schtasks /Query returns task names prefixed with \ (e.g.
-  // \OpenClaw Gateway for root-folder tasks). Strip the leading
+  // \Nova Gateway for root-folder tasks). Strip the leading
   // backslash so the configured name matches correctly and the live
   // gateway task is not misidentified as an extra gateway service.
   const stripped = normalized.replace(/^\\+/, "");
@@ -329,13 +329,13 @@ async function scanLaunchdDir(params: {
 async function scanSystemdDir(params: {
   dir: string;
   scope: "user" | "system";
-  includeManagedOpenClaw?: boolean;
+  includeManagedNova?: boolean;
 }): Promise<ExtraGatewayService[]> {
   const results: ExtraGatewayService[] = [];
   const candidates = await collectServiceFiles({
     dir: params.dir,
     extension: ".service",
-    isIgnoredName: params.includeManagedOpenClaw ? () => false : isIgnoredSystemdName,
+    isIgnoredName: params.includeManagedNova ? () => false : isIgnoredSystemdName,
   });
 
   for (const { entry, name, fullPath, contents } of candidates) {
@@ -346,7 +346,7 @@ async function scanSystemdDir(params: {
       continue;
     }
     if (
-      !params.includeManagedOpenClaw &&
+      !params.includeManagedNova &&
       marker === "openclaw" &&
       isOpenClawGatewaySystemdService(name, contents)
     ) {
@@ -377,7 +377,7 @@ export async function findSystemGatewayServices(): Promise<ExtraGatewayService[]
         ...(await scanSystemdDir({
           dir,
           scope: "system",
-          includeManagedOpenClaw: true,
+          includeManagedNova: true,
         })),
       );
     }

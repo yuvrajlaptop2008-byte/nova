@@ -1,5 +1,5 @@
 #!/usr/bin/env -S node --import tsx
-// Openclaw Npm Postpublish Verify script supports OpenClaw repository automation.
+// Openclaw Npm Postpublish Verify script supports Nova repository automation.
 
 import { createPublicKey, verify as verifySignature } from "node:crypto";
 import {
@@ -338,7 +338,7 @@ function resolveNpmProvenanceVerificationPolicy(
     statement.predicate?.runDetails?.builder?.id !== NPM_PROVENANCE_BUILDER_ID
   ) {
     throw new Error(
-      `npm provenance attestation does not bind ${version} to the trusted OpenClaw GitHub release workflow.`,
+      `npm provenance attestation does not bind ${version} to the trusted Nova GitHub release workflow.`,
     );
   }
 

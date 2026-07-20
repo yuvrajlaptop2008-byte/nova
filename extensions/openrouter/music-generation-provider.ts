@@ -394,7 +394,7 @@ export function buildOpenRouterMusicGenerationProvider(): MusicGenerationProvide
             Authorization: `Bearer ${auth.apiKey}`,
             "Content-Type": "application/json",
             "HTTP-Referer": "https://openclaw.ai",
-            "X-OpenRouter-Title": "OpenClaw",
+            "X-OpenRouter-Title": "Nova",
           },
           request: sanitizeConfiguredModelProviderRequest(
             req.cfg?.models?.providers?.openrouter?.request,

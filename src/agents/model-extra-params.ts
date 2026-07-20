@@ -34,7 +34,7 @@ export function resolveModelExtraParamSources(params: {
   return { defaultParams, modelParams, agentParams };
 }
 
-/** Returns whether embedded OpenClaw would apply authored request parameters. */
+/** Returns whether embedded Nova would apply authored request parameters. */
 export function hasModelExtraParams(
   params: Parameters<typeof resolveModelExtraParamSources>[0],
 ): boolean {

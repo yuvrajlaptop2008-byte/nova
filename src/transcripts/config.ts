@@ -1,4 +1,4 @@
-// Resolves transcript source configuration from OpenClaw config.
+// Resolves transcript source configuration from Nova config.
 import { normalizeOptionalString as readString } from "@openclaw/normalization-core/string-coerce";
 
 /**

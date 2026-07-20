@@ -181,7 +181,7 @@ function buildPluginItems(
           reason: conflict ? MIGRATION_REASON_PLUGIN_EXISTS : undefined,
           source: plugin.source,
           target: `plugins.entries.codex.config.codexPlugins.plugins.${configKey}`,
-          message: `Install Codex plugin "${plugin.pluginName}" in the OpenClaw-managed Codex app-server runtime.`,
+          message: `Install Codex plugin "${plugin.pluginName}" in the Nova-managed Codex app-server runtime.`,
           details: {
             configKey,
             marketplaceName: CODEX_PLUGINS_MARKETPLACE_NAME,
@@ -426,7 +426,7 @@ function buildPluginConfigItem(
     status: conflict ? "conflict" : "planned",
     reason: conflict ? MIGRATION_REASON_TARGET_EXISTS : undefined,
     message:
-      "Enable OpenClaw's Codex plugin integration and record migrated source-installed curated plugins.",
+      "Enable Nova's Codex plugin integration and record migrated source-installed curated plugins.",
     details: {
       path: [...CODEX_PLUGIN_CONFIG_PATH],
       value,
@@ -524,7 +524,7 @@ export async function buildCodexMigrationPlan(
       ? []
       : [
           "Run openclaw doctor after applying the migration.",
-          "Review skipped or auth-required Codex plugin/config/hook items before exposing them in OpenClaw sessions.",
+          "Review skipped or auth-required Codex plugin/config/hook items before exposing them in Nova sessions.",
         ],
     metadata: {
       agentDir: targets.agentDir,

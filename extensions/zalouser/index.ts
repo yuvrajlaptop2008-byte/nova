@@ -1,4 +1,4 @@
-// Zalouser plugin entrypoint registers its OpenClaw integration.
+// Zalouser plugin entrypoint registers its Nova integration.
 import {
   type AnyAgentTool,
   defineBundledChannelEntry,

@@ -129,7 +129,7 @@ function resolveClaudeCliContextModelId(modelId: string): string {
   return CLAUDE_CLI_CONTEXT_MODEL_ALIASES[lower] ?? trimmed;
 }
 type RunCliAgentPrepareParams = RunCliAgentParams & {
-  /** Ring-zero tool transport supplied only by the OpenClaw orchestrator. */
+  /** Ring-zero tool transport supplied only by the Nova orchestrator. */
   systemAgentTool?: import("../tools/system-agent-tool.js").SystemAgentToolOptions;
 };
 
@@ -184,7 +184,7 @@ function buildCliSessionDriftUserContext(
   if (reusableCliSession.mode !== "reuse-with-drift") {
     return undefined;
   }
-  return `OpenClaw resumed this CLI session after prompt content changed. Follow the current turn's instructions; changed=${reusableCliSession.drift.reasons.join(",")}.`;
+  return `Nova resumed this CLI session after prompt content changed. Follow the current turn's instructions; changed=${reusableCliSession.drift.reasons.join(",")}.`;
 }
 
 function prependCliSessionDriftUserContext(
@@ -581,7 +581,7 @@ export async function prepareCliRunContext(
         }),
       });
   // Mirror the embedded runner's bootstrap routing for backends that transport
-  // OpenClaw's system prompt. Only a declared native-tool backend can complete
+  // Nova's system prompt. Only a declared native-tool backend can complete
   // the file-based ritual; other backends receive limited guidance.
   const canonicalWorkspace = resolveUserPath(
     resolveAgentWorkspaceDir(params.config ?? {}, workspaceResolution.agentId),
@@ -640,7 +640,7 @@ export async function prepareCliRunContext(
     bootstrapMode === "none"
       ? toolBoundExtraSystemPromptHash
       : hashCliSessionText(JSON.stringify([toolBoundExtraSystemPromptHash ?? null, bootstrapMode]));
-  // Ring-zero OpenClaw runs replace the bundle MCP surface entirely: no
+  // Ring-zero Nova runs replace the bundle MCP surface entirely: no
   // loopback server, no plugin/user servers. A selectable backend also removes
   // its native tools, leaving only this openclaw stdio server.
   const systemAgentMcpConfig = internalParams.systemAgentTool
@@ -658,7 +658,7 @@ export async function prepareCliRunContext(
       await prepareDeps.ensureMcpLoopbackServer();
     } catch (error) {
       throw new Error(
-        `Bundled MCP is enabled, but the OpenClaw MCP loopback server failed to start: ${String(error)}`,
+        `Bundled MCP is enabled, but the Nova MCP loopback server failed to start: ${String(error)}`,
         { cause: error },
       );
     }
@@ -666,7 +666,7 @@ export async function prepareCliRunContext(
   }
   if (bundleMcpEnabled && !mcpLoopbackRuntime) {
     throw new Error(
-      "Bundled MCP is enabled, but the OpenClaw MCP loopback server did not publish a runtime after startup.",
+      "Bundled MCP is enabled, but the Nova MCP loopback server did not publish a runtime after startup.",
     );
   }
   const mcpDeliveryCaptureEnabled = bundleMcpEnabled && Boolean(mcpLoopbackRuntime);
@@ -1185,7 +1185,7 @@ export async function prepareCliRunContext(
       backendResolved.config.reseedFromRawTranscriptWhenUncompacted === true;
     const rawTranscriptReseedReason = reusableCliSessionId ? "session-expired" : invalidatedReason;
     // Node placement keeps this: the history prompt is built from the
-    // gateway-side OpenClaw transcript, so a fresh remote CLI session still
+    // gateway-side Nova transcript, so a fresh remote CLI session still
     // receives prior conversation context via stdin.
     const shouldPrepareOpenClawHistoryPrompt =
       !isSideQuestion && (!reusableCliSessionId || allowRawTranscriptReseed);

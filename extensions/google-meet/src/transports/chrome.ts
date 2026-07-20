@@ -111,7 +111,7 @@ export async function assertBlackHole2chAvailable(params: {
     throw new Error(
       [
         "BlackHole 2ch audio device not found.",
-        "Install BlackHole 2ch and route Chrome input/output through the OpenClaw audio bridge.",
+        "Install BlackHole 2ch and route Chrome input/output through the Nova audio bridge.",
         hint,
       ]
         .filter(Boolean)
@@ -170,7 +170,7 @@ export async function launchChromeMeet(params: {
     if (params.config.chrome.audioBridgeCommand) {
       if (params.mode === "agent") {
         throw new Error(
-          "Chrome agent mode requires chrome.audioInputCommand and chrome.audioOutputCommand so OpenClaw can run STT and regular TTS directly.",
+          "Chrome agent mode requires chrome.audioInputCommand and chrome.audioOutputCommand so Nova can run STT and regular TTS directly.",
         );
       }
       const bridge = await params.runtime.system.runCommandWithTimeout(

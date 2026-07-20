@@ -1,5 +1,5 @@
 import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-// Memory Core plugin entrypoint registers its OpenClaw integration.
+// Memory Core plugin entrypoint registers its Nova integration.
 import {
   jsonResult,
   resolveMemorySearchConfig,

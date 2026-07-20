@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Development runner that rebuilds OpenClaw, runs runtime postbuild steps, and
+// Development runner that rebuilds Nova, runs runtime postbuild steps, and
 // restarts the CLI when watched source or metadata changes.
 import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -1015,7 +1015,7 @@ const getInterruptedSpawnExitCode = (res) => {
   return null;
 };
 
-const runOpenClaw = async (deps) => {
+const runNova = async (deps) => {
   const diagnosticArgs = resolveRunNodeDiagnosticArgs(deps);
   const useProcessGroup = shouldUseRunNodeChildProcessGroup(deps);
   const nodeProcess = deps.spawn(deps.execPath, [...diagnosticArgs, "openclaw.mjs", ...deps.args], {
@@ -1457,7 +1457,7 @@ export async function runNodeMain(params = {}) {
   try {
     let exitCode = 1;
     if (shouldFastPathExistingDistForGatewayClient(deps)) {
-      exitCode = await runOpenClaw(deps);
+      exitCode = await runNova(deps);
       return await closeRunNodeOutputTee(deps, exitCode);
     }
     const buildRequirement = resolveBuildRequirement(deps);
@@ -1494,7 +1494,7 @@ export async function runNodeMain(params = {}) {
           return await closeRunNodeOutputTee(deps, 1);
         }
       }
-      exitCode = await runOpenClaw(deps);
+      exitCode = await runNova(deps);
       return await closeRunNodeOutputTee(deps, exitCode);
     }
 
@@ -1576,7 +1576,7 @@ export async function runNodeMain(params = {}) {
     if (buildExitCode !== 0) {
       return await closeRunNodeOutputTee(deps, buildExitCode);
     }
-    exitCode = await runOpenClaw(deps);
+    exitCode = await runNova(deps);
     return await closeRunNodeOutputTee(deps, exitCode);
   } catch (error) {
     await closeRunNodeOutputTee(deps, 1);

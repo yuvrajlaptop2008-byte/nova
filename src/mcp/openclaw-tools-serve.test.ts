@@ -1,4 +1,4 @@
-// OpenClaw MCP tools tests cover core tool server startup and registration.
+// Nova MCP tools tests cover core tool server startup and registration.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hashSystemAgentOperation } from "../agents/tools/system-agent-tool.js";
 import {
@@ -21,7 +21,7 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-describe("OpenClaw tools MCP server", () => {
+describe("Nova tools MCP server", () => {
   it("exposes cron", async () => {
     const handlers = createPluginToolsMcpHandlers(
       resolveOpenClawToolsForMcp({ agentSessionKey: "agent:worker:main" }),

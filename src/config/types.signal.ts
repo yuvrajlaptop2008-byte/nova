@@ -43,7 +43,7 @@ export type SignalAccountConfig = Omit<CommonChannelMessagingConfig, "mentionPat
     receiveMode?: "on-start" | "manual";
     ignoreAttachments?: boolean;
     ignoreStories?: boolean;
-    /** OpenClaw-side target aliases keyed by friendly name. */
+    /** Nova-side target aliases keyed by friendly name. */
     aliases?: Record<string, string>;
     /** Per-group overrides keyed by Signal group id (or "*"). */
     groups?: Record<string, SignalGroupConfig>;

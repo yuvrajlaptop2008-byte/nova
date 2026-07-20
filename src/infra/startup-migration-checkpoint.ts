@@ -180,7 +180,7 @@ export function acquireStartupMigrationLease(
     );
     if (existing) {
       throw new Error(
-        `OpenClaw startup migrations are already running for this state directory; retry after the other gateway finishes or after ${new Date(existing.expiresAt ?? expiresAt).toISOString()}.`,
+        `Nova startup migrations are already running for this state directory; retry after the other gateway finishes or after ${new Date(existing.expiresAt ?? expiresAt).toISOString()}.`,
       );
     }
     executeSqliteQuerySync(
@@ -221,7 +221,7 @@ export function acquireStartupMigrationLease(
         );
         if (result.numAffectedRows !== 1n) {
           throw new Error(
-            "OpenClaw startup migration lease was lost before startup migrations completed; restart the gateway so migrations can run under a fresh lease.",
+            "Nova startup migration lease was lost before startup migrations completed; restart the gateway so migrations can run under a fresh lease.",
           );
         }
       });
@@ -275,7 +275,7 @@ export function recordSuccessfulStartupMigrations(
       );
       if (!activeLease) {
         throw new Error(
-          "OpenClaw startup migration lease was lost before checkpoint recording; restart the gateway so migrations can run under a fresh lease.",
+          "Nova startup migration lease was lost before checkpoint recording; restart the gateway so migrations can run under a fresh lease.",
         );
       }
     }

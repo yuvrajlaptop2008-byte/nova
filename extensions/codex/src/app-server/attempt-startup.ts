@@ -390,7 +390,7 @@ export async function startCodexAttemptThread(params: {
                 !startupSandboxEnvironment
               ) {
                 throw new Error(
-                  "Codex app-server did not register an OpenClaw sandbox exec-server environment.",
+                  "Codex app-server did not register an Nova sandbox exec-server environment.",
                 );
               }
             } catch (error) {

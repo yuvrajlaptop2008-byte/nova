@@ -619,9 +619,7 @@ async function prepareSubagentSessionContext(params: {
       );
     }
     if (forkedResult.status === "failed" || forkedResult.status === "missing-entry") {
-      throw new Error(
-        'context="fork" requested but OpenClaw could not fork the requester transcript.',
-      );
+      throw new Error('context="fork" requested but Nova could not fork the requester transcript.');
     }
     parentEntry = forkedResult.parentEntry;
     childEntry = forkedResult.sessionEntry;
@@ -650,7 +648,7 @@ async function prepareSubagentSessionContext(params: {
         }
         return {
           status: "error",
-          error: 'context="fork" requested but OpenClaw could not prepare forked context.',
+          error: 'context="fork" requested but Nova could not prepare forked context.',
         };
       }
       return {

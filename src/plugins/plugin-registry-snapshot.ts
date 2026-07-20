@@ -391,7 +391,7 @@ function isAllowedPersistedBundledPluginRoot(
   }
   if (sourcePluginOptsOutOfBundledDist(path.join(legacyRoot, relativePluginRoot))) {
     // Older index records lack packageBuild. Re-derive once so runtime loading
-    // and OpenClaw fingerprint the same source-only artifact.
+    // and Nova fingerprint the same source-only artifact.
     return false;
   }
   // Discovery prefers a built plugin whenever the same child exists in the

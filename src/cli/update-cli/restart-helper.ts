@@ -161,7 +161,7 @@ if [ "$status" -eq 0 ]; then
 else
   printf '[%s] openclaw restart failed source=update status=%s\\n' "$(date -u +%FT%TZ)" "$status" >&2
 fi
-# Self-cleanup (log is retained under the OpenClaw state logs directory).
+# Self-cleanup (log is retained under the Nova state logs directory).
 script_dir=$(dirname "$0")
 rm -f "$0"
 rmdir "$script_dir" 2>/dev/null || true
@@ -291,7 +291,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace OpenClaw.Restart {
+namespace Nova.Restart {
   public sealed class ProcessLease : IDisposable {
     private IntPtr handle;
     public long CreationTimeFileTime { get; private set; }
@@ -472,7 +472,7 @@ function Get-OpenClawProcessFacts {
     return [pscustomobject]@{
       ProcessId = [int]$process.ProcessId
       CreationTimeFileTime = [string]$creationTimeFileTime
-      Argv = @([OpenClaw.Restart.NativeMethods]::ParseCommandLine([string]$process.CommandLine))
+      Argv = @([Nova.Restart.NativeMethods]::ParseCommandLine([string]$process.CommandLine))
     }
   } catch {
     Write-RestartLog "openclaw restart process query failed source=update pid=$ProcessId error=$($_.Exception.Message)"
@@ -556,7 +556,7 @@ function Invoke-OpenClawVerifiedListenerKill {
     [string[]]$ExpectedArgv,
     [scriptblock]$ProcessQuery = { param([int]$QueryPid) Get-OpenClawProcessFacts -ProcessId $QueryPid },
     [scriptblock]$ListenerQuery = { param([int]$QueryPort) Get-OpenClawListenerSnapshot -Port $QueryPort },
-    [scriptblock]$ProcessOpen = { param([int]$QueryPid) [OpenClaw.Restart.NativeMethods]::TryOpenProcess($QueryPid) }
+    [scriptblock]$ProcessOpen = { param([int]$QueryPid) [Nova.Restart.NativeMethods]::TryOpenProcess($QueryPid) }
   )
 
   $observedProcess = & $ProcessQuery $ProcessId

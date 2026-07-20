@@ -156,7 +156,7 @@ describe("supervised gateway lock recovery", () => {
     expect(testing.resolveGatewayLockErrorExitCode(err, null, true)).toBe(0);
   });
 
-  it("recognizes only the OpenClaw health response", () => {
+  it("recognizes only the Nova health response", () => {
     expect(
       testing.isGatewayHealthzResponse(200, JSON.stringify({ ok: true, status: "live" })),
     ).toBe(true);

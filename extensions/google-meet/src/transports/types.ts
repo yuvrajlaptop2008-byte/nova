@@ -138,7 +138,7 @@ export type GoogleMeetSession = MeetingSessionRecord<
     launched: boolean;
     nodeId?: string;
     browserProfile?: string;
-    /** Exact joined tab and whether OpenClaw may close it on leave. */
+    /** Exact joined tab and whether Nova may close it on leave. */
     browserTab?: GoogleMeetBrowserTab;
     audioBridge?: {
       type: "command-pair" | "node-command-pair" | "external-command";

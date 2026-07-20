@@ -126,7 +126,7 @@ export function registerBrowserExtensionCommands(
 
   extension
     .command("pair")
-    .description("Print the pairing string to paste into the OpenClaw extension popup")
+    .description("Print the pairing string to paste into the Nova extension popup")
     .option("--json", "Print the pairing string as JSON")
     .option(
       "--gateway-url <url>",
@@ -159,7 +159,7 @@ export function registerBrowserExtensionCommands(
               setupLine,
               info("1. Load the extension: chrome://extensions → Developer mode → Load unpacked →"),
               `   ${resolveChromeExtensionDir(pluginRoot)}`,
-              info("2. Open the OpenClaw popup and paste this pairing string:"),
+              info("2. Open the Nova popup and paste this pairing string:"),
               "",
               theme.heading(result.pairing),
               "",

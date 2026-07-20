@@ -1,4 +1,4 @@
-// Qqbot plugin entrypoint registers its OpenClaw integration.
+// Qqbot plugin entrypoint registers its Nova integration.
 import type { ApprovalResolveResult } from "openclaw/plugin-sdk/approval-gateway-runtime";
 import type { ResolvedChannelMessageIngress } from "openclaw/plugin-sdk/channel-ingress-runtime";
 import type { EffectivePolicyInput } from "../access/resolve-policy.js";

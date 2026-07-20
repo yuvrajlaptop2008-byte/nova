@@ -930,8 +930,8 @@ async function main() {
     removeGatewayParentCleanup = installGatewayParentCleanup(gatewayChild);
     await waitForGatewayReady({ child: gatewayChild, port, stderrPath });
 
-    const requireFromOpenClaw = createRequire(path.join(repoRoot, "package.json"));
-    const WebSocket = requireFromOpenClaw("ws");
+    const requireFromNova = createRequire(path.join(repoRoot, "package.json"));
+    const WebSocket = requireFromNova("ws");
     const protocol = await import(
       pathToFileURL(path.join(repoRoot, "packages/gateway-protocol/src/version.ts")).href
     );

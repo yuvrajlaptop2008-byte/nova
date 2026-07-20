@@ -109,9 +109,9 @@ const ANTHROPIC_OPUS_47_TEMPLATE_MODEL_IDS = [
 const ANTHROPIC_SONNET_46_MODEL_ID = "claude-sonnet-4-6";
 const ANTHROPIC_SONNET_46_DOT_MODEL_ID = "claude-sonnet-4.6";
 const ANTHROPIC_SETUP_TOKEN_NOTE_LINES = [
-  "Anthropic setup-token auth is supported in OpenClaw.",
-  "OpenClaw prefers Claude CLI reuse when it is available on the host.",
-  "Anthropic staff told us this OpenClaw path is allowed again.",
+  "Anthropic setup-token auth is supported in Nova.",
+  "Nova prefers Claude CLI reuse when it is available on the host.",
+  "Anthropic staff told us this Nova path is allowed again.",
   `If you want a direct API billing path instead, use ${formatCliCommand("openclaw models auth login --provider anthropic --method api-key --set-default")} or ${formatCliCommand("openclaw models auth login --provider anthropic --method cli --set-default")}.`,
 ] as const;
 

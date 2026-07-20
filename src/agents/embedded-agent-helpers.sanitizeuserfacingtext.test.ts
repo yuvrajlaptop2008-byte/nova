@@ -200,7 +200,7 @@ describe("sanitizeUserFacingText", () => {
     "rewrites disk-space failures with errorContext: %s",
     (input) => {
       expect(sanitizeUserFacingText(input, { errorContext: true })).toBe(
-        "OpenClaw could not write local session data because the disk is full. Free some disk space and try again.",
+        "Nova could not write local session data because the disk is full. Free some disk space and try again.",
       );
     },
   );
@@ -481,7 +481,7 @@ describe("sanitizeUserFacingText", () => {
   it("strips marked internal runtime context blocks but keeps real reply text", () => {
     const input = [
       INTERNAL_RUNTIME_CONTEXT_BEGIN,
-      "OpenClaw runtime context (internal):",
+      "Nova runtime context (internal):",
       "This context is runtime-generated, not user-authored. Keep internal details private.",
       "",
       "[Internal task completion event]",
@@ -500,12 +500,12 @@ describe("sanitizeUserFacingText", () => {
     const input = [
       "Conversation info (untrusted metadata):",
       "```json",
-      '{"chat_id":"channel:123","sender":"OpenClaw"}',
+      '{"chat_id":"channel:123","sender":"Nova"}',
       "```",
       "",
       "Sender (untrusted metadata):",
       "```json",
-      '{"label":"OpenClaw (123)"}',
+      '{"label":"Nova (123)"}',
       "```",
       "",
       "Pong",
@@ -580,7 +580,7 @@ describe("sanitizeUserFacingText", () => {
 
   it("drops legacy unmarked internal runtime context when it leaks into user-facing text", () => {
     const input = [
-      "OpenClaw runtime context (internal):",
+      "Nova runtime context (internal):",
       "This context is runtime-generated, not user-authored. Keep internal details private.",
       "",
       "[Internal task completion event]",
@@ -594,7 +594,7 @@ describe("sanitizeUserFacingText", () => {
     const input = [
       "Visible intro.",
       "",
-      "OpenClaw runtime context (internal):",
+      "Nova runtime context (internal):",
       "This context is runtime-generated, not user-authored. Keep internal details private.",
       "",
       "[Internal task completion event]",
@@ -621,7 +621,7 @@ describe("sanitizeUserFacingText", () => {
 
   it("strips copied next-turn runtime context prefaces from user-facing text", () => {
     const input = [
-      "OpenClaw runtime context for the immediately preceding user message.",
+      "Nova runtime context for the immediately preceding user message.",
       "This context is runtime-generated, not user-authored. Keep internal details private.",
       "",
       "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
@@ -636,7 +636,7 @@ describe("sanitizeUserFacingText", () => {
 
   it("strips copied runtime event prefaces when no visible text remains", () => {
     const input = [
-      "OpenClaw runtime event.",
+      "Nova runtime event.",
       "This context is runtime-generated, not user-authored. Keep internal details private.",
     ].join("\n");
 
@@ -645,7 +645,7 @@ describe("sanitizeUserFacingText", () => {
 
   it("does not strip ordinary text that merely mentions internal marker strings", () => {
     const input = [
-      "The literal header `OpenClaw runtime context (internal):` appears in this note.",
+      "The literal header `Nova runtime context (internal):` appears in this note.",
       "The phrase `[Internal task completion event]` is also mentioned as an example.",
     ].join("\n");
 
@@ -654,7 +654,7 @@ describe("sanitizeUserFacingText", () => {
 
   it("does not strip text that starts with the legacy header phrase but is not the canonical block", () => {
     const input =
-      "OpenClaw runtime context (internal): is the label used by the old runtime block formatter.";
+      "Nova runtime context (internal): is the label used by the old runtime block formatter.";
 
     expect(sanitizeUserFacingText(input)).toBe(input);
   });

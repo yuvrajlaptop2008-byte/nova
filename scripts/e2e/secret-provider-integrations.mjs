@@ -315,7 +315,7 @@ function makeEnv(name) {
     OPENCLAW_PROFILE: serviceProfile,
     OPENCLAW_LAUNCHD_LABEL: `ai.openclaw.${serviceProfile}`,
     OPENCLAW_SYSTEMD_UNIT: `openclaw-gateway-${serviceProfile}.service`,
-    OPENCLAW_WINDOWS_TASK_NAME: `OpenClaw Gateway (${serviceProfile})`,
+    OPENCLAW_WINDOWS_TASK_NAME: `Nova Gateway (${serviceProfile})`,
     NO_COLOR: "1",
     PNPM_HOME:
       process.env.PNPM_HOME ??
@@ -513,7 +513,7 @@ function runCommand(command, args, options = {}) {
   });
 }
 
-async function runOpenClaw(args, env, options = {}) {
+async function runNova(args, env, options = {}) {
   const command = await resolveOpenClawCommand(args, env, options);
   return await runCommand(command.command, command.args, {
     ...options,
@@ -859,7 +859,7 @@ function serviceManagerEnv(source) {
   return {
     ...source,
     // systemd/launchd discover user service definitions from the real account
-    // home, while OpenClaw state/config below remain pinned to the proof root.
+    // home, while Nova state/config below remain pinned to the proof root.
     HOME: hostHome,
     USERPROFILE: hostHome,
   };
@@ -1090,7 +1090,7 @@ async function gatewayCall(env, port, token, method, params = {}, options = {}) 
     `${Date.now()}-${gatewayClientStateCounter++}`,
   );
   fs.mkdirSync(clientStateDir, { recursive: true });
-  return await runOpenClaw(
+  return await runNova(
     [
       "gateway",
       "call",
@@ -1213,7 +1213,7 @@ async function expectGatewayStartupFails(envCtx, port, reason) {
 async function uninstallManagedGateway(env) {
   let lastResult;
   for (let attempt = 1; attempt <= 2; attempt += 1) {
-    lastResult = await runOpenClaw(["gateway", "uninstall", "--json"], env, {
+    lastResult = await runNova(["gateway", "uninstall", "--json"], env, {
       timeoutMs: 60000,
       allowFailure: true,
     });
@@ -1239,7 +1239,7 @@ async function waitForManagedGatewayStatus(env, token) {
   let lastError;
   while (Date.now() - started < READY_TIMEOUT_MS) {
     try {
-      lastResult = await runOpenClaw(
+      lastResult = await runNova(
         [
           "gateway",
           "status",
@@ -1453,7 +1453,7 @@ async function p7AuthProfileSecretRefPersistsAndResolves() {
       },
     });
     const callsBefore = readJson(storePath).calls;
-    const result = await runOpenClaw(
+    const result = await runNova(
       [
         "models",
         "status",
@@ -1528,7 +1528,7 @@ async function p8ManagedServiceEnvProof() {
     try {
       const callsBeforeInstall = readJson(envCtx.env.PROOF_SECRET_STORE_PATH).calls;
       installAttempted = true;
-      const install = await runOpenClaw(
+      const install = await runNova(
         ["gateway", "install", "--force", "--port", String(port), "--json"],
         managerEnv,
         { timeoutMs: 120000 },
@@ -1754,7 +1754,7 @@ async function p12OpenAiLiveProof() {
         },
       });
       const callsBefore = readJson(storePath).calls;
-      const result = await runOpenClaw(
+      const result = await runNova(
         [
           "models",
           "status",
@@ -1982,7 +1982,7 @@ async function p14ConfigPatchValidation() {
         },
       },
     };
-    const valid = await runOpenClaw(
+    const valid = await runNova(
       ["config", "patch", "--stdin", "--dry-run", "--allow-exec", "--json"],
       envCtx.env,
       { input: JSON.stringify(validPatch), timeoutMs: 60000 },
@@ -2003,7 +2003,7 @@ async function p14ConfigPatchValidation() {
         },
       },
     };
-    const invalid = await runOpenClaw(
+    const invalid = await runNova(
       ["config", "patch", "--stdin", "--dry-run", "--allow-exec", "--json"],
       envCtx.env,
       { input: JSON.stringify(invalidPatch), timeoutMs: 60000, allowFailure: true },
@@ -2022,7 +2022,7 @@ async function p14ConfigPatchValidation() {
 async function p15ModelsAuthCliScope() {
   const envCtx = makeEnv("p15");
   try {
-    const help = await runOpenClaw(["models", "auth", "paste-api-key", "--help"], envCtx.env, {
+    const help = await runNova(["models", "auth", "paste-api-key", "--help"], envCtx.env, {
       timeoutMs: 30000,
     });
     const text = help.stdout;
@@ -2060,12 +2060,12 @@ async function p16DiagnosticsNoLeak() {
 async function p17StaticMetadataAlignment() {
   const envCtx = makeEnv("p17");
   try {
-    const schema = await runOpenClaw(["config", "schema"], envCtx.env, { timeoutMs: 60000 });
+    const schema = await runNova(["config", "schema"], envCtx.env, { timeoutMs: 60000 });
     const schemaText = schema.stdout;
     if (!schemaText.includes("pluginIntegration") || !schemaText.includes("integrationId")) {
       throw new Error("config schema does not expose pluginIntegration metadata");
     }
-    const secretsHelp = await runOpenClaw(["secrets", "configure", "--help"], envCtx.env, {
+    const secretsHelp = await runNova(["secrets", "configure", "--help"], envCtx.env, {
       timeoutMs: 30000,
     });
     if (

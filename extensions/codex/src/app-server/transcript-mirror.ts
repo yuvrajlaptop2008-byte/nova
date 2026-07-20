@@ -283,7 +283,7 @@ export function projectBoundedCodexThreadHistory(params: {
   };
 }
 
-/** Imports a bounded, user-visible Codex history tail into a new OpenClaw transcript. */
+/** Imports a bounded, user-visible Codex history tail into a new Nova transcript. */
 export async function importCodexThreadHistoryToTranscript(params: {
   thread: CodexThread;
   throughTurnId: string | null;

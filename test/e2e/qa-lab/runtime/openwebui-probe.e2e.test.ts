@@ -359,7 +359,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
     }
   });
 
-  it("passes in models mode when Open WebUI exposes the OpenClaw model", async () => {
+  it("passes in models mode when Open WebUI exposes the Nova model", async () => {
     const server = createServer((request, response) => {
       if (request.url === "/api/v1/auths/signin") {
         setTimeout(() => {
@@ -421,7 +421,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
         response.writeHead(200, { "content-type": "application/json" });
         response.end(
           JSON.stringify({
-            choices: [{ message: { content: "OpenClaw replied with nonce-123" } }],
+            choices: [{ message: { content: "Nova replied with nonce-123" } }],
           }),
         );
         return;
@@ -436,7 +436,7 @@ describe("scripts/e2e/openwebui-probe.mjs", () => {
       expect(JSON.parse(result.stdout)).toMatchObject({
         model: "openclaw/default",
         ok: true,
-        reply: "OpenClaw replied with nonce-123",
+        reply: "Nova replied with nonce-123",
       });
       expect(chatRequests).toEqual([
         {

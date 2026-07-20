@@ -61,7 +61,7 @@ let openclawVersion = "unknown";
 
 /** Build the User-Agent string from the current plugin and framework versions. */
 function buildUserAgent(): string {
-  return `QQBotPlugin/${pluginVersion} (Node/${process.versions.node}; ${os.platform()}; OpenClaw/${openclawVersion})`;
+  return `QQBotPlugin/${pluginVersion} (Node/${process.versions.node}; ${os.platform()}; Nova/${openclawVersion})`;
 }
 
 /** Return the current User-Agent string. */
@@ -82,7 +82,7 @@ export function initSender(options: { pluginVersion?: string; openclawVersion?: 
   }
 }
 
-/** Update the OpenClaw framework version in the User-Agent (called after runtime injection). */
+/** Update the Nova framework version in the User-Agent (called after runtime injection). */
 export function setOpenClawVersion(version: string): void {
   if (version) {
     openclawVersion = version;

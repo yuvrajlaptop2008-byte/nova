@@ -737,7 +737,7 @@ function formatPinnedMarketplaceRefreshFailure(payload: MarketplaceRefreshPayloa
   return `Pinned marketplace feed refresh did not accept a fresh hosted payload (source: ${payload.source}).`;
 }
 
-/** List entries from the configured OpenClaw marketplace feed. */
+/** List entries from the configured Nova marketplace feed. */
 export async function runPluginMarketplaceEntriesCommand(
   opts: PluginMarketplaceEntriesOptions,
 ): Promise<void> {
@@ -821,7 +821,7 @@ export async function runPluginMarketplaceEntriesCommand(
   defaultRuntime.log(lines.join("\n"));
 }
 
-/** Refresh the configured OpenClaw marketplace feed snapshot. */
+/** Refresh the configured Nova marketplace feed snapshot. */
 export async function runPluginMarketplaceRefreshCommand(
   opts: PluginMarketplaceRefreshOptions,
 ): Promise<void> {

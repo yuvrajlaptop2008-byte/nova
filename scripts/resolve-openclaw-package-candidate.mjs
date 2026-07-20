@@ -166,9 +166,7 @@ function resolvePackedOpenClawTarballFilename(value) {
     filename !== path.basename(filename) ||
     filename !== path.win32.basename(filename)
   ) {
-    throw new Error(
-      `npm pack reported unsafe OpenClaw tarball filename: ${JSON.stringify(filename)}`,
-    );
+    throw new Error(`npm pack reported unsafe Nova tarball filename: ${JSON.stringify(filename)}`);
   }
   return filename;
 }
@@ -176,7 +174,7 @@ function resolvePackedOpenClawTarballFilename(value) {
 export function validateOpenClawPackageSpec(spec) {
   if (!OPENCLAW_PACKAGE_SPEC_RE.test(spec)) {
     throw new Error(
-      `package_spec must be openclaw@alpha, openclaw@beta, openclaw@extended-stable, openclaw@latest, or an exact OpenClaw release version; got: ${spec}`,
+      `package_spec must be openclaw@alpha, openclaw@beta, openclaw@extended-stable, openclaw@latest, or an exact Nova release version; got: ${spec}`,
     );
   }
 }
@@ -606,7 +604,7 @@ async function resolveTrustedRepoRef(ref) {
   }
 
   throw new Error(
-    `package_ref ${ref} resolved to ${selectedSha}, which is not reachable from an OpenClaw branch or release tag`,
+    `package_ref ${ref} resolved to ${selectedSha}, which is not reachable from an Nova branch or release tag`,
   );
 }
 
@@ -695,7 +693,7 @@ async function moveNewestPackedTarball(outputDir, packOutput, outputName) {
       .at(-1);
   }
   if (!filename) {
-    throw new Error(`npm pack produced no OpenClaw tarball in ${outputDir}`);
+    throw new Error(`npm pack produced no Nova tarball in ${outputDir}`);
   }
   const packed = path.join(outputDir, filename);
   const target = path.join(outputDir, outputName);
@@ -1554,13 +1552,13 @@ async function resolveCandidate(options) {
 
   const artifactSha256 = typeof artifactMetadata.sha256 === "string" ? artifactMetadata.sha256 : "";
   const digest = await assertExpectedSha256(target, options.packageSha256 || artifactSha256);
-  console.error(`Checking OpenClaw package tarball: ${target}`);
+  console.error(`Checking Nova package tarball: ${target}`);
   const checkStartedAt = Date.now();
   await run("node", ["scripts/check-openclaw-package-tarball.mjs", target], {
     timeoutMs: 5 * 60 * 1000,
   });
   console.error(
-    `OpenClaw package tarball check finished in ${Math.round((Date.now() - checkStartedAt) / 1000)}s`,
+    `Nova package tarball check finished in ${Math.round((Date.now() - checkStartedAt) / 1000)}s`,
   );
   const pkg = await readPackageJson(target);
   if (!packageSourceSha) {

@@ -1341,7 +1341,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
       });
 
       expect(result.status).not.toBe(0);
-      expect(result.stderr).toContain("failed to read OpenClaw config");
+      expect(result.stderr).toContain("failed to read Nova config");
     } finally {
       rmSync(root, { force: true, recursive: true });
     }

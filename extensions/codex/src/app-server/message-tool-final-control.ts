@@ -45,7 +45,7 @@ function addCodexMessageToolOnlyFinalParameter(parameters: unknown): unknown {
       final: {
         type: "boolean",
         description:
-          "Set false for progress or true to complete the current source reply. If omitted, OpenClaw continues and resolves the latest omitted source reply when the turn ends.",
+          "Set false for progress or true to complete the current source reply. If omitted, Nova continues and resolves the latest omitted source reply when the turn ends.",
       },
     },
   };

@@ -20,8 +20,8 @@ type ConfiguredRuntimePluginInstallCandidate = {
   trustedSourceLinkedOfficialInstall?: boolean;
   /** Default installer choice when multiple official sources are available. */
   defaultChoice?: PluginPackageInstall["defaultChoice"];
-  /** Keep this official runtime package on the same release cohort as OpenClaw. */
-  versionBoundToOpenClaw?: boolean;
+  /** Keep this official runtime package on the same release cohort as Nova. */
+  versionBoundToNova?: boolean;
 };
 
 export const CONFIGURED_RUNTIME_PLUGIN_INSTALL_CANDIDATES: readonly ConfiguredRuntimePluginInstallCandidate[] =
@@ -38,13 +38,13 @@ export const CONFIGURED_RUNTIME_PLUGIN_INSTALL_CANDIDATES: readonly ConfiguredRu
       label: "Codex",
       npmSpec: "@openclaw/codex",
       trustedSourceLinkedOfficialInstall: true,
-      versionBoundToOpenClaw: true,
+      versionBoundToNova: true,
     },
   ];
 
 export const VERSION_BOUND_RUNTIME_PLUGIN_IDS: ReadonlySet<string> = new Set(
   CONFIGURED_RUNTIME_PLUGIN_INSTALL_CANDIDATES.filter(
-    (candidate) => candidate.versionBoundToOpenClaw,
+    (candidate) => candidate.versionBoundToNova,
   ).map((candidate) => candidate.pluginId),
 );
 

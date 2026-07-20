@@ -1,4 +1,4 @@
-// Github Copilot plugin entrypoint registers its OpenClaw integration.
+// Github Copilot plugin entrypoint registers its Nova integration.
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { resolvePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
 import {

@@ -229,7 +229,7 @@ describe("renderAndroidReleaseNotes", () => {
       version: "2026.6.2",
       versionCode: 2026060201,
       changelog: [
-        "# OpenClaw Android Changelog",
+        "# Nova Android Changelog",
         "",
         "## Unreleased",
         "",
@@ -246,7 +246,7 @@ describe("renderAndroidReleaseNotes", () => {
     expect(
       renderAndroidReleaseNotes(
         version,
-        "# OpenClaw Android Changelog\n\n## Unreleased\n\nFuture Android changes.\n\n## 2026.6.2 - 2026-06-02\n\nPinned Android release notes.\n",
+        "# Nova Android Changelog\n\n## Unreleased\n\nFuture Android changes.\n\n## 2026.6.2 - 2026-06-02\n\nPinned Android release notes.\n",
       ),
     ).toBe("Pinned Android release notes.\n");
   });
@@ -261,7 +261,7 @@ describe("renderAndroidReleaseNotes", () => {
     expect(
       renderAndroidReleaseNotes(
         version,
-        "# OpenClaw Android Changelog\n\n## Unreleased\n\nPending Android notes.\n",
+        "# Nova Android Changelog\n\n## Unreleased\n\nPending Android notes.\n",
       ),
     ).toBe("Pending Android notes.\n");
   });
@@ -274,10 +274,7 @@ describe("renderAndroidReleaseNotes", () => {
     const version = resolveAndroidVersion(rootDir);
 
     expect(() =>
-      renderAndroidReleaseNotes(
-        version,
-        "# OpenClaw Android Changelog\n\n## 2026.6.1\n\nOld notes.\n",
-      ),
+      renderAndroidReleaseNotes(version, "# Nova Android Changelog\n\n## 2026.6.1\n\nOld notes.\n"),
     ).toThrow("Unable to find Android changelog notes for 2026.6.2");
   });
 

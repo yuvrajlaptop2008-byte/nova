@@ -362,11 +362,11 @@ describe("config env vars", () => {
     try {
       const merged = createConfigRuntimeEnv(
         { env: { vars: { OPENCLAW_LOAD_SHELL_ENV: "1" } } } as OpenClawConfig,
-        { OpenClaw_Load_Shell_Env: "0" },
+        { Nova_Load_Shell_Env: "0" },
       );
 
       expect(merged.OPENCLAW_LOAD_SHELL_ENV).toBe("0");
-      expect(Object.keys(merged)).toEqual(["OpenClaw_Load_Shell_Env"]);
+      expect(Object.keys(merged)).toEqual(["Nova_Load_Shell_Env"]);
     } finally {
       platformSpy.mockRestore();
     }
@@ -417,7 +417,7 @@ describe("config env vars", () => {
 
   it("does not adopt a concurrent Windows case-only rename as config-owned", () => {
     const platformSpy = vi.spyOn(process, "platform", "get").mockReturnValue("win32");
-    const originalKey = "OpenClaw_Test_Windows_Owned_Case";
+    const originalKey = "Nova_Test_Windows_Owned_Case";
     const concurrentKey = originalKey.toLowerCase();
     const config = { env: { vars: { [originalKey]: "owned" } } };
     try {

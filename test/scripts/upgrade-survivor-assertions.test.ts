@@ -260,7 +260,7 @@ describe("upgrade survivor assertions", () => {
     expect(new Set(scenarios).size).toBe(scenarios.length);
   });
 
-  it("accepts the ACPX OpenClaw tools bridge scenario during seed", () => {
+  it("accepts the ACPX Nova tools bridge scenario during seed", () => {
     const root = mkdtempSync(join(tmpdir(), "openclaw-upgrade-survivor-acpx-"));
     try {
       const stateDir = join(root, "state");
@@ -282,7 +282,7 @@ describe("upgrade survivor assertions", () => {
     }
   });
 
-  it("asserts the ACPX OpenClaw tools bridge config survived", () => {
+  it("asserts the ACPX Nova tools bridge config survived", () => {
     const root = mkdtempSync(join(tmpdir(), "openclaw-upgrade-survivor-acpx-config-"));
     try {
       const configPath = join(root, "openclaw.json");

@@ -23,7 +23,7 @@ function parseJson(raw, label) {
 
 function requiredString(value, label) {
   if (typeof value !== "string" || value.length === 0) {
-    fail(`OpenClaw npm resume run is missing ${label}.`);
+    fail(`Nova npm resume run is missing ${label}.`);
   }
   return value;
 }
@@ -31,7 +31,7 @@ function requiredString(value, label) {
 function requiredSha(value, label) {
   const sha = requiredString(value, label);
   if (!SHA_PATTERN.test(sha)) {
-    fail(`OpenClaw npm resume run has invalid ${label}.`);
+    fail(`Nova npm resume run has invalid ${label}.`);
   }
   return sha;
 }
@@ -56,7 +56,7 @@ export function validateOpenClawNpmResumeRun({
   const branch = requiredString(run?.head_branch, "head_branch");
   const branchMatch = RELEASE_PUBLISH_REF_PATTERN.exec(branch);
   if (!branchMatch) {
-    fail(`OpenClaw npm resume run has an untrusted workflow ref: ${url}`);
+    fail(`Nova npm resume run has an untrusted workflow ref: ${url}`);
   }
 
   const sha = requiredSha(run?.head_sha, "head_sha");
@@ -68,12 +68,12 @@ export function validateOpenClawNpmResumeRun({
     run?.workflow_id !== canonicalWorkflowId ||
     sha.slice(0, 12) !== branchMatch[1]
   ) {
-    fail(`OpenClaw npm resume run has an untrusted workflow identity: ${url}`);
+    fail(`Nova npm resume run has an untrusted workflow identity: ${url}`);
   }
 
   const tagObjectSha = requiredSha(tagRef?.object?.sha, "tooling tag object SHA");
   if (tagRef?.object?.type !== "tag") {
-    fail(`OpenClaw npm resume run tooling ref is not a signed annotated tag: ${url}`);
+    fail(`Nova npm resume run tooling ref is not a signed annotated tag: ${url}`);
   }
 
   const tagCommitSha = requiredSha(tag?.object?.sha, "tooling tag commit SHA");
@@ -84,7 +84,7 @@ export function validateOpenClawNpmResumeRun({
     (compareStatus !== "ahead" && compareStatus !== "identical")
   ) {
     fail(
-      `OpenClaw npm resume run is not bound to a real, main-reachable protected tooling tag: ${url}`,
+      `Nova npm resume run is not bound to a real, main-reachable protected tooling tag: ${url}`,
     );
   }
 
@@ -92,7 +92,7 @@ export function validateOpenClawNpmResumeRun({
     !Array.isArray(jobs) ||
     !jobs.some((job) => job?.name === "validate_publish_request" && job?.conclusion === "success")
   ) {
-    fail(`OpenClaw npm resume run lacks successful parent release approval validation: ${url}`);
+    fail(`Nova npm resume run lacks successful parent release approval validation: ${url}`);
   }
 
   return {
@@ -115,10 +115,10 @@ export function runOpenClawNpmResumeGh(args, params = {}) {
 
 export function resolveOpenClawNpmResumeRun({ repo, runId, runGh = runOpenClawNpmResumeGh }) {
   if (!/^[1-9][0-9]*$/u.test(runId)) {
-    fail("OpenClaw npm resume run id must be a positive integer.");
+    fail("Nova npm resume run id must be a positive integer.");
   }
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/u.test(repo)) {
-    fail("OpenClaw npm resume repository must be owner/name.");
+    fail("Nova npm resume repository must be owner/name.");
   }
 
   const api = (endpoint) =>

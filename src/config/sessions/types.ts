@@ -447,7 +447,7 @@ export type SessionEntry = SessionRestartRecoveryState &
     modelProvider?: string;
     model?: string;
     /**
-     * Prevents OpenClaw model changes and automatic maintenance eviction until
+     * Prevents Nova model changes and automatic maintenance eviction until
      * the owning harness explicitly retires the session.
      */
     modelSelectionLocked?: boolean;

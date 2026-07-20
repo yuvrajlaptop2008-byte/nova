@@ -280,7 +280,7 @@ describe("resolveReleaseNpmCommand", () => {
         existsSync: () => false,
         platform: "win32",
       }),
-    ).toThrow("OpenClaw refuses to shell out to bare npm on Windows");
+    ).toThrow("Nova refuses to shell out to bare npm on Windows");
   });
 });
 
@@ -594,12 +594,12 @@ describe("collectForbiddenPackPaths", () => {
     expect(
       collectForbiddenPackPaths([
         "dist/index.js",
-        "dist/extensions/browser/.OpenClaw-Install-Stage/package.json",
+        "dist/extensions/browser/.Nova-Install-Stage/package.json",
         "dist/extensions/codex/.openclaw-runtime-deps-backup-node_modules-old/zod/index.js",
         "dist/extensions/discord/.openclaw-runtime-deps-stamp.json",
       ]),
     ).toEqual([
-      "dist/extensions/browser/.OpenClaw-Install-Stage/package.json",
+      "dist/extensions/browser/.Nova-Install-Stage/package.json",
       "dist/extensions/codex/.openclaw-runtime-deps-backup-node_modules-old/zod/index.js",
       "dist/extensions/discord/.openclaw-runtime-deps-stamp.json",
     ]);

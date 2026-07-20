@@ -1,4 +1,4 @@
-// Npm Update Scripts script supports OpenClaw repository automation.
+// Npm Update Scripts script supports Nova repository automation.
 import { posixAgentWorkspaceScript, windowsAgentWorkspaceScript } from "./agent-workspace.ts";
 import { shellQuote } from "./host-command.ts";
 import {
@@ -134,7 +134,7 @@ function windowsUpdateWithBundledPluginsDisabled(input: NpmUpdateScriptInput): s
     : "";
   return `$script:OpenClawUpdateExit = 0
 $updateOutput = Invoke-WithScopedEnv @{ OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'; OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = '1'${registryEntry} } {
-  Invoke-OpenClaw update --tag ${psSingleQuote(input.updateTarget)} --yes --json --no-restart 2>&1
+  Invoke-Nova update --tag ${psSingleQuote(input.updateTarget)} --yes --json --no-restart 2>&1
   $script:OpenClawUpdateExit = $LASTEXITCODE
 }
 $updateExit = $script:OpenClawUpdateExit
@@ -146,17 +146,17 @@ function windowsGatewayReadyScript(): string {
   $deadline = (Get-Date).AddSeconds(180)
   $attempt = 0
   while ((Get-Date) -lt $deadline) {
-    Invoke-OpenClaw gateway status --deep --require-rpc --timeout 15000
+    Invoke-Nova gateway status --deep --require-rpc --timeout 15000
     if ($LASTEXITCODE -eq 0) { return }
     $attempt += 1
     if ($attempt -eq 4) {
-      Invoke-OpenClaw gateway start *>&1 | Out-Host
+      Invoke-Nova gateway start *>&1 | Out-Host
     }
     Start-Sleep -Seconds 5
   }
   throw "gateway did not become ready after update"
 }
-Invoke-OpenClaw gateway restart *>&1 | Out-Host
+Invoke-Nova gateway restart *>&1 | Out-Host
 if ($LASTEXITCODE -ne 0) {
   "gateway restart exited with code $LASTEXITCODE; probing readiness before failing" | Out-Host
 }
@@ -176,7 +176,7 @@ for ($attempt = 1; $attempt -le 2; $attempt++) {
   $sessionsDir = Join-Path $env:USERPROFILE '.openclaw\\agents\\main\\sessions'
   $sessionPath = Join-Path $sessionsDir "$sessionId.jsonl"
   Remove-Item $sessionPath -Force -ErrorAction SilentlyContinue
-  $output = Invoke-OpenClaw agent --local --agent main --session-id $sessionId --model ${psSingleQuote(input.auth.modelId)} --message 'Reply with exact ASCII text OK only.' --thinking off --timeout ${resolveParallelsModelTimeoutSeconds("windows")} --json 2>&1
+  $output = Invoke-Nova agent --local --agent main --session-id $sessionId --model ${psSingleQuote(input.auth.modelId)} --message 'Reply with exact ASCII text OK only.' --thinking off --timeout ${resolveParallelsModelTimeoutSeconds("windows")} --json 2>&1
   $agentExitCode = $LASTEXITCODE
   if ($null -ne $output) { $output | ForEach-Object { $_ } }
   if ($agentExitCode -eq 0 -and ($output | Out-String) -match '"finalAssistant(Raw|Visible)Text":\\s*"OK"') {
@@ -331,7 +331,7 @@ if (changed) {
   }
 }
 function Stop-OpenClawGatewayProcesses {
-  Invoke-OpenClaw gateway stop *>&1 | Out-Host
+  Invoke-Nova gateway stop *>&1 | Out-Host
   Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
     Where-Object { $_.CommandLine -match 'openclaw.*gateway' } |
     ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
@@ -465,7 +465,7 @@ function windowsVersionCheck(expectedNeedle: string): string {
   if (!expectedNeedle) {
     return `$versionDeadline = (Get-Date).AddSeconds(60)
 while ($true) {
-  $version = Invoke-OpenClaw --version
+  $version = Invoke-Nova --version
   $version
   if ($LASTEXITCODE -eq 0) { break }
   if ((Get-Date) -ge $versionDeadline) { throw "openclaw --version failed with exit code $LASTEXITCODE" }
@@ -476,7 +476,7 @@ while ($true) {
   const mismatch = psSingleQuote(`version mismatch: expected ${expectedNeedle}`);
   return `$versionDeadline = (Get-Date).AddSeconds(60)
 while ($true) {
-  $version = Invoke-OpenClaw --version
+  $version = Invoke-Nova --version
   $version
   if ($LASTEXITCODE -eq 0 -and (($version | Out-String) -like ${expectedPattern})) { break }
   if ((Get-Date) -ge $versionDeadline) {

@@ -1,4 +1,4 @@
-// Validates config after an approved OpenClaw write and asks for one repair.
+// Validates config after an approved Nova write and asks for one repair.
 import { isSystemAgentInferenceUnavailableError } from "./inference-error.js";
 
 function unavailable(reason: string): string {
@@ -43,5 +43,5 @@ export async function verifyConfigAfterSystemAgentWrite(
   }
   return recovery.text
     ? `${notice}\n\n${recovery.text}`
-    : `${notice}\nExit OpenClaw and run \`openclaw doctor --fix\`, or use \`config schema <path>\` to check the expected shape before leaving.`;
+    : `${notice}\nExit Nova and run \`openclaw doctor --fix\`, or use \`config schema <path>\` to check the expected shape before leaving.`;
 }

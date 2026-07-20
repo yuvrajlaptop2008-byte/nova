@@ -268,10 +268,8 @@ describe("canvas host", () => {
     expect(out).toContain("openclawSendUserAction");
     expect(out).toContain("crypto?.getRandomValues");
     expect(out).not.toContain("String(Date.now())");
-    expect(out.indexOf("globalThis.OpenClaw.postMessage")).toBeGreaterThan(out.indexOf("<head>"));
-    expect(out.indexOf("globalThis.OpenClaw.postMessage")).toBeLessThan(
-      out.indexOf(authoredScript),
-    );
+    expect(out.indexOf("globalThis.Nova.postMessage")).toBeGreaterThan(out.indexOf("<head>"));
+    expect(out.indexOf("globalThis.Nova.postMessage")).toBeLessThan(out.indexOf(authoredScript));
   });
 
   it("keeps the Canvas bridge when live reload is disabled", () => {
@@ -290,10 +288,8 @@ describe("canvas host", () => {
       `${comment}\n${head}<script>${authoredScript}</script><body>Hello</body>`,
     );
 
-    expect(out.indexOf("globalThis.OpenClaw.postMessage")).toBeGreaterThan(out.indexOf(head));
-    expect(out.indexOf("globalThis.OpenClaw.postMessage")).toBeLessThan(
-      out.indexOf(authoredScript),
-    );
+    expect(out.indexOf("globalThis.Nova.postMessage")).toBeGreaterThan(out.indexOf(head));
+    expect(out.indexOf("globalThis.Nova.postMessage")).toBeLessThan(out.indexOf(authoredScript));
     expect(out.slice(0, out.indexOf(head))).toBe(`${comment}\n`);
   });
 
@@ -304,7 +300,7 @@ describe("canvas host", () => {
     const { consoleError } = runInjectedScript(ThrowingWebSocket);
 
     expect(consoleError).toHaveBeenCalledTimes(1);
-    expect(consoleError).toHaveBeenCalledWith("OpenClaw canvas live reload unavailable");
+    expect(consoleError).toHaveBeenCalledWith("Nova canvas live reload unavailable");
   });
 
   it("reports asynchronous websocket connection errors once", () => {

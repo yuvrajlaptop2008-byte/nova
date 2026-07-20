@@ -100,7 +100,7 @@ function appHtml(appModuleUrl: string): string {
 import { App, McpUiResourceTeardownResultSchema } from ${JSON.stringify(appModuleUrl)};
 const write = (id, value) => { document.getElementById(id).textContent = value; };
 try { void window.top.document; write("isolation", "failed"); } catch { write("isolation", "isolated"); }
-const app = new App({ name: "OpenClaw conformance fixture", version: "1.0.0" });
+const app = new App({ name: "Nova conformance fixture", version: "1.0.0" });
 app.ontoolinput = ({ arguments: args }) => write("input", JSON.stringify(args ?? {}));
 app.ontoolresult = (value) => write("result", JSON.stringify(value.structuredContent ?? value));
 app.onteardown = async () => {

@@ -804,7 +804,7 @@ NODE
     expect(output).toContain(`git=${join(openclawHome, "openclaw")}`);
     const mkdirParentIndex = script.indexOf('mkdir -p "$(dirname "$repo_dir")"');
     const cloneIndex = script.indexOf(
-      'run_quiet_step "Cloning OpenClaw" git clone "$repo_url" "$repo_dir"',
+      'run_quiet_step "Cloning Nova" git clone "$repo_url" "$repo_dir"',
     );
     expect(mkdirParentIndex).toBeGreaterThan(-1);
     expect(cloneIndex).toBeGreaterThan(-1);
@@ -1078,7 +1078,7 @@ NODE
     expect(result.stdout).toContain("dashboard-called");
   });
 
-  it("rejects OpenClaw GitHub source targets for npm installs", () => {
+  it("rejects Nova GitHub source targets for npm installs", () => {
     const result = runInstallShell(`
       set -euo pipefail
       source "${SCRIPT_PATH}"
@@ -1092,7 +1092,7 @@ NODE
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("status=1");
-    expect(result.stdout).toContain("npm installs do not support OpenClaw GitHub source targets");
+    expect(result.stdout).toContain("npm installs do not support Nova GitHub source targets");
     expect(result.stdout).toContain("--install-method git --version main");
   });
 
@@ -1184,7 +1184,7 @@ NODE
         "parse_args --verify",
         "configure_install_stage_total",
         'ui_stage "Preparing environment"',
-        'ui_stage "Installing OpenClaw"',
+        'ui_stage "Installing Nova"',
         'ui_stage "Finalizing setup"',
         'ui_stage "Verifying installation"',
       ].join("\n"),
@@ -2129,7 +2129,7 @@ exit 0
   });
 });
 
-describe("install.sh duplicate OpenClaw install detection", () => {
+describe("install.sh duplicate Nova install detection", () => {
   it("warns with concrete package paths and versions for duplicate npm roots", () => {
     const result = runInstallShell(`
       set -euo pipefail
@@ -2146,7 +2146,7 @@ describe("install.sh duplicate OpenClaw install detection", () => {
     `);
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("Multiple OpenClaw global installs detected");
+    expect(result.stdout).toContain("Multiple Nova global installs detected");
     expect(result.stdout).toContain("2026.3.7");
     expect(result.stdout).toContain("2026.3.1");
     expect(result.stdout).toContain("/brew/openclaw");
@@ -2155,7 +2155,7 @@ describe("install.sh duplicate OpenClaw install detection", () => {
     expect(result.stdout).toContain("npm uninstall -g nova");
   });
 
-  it("stays quiet when only one OpenClaw npm root exists", () => {
+  it("stays quiet when only one Nova npm root exists", () => {
     const result = runInstallShell(`
       set -euo pipefail
       source "${SCRIPT_PATH}"
@@ -2169,7 +2169,7 @@ describe("install.sh duplicate OpenClaw install detection", () => {
     `);
 
     expect(result.status).toBe(0);
-    expect(result.stdout).not.toContain("Multiple OpenClaw global installs detected");
+    expect(result.stdout).not.toContain("Multiple Nova global installs detected");
   });
 
   it("needs_stdin_isolation returns true when stdin is piped", () => {

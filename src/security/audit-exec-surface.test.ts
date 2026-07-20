@@ -35,7 +35,7 @@ function requireFinding(
 }
 
 describe("security audit exec surface findings", () => {
-  // Redirect the OpenClaw home (OPENCLAW_HOME wins over HOME/USERPROFILE in
+  // Redirect the Nova home (OPENCLAW_HOME wins over HOME/USERPROFILE in
   // `resolveRawHomeDir`) to a per-test tempdir so `saveExecApprovals` never
   // touches the real `~/.openclaw/exec-approvals.json` on the host running
   // the suite.
@@ -116,7 +116,7 @@ describe("security audit exec surface findings", () => {
       }),
     );
     expect(finding?.detail).toContain("resumeArgs=acceptEdits");
-    expect(finding?.detail).toContain("OpenClaw exec is YOLO");
+    expect(finding?.detail).toContain("Nova exec is YOLO");
   });
 
   it("warns for normalized Claude backend keys", async () => {
@@ -161,7 +161,7 @@ describe("security audit exec surface findings", () => {
     ).toBe(false);
   });
 
-  it("does not warn for restrictive Claude permission mode when OpenClaw exec is restrictive", async () => {
+  it("does not warn for restrictive Claude permission mode when Nova exec is restrictive", async () => {
     const findings = await collectSecurityAuditFindings({
       tools: { exec: { security: "allowlist", ask: "on-miss" } },
       agents: {

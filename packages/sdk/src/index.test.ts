@@ -1,6 +1,6 @@
-// OpenClaw SDK tests cover index behavior.
+// Nova SDK tests cover index behavior.
 import { describe, expect, it } from "vitest";
-import { EventHub, OpenClaw, normalizeGatewayEvent } from "./index.js";
+import { EventHub, Nova, normalizeGatewayEvent } from "./index.js";
 import type {
   GatewayEvent,
   GatewayRequestOptions,
@@ -119,13 +119,13 @@ function requireTransportCall(calls: readonly RequestCall[], index: number): Req
   return call;
 }
 
-describe("OpenClaw SDK", () => {
+describe("Nova SDK", () => {
   it("runs an agent through the Gateway agent method", async () => {
     const transport = new FakeTransport({
       agent: { status: "accepted", runId: "run_123" },
       "agent.wait": { status: "ok", runId: "run_123", sessionKey: "main" },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
     const agent = await oc.agents.get("main");
 
     const run = await agent.run({
@@ -166,7 +166,7 @@ describe("OpenClaw SDK", () => {
     const transport = new FakeTransport({
       "agent.wait": { status: "ok", runId: "run_numeric", startedAt: 123, endedAt: 456 },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_numeric");
 
@@ -192,7 +192,7 @@ describe("OpenClaw SDK", () => {
         error: "aborted by operator",
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_cancelled");
 
@@ -210,7 +210,7 @@ describe("OpenClaw SDK", () => {
         providerStarted: true,
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_restart");
 
@@ -229,7 +229,7 @@ describe("OpenClaw SDK", () => {
         error: "provider request timed out",
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_hard_timeout");
 
@@ -248,7 +248,7 @@ describe("OpenClaw SDK", () => {
         error: "provider request timed out",
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_timeout_error");
 
@@ -266,7 +266,7 @@ describe("OpenClaw SDK", () => {
         error: "provider authentication failed",
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_provider_error");
 
@@ -283,7 +283,7 @@ describe("OpenClaw SDK", () => {
         providerStarted: true,
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_provider_started_ok");
 
@@ -300,7 +300,7 @@ describe("OpenClaw SDK", () => {
         error: "provider auth was removed",
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_auth_revoked");
 
@@ -313,7 +313,7 @@ describe("OpenClaw SDK", () => {
     const transport = new FakeTransport({
       "agent.wait": { status: "timeout", runId: "run_still_active" },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_still_active");
 
@@ -331,7 +331,7 @@ describe("OpenClaw SDK", () => {
         pendingError: true,
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_pending_error");
 
@@ -351,7 +351,7 @@ describe("OpenClaw SDK", () => {
         providerStarted: true,
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_pending_provider_error");
 
@@ -369,7 +369,7 @@ describe("OpenClaw SDK", () => {
         error: "agent runtime timeout",
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_timed_out");
 
@@ -387,7 +387,7 @@ describe("OpenClaw SDK", () => {
         endedAt: 456,
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.runs.wait("run_timed_out");
 
@@ -402,7 +402,7 @@ describe("OpenClaw SDK", () => {
     const transport = new FakeTransport({
       agent: { status: "accepted", runId: "run_openrouter" },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await oc.runs.create({
       input: "use a routed model",
@@ -430,7 +430,7 @@ describe("OpenClaw SDK", () => {
         approvals: "ask",
       }),
     ).rejects.toThrow(
-      "OpenClaw Gateway does not support per-run SDK options yet: workspace, runtime, environment, approvals",
+      "Nova Gateway does not support per-run SDK options yet: workspace, runtime, environment, approvals",
     );
   });
 
@@ -438,7 +438,7 @@ describe("OpenClaw SDK", () => {
     const transport = new FakeTransport({
       agent: { status: "accepted", runId: "run_timeout" },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await oc.runs.create({
       input: "short run",
@@ -488,7 +488,7 @@ describe("OpenClaw SDK", () => {
         data: "aGVsbG8=",
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const artifactList = await oc.artifacts.list({ sessionKey: "agent:main:main" });
     expect(artifactList.artifacts).toEqual([
@@ -528,7 +528,7 @@ describe("OpenClaw SDK", () => {
 
   it("requires artifact query scope before calling Gateway", async () => {
     const transport = new FakeTransport({});
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await expect(oc.artifacts.list(undefined as never)).rejects.toThrow(
       "oc.artifacts.list requires one of sessionKey, runId, or taskId",
@@ -546,7 +546,7 @@ describe("OpenClaw SDK", () => {
     const transport = new FakeTransport({
       "tools.invoke": { ok: true, toolName: "demo", output: { value: 1 }, source: "core" },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const result = await oc.tools.invoke("demo", {
       args: { mode: "test" },
@@ -602,7 +602,7 @@ describe("OpenClaw SDK", () => {
         },
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const taskList = await oc.tasks.list({
       status: "running",
@@ -676,7 +676,7 @@ describe("OpenClaw SDK", () => {
       "environments.create": workerEnvironment,
       "environments.destroy": { ...workerEnvironment, status: "unavailable" },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await expect(oc.environments.list()).resolves.toEqual({
       environments: [gatewayEnvironment],
@@ -690,7 +690,7 @@ describe("OpenClaw SDK", () => {
       status: "unavailable",
     });
     await expect(oc.environments.delete("worker_123")).rejects.toThrow(
-      "oc.environments.delete is not supported by the current OpenClaw Gateway yet",
+      "oc.environments.delete is not supported by the current Nova Gateway yet",
     );
     expect(transport.calls).toEqual([
       { method: "environments.list", params: {}, options: undefined },
@@ -718,7 +718,7 @@ describe("OpenClaw SDK", () => {
       "exec.approval.list": { approvals: [] },
       "environments.list": { environments: [] },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await expect(oc.agents.list()).resolves.toEqual({ agents: [] });
     await expect(oc.sessions.list()).resolves.toEqual({ sessions: [] });
@@ -750,7 +750,7 @@ describe("OpenClaw SDK", () => {
       "exec.approval.list": { approvals: [] },
       "environments.list": { environments: [] },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await (oc.agents.list as unknown as ListMethod).call(oc.agents, null);
     await (oc.sessions.list as unknown as ListMethod).call(oc.sessions, null);
@@ -776,7 +776,7 @@ describe("OpenClaw SDK", () => {
     const transport = new FakeTransport({
       "tools.effective": { tools: [] },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await expect((oc.tools.effective as unknown as EffectiveMethod).call(oc.tools)).rejects.toThrow(
       "oc.tools.effective requires sessionKey",
@@ -792,19 +792,19 @@ describe("OpenClaw SDK", () => {
     const transport = new DelayedConnectTransport({
       "agents.list": { agents: [] },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const connect = oc.connect();
     const close = oc.close();
     transport.finishConnect();
 
-    await expect(connect).rejects.toThrow("OpenClaw SDK client is closed");
+    await expect(connect).rejects.toThrow("Nova SDK client is closed");
     await close;
-    await expect(oc.agents.list()).rejects.toThrow("OpenClaw SDK client is closed");
+    await expect(oc.agents.list()).rejects.toThrow("Nova SDK client is closed");
     await expect(oc.events()[Symbol.asyncIterator]().next()).rejects.toThrow(
-      "OpenClaw SDK client is closed",
+      "Nova SDK client is closed",
     );
-    expect(() => oc.rawEvents()).toThrow("OpenClaw SDK client is closed");
+    expect(() => oc.rawEvents()).toThrow("Nova SDK client is closed");
     expect(transport.connectCalls).toBe(1);
     expect(transport.calls).toEqual([]);
   });
@@ -814,7 +814,7 @@ describe("OpenClaw SDK", () => {
       "exec.approval.list": { approvals: [] },
       "exec.approval.resolve": { ok: true },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     await expect(oc.approvals.list()).resolves.toEqual({ approvals: [] });
     const staleDecision = { id: "stale-approval", decision: "allow-once" as const };
@@ -840,13 +840,13 @@ describe("OpenClaw SDK", () => {
     const transport = new ClosingEventPumpTransport({
       "agents.list": { agents: [] },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
     let closePromise: Promise<void> | undefined;
     transport.onFirstEventPoll = () => {
       closePromise = oc.close();
     };
 
-    await expect(oc.agents.list()).rejects.toThrow("OpenClaw SDK client is closed");
+    await expect(oc.agents.list()).rejects.toThrow("Nova SDK client is closed");
     await closePromise;
     expect(transport.calls).toEqual([]);
   });
@@ -857,7 +857,7 @@ describe("OpenClaw SDK", () => {
       "sessions.abort": { ok: true, status: "aborted", abortedRunId: "run_without_session" },
       "models.authStatus": { providers: [] },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const run = await oc.runs.create({
       input: "start",
@@ -913,7 +913,7 @@ describe("OpenClaw SDK", () => {
         return { status: "accepted", runId: "run_fast", sessionKey: "fast" };
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const run = await oc.runs.create({
       input: "finish immediately",
@@ -943,7 +943,7 @@ describe("OpenClaw SDK", () => {
         };
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
     const iterator = oc.events()[Symbol.asyncIterator]();
     let futureIterator: AsyncIterator<OpenClawEvent> | undefined;
 
@@ -977,7 +977,7 @@ describe("OpenClaw SDK", () => {
         throw failure;
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
     const run = await oc.runs.get("run_pump_failure");
     const iterator = run.events()[Symbol.asyncIterator]();
     let futureIterator: AsyncIterator<OpenClawEvent> | undefined;
@@ -1084,7 +1084,7 @@ describe("OpenClaw SDK", () => {
         };
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const run = await oc.runs.create({
       input: "stream with chat projection",
@@ -1188,7 +1188,7 @@ describe("OpenClaw SDK", () => {
         return { status: "accepted", runId: "run_chat_only", sessionKey: "chat-only" };
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const run = await oc.runs.create({
       input: "stream with chat-only projection",
@@ -1279,7 +1279,7 @@ describe("OpenClaw SDK", () => {
         return { status: "accepted", runId: "run_chat_delta_text", sessionKey: "chat-delta-text" };
       },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const run = await oc.runs.create({
       input: "stream with chat deltaText",
@@ -1311,7 +1311,7 @@ describe("OpenClaw SDK", () => {
 
   it("uses cumulative text for the first replayed chat projection", async () => {
     const transport = new FakeTransport({});
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
     const runId = "run_chat_delta_text_replay";
     let text = "";
     let iterator: AsyncIterator<OpenClawEvent> | undefined;
@@ -1369,7 +1369,7 @@ describe("OpenClaw SDK", () => {
       "sessions.send": { status: "accepted", runId: "run_session" },
       "sessions.compact": { ok: true, compacted: true },
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new Nova({ transport });
 
     const session = await oc.sessions.create({
       key: "session-main",

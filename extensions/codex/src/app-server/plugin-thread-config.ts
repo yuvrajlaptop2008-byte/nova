@@ -173,7 +173,7 @@ export async function buildCodexPluginThreadConfig(
     shouldRefreshMissingAppInventory(params, policy, inventory);
   if (shouldWaitForInitialAppInventory(params, policy, inventory)) {
     await refreshAppInventoryNow(params, appCache, {
-      // OpenClaw is missing its process-local snapshot, but Codex may already
+      // Nova is missing its process-local snapshot, but Codex may already
       // have a current inventory. Avoid rebuilding the entire remote catalog
       // during thread startup; post-install and readiness repair still force.
       forceRefetch: false,
@@ -700,7 +700,7 @@ function resolveThreadConfigAppsForRecord(params: {
 
 function isPluginAppReadyForThreadStart(app: CodexPluginOwnedApp): boolean {
   // `app/list` is the source of truth for inventory and access posture, but
-  // OpenClaw owns the per-thread enablement decision. A listed app that is
+  // Nova owns the per-thread enablement decision. A listed app that is
   // accessible can be re-enabled for this thread via `config.apps[app.id]`.
   return app.accessible;
 }

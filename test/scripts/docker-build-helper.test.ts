@@ -2212,7 +2212,7 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
 
       expect(result.status).toBe(2);
       expect(result.stderr).toContain(`invalid ${envName}: ${value}`);
-      expect(result.stderr).not.toContain("OpenClaw package tarball does not exist");
+      expect(result.stderr).not.toContain("Nova package tarball does not exist");
     },
   );
 
@@ -2225,7 +2225,7 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
     const pluginCorrupt = readFileSync(PLUGIN_UPDATE_CORRUPT_SCENARIO_PATH, "utf8");
 
     expect(multiNode).toContain(
-      'openclaw_e2e_install_package "$ARTIFACTS/install-a.log" "OpenClaw package under node-A prefix" "$NPM_PREFIX_A"',
+      'openclaw_e2e_install_package "$ARTIFACTS/install-a.log" "Nova package under node-A prefix" "$NPM_PREFIX_A"',
     );
     expect(updateChannel).toContain(
       'openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit',
@@ -2282,7 +2282,7 @@ grep -qx -- "OPENCLAW_E2E_COMMAND_TIMEOUT=23s" "$TMPDIR/package-args"
     }
   });
 
-  it("wraps package-backed scenario OpenClaw CLI calls with the shared timeout helper", () => {
+  it("wraps package-backed scenario Nova CLI calls with the shared timeout helper", () => {
     const paths = [
       CODEX_ON_DEMAND_DOCKER_E2E_PATH,
       CODEX_MEDIA_PATH_SCENARIO_PATH,
@@ -2524,7 +2524,7 @@ fi
     }
   });
 
-  it("bounds upgrade survivor foreground OpenClaw CLI calls", () => {
+  it("bounds upgrade survivor foreground Nova CLI calls", () => {
     const runner = readFileSync(UPGRADE_SURVIVOR_DOCKER_E2E_PATH, "utf8");
     const publishedRunner = readFileSync(UPGRADE_SURVIVOR_RUN_SCRIPT, "utf8");
     const updateRestartAuth = readFileSync(UPGRADE_SURVIVOR_UPDATE_RESTART_AUTH_PATH, "utf8");

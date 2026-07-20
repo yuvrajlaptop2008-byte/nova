@@ -34,7 +34,7 @@ describe("startup migration checkpoint", () => {
     expect(existsSync(dbPath)).toBe(false);
   });
 
-  it("records the migrated OpenClaw version in shared state", () => {
+  it("records the migrated Nova version in shared state", () => {
     const env = {
       OPENCLAW_STATE_DIR: startupMigrationTempDirs.make("openclaw-startup-migration-"),
     };
@@ -112,7 +112,7 @@ describe("startup migration checkpoint", () => {
     expect(hasActiveStartupMigrationLease({ env, nowMs: 1001 })).toBe(true);
 
     expect(() => acquireStartupMigrationLease({ env, nowMs: 1001, owner: "second" })).toThrow(
-      "OpenClaw startup migrations are already running",
+      "Nova startup migrations are already running",
     );
 
     lease.release();
@@ -143,7 +143,7 @@ describe("startup migration checkpoint", () => {
     lease.heartbeat({ nowMs: 300_000 });
 
     expect(() => acquireStartupMigrationLease({ env, nowMs: 301_001, owner: "second" })).toThrow(
-      "OpenClaw startup migrations are already running",
+      "Nova startup migrations are already running",
     );
 
     lease.release();

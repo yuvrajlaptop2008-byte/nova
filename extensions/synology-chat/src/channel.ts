@@ -1,5 +1,5 @@
 /**
- * Synology Chat Channel Plugin for OpenClaw.
+ * Synology Chat Channel Plugin for Nova.
  *
  * Implements the ChannelPlugin interface following the LINE pattern.
  */
@@ -310,7 +310,7 @@ function createSynologyChatPlugin(): SynologyChatPlugin {
         selectionLabel: "Synology Chat (Webhook)",
         detailLabel: "Synology Chat (Webhook)",
         docsPath: "/channels/synology-chat",
-        blurb: "Connect your Synology NAS Chat to OpenClaw",
+        blurb: "Connect your Synology NAS Chat to Nova",
         order: 90,
       },
       capabilities: {
@@ -426,7 +426,7 @@ function createSynologyChatPlugin(): SynologyChatPlugin {
     pairing: {
       text: {
         idLabel: "synologyChatUserId",
-        message: "OpenClaw: your access has been approved.",
+        message: "Nova: your access has been approved.",
         normalizeAllowEntry: (entry: string) => normalizeLowercaseStringOrEmpty(entry),
         notify: async ({ cfg, id, message }) => {
           const account = resolveAccount(cfg);

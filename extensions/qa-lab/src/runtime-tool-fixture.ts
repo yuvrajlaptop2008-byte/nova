@@ -549,9 +549,9 @@ function formatCodexNativeWorkspaceDetails(params: {
   failureRequest?: QaRuntimeToolFixtureRequest;
 }) {
   return [
-    `codex-native-workspace ${params.toolName}: OpenClaw dynamic exposure is intentionally omitted because Codex owns this workspace operation natively`,
+    `codex-native-workspace ${params.toolName}: Nova dynamic exposure is intentionally omitted because Codex owns this workspace operation natively`,
     params.reason ? `reason: ${params.reason}` : undefined,
-    `available OpenClaw dynamic tools: ${[...params.tools].toSorted().join(", ")}`,
+    `available Nova dynamic tools: ${[...params.tools].toSorted().join(", ")}`,
     params.happyRequest
       ? `${params.toolName} mock provider happy planned args (diagnostic only): ${formatPlannedToolArgs(params.happyRequest.plannedToolArgs)}`
       : undefined,

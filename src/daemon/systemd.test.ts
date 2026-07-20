@@ -1065,10 +1065,10 @@ describe("splitArgsPreservingQuotes", () => {
 
   it("supports schtasks-style escaped quotes while preserving other backslashes", () => {
     expect(
-      splitArgsPreservingQuotes('openclaw --path "C:\\\\Program Files\\\\OpenClaw"', {
+      splitArgsPreservingQuotes('openclaw --path "C:\\\\Program Files\\\\Nova"', {
         escapeMode: "backslash-quote-only",
       }),
-    ).toEqual(["openclaw", "--path", "C:\\\\Program Files\\\\OpenClaw"]);
+    ).toEqual(["openclaw", "--path", "C:\\\\Program Files\\\\Nova"]);
 
     expect(
       splitArgsPreservingQuotes('openclaw --label "My \\"Quoted\\" Name"', {
@@ -1586,7 +1586,7 @@ describe("stageSystemdService", () => {
         programArguments: ["/usr/bin/openclaw", "gateway", "run"],
         workingDirectory: "/tmp",
         // Staging manages OPENCLAW_GATEWAY_TOKEN inline; OPENCLAW_SERVICE_MANAGED_ENV_KEYS
-        // marks it as an OpenClaw-managed key so the stale env-file copy is cleared.
+        // marks it as an Nova-managed key so the stale env-file copy is cleared.
         environment: {
           OPENCLAW_GATEWAY_TOKEN: "fresh-gateway-token",
           LLM_API_KEY: "dotenv-key",
@@ -2051,7 +2051,7 @@ describe("systemd service install and uninstall", () => {
   it("disables the OPENCLAW_SYSTEMD_UNIT override during uninstall", async () => {
     await withNodeSystemdFixture(async ({ env, unitPath, nodeEnvFilePath }) => {
       await fs.mkdir(path.dirname(unitPath), { recursive: true });
-      await fs.writeFile(unitPath, "[Unit]\nDescription=OpenClaw Node\n", "utf8");
+      await fs.writeFile(unitPath, "[Unit]\nDescription=Nova Node\n", "utf8");
       await fs.writeFile(
         nodeEnvFilePath,
         [
@@ -2102,7 +2102,7 @@ describe("systemd service install and uninstall", () => {
   it("removes a password-only node environment file during uninstall", async () => {
     await withNodeSystemdFixture(async ({ env, unitPath, nodeEnvFilePath }) => {
       await fs.mkdir(path.dirname(unitPath), { recursive: true });
-      await fs.writeFile(unitPath, "[Unit]\nDescription=OpenClaw Node\n", "utf8");
+      await fs.writeFile(unitPath, "[Unit]\nDescription=Nova Node\n", "utf8");
       await fs.writeFile(nodeEnvFilePath, "OPENCLAW_GATEWAY_PASSWORD=stale-password\n", {
         encoding: "utf8",
         mode: 0o600,
@@ -2129,7 +2129,7 @@ describe("systemd service install and uninstall", () => {
   it("preserves node env file values when unit removal fails during uninstall", async () => {
     await withNodeSystemdFixture(async ({ env, unitPath, nodeEnvFilePath }) => {
       await fs.mkdir(path.dirname(unitPath), { recursive: true });
-      await fs.writeFile(unitPath, "[Unit]\nDescription=OpenClaw Node\n", "utf8");
+      await fs.writeFile(unitPath, "[Unit]\nDescription=Nova Node\n", "utf8");
       await fs.writeFile(
         nodeEnvFilePath,
         "OPENCLAW_GATEWAY_TOKEN=stale-node-token\nOPENROUTER_API_KEY=operator-key\n",
@@ -2155,7 +2155,7 @@ describe("systemd service install and uninstall", () => {
         "EACCES: permission denied",
       );
 
-      await expect(fs.readFile(unitPath, "utf8")).resolves.toContain("OpenClaw Node");
+      await expect(fs.readFile(unitPath, "utf8")).resolves.toContain("Nova Node");
       await expect(fs.readFile(nodeEnvFilePath, "utf8")).resolves.toBe(
         "OPENCLAW_GATEWAY_TOKEN=stale-node-token\nOPENROUTER_API_KEY=operator-key\n",
       );

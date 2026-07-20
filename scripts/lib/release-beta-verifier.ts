@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-// Release Beta Verifier script supports OpenClaw repository automation.
+// Release Beta Verifier script supports Nova repository automation.
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -1395,9 +1395,9 @@ export async function verifyBetaRelease(
     workflowRuns.push(
       verifyWorkflowRun({
         id: args.workflowRuns.openclawNpm,
-        label: "OpenClaw NPM Release",
+        label: "Nova NPM Release",
         repo: args.repo,
-        expectedWorkflowName: "OpenClaw NPM Release",
+        expectedWorkflowName: "Nova NPM Release",
         expectedHeadBranch: args.workflowRef,
         rerunFailed: false,
       }),

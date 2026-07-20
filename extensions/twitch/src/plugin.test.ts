@@ -16,7 +16,7 @@ describe("twitchPlugin outbound session routing", () => {
       cfg: {},
       agentId: "ops",
       accountId: "stream",
-      target: "twitch:channel:OpenClaw",
+      target: "twitch:channel:Nova",
     });
 
     expect(route).toMatchObject({

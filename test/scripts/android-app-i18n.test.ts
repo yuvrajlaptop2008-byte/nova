@@ -22,7 +22,7 @@ describe("Android app i18n resources", () => {
 
   it("preserves the existing Swedish app name", async () => {
     const strings = await readFile("apps/android/app/src/main/res/values-sv/strings.xml", "utf8");
-    expect(strings).toContain('<string name="app_name">OpenClaw-nod</string>');
+    expect(strings).toContain('<string name="app_name">Nova-nod</string>');
   });
 
   it("counts Kotlin and XML resource references", () => {
@@ -285,7 +285,7 @@ describe("Android app i18n resources", () => {
       CommandItem(
         key = "voice",
         title = nativeString("Start Voice"),
-        subtitle = nativeString("Talk with OpenClaw"),
+        subtitle = nativeString("Talk with Nova"),
       )
       HomeAttentionRow(
         title = "Gateway",
@@ -318,7 +318,7 @@ describe("Android app i18n resources", () => {
         "chat",
         "voice",
         "Start Voice",
-        "Talk with OpenClaw",
+        "Talk with Nova",
         "Offline",
         "gateway",
       ]),

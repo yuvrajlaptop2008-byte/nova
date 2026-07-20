@@ -330,7 +330,7 @@ async function runSetupWizardOnce(
     });
     const migratedSnapshot = await readSetupConfigFileSnapshot();
     if (!migratedSnapshot.valid) {
-      throw new Error("Migration produced an invalid OpenClaw config. Run `openclaw doctor`.");
+      throw new Error("Migration produced an invalid Nova config. Run `openclaw doctor`.");
     }
     baseConfig = migratedSnapshot.sourceConfig ?? migratedSnapshot.config;
     pendingPluginInstallMigrationBaseConfig = baseConfig;

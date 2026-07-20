@@ -1,5 +1,5 @@
 import { resolveCliBackendConfig } from "../agents/cli-backends.js";
-// OpenClaw test helpers build runtime environments for rescue tests.
+// Nova test helpers build runtime environments for rescue tests.
 import {
   fingerprintAuthProfileOwnerShape,
   fingerprintOpaqueRuntimeOwner,
@@ -169,7 +169,7 @@ export async function createSystemAgentVerifiedInferenceTestFixture(
 }
 
 /**
- * Test helpers for capturing OpenClaw runtime output.
+ * Test helpers for capturing Nova runtime output.
  *
  * Tests use this lightweight runtime instead of the real CLI runtime so exits
  * become thrown errors and logs are easy to assert.

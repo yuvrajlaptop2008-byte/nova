@@ -1,4 +1,4 @@
-// OpenClaw ring-zero tool tests: approval gating, action mapping, verification.
+// Nova ring-zero tool tests: approval gating, action mapping, verification.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createSystemAgentTool,
@@ -323,7 +323,7 @@ describe("openclaw tool", () => {
     });
     expect(toolText(configureModel)).toContain("directive:");
     expect(toolText(configureModel)).toContain(
-      "active inference route cannot be changed inside OpenClaw",
+      "active inference route cannot be changed inside Nova",
     );
     expect(toolText(configureModel)).toContain("openclaw onboard");
     expect(directiveRef.current).toEqual({ kind: "model-setup", workspace: "/tmp/work" });
@@ -348,7 +348,7 @@ describe("openclaw tool", () => {
       action: "open_setup",
       target: "guided",
     });
-    expect(toolText(guidedSetup)).toContain("cannot run inside OpenClaw");
+    expect(toolText(guidedSetup)).toContain("cannot run inside Nova");
     expect(toolText(guidedSetup)).toContain("openclaw onboard");
     expect(directiveRef.current).toEqual({ kind: "open-setup", target: "guided" });
 
@@ -387,13 +387,13 @@ describe("openclaw tool", () => {
       resolveSystemAgentDirectiveTransition({
         args: { action: "configure_model_provider", workspace: "/tmp/work" },
         resultText:
-          "directive: the active inference route cannot be changed inside OpenClaw; run openclaw onboard.",
+          "directive: the active inference route cannot be changed inside Nova; run openclaw onboard.",
       }),
     ).toEqual({ kind: "model-setup", workspace: "/tmp/work" });
     expect(
       resolveSystemAgentDirectiveTransition({
         args: { action: "open_setup", target: "classic" },
-        resultText: "directive: classic setup cannot run inside OpenClaw; run openclaw onboard.",
+        resultText: "directive: classic setup cannot run inside Nova; run openclaw onboard.",
       }),
     ).toEqual({ kind: "open-setup", target: "classic" });
     // Non-directive results and other actions never mirror.

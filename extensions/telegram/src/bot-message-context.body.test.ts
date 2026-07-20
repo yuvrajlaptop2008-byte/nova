@@ -202,7 +202,7 @@ describe("resolveTelegramInboundBody", () => {
               type: "photo",
               caption: {
                 text: "Chart",
-                credit: "OpenClaw",
+                credit: "Nova",
               },
             },
           ],
@@ -210,8 +210,8 @@ describe("resolveTelegramInboundBody", () => {
       } as never,
     });
 
-    expect(result?.rawBody).toBe("Run summary\n1.\nCI clean\na^2+b^2=c^2\nChart\nOpenClaw");
-    expect(result?.bodyText).toBe("Run summary\n1.\nCI clean\na^2+b^2=c^2\nChart\nOpenClaw");
+    expect(result?.rawBody).toBe("Run summary\n1.\nCI clean\na^2+b^2=c^2\nChart\nNova");
+    expect(result?.bodyText).toBe("Run summary\n1.\nCI clean\na^2+b^2=c^2\nChart\nNova");
   });
 
   it("keeps rich-message table caption spans inline", async () => {

@@ -74,10 +74,10 @@ function runCleanupFunction(fakePs: string) {
       cleanupFunction,
       'ROOT_DIR="/worktree"',
       'APP_BUNDLE=""',
-      'APP_EXECUTABLE_RELATIVE_PATH="Contents/MacOS/OpenClaw"',
-      'DEBUG_PROCESS_PATTERN="/worktree/apps/macos/.build/debug/OpenClaw"',
-      'LOCAL_PROCESS_PATTERN="/worktree/apps/macos/.build-local/debug/OpenClaw"',
-      'RELEASE_PROCESS_PATTERN="/worktree/apps/macos/.build/release/OpenClaw"',
+      'APP_EXECUTABLE_RELATIVE_PATH="Contents/MacOS/Nova"',
+      'DEBUG_PROCESS_PATTERN="/worktree/apps/macos/.build/debug/Nova"',
+      'LOCAL_PROCESS_PATTERN="/worktree/apps/macos/.build-local/debug/Nova"',
+      'RELEASE_PROCESS_PATTERN="/worktree/apps/macos/.build/release/Nova"',
       "kill() {",
       '  printf "%s\\n" "$*" >> "$OPENCLAW_TEST_KILL_CALLS"',
       "  return 0",
@@ -135,8 +135,8 @@ function runManagedSupervisorClassifier(
       '  grep "^$1|$2|" "$OPENCLAW_TEST_LOADED_JOBS" |',
       "    awk -F'|' '{ print \"program = \" $3; print \"properties = \" $4 }'",
       "}",
-      'TARGET_EXECUTABLE="/worktree/dist/OpenClaw.app/Contents/MacOS/OpenClaw"',
-      'INSTALLED_EXECUTABLE="/Applications/OpenClaw.app/Contents/MacOS/OpenClaw"',
+      'TARGET_EXECUTABLE="/worktree/dist/Nova.app/Contents/MacOS/Nova"',
+      'INSTALLED_EXECUTABLE="/Applications/Nova.app/Contents/MacOS/Nova"',
       "managed_openclaw_supervisor_labels",
     ].join("\n"),
   );
@@ -266,9 +266,9 @@ function runForeignProcessClassifier(fakePs: string) {
     [
       "#!/usr/bin/env bash",
       functions,
-      'APP_EXECUTABLE_RELATIVE_PATH="Contents/MacOS/OpenClaw"',
-      'TARGET_EXECUTABLE="/Users/steipete/openclaw/dist/OpenClaw.app/Contents/MacOS/OpenClaw"',
-      'INSTALLED_EXECUTABLE="/Applications/OpenClaw.app/Contents/MacOS/OpenClaw"',
+      'APP_EXECUTABLE_RELATIVE_PATH="Contents/MacOS/Nova"',
+      'TARGET_EXECUTABLE="/Users/steipete/openclaw/dist/Nova.app/Contents/MacOS/Nova"',
+      'INSTALLED_EXECUTABLE="/Applications/Nova.app/Contents/MacOS/Nova"',
       "foreign_openclaw_process_pids",
     ].join("\n"),
   );
@@ -397,14 +397,14 @@ describe("scripts/restart-mac.sh", () => {
 
     expect(script).toContain('fail "OPENCLAW_APP_BUNDLE does not exist: ${APP_BUNDLE}"');
     expect(chooseBlock).toContain("canonicalize_app_bundle");
-    expect(chooseBlock.indexOf("${ROOT_DIR}/dist/OpenClaw.app")).toBeGreaterThan(-1);
-    expect(chooseBlock.indexOf("/Applications/OpenClaw.app")).toBeGreaterThan(-1);
-    expect(chooseBlock.indexOf("${ROOT_DIR}/dist/OpenClaw.app")).toBeLessThan(
-      chooseBlock.indexOf("/Applications/OpenClaw.app"),
+    expect(chooseBlock.indexOf("${ROOT_DIR}/dist/Nova.app")).toBeGreaterThan(-1);
+    expect(chooseBlock.indexOf("/Applications/Nova.app")).toBeGreaterThan(-1);
+    expect(chooseBlock.indexOf("${ROOT_DIR}/dist/Nova.app")).toBeLessThan(
+      chooseBlock.indexOf("/Applications/Nova.app"),
     );
   });
 
-  it("keeps restart cleanup scoped to known OpenClaw app and build paths", () => {
+  it("keeps restart cleanup scoped to known Nova app and build paths", () => {
     const script = readFileSync(restartScriptPath, "utf8");
     const cleanupBlock = script.slice(
       script.indexOf("kill_all_openclaw()"),
@@ -412,18 +412,16 @@ describe("scripts/restart-mac.sh", () => {
     );
 
     expect(cleanupBlock).toContain("ps axww -o pid=,command=");
-    expect(cleanupBlock).toContain(
-      '"${ROOT_DIR}/dist/OpenClaw.app/${APP_EXECUTABLE_RELATIVE_PATH}"',
-    );
-    expect(cleanupBlock).toContain('"/Applications/OpenClaw.app/${APP_EXECUTABLE_RELATIVE_PATH}"');
+    expect(cleanupBlock).toContain('"${ROOT_DIR}/dist/Nova.app/${APP_EXECUTABLE_RELATIVE_PATH}"');
+    expect(cleanupBlock).toContain('"/Applications/Nova.app/${APP_EXECUTABLE_RELATIVE_PATH}"');
     expect(cleanupBlock).toContain('"${DEBUG_PROCESS_PATTERN}"');
     expect(cleanupBlock).toContain('"${LOCAL_PROCESS_PATTERN}"');
     expect(cleanupBlock).toContain('"${RELEASE_PROCESS_PATTERN}"');
     expect(cleanupBlock).not.toContain("APP_PROCESS_PATTERN");
     expect(cleanupBlock).not.toContain("pkill");
-    expect(cleanupBlock).not.toContain('pkill -x "OpenClaw"');
+    expect(cleanupBlock).not.toContain('pkill -x "Nova"');
     expect(cleanupBlock).not.toContain("pgrep");
-    expect(cleanupBlock).not.toContain('pgrep -x "OpenClaw"');
+    expect(cleanupBlock).not.toContain('pgrep -x "Nova"');
   });
 
   it("stops launchd supervision before killing app processes", () => {
@@ -463,19 +461,19 @@ describe("scripts/restart-mac.sh", () => {
       {
         domain: "gui/501",
         label: "ai.openclaw.mac.custom",
-        program: "/Applications/OpenClaw.app/Contents/MacOS/OpenClaw",
+        program: "/Applications/Nova.app/Contents/MacOS/Nova",
         properties: "keepalive | runatload",
       },
       {
         domain: "user/501",
         label: "ai.openclaw.mac.target",
-        program: "/worktree/dist/OpenClaw.app/Contents/MacOS/OpenClaw",
+        program: "/worktree/dist/Nova.app/Contents/MacOS/Nova",
         properties: "keepalive",
       },
       {
         domain: "gui/501",
         label: "application.ai.openclaw.mac.123",
-        program: "/Applications/OpenClaw.app/Contents/MacOS/OpenClaw",
+        program: "/Applications/Nova.app/Contents/MacOS/Nova",
       },
       {
         domain: "system",
@@ -563,10 +561,10 @@ describe("scripts/restart-mac.sh", () => {
     const result = runForeignProcessClassifier(
       [
         "#!/usr/bin/env bash",
-        "printf '%s\\n' '  101 /Applications/OpenClaw.app/Contents/MacOS/OpenClaw --attach-only'",
-        "printf '%s\\n' '  102 /Users/steipete/openclaw/dist/OpenClaw.app/Contents/MacOS/OpenClaw --attach-only'",
-        "printf '%s\\n' '  103 /tmp/agent/OpenClaw.app/Contents/MacOS/OpenClaw --attach-only'",
-        "printf '%s\\n' '  104 /bin/sh test.sh /Applications/OpenClaw.app/Contents/MacOS/OpenClaw'",
+        "printf '%s\\n' '  101 /Applications/Nova.app/Contents/MacOS/Nova --attach-only'",
+        "printf '%s\\n' '  102 /Users/steipete/openclaw/dist/Nova.app/Contents/MacOS/Nova --attach-only'",
+        "printf '%s\\n' '  103 /tmp/agent/Nova.app/Contents/MacOS/Nova --attach-only'",
+        "printf '%s\\n' '  104 /bin/sh test.sh /Applications/Nova.app/Contents/MacOS/Nova'",
       ].join("\n"),
     );
 
@@ -596,10 +594,10 @@ describe("scripts/restart-mac.sh", () => {
   it("normalizes custom app bundle paths before process matching", () => {
     const root = mkdtempSync(join(tmpdir(), "openclaw-restart-mac-test-"));
     tempRoots.push(root);
-    const appBundle = join(root, "dist", "OpenClaw.app");
+    const appBundle = join(root, "dist", "Nova.app");
     mkdirSync(appBundle, { recursive: true });
 
-    const { result } = runCanonicalizeAppBundle(`${appBundle}/../OpenClaw.app/`);
+    const { result } = runCanonicalizeAppBundle(`${appBundle}/../Nova.app/`);
 
     expect(result.status).toBe(0);
     expect(result.stdout.trim()).toBe(realpathSync(appBundle));
@@ -610,7 +608,7 @@ describe("scripts/restart-mac.sh", () => {
     const { killCalls, result } = runCleanupFunction(
       [
         "#!/usr/bin/env bash",
-        "printf '%s\\n' '  321 /worktree/dist/OpenClaw.app/Contents/MacOS/OpenClaw --attach-only'",
+        "printf '%s\\n' '  321 /worktree/dist/Nova.app/Contents/MacOS/Nova --attach-only'",
       ].join("\n"),
     );
 
@@ -626,7 +624,7 @@ describe("scripts/restart-mac.sh", () => {
         "#!/usr/bin/env bash",
         'kill_count="$(wc -l < "$OPENCLAW_TEST_KILL_CALLS" 2>/dev/null || echo 0)"',
         'if [[ "$kill_count" -lt 10 ]]; then',
-        "  printf '%s\\n' '  321 /worktree/dist/OpenClaw.app/Contents/MacOS/OpenClaw --attach-only'",
+        "  printf '%s\\n' '  321 /worktree/dist/Nova.app/Contents/MacOS/Nova --attach-only'",
         "fi",
       ].join("\n"),
     );
@@ -646,11 +644,11 @@ describe("scripts/restart-mac.sh", () => {
     expect(result.stderr).toBe("");
   });
 
-  it("does not kill unrelated OpenClaw app bundles", () => {
+  it("does not kill unrelated Nova app bundles", () => {
     const { killCalls, result } = runCleanupFunction(
       [
         "#!/usr/bin/env bash",
-        "printf '%s\\n' '  654 /tmp/Other/OpenClaw.app/Contents/MacOS/OpenClaw'",
+        "printf '%s\\n' '  654 /tmp/Other/Nova.app/Contents/MacOS/Nova'",
       ].join("\n"),
     );
 

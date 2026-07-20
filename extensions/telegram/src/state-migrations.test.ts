@@ -72,7 +72,7 @@ describe("telegram state migrations", () => {
           botInfo: {
             id: 123456,
             is_bot: true,
-            first_name: "OpenClaw",
+            first_name: "Nova",
             username: "openclaw_bot",
           },
         }),

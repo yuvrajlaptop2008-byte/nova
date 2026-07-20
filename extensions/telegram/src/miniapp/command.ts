@@ -18,7 +18,7 @@ function createTelegramMiniAppDashboardCommand(
 ): OpenClawPluginCommandDefinition {
   return {
     name: "dashboard",
-    description: "Open the OpenClaw dashboard",
+    description: "Open the Nova dashboard",
     channels: ["telegram"],
     requireAuth: true,
     exposeSenderIsOwner: true,
@@ -40,7 +40,7 @@ function createTelegramMiniAppDashboardCommand(
       }
       pageUrl.searchParams.set("accountId", accountId);
       return {
-        text: "Open OpenClaw dashboard.",
+        text: "Open Nova dashboard.",
         presentation: {
           blocks: [
             {
@@ -59,7 +59,7 @@ function currentConfig(api: OpenClawPluginApi): OpenClawConfig {
 }
 
 function isTelegramDirectCommand(ctx: PluginCommandContext): boolean {
-  // Parses OpenClaw's canonical telegram:<id> / telegram:group:<id> from/sessionKey encoding.
+  // Parses Nova's canonical telegram:<id> / telegram:group:<id> from/sessionKey encoding.
   // DM-only because Telegram permits web_app inline buttons only in private chats.
   const from = ctx.from?.trim() ?? "";
   const sessionKey = ctx.sessionKey?.trim() ?? "";

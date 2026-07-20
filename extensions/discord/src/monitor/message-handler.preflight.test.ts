@@ -377,7 +377,7 @@ describe("preflightDiscordMessage", () => {
       author: {
         id: "relay-bot-1",
         bot: true,
-        username: "OpenClaw",
+        username: "Nova",
       },
     });
 
@@ -1221,7 +1221,7 @@ describe("preflightDiscordMessage", () => {
       get: vi.fn(async () => ({
         id: message.id,
         content: message.content,
-        mentions: [{ id: botId, username: "OpenClaw", bot: true }],
+        mentions: [{ id: botId, username: "Nova", bot: true }],
         mention_roles: [],
         mention_everyone: false,
       })),
@@ -2384,7 +2384,7 @@ describe("shouldIgnoreBoundThreadWebhookMessage", () => {
       author: {
         id: "relay-bot-1",
         bot: true,
-        username: "OpenClaw",
+        username: "Nova",
       },
     });
     const result = await preflightDiscordMessage({

@@ -13,7 +13,7 @@ function makeRepository(): { root: string; commit: string } {
   tempDirs.push(root);
   execFileSync("git", ["init", "--quiet"], { cwd: root });
   execFileSync("git", ["config", "user.email", "release-test@openclaw.test"], { cwd: root });
-  execFileSync("git", ["config", "user.name", "OpenClaw Release Test"], { cwd: root });
+  execFileSync("git", ["config", "user.name", "Nova Release Test"], { cwd: root });
   writeFileSync(path.join(root, "tracked.txt"), "clean\n", "utf8");
   execFileSync("git", ["add", "tracked.txt"], { cwd: root });
   execFileSync("git", ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "initial"], {

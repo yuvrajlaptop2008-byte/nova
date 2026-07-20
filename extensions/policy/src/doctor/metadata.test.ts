@@ -173,7 +173,7 @@ describe("policy doctor metadata", () => {
     );
   });
 
-  it("points required-deny repair metadata at OpenClaw deny config paths", () => {
+  it("points required-deny repair metadata at Nova deny config paths", () => {
     expect(
       POLICY_FIX_METADATA_BY_CHECK_ID.get(CHECK_IDS.policyToolsRequiredDenyMissing)?.configTargets,
     ).toEqual(["tools.deny", "agents.list[].tools.deny"]);

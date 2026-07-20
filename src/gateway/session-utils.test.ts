@@ -861,7 +861,7 @@ describe("gateway session utils", () => {
       thinkingLevel: "ultra",
       agentRuntimeOverride: "openclaw",
     } as SessionEntry);
-    const legacyObservedOpenClaw = row({
+    const legacyObservedNova = row({
       sessionId: "legacy-observed-openclaw",
       thinkingLevel: "ultra",
       agentHarnessId: "openclaw",
@@ -879,9 +879,9 @@ describe("gateway session utils", () => {
     expect(codex.thinkingLevels?.map((level) => level.id)).not.toContain("ultra");
     expect(openClawOverride.thinkingLevel).toBe("ultra");
     expect(openClawOverride.agentRuntime?.id).toBe("openclaw");
-    expect(legacyObservedOpenClaw.thinkingLevel).toBe("ultra");
-    expect(legacyObservedOpenClaw.agentRuntime?.id).toBe("codex");
-    expect(legacyObservedOpenClaw.thinkingLevels?.map((level) => level.id)).not.toContain("ultra");
+    expect(legacyObservedNova.thinkingLevel).toBe("ultra");
+    expect(legacyObservedNova.agentRuntime?.id).toBe("codex");
+    expect(legacyObservedNova.thinkingLevels?.map((level) => level.id)).not.toContain("ultra");
     expect(lockedCodex.thinkingLevel).toBe("ultra");
     expect(lockedCodex.agentRuntime).toEqual({ id: "codex", source: "session" });
     expect(lockedCodex.thinkingLevels?.map((level) => level.id)).not.toContain("ultra");

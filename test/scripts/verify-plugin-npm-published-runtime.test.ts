@@ -162,7 +162,7 @@ describe("collectPluginNpmPublishedRuntimeErrors", () => {
     ).toStrictEqual([]);
   });
 
-  it("flags plugin npm packages without an OpenClaw plugin manifest", () => {
+  it("flags plugin npm packages without an Nova plugin manifest", () => {
     expect(
       collectPluginNpmPublishedRuntimeErrors({
         packageJson: {

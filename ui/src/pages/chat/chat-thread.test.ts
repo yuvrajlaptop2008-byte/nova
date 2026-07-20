@@ -1387,7 +1387,7 @@ describe("buildCachedChatItems", () => {
     ]);
   });
 
-  it("deduplicates relay-labeled assistant copies by OpenClaw transcript metadata id", () => {
+  it("deduplicates relay-labeled assistant copies by Nova transcript metadata id", () => {
     const groups = messageGroups({
       messages: [
         {
@@ -1414,7 +1414,7 @@ describe("buildCachedChatItems", () => {
     ]);
   });
 
-  it("deduplicates relay-labeled assistant copies by OpenClaw metadata before surface ids", () => {
+  it("deduplicates relay-labeled assistant copies by Nova metadata before surface ids", () => {
     const groups = messageGroups({
       messages: [
         {

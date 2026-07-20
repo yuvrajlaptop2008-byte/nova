@@ -166,7 +166,7 @@ async function replaceGatewayClient(page: Page) {
       runtime?: { context: { gateway: { connect: () => void } } };
     };
     if (!app.runtime) {
-      throw new Error("OpenClaw application runtime is unavailable");
+      throw new Error("Nova application runtime is unavailable");
     }
     app.runtime.context.gateway.connect();
   });
@@ -388,7 +388,7 @@ describeControlUiE2e("Control UI new-session page mocked Gateway E2E", () => {
             };
           };
           if (!app.runtime) {
-            throw new Error("OpenClaw application runtime is unavailable");
+            throw new Error("Nova application runtime is unavailable");
           }
           app.runtime.context.navigate(targetRouteId, { search: targetSearch });
         },

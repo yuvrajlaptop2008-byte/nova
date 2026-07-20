@@ -1,7 +1,7 @@
 /**
  * Extension relay HTTP/WebSocket server.
  *
- * Loopback-only endpoint that pairs the OpenClaw Chrome extension with the
+ * Loopback-only endpoint that pairs the Nova Chrome extension with the
  * browser control service:
  *   GET /json/version  -> CDP discovery for pw-session (503 until paired)
  *   WS  /cdp           -> CDP browser endpoint (Playwright connectOverCDP)
@@ -149,7 +149,7 @@ export async function startExtensionRelayServer(params: {
         res.end(
           JSON.stringify({
             error:
-              "OpenClaw Chrome extension is not connected. Install the extension and pair it with `openclaw browser extension pair`.",
+              "Nova Chrome extension is not connected. Install the extension and pair it with `openclaw browser extension pair`.",
           }),
         );
         return;

@@ -286,7 +286,7 @@ function normalizeUnsupportedRealtimeWakeNames(
     const nextRealtime = { ...realtime };
     delete nextRealtime.wakeNames;
     changes.push(
-      `Removed empty ${pathPrefix}.voice.realtime.wakeNames; unset wake names use the default agent/OpenClaw fallback.`,
+      `Removed empty ${pathPrefix}.voice.realtime.wakeNames; unset wake names use the default agent/Nova fallback.`,
     );
     return {
       entry: {

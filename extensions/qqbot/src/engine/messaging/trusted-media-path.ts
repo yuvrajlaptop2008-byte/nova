@@ -25,7 +25,7 @@ function trustedOpenClawTmpRoot(): string | null {
  * same check runs at three sites (`resolveOutboundMediaPath`, the voice send
  * re-check, and structured-payload validation), so they must all agree or a file
  * accepted at one gate is rejected at the next. Beyond the QQ Bot media storage
- * roots, this also trusts OpenClaw's permission-hardened temp root, where
+ * roots, this also trusts Nova's permission-hardened temp root, where
  * framework scratch media is written (e.g. cron auto-TTS voice files). Core
  * already treats that temp root as a sanctioned media root (`buildMediaLocalRoots`);
  * without it here, auto-routed sends are dropped and cron delivery silently loses
@@ -52,7 +52,7 @@ export function resolveTrustedOutboundMediaPath(
     resolveLocalPathFromRootsSync({
       filePath: p,
       roots: [tmpRoot],
-      label: "OpenClaw temp media root",
+      label: "Nova temp media root",
       allowMissing: options.allowMissing === true,
     })?.path ?? null
   );

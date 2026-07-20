@@ -1,7 +1,7 @@
 /**
  * Durable channel ingress queue.
  *
- * Stores, claims, completes, and tombstones inbound channel events in OpenClaw state.
+ * Stores, claims, completes, and tombstones inbound channel events in Nova state.
  */
 import { randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
@@ -557,7 +557,7 @@ export function countFailedChannelIngressQueueEntries(
   }));
 }
 
-/** Creates a durable channel/account-scoped ingress queue backed by the OpenClaw state database. */
+/** Creates a durable channel/account-scoped ingress queue backed by the Nova state database. */
 export function createChannelIngressQueue<
   TPayload,
   TMetadata = unknown,

@@ -177,6 +177,6 @@ describe("resolveNpmRunner", () => {
         existsSync: () => false,
         platform: "win32",
       }),
-    ).toThrow("OpenClaw refuses to shell out to bare npm on Windows");
+    ).toThrow("Nova refuses to shell out to bare npm on Windows");
   });
 });

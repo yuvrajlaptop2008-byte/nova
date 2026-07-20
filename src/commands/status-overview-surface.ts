@@ -41,7 +41,7 @@ type StatusGatewaySelf =
 type StatusServiceSummary = {
   label: string;
   installed: boolean | null;
-  managedByOpenClaw?: boolean;
+  managedByNova?: boolean;
   loadedText: string;
   runtimeShort?: string | null;
   runtime?: {

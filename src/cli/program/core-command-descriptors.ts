@@ -8,7 +8,7 @@ type CoreCliCommandDescriptor = NamedCommandDescriptor;
 const coreCliCommandCatalog = defineCommandDescriptorCatalog([
   {
     name: "setup",
-    description: "Chat with OpenClaw; onboard when setup is incomplete",
+    description: "Chat with Nova; onboard when setup is incomplete",
     hasSubcommands: false,
   },
   {
@@ -70,7 +70,7 @@ const coreCliCommandCatalog = defineCommandDescriptorCatalog([
   },
   {
     name: "mcp",
-    description: "Manage OpenClaw mcp.servers config and channel bridge",
+    description: "Manage Nova mcp.servers config and channel bridge",
     hasSubcommands: true,
     parentDefaultHelp: true,
   },

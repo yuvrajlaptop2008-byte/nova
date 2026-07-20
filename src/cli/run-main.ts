@@ -1191,7 +1191,7 @@ export async function runCli(argv: string[] = process.argv) {
         if (!process.stdin.isTTY || !process.stdout.isTTY) {
           console.error(
             bareRootLaunchTarget.classic
-              ? "OpenClaw config is invalid. Run `openclaw doctor --fix` before onboarding."
+              ? "Nova config is invalid. Run `openclaw doctor --fix` before onboarding."
               : "Onboarding needs an interactive TTY. Use `openclaw onboard --non-interactive --accept-risk ...` for automation.",
           );
           process.exitCode = 1;
@@ -1204,7 +1204,7 @@ export async function runCli(argv: string[] = process.argv) {
       if (bareRootLaunchTarget.kind === "tui") {
         if (!process.stdin.isTTY || !process.stdout.isTTY) {
           console.error(
-            "OpenClaw TUI needs an interactive TTY. Use `openclaw agent --local ...` for automation.",
+            "Nova TUI needs an interactive TTY. Use `openclaw agent --local ...` for automation.",
           );
           process.exitCode = 1;
           return;
@@ -1263,7 +1263,7 @@ export async function runCli(argv: string[] = process.argv) {
     const suppressStartupProgress = hasJsonOutputFlag(parseArgv);
     const { createCliProgress } = await loadProgressModule();
     const startupProgress = createCliProgress({
-      label: "Loading OpenClaw CLI…",
+      label: "Loading Nova CLI…",
       indeterminate: true,
       delayMs: 0,
       ...(suppressStartupProgress ? { enabled: false } : {}),
@@ -1321,7 +1321,7 @@ export async function runCli(argv: string[] = process.argv) {
           return;
         }
         for (const line of formatCliFailureLines({
-          title: "OpenClaw hit an unexpected runtime error.",
+          title: "Nova hit an unexpected runtime error.",
           error,
           argv: normalizedArgv,
         })) {

@@ -1112,11 +1112,10 @@ describe("release CI summary child correlation", () => {
         workflow: "ci.yml",
       },
       {
-        displayTitle:
-          "OpenClaw Release Checks full-release-validation-29090000000-3-release-checks",
+        displayTitle: "Nova Release Checks full-release-validation-29090000000-3-release-checks",
         headBranch: "release/2026.7.1",
         manifestKey: "releaseChecks",
-        name: "OpenClaw Release Checks",
+        name: "Nova Release Checks",
         parentJobName: "Run release/live/Docker/QA validation",
         suffix: "-release-checks",
         trustedRef: "parent",
@@ -1143,10 +1142,10 @@ describe("release CI summary child correlation", () => {
         workflow: "npm-telegram-beta-e2e.yml",
       },
       {
-        displayTitle: "OpenClaw Performance full-release-validation-29090000000-3",
+        displayTitle: "Nova Performance full-release-validation-29090000000-3",
         headBranch: "release/2026.7.1",
         manifestKey: "productPerformance",
-        name: "OpenClaw Performance",
+        name: "Nova Performance",
         parentJobName: "Run product performance evidence",
         suffix: "",
         trustedRef: "parent",
@@ -1156,7 +1155,7 @@ describe("release CI summary child correlation", () => {
   });
 
   it("ignores same-SHA and nearby-name runs without the exact parent dispatch binding", () => {
-    const expected = "OpenClaw Performance full-release-validation-29090000000-3";
+    const expected = "Nova Performance full-release-validation-29090000000-3";
     const exact = {
       display_title: expected,
       event: "workflow_dispatch",
@@ -1168,7 +1167,7 @@ describe("release CI summary child correlation", () => {
       selectExactChildRun(
         [
           {
-            display_title: "OpenClaw Performance",
+            display_title: "Nova Performance",
             event: "workflow_dispatch",
             head_branch: "main",
             head_sha: exact.head_sha,
@@ -1213,7 +1212,7 @@ describe("release CI summary child correlation", () => {
   });
 
   it("returns one exact child after a full bounded pagination scan", () => {
-    const expected = "OpenClaw Performance full-release-validation-29090000000-3";
+    const expected = "Nova Performance full-release-validation-29090000000-3";
     const exact = {
       display_title: expected,
       event: "workflow_dispatch",
@@ -1663,10 +1662,10 @@ describe("release CI summary child correlation", () => {
         {
           originAttempt: 1,
           runId: 28717802171,
-          title: "OpenClaw Performance full-release-validation-28717729503-1",
+          title: "Nova Performance full-release-validation-28717729503-1",
         },
       ],
-      ["releaseChecks", { originAttempt: 1, runId: 28717802397, title: "OpenClaw Release Checks" }],
+      ["releaseChecks", { originAttempt: 1, runId: 28717802397, title: "Nova Release Checks" }],
     ]);
     const fingerprint = {
       completed_at: "2026-07-04T20:29:21Z",

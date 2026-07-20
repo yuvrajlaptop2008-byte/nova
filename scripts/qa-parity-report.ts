@@ -1,4 +1,4 @@
-// Qa Parity Report script supports OpenClaw repository automation.
+// Qa Parity Report script supports Nova repository automation.
 import { booleanFlag, parseFlagArgs, stringFlag } from "./lib/arg-utils.mjs";
 
 type Options = {

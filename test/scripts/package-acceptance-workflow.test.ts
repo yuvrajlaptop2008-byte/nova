@@ -326,7 +326,7 @@ function runOpenClawNpmTrustedRefGuard(overrides: Record<string, string>) {
   const job = workflowJob(OPENCLAW_NPM_RELEASE_WORKFLOW, "validate_publish_request");
   const script = workflowStep(job, "Require trusted workflow ref for publish").run;
   if (!script) {
-    throw new Error("Expected OpenClaw npm trusted ref guard");
+    throw new Error("Expected Nova npm trusted ref guard");
   }
   const binDir = tempDirs.make("openclaw-npm-trusted-ref-");
   const gitPath = `${binDir}/git`;
@@ -504,7 +504,7 @@ describe("package acceptance workflow", () => {
     });
     expect(mismatchedName.status).toBe(1);
     expect(mismatchedName.stderr).toContain(
-      "SHA-pinned release-publish tag does not match the OpenClaw npm workflow SHA",
+      "SHA-pinned release-publish tag does not match the Nova npm workflow SHA",
     );
 
     const unreachable = runOpenClawNpmTrustedRefGuard({
@@ -514,7 +514,7 @@ describe("package acceptance workflow", () => {
     });
     expect(unreachable.status).toBe(1);
     expect(unreachable.stderr).toContain(
-      "SHA-pinned OpenClaw npm workflow revision is not reachable from current main",
+      "SHA-pinned Nova npm workflow revision is not reachable from current main",
     );
   });
 
@@ -552,11 +552,11 @@ describe("package acceptance workflow", () => {
     const publishOrchestration = workflowStep(publishJob, "Dispatch publish workflows");
 
     for (const stepName of [
-      "Download OpenClaw npm preflight manifest",
+      "Download Nova npm preflight manifest",
       "Resolve full release validation run",
       "Download full release validation manifest",
       "Download trusted release validation tooling",
-      "Validate OpenClaw npm preflight manifest",
+      "Validate Nova npm preflight manifest",
       "Validate full release validation manifest",
     ]) {
       expect(workflowStep(resolveJob, stepName).if).toContain(
@@ -745,7 +745,7 @@ describe("package acceptance workflow", () => {
     expect(workflow).toContain(
       '--require-complete-platform-assets "$ALLOW_FAILED_PUBLISH_RECOVERY"',
     );
-    expect(workflow).toContain("verify_checksum_manifest OpenClaw-Android-SHA256SUMS.txt");
+    expect(workflow).toContain("verify_checksum_manifest Nova-Android-SHA256SUMS.txt");
     expect(workflow).toContain("verify_checksum_manifest OpenClawCompanion-SHA256SUMS.txt");
     expect(workflow).toContain("actual=\"$(awk 'NF { name=$2;");
     expect(workflow).toContain('sub(/^\\*/, "", name)');
@@ -1255,7 +1255,7 @@ describe("package acceptance workflow", () => {
     const workflow = readFileSync(FULL_RELEASE_VALIDATION_WORKFLOW, "utf8");
     const performanceStep = workflowStep(
       workflowJob(FULL_RELEASE_VALIDATION_WORKFLOW, "performance"),
-      "Dispatch and monitor OpenClaw Performance",
+      "Dispatch and monitor Nova Performance",
     );
     const summaryStep = workflowStep(
       workflowJob(FULL_RELEASE_VALIDATION_WORKFLOW, "summary"),
@@ -1311,7 +1311,7 @@ describe("package acceptance workflow", () => {
       ["plugin_prerelease", "Dispatch and monitor plugin prerelease"],
       ["release_checks", "Dispatch and monitor release checks"],
       ["npm_telegram", "Dispatch and monitor npm Telegram E2E"],
-      ["performance", "Dispatch and monitor OpenClaw Performance"],
+      ["performance", "Dispatch and monitor Nova Performance"],
     ] as const;
     const dispatchScripts = childDispatches.map(([jobName, stepName]) => {
       const job = workflowJob(FULL_RELEASE_VALIDATION_WORKFLOW, jobName);
@@ -1416,7 +1416,7 @@ describe("package acceptance workflow", () => {
       "format('Plugin Prerelease {0}', inputs.dispatch_id)",
     );
     expect(readFileSync(RELEASE_CHECKS_WORKFLOW, "utf8")).toContain(
-      "format('OpenClaw Release Checks {0}', inputs.dispatch_id)",
+      "format('Nova Release Checks {0}', inputs.dispatch_id)",
     );
     expect(readFileSync(NPM_TELEGRAM_WORKFLOW, "utf8")).toContain(
       "format('NPM Telegram Beta E2E {0}', inputs.dispatch_id)",
@@ -1532,8 +1532,8 @@ describe("package artifact reuse", () => {
     expect(workflow).toContain(
       "OPENCLAW_ALLOW_FROZEN_TARGET_SCENARIO_OMISSIONS: ${{ inputs.allow_frozen_target_scenario_omissions && '1' || '0' }}",
     );
-    expect(workflow).toContain("Download current-run OpenClaw Docker E2E package");
-    expect(workflow).toContain("Download previous-run OpenClaw Docker E2E package");
+    expect(workflow).toContain("Download current-run Nova Docker E2E package");
+    expect(workflow).toContain("Download previous-run Nova Docker E2E package");
     expect(workflow).toContain("inputs.package_artifact_id != ''");
     expect(workflow).toContain(
       'bare_image="${PROVIDED_BARE_IMAGE:-ghcr.io/${repository}-docker-e2e-bare:${image_tag}}"',
@@ -3097,7 +3097,7 @@ describe("package artifact reuse", () => {
 
     expectTextToIncludeAll(workflow, [
       "Published-package Telegram E2E:",
-      "Package Telegram E2E: OpenClaw Release Checks Package Acceptance",
+      "Package Telegram E2E: Nova Release Checks Package Acceptance",
       "Package Telegram E2E: focused rerun requires \\`release_package_spec\\` or \\`npm_telegram_package_spec\\`",
     ]);
     expect(releaseDocs).toContain(
@@ -3188,7 +3188,7 @@ describe("package artifact reuse", () => {
       'find "${package_dir}" -type f -name "*.tgz"',
       "package artifact manifest contains duplicate package metadata",
       "package artifact tarball set does not match preflight manifest",
-      "package candidate manifest does not match the OpenClaw tarball",
+      "package candidate manifest does not match the Nova tarball",
       "Package Telegram artifact SHA-256 differs from package_sha256.",
       "package candidate digest mismatch",
       "Package Telegram artifact tarball differs from package_file_name.",
@@ -3572,8 +3572,8 @@ describe("package artifact reuse", () => {
 
     expect(workflow).toContain("timeout-minutes: 120");
     expect(workflow).toContain("environment: npm-release");
-    expect(workflow).toContain("Download OpenClaw npm preflight manifest");
-    expect(workflow).toContain("Validate OpenClaw npm preflight manifest");
+    expect(workflow).toContain("Download Nova npm preflight manifest");
+    expect(workflow).toContain("Validate Nova npm preflight manifest");
     expect(workflow).toContain("Download full release validation manifest");
     expect(workflow).toContain("Validate full release validation manifest");
     expect(workflow).toContain("scripts/validate-full-release-validation-evidence.mjs");
@@ -3714,7 +3714,7 @@ describe("package artifact reuse", () => {
     expect(workflow).not.toContain("timeout-minutes: 360");
   });
 
-  it("keeps OpenClaw npm release pack tarball paths local before preflight upload", () => {
+  it("keeps Nova npm release pack tarball paths local before preflight upload", () => {
     const npmWorkflow = readFileSync(".github/workflows/openclaw-npm-release.yml", "utf8");
     const packStepIndex = npmWorkflow.indexOf("- name: Pack prepared npm tarball");
     const copyIndex = npmWorkflow.indexOf('cp "$PACK_PATH" "$ARTIFACT_DIR/"');
@@ -3735,7 +3735,7 @@ describe("package artifact reuse", () => {
     expect(npmWorkflow).not.toContain('TARBALL_NAME="$(basename "$PACK_PATH")"');
   });
 
-  it("accepts tag-matched frozen release branches in OpenClaw npm preflight", () => {
+  it("accepts tag-matched frozen release branches in Nova npm preflight", () => {
     const preflight = workflowJob(OPENCLAW_NPM_RELEASE_WORKFLOW, "preflight_openclaw_npm");
     const metadata = workflowStep(preflight, "Validate release metadata");
 
@@ -3756,11 +3756,9 @@ describe("package artifact reuse", () => {
       "utf8",
     );
 
+    expect(releaseWorkflow).toContain("Stable Nova publish requires an explicit windows_node_tag.");
     expect(releaseWorkflow).toContain(
-      "Stable OpenClaw publish requires an explicit windows_node_tag.",
-    );
-    expect(releaseWorkflow).toContain(
-      "Stable OpenClaw publish requires candidate-approved windows_node_installer_digests.",
+      "Stable Nova publish requires candidate-approved windows_node_installer_digests.",
     );
     expect(releaseWorkflow).toContain("promote_windows_release_assets()");
     expect(releaseWorkflow).toContain("dispatch_workflow windows-node-release.yml");
@@ -3832,7 +3830,7 @@ describe("package artifact reuse", () => {
       "Windows source release asset digest does not match the pinned digest",
     );
     expect(windowsWorkflow).toContain(
-      "CN=OpenClaw Foundation, O=OpenClaw Foundation, L=Mill Valley, S=California, C=US",
+      "CN=Nova Foundation, O=Nova Foundation, L=Mill Valley, S=California, C=US",
     );
     expect(windowsWorkflow).toContain("has unexpected signer subject");
     expect(windowsWorkflow).toContain("OpenClawCompanion-SHA256SUMS.txt");
@@ -3892,8 +3890,8 @@ describe("package artifact reuse", () => {
       "Attested Android release approval does not match this run request.",
     );
     expect(androidWorkflow).toContain('--artifact", "third-party');
-    expect(androidWorkflow).toContain("OpenClaw-Android.apk");
-    expect(androidWorkflow).toContain("OpenClaw-Android-SHA256SUMS.txt");
+    expect(androidWorkflow).toContain("Nova-Android.apk");
+    expect(androidWorkflow).toContain("Nova-Android-SHA256SUMS.txt");
     expect(androidWorkflow).toContain("actions/attest@a1948c3f048ba23858d222213b7c278aabede763");
     expect(androidWorkflow).toContain("--signer-workflow");
     expect(androidWorkflow).toContain('--source-ref "refs/tags/${RELEASE_TAG}"');
@@ -3923,7 +3921,7 @@ describe("package artifact reuse", () => {
 
     expect(releaseWorkflow).toContain("promote_android_release_asset()");
     expect(releaseWorkflow).toContain("is_android_release()");
-    expect(androidWorkflow).toContain("requires a final or correction OpenClaw release tag");
+    expect(androidWorkflow).toContain("requires a final or correction Nova release tag");
     expect(androidWorkflow).toContain("previous_version_code");
     expect(androidWorkflow).toContain("must exceed ${previous_tag} versionCode");
     expect(androidWorkflow).toContain("standalone channel bootstrap");
@@ -3949,8 +3947,8 @@ describe("package artifact reuse", () => {
     expect(publishReleaseCall).toBeGreaterThan(promoteAndroidCall);
 
     expect(androidDocs).toContain("github.com/openclaw/openclaw/releases");
-    expect(androidDocs).not.toContain("releases/latest/download/OpenClaw-Android.apk");
-    expect(androidDocs).toContain("gh attestation verify OpenClaw-Android.apk");
+    expect(androidDocs).not.toContain("releases/latest/download/Nova-Android.apk");
+    expect(androidDocs).toContain("gh attestation verify Nova-Android.apk");
     expect(androidDocs).toContain('--source-ref "refs/tags/${release_tag}"');
     expect(releaseDocs).toContain("signed standalone Android APK");
   });
@@ -3972,7 +3970,7 @@ describe("package artifact reuse", () => {
       "if ($stableRelease -and $sourceRelease.isPrerelease)",
     );
     const rejectUnexpectedTargetAssetsIndex = windowsWorkflow.indexOf(
-      "Target OpenClaw release contains unexpected OpenClawCompanion assets before upload",
+      "Target Nova release contains unexpected OpenClawCompanion assets before upload",
     );
     const uploadAssetsIndex = windowsWorkflow.indexOf("gh release upload $env:RELEASE_TAG");
 
@@ -4262,7 +4260,7 @@ describe("package artifact reuse", () => {
     );
     expect(verifyBootstrapWorkflowIndex).toBeGreaterThan(-1);
     expect(dispatchPluginNpmIndex).toBeGreaterThan(verifyBootstrapWorkflowIndex);
-    expect(releaseWorkflow).toContain("OpenClaw npm run ID");
+    expect(releaseWorkflow).toContain("Nova npm run ID");
     expect(releaseWorkflow).toContain("npm_telegram_run_id");
     expect(releaseWorkflow).toContain('release_publish_run_id="${GITHUB_RUN_ID}"');
     expect(releaseWorkflow).toContain("append_release_proof_to_github_release");
@@ -4337,7 +4335,7 @@ describe("package artifact reuse", () => {
     expect(releaseWorkflow).toContain("--postpublish-verifier");
     expect(releaseWorkflow).toContain('"${verify_args[@]}"');
     expect(releaseWorkflow).toContain(
-      "OpenClaw Release Publish must use trusted main workflow tooling",
+      "Nova Release Publish must use trusted main workflow tooling",
     );
     expect(releaseInputGuard).toContain(
       '[[ "${WORKFLOW_REF}" != "refs/heads/main" && "${tideclaw_alpha_publish}" != "true" && "${sha_pinned_release_publish}" != "true" ]]',
@@ -4393,13 +4391,13 @@ describe("package artifact reuse", () => {
     );
     expect(pluginNpmWorkflow).toContain("Direct Plugin NPM Release dispatch");
     expect(clawHubWorkflow).toContain("Direct Plugin ClawHub Release dispatch");
-    expect(openclawNpmWorkflow).toContain("Direct OpenClaw npm publish");
+    expect(openclawNpmWorkflow).toContain("Direct Nova npm publish");
     expect(pluginNpmWorkflow).toContain('GITHUB_ACTOR}" != "github-actions[bot]"');
     expect(clawHubWorkflow).toContain('GITHUB_ACTOR}" != "github-actions[bot]"');
     expect(openclawNpmWorkflow).toContain('GITHUB_ACTOR}" != "github-actions[bot]"');
     expect(pluginNpmWorkflow).toContain("Direct Plugin NPM Release recovery");
     expect(clawHubWorkflow).toContain("Direct Plugin ClawHub Release recovery");
-    expect(openclawNpmWorkflow).toContain("Direct OpenClaw npm recovery");
+    expect(openclawNpmWorkflow).toContain("Direct Nova npm recovery");
     expect(pluginNpmWorkflow).toContain("validate-release-publish-approval.mjs");
     expect(clawHubWorkflow).toContain("validate-release-publish-approval.mjs");
     expect(openclawNpmWorkflow).toContain("validate-release-publish-approval.mjs");
@@ -4426,7 +4424,7 @@ describe("package artifact reuse", () => {
     expect(clawHubNewWorkflow).toContain("--clawhub-toolchain-sha256");
     expect(clawHubNewWorkflow).toContain("--clawhub-toolchain-version");
     expect(clawHubNewWorkflow).toContain(
-      "CLAW-277 03 - Split OpenClaw plugin ClawHub publishing into OIDC release and token bootstrap workflows",
+      "CLAW-277 03 - Split Nova plugin ClawHub publishing into OIDC release and token bootstrap workflows",
     );
     expect(clawHubNewWorkflow).toContain("Usage: clawhub package trusted-publisher set");
     expect(clawHubNewWorkflow).toContain("Write ClawHub token config");

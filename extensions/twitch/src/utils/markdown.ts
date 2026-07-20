@@ -2,7 +2,7 @@
  * Markdown utilities for Twitch chat
  *
  * Twitch chat doesn't support markdown formatting, so we strip it before sending.
- * Based on OpenClaw's markdownToText in src/agents/tools/web-fetch-utils.ts.
+ * Based on Nova's markdownToText in src/agents/tools/web-fetch-utils.ts.
  */
 import { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
 

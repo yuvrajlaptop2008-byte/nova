@@ -737,7 +737,7 @@ describe("runDoctorConfigPreflight state migration", () => {
         requireStartupMigrationCheckpoint: true,
       }),
     ).rejects.toThrow(
-      "OpenClaw startup migrations did not complete cleanly; refusing to report the gateway ready.",
+      "Nova startup migrations did not complete cleanly; refusing to report the gateway ready.",
     );
 
     expect(recordSuccessfulStartupMigrations).not.toHaveBeenCalled();
@@ -868,7 +868,7 @@ describe("runDoctorConfigPreflight state migration", () => {
         invalidConfigNote: false,
         requireStartupMigrationCheckpoint: true,
       }),
-    ).rejects.toThrow("OpenClaw config is invalid");
+    ).rejects.toThrow("Nova config is invalid");
 
     expect(recordSuccessfulStartupMigrations).not.toHaveBeenCalled();
     expect(startupMigrationLeaseRelease).toHaveBeenCalledOnce();

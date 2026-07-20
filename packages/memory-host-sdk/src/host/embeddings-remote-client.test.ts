@@ -28,7 +28,7 @@ describe("resolveRemoteEmbeddingBearerClient", () => {
     expect(client.baseUrl).toBe("https://proxy.example.test/openai/v1");
   });
 
-  it("adds OpenClaw attribution to native OpenAI embedding requests", async () => {
+  it("adds Nova attribution to native OpenAI embedding requests", async () => {
     vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
     const client = await resolveRemoteEmbeddingBearerClient({
       provider: "openai",

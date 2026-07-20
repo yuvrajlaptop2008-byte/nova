@@ -159,7 +159,7 @@ function resolveQaGatewayChildCommand(repoRoot: string): QaGatewayChildCommand {
     };
   }
 
-  throw new Error("OpenClaw CLI entry not found: expected dist/index.(m)js or src/entry.ts");
+  throw new Error("Nova CLI entry not found: expected dist/index.(m)js or src/entry.ts");
 }
 
 async function runQaGatewayCliCommand(params: {
@@ -204,7 +204,7 @@ async function readQaGatewayCliCommand(child: ChildProcess): Promise<string> {
   const exitCode = await new Promise<number>((resolve, reject) => {
     monitorQaChildFailure(child, (failure) => {
       if (failure.source === "process") {
-        reject(toQaErrorObject(failure.error, "OpenClaw CLI process failed"));
+        reject(toQaErrorObject(failure.error, "Nova CLI process failed"));
         return;
       }
       if (!hasChildExited(child) && !child.killed) {
@@ -226,7 +226,7 @@ async function readQaGatewayCliCommand(child: ChildProcess): Promise<string> {
   const stdoutText = readQaChildOutput(stdout);
   if (exitCode !== 0) {
     const stderrText = formatQaChildOutputTail(stderr, "stderr");
-    throw new Error(`OpenClaw CLI exited ${exitCode}: ${stderrText || stdoutText}`);
+    throw new Error(`Nova CLI exited ${exitCode}: ${stderrText || stdoutText}`);
   }
   return stdoutText;
 }

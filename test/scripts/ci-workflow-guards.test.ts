@@ -4544,7 +4544,7 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
         type: "string",
       },
       ref: {
-        description: "OpenClaw branch, tag, or SHA containing the maturity score source",
+        description: "Nova branch, tag, or SHA containing the maturity score source",
         required: true,
         type: "string",
       },

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Summarizes OpenClaw performance source fixtures for reports.
+// Summarizes Nova performance source fixtures for reports.
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -50,7 +50,7 @@ export function parseArgs(argv) {
 function printHelp() {
   console.log(`Usage: node scripts/openclaw-performance-source-summary.mjs --source-dir <dir> [--baseline-source-dir <dir>] [--output <summary.md>]
 
-Summarizes OpenClaw-native performance probe artifacts for CI reports.`);
+Summarizes Nova-native performance probe artifacts for CI reports.`);
 }
 
 function readJsonIfExists(filePath) {
@@ -557,7 +557,7 @@ export function buildMarkdown(sourceDir, baselineSourceDir) {
   const memoryDeltaRows = buildMemoryDeltaRows(current, baseline);
 
   const lines = [
-    "# OpenClaw Source Performance",
+    "# Nova Source Performance",
     "",
     `Generated: ${new Date().toISOString()}`,
     "",

@@ -50,7 +50,7 @@ function buildApiKeyAuth(): ProviderAuthMethod {
     noteTitle: "ClawRouter",
     noteMessage: [
       "Use the proxy key issued by your ClawRouter administrator.",
-      "OpenClaw discovers only the models granted to that key.",
+      "Nova discovers only the models granted to that key.",
     ].join("\n"),
     wizard: {
       choiceId: "clawrouter-api-key",

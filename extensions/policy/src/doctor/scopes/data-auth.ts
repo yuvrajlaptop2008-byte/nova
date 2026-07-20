@@ -73,7 +73,7 @@ export function createPolicyDataAuthChecks(deps: PolicyDoctorCheckDeps): readonl
     id: CHECK_IDS.policySecretsUnmanagedProvider,
     kind: "plugin",
     description:
-      "OpenClaw config SecretRefs use configured secret providers when policy requires managed providers.",
+      "Nova config SecretRefs use configured secret providers when policy requires managed providers.",
     source: "policy",
     async detect(ctx) {
       return findingsForCheck(await evaluatePolicy(ctx), CHECK_IDS.policySecretsUnmanagedProvider);
@@ -82,8 +82,7 @@ export function createPolicyDataAuthChecks(deps: PolicyDoctorCheckDeps): readonl
   const policySecretsDeniedProviderSourceCheck: HealthCheck = {
     id: CHECK_IDS.policySecretsDeniedProviderSource,
     kind: "plugin",
-    description:
-      "OpenClaw config secret providers and SecretRefs do not use sources denied by policy.",
+    description: "Nova config secret providers and SecretRefs do not use sources denied by policy.",
     source: "policy",
     async detect(ctx) {
       return findingsForCheck(
@@ -105,7 +104,7 @@ export function createPolicyDataAuthChecks(deps: PolicyDoctorCheckDeps): readonl
   const policyAuthProfileInvalidMetadataCheck: HealthCheck = {
     id: CHECK_IDS.policyAuthProfileInvalidMetadata,
     kind: "plugin",
-    description: "OpenClaw config auth profiles declare required provider and mode metadata.",
+    description: "Nova config auth profiles declare required provider and mode metadata.",
     source: "policy",
     async detect(ctx) {
       return findingsForCheck(
@@ -117,7 +116,7 @@ export function createPolicyDataAuthChecks(deps: PolicyDoctorCheckDeps): readonl
   const policyAuthProfileUnapprovedModeCheck: HealthCheck = {
     id: CHECK_IDS.policyAuthProfileUnapprovedMode,
     kind: "plugin",
-    description: "OpenClaw config auth profile modes stay within the policy allowlist.",
+    description: "Nova config auth profile modes stay within the policy allowlist.",
     source: "policy",
     async detect(ctx) {
       return findingsForCheck(await evaluatePolicy(ctx), CHECK_IDS.policyAuthProfileUnapprovedMode);

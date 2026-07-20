@@ -1,4 +1,4 @@
-// Phone Control plugin entrypoint registers its OpenClaw integration.
+// Phone Control plugin entrypoint registers its Nova integration.
 import { randomUUID } from "node:crypto";
 import milliseconds from "ms";
 import {

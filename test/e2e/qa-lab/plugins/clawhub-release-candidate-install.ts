@@ -185,8 +185,8 @@ async function buildCandidateTarballFromCheckout(options: ProducerOptions) {
   const destination = path.join(options.artifactBase, "package");
   await fs.mkdir(destination, { recursive: true });
   const evalScript = `
-    import { packOpenClaw } from "./scripts/e2e/parallels/package-artifact.ts";
-    const artifact = await packOpenClaw({ destination: ${JSON.stringify(destination)} });
+    import { packNova } from "./scripts/e2e/parallels/package-artifact.ts";
+    const artifact = await packNova({ destination: ${JSON.stringify(destination)} });
     process.stdout.write(${JSON.stringify(CHECKOUT_BUILD_RESULT_PREFIX)} + JSON.stringify({ path: artifact.path }) + "\\n");
   `;
   const result = await execFileAsync(

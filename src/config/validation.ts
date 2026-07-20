@@ -1,4 +1,4 @@
-// Validates normalized OpenClaw config and reports user-facing errors.
+// Validates normalized Nova config and reports user-facing errors.
 import path from "node:path";
 import { collectConfiguredModelRefs } from "@openclaw/model-catalog-core/configured-model-refs";
 import { isCanonicalDottedDecimalIPv4, isLoopbackIpAddress } from "@openclaw/net-policy/ip";
@@ -77,7 +77,7 @@ const BLOCKED_PLUGIN_CANDIDATE_PREFIX = "blocked plugin candidate:";
 
 function formatRemovedPluginConfigWarning(pluginId: string): string {
   if (pluginId === "skill-workshop") {
-    return "plugin removed: skill-workshop (stale plugin config ignored; Skill Workshop is built into OpenClaw skills now. Use skills.workshop settings and openclaw skills workshop commands, then remove this plugins config entry)";
+    return "plugin removed: skill-workshop (stale plugin config ignored; Skill Workshop is built into Nova skills now. Use skills.workshop settings and openclaw skills workshop commands, then remove this plugins config entry)";
   }
   return `plugin removed: ${pluginId} (stale config entry ignored; remove it from plugins config)`;
 }
@@ -2176,7 +2176,7 @@ function validateConfigObjectWithPluginsBase(
           replacePluginEntryConfig(pluginId, res.value as Record<string, unknown>);
         }
       } else if (record.format === "bundle") {
-        // Compatible bundles currently expose no native OpenClaw config schema.
+        // Compatible bundles currently expose no native Nova config schema.
         // Treat them as schema-less capability packs rather than failing validation.
       } else {
         issues.push({

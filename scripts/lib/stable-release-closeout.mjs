@@ -137,7 +137,7 @@ export function verifyStableMainCloseout(params) {
 
   if (mainVersion && !isStableMainVersionAtLeast(mainVersion, version)) {
     errors.push(
-      `main package.json version is ${mainVersion}, expected shipped version ${version} or a later stable OpenClaw CalVer.`,
+      `main package.json version is ${mainVersion}, expected shipped version ${version} or a later stable Nova CalVer.`,
     );
   }
   if (tagPackageVersion && tagPackageVersion !== version) {
@@ -174,9 +174,9 @@ export function verifyStableMainCloseout(params) {
 
   const macAssetVersion = version;
   const expectedMacAssets = [
-    `OpenClaw-${macAssetVersion}.zip`,
-    `OpenClaw-${macAssetVersion}.dmg`,
-    `OpenClaw-${macAssetVersion}.dSYM.zip`,
+    `Nova-${macAssetVersion}.zip`,
+    `Nova-${macAssetVersion}.dmg`,
+    `Nova-${macAssetVersion}.dSYM.zip`,
   ];
   const releaseAssets = readReleaseAssets(params.release);
   const assetNames = new Set(releaseAssets.map((asset) => asset.name));
@@ -197,8 +197,8 @@ export function verifyStableMainCloseout(params) {
     const requiredPlatformFamilies = [
       {
         label: "Android",
-        prefix: "OpenClaw-Android",
-        expected: ["OpenClaw-Android-SHA256SUMS.txt", "OpenClaw-Android.apk"],
+        prefix: "Nova-Android",
+        expected: ["Nova-Android-SHA256SUMS.txt", "Nova-Android.apk"],
       },
       {
         label: "Windows",

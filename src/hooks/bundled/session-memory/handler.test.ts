@@ -13,7 +13,7 @@ import { createInternalHookEvent as createHookEvent } from "../../internal-hooks
 import { generateSlugViaLLM } from "../../llm-slug-generator.js";
 import { findPreviousSessionFile, getRecentSessionContentWithResetFallback } from "./transcript.js";
 
-// Avoid calling the embedded OpenClaw agent (global command lane); keep this unit test deterministic.
+// Avoid calling the embedded Nova agent (global command lane); keep this unit test deterministic.
 vi.mock("../../llm-slug-generator.js", () => ({
   generateSlugViaLLM: vi.fn().mockResolvedValue("simple-math"),
 }));

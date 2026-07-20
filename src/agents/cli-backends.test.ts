@@ -529,7 +529,7 @@ describe("resolveCliBackendLiveTest", () => {
 });
 
 describe("resolveCliBackendConfig claude-cli defaults", () => {
-  it("derives bypassPermissions from OpenClaw's default YOLO exec policy", () => {
+  it("derives bypassPermissions from Nova's default YOLO exec policy", () => {
     const resolved = requireCliBackendConfig("claude-cli");
 
     expect(resolved?.bundleMcp).toBe(true);
@@ -566,7 +566,7 @@ describe("resolveCliBackendConfig claude-cli defaults", () => {
     expect(resolved?.ownsNativeCompaction).toBe(true);
   });
 
-  it("keeps Claude permission mode unset when OpenClaw exec policy is not YOLO", () => {
+  it("keeps Claude permission mode unset when Nova exec policy is not YOLO", () => {
     const resolved = requireCliBackendConfig("claude-cli", {
       tools: { exec: { security: "allowlist", ask: "on-miss" } },
     });

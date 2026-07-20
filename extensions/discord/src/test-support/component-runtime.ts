@@ -196,7 +196,7 @@ export function resetDiscordComponentRuntimeMocks() {
     binding: {
       bindingId: "binding-1",
       pluginId: "openclaw-codex-app-server",
-      pluginName: "OpenClaw App Server",
+      pluginName: "Nova App Server",
       pluginRoot: "/plugins/codex",
       channel: "discord",
       accountId: "default",
@@ -206,7 +206,7 @@ export function resetDiscordComponentRuntimeMocks() {
     request: {
       id: "approval-1",
       pluginId: "openclaw-codex-app-server",
-      pluginName: "OpenClaw App Server",
+      pluginName: "Nova App Server",
       pluginRoot: "/plugins/codex",
       requestedAt: Date.now(),
       conversation: {

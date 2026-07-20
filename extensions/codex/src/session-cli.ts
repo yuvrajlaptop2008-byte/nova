@@ -254,7 +254,7 @@ async function continueCodexSession(
     writeJson(result);
     return;
   }
-  writeLine(`OpenClaw session: ${singleLineTerminalText(result.sessionKey)}`);
+  writeLine(`Nova session: ${singleLineTerminalText(result.sessionKey)}`);
 }
 
 async function archiveCodexSession(
@@ -312,7 +312,7 @@ export function registerCodexSessionCli(program: Command): void {
   addGatewayClientOptions(
     codex
       .command("continue <thread-id>")
-      .description("Continue a Gateway-local Codex thread as an OpenClaw branch")
+      .description("Continue a Gateway-local Codex thread as an Nova branch")
       .option("--json", "Print the structured response", false),
   ).action(async (threadId: string, options: CodexGatewayOptions) => {
     await continueCodexSession(threadId, options);
@@ -324,7 +324,7 @@ export function registerCodexSessionCli(program: Command): void {
       .description("Archive a stored or idle Gateway-local Codex thread")
       .option(
         "--confirm-no-other-runner",
-        "Confirm no other Codex client or OpenClaw runner is using this thread",
+        "Confirm no other Codex client or Nova runner is using this thread",
         false,
       )
       .option("--json", "Print the structured response", false),

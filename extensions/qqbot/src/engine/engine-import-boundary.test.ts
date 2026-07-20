@@ -42,7 +42,7 @@ function findOpenclawImports(source: string): string[] {
   return [
     ...source.matchAll(/from\s+["'](openclaw\/[^"']+)["']/g),
     ...source.matchAll(/import\(\s*["'](openclaw\/[^"']+)["']\s*\)/g),
-  ].map((match) => expectDefined(match[1], "OpenClaw import specifier"));
+  ].map((match) => expectDefined(match[1], "Nova import specifier"));
 }
 
 /** Check if an import specifier is an allowed openclaw/plugin-sdk subpath. */

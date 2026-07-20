@@ -106,8 +106,8 @@ function runStopPackagedAppHarness(killZeroStatus: 0 | 1) {
   const root = tempDirs.make("openclaw-package-stop-root-");
   const toolsDir = tempDirs.make("openclaw-package-stop-tools-");
 
-  const appRoot = path.join(root, "dist", "OpenClaw.app");
-  const appBinary = path.join(appRoot, "Contents", "MacOS", "OpenClaw");
+  const appRoot = path.join(root, "dist", "Nova.app");
+  const appBinary = path.join(appRoot, "Contents", "MacOS", "Nova");
   const lsofPath = path.join(toolsDir, "lsof");
   const pgrepPath = path.join(toolsDir, "pgrep");
   const sleepPath = path.join(toolsDir, "sleep");
@@ -126,7 +126,7 @@ function runStopPackagedAppHarness(killZeroStatus: 0 | 1) {
   return runHelper(`
     set -euo pipefail
     APP_ROOT=${JSON.stringify(appRoot)}
-    PRODUCT=OpenClaw
+    PRODUCT=Nova
     PATH=${JSON.stringify(`${toolsDir}:/usr/bin:/bin`)}
     kill() {
       if [[ "\${1:-}" == "-0" ]]; then
@@ -143,7 +143,7 @@ function runSwiftCompatibilityHarness(buildConfig: "debug" | "release") {
   const root = tempDirs.make("openclaw-package-swift-root-");
   const toolsDir = tempDirs.make("openclaw-package-swift-tools-");
   const developerDir = path.join(root, "Xcode.app", "Contents", "Developer");
-  const appRoot = path.join(root, "OpenClaw.app");
+  const appRoot = path.join(root, "Nova.app");
   const xcodeSelectPath = path.join(toolsDir, "xcode-select");
 
   writeFileSync(
@@ -535,7 +535,7 @@ describe("package-mac-app plist stamping", () => {
     `);
 
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain("OpenClaw macOS app packaging requires Swift tools 6.2+");
+    expect(result.stderr).toContain("Nova macOS app packaging requires Swift tools 6.2+");
     expect(result.stderr).toContain("Current Swift is 6.0");
   });
 
@@ -604,15 +604,15 @@ describe("package-mac-app plist stamping", () => {
     expect(result.stderr).toBe("");
   });
 
-  it("does not kill unrelated OpenClaw processes during packaging", () => {
+  it("does not kill unrelated Nova processes during packaging", () => {
     const script = readFileSync(scriptPath, "utf8");
     const stopBlock = script.slice(
       script.indexOf("running_packaged_app_pids()"),
       script.indexOf('echo "🔏 Signing bundle'),
     );
 
-    expect(script).not.toContain("killall -q OpenClaw");
-    expect(stopBlock).toContain('local app_binary="$APP_ROOT/Contents/MacOS/OpenClaw"');
+    expect(script).not.toContain("killall -q Nova");
+    expect(stopBlock).toContain('local app_binary="$APP_ROOT/Contents/MacOS/Nova"');
     expect(stopBlock).toContain('pgrep -x "$PRODUCT"');
     expect(stopBlock).toContain('grep -Fx "$app_binary"');
     expect(stopBlock).toContain(
@@ -624,7 +624,7 @@ describe("package-mac-app plist stamping", () => {
     const result = runStopPackagedAppHarness(0);
 
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain("ERROR: Packaged OpenClaw bundle did not exit: 123");
+    expect(result.stderr).toContain("ERROR: Packaged Nova bundle did not exit: 123");
   });
 
   it("fails release packaging when the Swift compatibility library is missing", () => {
@@ -744,18 +744,18 @@ describe("package-mac-app plist stamping", () => {
     expect(packageManifest).toContain('.copy("Resources/ProviderIcons")');
     expect(
       readFileSync(
-        "apps/macos/Sources/OpenClaw/Resources/ProviderIcons/ProviderIcon-claude.svg",
+        "apps/macos/Sources/Nova/Resources/ProviderIcons/ProviderIcon-claude.svg",
         "utf8",
       ),
     ).toContain("<svg");
     expect(
       readFileSync(
-        "apps/macos/Sources/OpenClaw/Resources/ProviderIcons/ProviderIcon-codex.svg",
+        "apps/macos/Sources/Nova/Resources/ProviderIcons/ProviderIcon-codex.svg",
         "utf8",
       ),
     ).toContain("<svg");
     expect(script).toContain(
-      'PROVIDER_ICONS_SRC="$ROOT_DIR/apps/macos/Sources/OpenClaw/Resources/ProviderIcons"',
+      'PROVIDER_ICONS_SRC="$ROOT_DIR/apps/macos/Sources/Nova/Resources/ProviderIcons"',
     );
     expect(script).toContain(
       'echo "ERROR: Provider icon resources missing at $PROVIDER_ICONS_SRC"',

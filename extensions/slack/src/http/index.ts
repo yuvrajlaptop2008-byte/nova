@@ -1,2 +1,2 @@
-// Slack plugin entrypoint registers its OpenClaw integration.
+// Slack plugin entrypoint registers its Nova integration.
 export * from "./registry.js";

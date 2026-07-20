@@ -149,7 +149,7 @@ export async function prepareEmbeddedAttemptHistory(input: {
     }
 
     if (attempt.sessionKey && attempt.config) {
-      // Capability guidance must include deferred OpenClaw tools without
+      // Capability guidance must include deferred Nova tools without
       // interpreting arbitrary client tool names as native capabilities.
       const activeSubagentPromptAddition = buildActiveSubagentSystemPromptAddition({
         cfg: attempt.config,

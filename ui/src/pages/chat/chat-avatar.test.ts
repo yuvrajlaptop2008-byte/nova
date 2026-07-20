@@ -65,7 +65,7 @@ describe("renderChatAvatar", () => {
   it("uses the assistant fallback while authenticated avatar routes are loading", () => {
     const avatar = renderAvatar([
       "assistant",
-      { avatar: "/avatar/main", name: "OpenClaw" },
+      { avatar: "/avatar/main", name: "Nova" },
       undefined,
       "",
       "session-token",

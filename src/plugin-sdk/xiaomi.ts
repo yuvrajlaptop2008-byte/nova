@@ -16,7 +16,7 @@ function loadFacadeModule(): FacadeModule {
     artifactBasename: "api.js",
   });
 }
-/** Apply Xiaomi provider defaults to the full OpenClaw config. */
+/** Apply Xiaomi provider defaults to the full Nova config. */
 export const applyXiaomiConfig: FacadeModule["applyXiaomiConfig"] = ((...args) =>
   loadFacadeModule()["applyXiaomiConfig"](...args)) as FacadeModule["applyXiaomiConfig"];
 /** Apply only Xiaomi provider config defaults. */

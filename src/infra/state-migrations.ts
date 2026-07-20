@@ -1,4 +1,4 @@
-// Applies persisted state migrations across OpenClaw config files.
+// Applies persisted state migrations across Nova config files.
 export type { LegacyStateDetection } from "./state-migrations.types.js";
 export {
   autoMigrateLegacyPluginDoctorState,

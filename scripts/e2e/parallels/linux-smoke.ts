@@ -1,5 +1,5 @@
 #!/usr/bin/env -S pnpm tsx
-// Linux Smoke script supports OpenClaw repository automation.
+// Linux Smoke script supports Nova repository automation.
 import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -848,7 +848,7 @@ fi`,
     return await extractLastOpenClawVersion(
       this.runDir,
       phaseId,
-      /(OpenClaw [^\r\n]+ \([0-9a-f]{7,}\))/g,
+      /(Nova [^\r\n]+ \([0-9a-f]{7,}\))/g,
     );
   }
 

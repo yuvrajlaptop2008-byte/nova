@@ -129,7 +129,7 @@ describe("runRemoteGatewayInferenceOnboarding", () => {
       secret: "selected-password",
     },
   ])(
-    "pins $label across detect, activate, verify, OpenClaw, and in-process TUI",
+    "pins $label across detect, activate, verify, Nova, and in-process TUI",
     async ({ auth, secret }) => {
       const localConfig = makeLocalConfig();
       const localConfigBefore = structuredClone(localConfig);
@@ -289,7 +289,7 @@ describe("runRemoteGatewayInferenceOnboarding", () => {
       verification: { ok: true, modelRef: "openai/other", latencyMs: 100 },
       error: "Gateway verified openai/other, not the activated claude-cli/opus",
     },
-  ])("fails closed on $label before OpenClaw", async ({ verification, error }) => {
+  ])("fails closed on $label before Nova", async ({ verification, error }) => {
     const localConfig = makeLocalConfig();
     const localConfigBefore = structuredClone(localConfig);
     const methods: string[] = [];
@@ -366,7 +366,7 @@ describe("runRemoteGatewayInferenceOnboarding", () => {
     expect(runTui).not.toHaveBeenCalled();
   });
 
-  it("treats a cancelled remote OpenClaw conversation as a pause without opening the agent", async () => {
+  it("treats a cancelled remote Nova conversation as a pause without opening the agent", async () => {
     const methods: string[] = [];
     const callGatewayMock = vi.fn(async (options: CallGatewayCliOptions): Promise<unknown> => {
       methods.push(options.method);
@@ -417,7 +417,7 @@ describe("runRemoteGatewayInferenceOnboarding", () => {
       "openclaw.setup.verify",
       "openclaw.chat",
     ]);
-    expect(prompter.outro).toHaveBeenCalledWith("OpenClaw setup paused.");
+    expect(prompter.outro).toHaveBeenCalledWith("Nova setup paused.");
     expect(runTui).not.toHaveBeenCalled();
   });
 });

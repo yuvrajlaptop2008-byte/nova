@@ -318,7 +318,7 @@ describe("device-pair /pair qr", () => {
         purpose: "mobile-full",
       },
     });
-    expect(text).toContain("Scan this QR code with the OpenClaw iOS app:");
+    expect(text).toContain("Scan this QR code with the Nova iOS app:");
     expect(payload.mediaUrl).toBeUndefined();
     expect(payload.channelData?.openclawPairingQr).toEqual({
       setupCode: expect.any(String),
@@ -328,7 +328,7 @@ describe("device-pair /pair qr", () => {
     expect(text).toContain("- Security: single-use bootstrap token");
     expect(text).toContain("**Important:** Run `/pair cleanup` after pairing finishes.");
     expect(text).toContain("If this QR code leaks, run `/pair cleanup` immediately.");
-    expect(text).not.toContain("![OpenClaw pairing QR]");
+    expect(text).not.toContain("![Nova pairing QR]");
   });
 
   it("rejects qr setup for internal gateway callers without operator.pairing", async () => {
@@ -534,7 +534,7 @@ describe("device-pair /pair qr", () => {
       } & Record<string, unknown>,
     ];
     expect(target).toBe(testCase.expectedTarget);
-    expect(caption).toContain("Scan this QR code with the OpenClaw iOS app:");
+    expect(caption).toContain("Scan this QR code with the Nova iOS app:");
     expect(caption).toContain("IMPORTANT: After pairing finishes, run /pair cleanup.");
     expect(caption).toContain("If this QR code leaks, run /pair cleanup immediately.");
     const mediaUrl = requireMediaUrl(opts);

@@ -130,17 +130,17 @@ export function assertCanonicalStateSchemaShape(db: DatabaseSync, pathname: stri
   operatorApprovalMigration.assertCanonicalOperatorApprovalKinds(db, pathname);
   if (!hasCanonicalAgentDatabasesPrimaryKey(db)) {
     throw new Error(
-      `OpenClaw state database ${pathname} has a legacy agent database registry schema; run openclaw doctor --fix to migrate it.`,
+      `Nova state database ${pathname} has a legacy agent database registry schema; run openclaw doctor --fix to migrate it.`,
     );
   }
   if (!hasCanonicalAuditEventsSchema(db)) {
     if (canRepairLegacyAuditEventsSchema(db)) {
       throw new Error(
-        `OpenClaw state database ${pathname} has a legacy audit event schema; run openclaw doctor --fix to migrate it.`,
+        `Nova state database ${pathname} has a legacy audit event schema; run openclaw doctor --fix to migrate it.`,
       );
     }
     throw new Error(
-      `OpenClaw state database ${pathname} has a noncanonical audit event schema that cannot be repaired automatically; restore the canonical audit_events shape before retrying.`,
+      `Nova state database ${pathname} has a noncanonical audit event schema that cannot be repaired automatically; restore the canonical audit_events shape before retrying.`,
     );
   }
 }

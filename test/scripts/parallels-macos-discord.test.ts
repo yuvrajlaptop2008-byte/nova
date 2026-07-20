@@ -30,7 +30,7 @@ describe("Parallels macOS Discord smoke", () => {
         config: { channelId: "channel-id", guildId: "guild-id", token: "" },
         guest: {} as never,
         guestNode: "node",
-        guestOpenClaw: "openclaw",
+        guestNova: "openclaw",
         guestOpenClawEntry: "openclaw.mjs",
         runDir,
         vmName: "macos-vm",

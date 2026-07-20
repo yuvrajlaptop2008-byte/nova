@@ -1,4 +1,4 @@
-// Windows Git script supports OpenClaw repository automation.
+// Windows Git script supports Nova repository automation.
 import path from "node:path";
 import type { WindowsGuest } from "./guest-transports.ts";
 import { die, run, say } from "./host-command.ts";
@@ -131,7 +131,7 @@ export function ensureGuestGit(input: {
   const minGitName = path.basename(input.minGitZipPath);
   input.guest.powershell(
     `$ErrorActionPreference = 'Stop'
-$depsRoot = Join-Path $env:LOCALAPPDATA 'OpenClaw\\deps'
+$depsRoot = Join-Path $env:LOCALAPPDATA 'Nova\\deps'
 $portableGit = Join-Path $depsRoot 'portable-git'
 $archive = Join-Path $env:TEMP ${psSingleQuote(minGitName)}
 if (Test-Path $portableGit) {

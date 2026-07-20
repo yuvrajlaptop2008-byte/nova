@@ -596,7 +596,7 @@ export async function runInstallPolicy(params: {
       const { getRuntimeConfig } = await import("../config/io.js");
       config = getRuntimeConfig({ skipPluginValidation: true });
     } catch (err) {
-      return failClosed(`could not load OpenClaw config (${formatErrorMessage(err)})`);
+      return failClosed(`could not load Nova config (${formatErrorMessage(err)})`);
     }
   }
 

@@ -32,7 +32,7 @@ export type ClickClackAccountConfig = {
   agentActivity?: boolean;
   /** Publish the native command catalog to ClickClack composer autocomplete. */
   commandMenu?: boolean;
-  /** Create and synchronize one managed ClickClack channel per OpenClaw session. */
+  /** Create and synchronize one managed ClickClack channel per Nova session. */
   discussions?: ClickClackDiscussionsConfig;
 };
 
@@ -42,7 +42,7 @@ type ClickClackConfig = ClickClackAccountConfig & {
   defaultAccount?: string;
 };
 
-/** OpenClaw config narrowed to include ClickClack channel settings. */
+/** Nova config narrowed to include ClickClack channel settings. */
 export type CoreConfig = OpenClawConfig & {
   channels?: OpenClawConfig["channels"] & {
     clickclack?: ClickClackConfig;

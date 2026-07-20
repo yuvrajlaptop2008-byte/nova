@@ -48,7 +48,7 @@ import {
 } from "@openclaw/ai/internal/shared";
 /**
  * Native Anthropic Messages streaming transport.
- * Converts OpenClaw contexts/tools into Anthropic payloads, streams SSE events
+ * Converts Nova contexts/tools into Anthropic payloads, streams SSE events
  * back into runtime output blocks, and applies provider request policy.
  */
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";

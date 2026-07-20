@@ -1,4 +1,4 @@
-// Opencode Go plugin entrypoint registers its OpenClaw integration.
+// Opencode Go plugin entrypoint registers its Nova integration.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { createProviderApiKeyAuthMethod } from "openclaw/plugin-sdk/provider-auth-api-key";
 import { buildProviderReplayFamilyHooks } from "openclaw/plugin-sdk/provider-model-shared";

@@ -13,7 +13,7 @@ describe("changed path facts", () => {
       ["packages/gateway-client/src/client.ts", "package"],
       ["extensions/slack/src/index.ts", "extension"],
       ["ui/src/app.ts", "ui"],
-      ["apps/macos/Sources/OpenClaw/AppDelegate.swift", "app"],
+      ["apps/macos/Sources/Nova/AppDelegate.swift", "app"],
       ["test/scripts/changed-lanes.test.ts", "rootTest"],
       ["test-fixtures/sample.ts", "testFixture"],
       ["scripts/check-changed.mjs", "rootTooling"],

@@ -244,11 +244,11 @@ describe("Parallels smoke model selection", () => {
     expect(isLikelyMacosDesktopHome("/var/empty")).toBe(false);
   });
 
-  it("extracts the last OpenClaw version from a bounded log tail", async () => {
+  it("extracts the last Nova version from a bounded log tail", async () => {
     const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-log-tail-"));
     const logPath = join(tempDir, "phase.log");
     try {
-      writeFileSync(logPath, ["OpenClaw 0.0.1", "x".repeat(4096), "OpenClaw 2026.6.7"].join("\n"));
+      writeFileSync(logPath, ["Nova 0.0.1", "x".repeat(4096), "Nova 2026.6.7"].join("\n"));
 
       await expect(extractLastOpenClawVersionFromLog(logPath, undefined, 128)).resolves.toBe(
         "2026.6.7",
@@ -273,7 +273,7 @@ describe("Parallels smoke model selection", () => {
     }
   });
 
-  it("owns the reusable Windows VM and OpenClaw baseline lifecycle", () => {
+  it("owns the reusable Windows VM and Nova baseline lifecycle", () => {
     const controller = readFileSync(WINDOWS_PREPARE_WRAPPER, "utf8");
     expect(controller).toContain("ensure_wsl_features");
     expect(controller).toContain("resolve_winget_manifest");
@@ -484,7 +484,7 @@ fetch_host_metadata "https://example.test/metadata"`,
         .map((name) => name.trim())
         .filter(Boolean),
     );
-    expect(packageArtifactExports).toContain("packOpenClaw");
+    expect(packageArtifactExports).toContain("packNova");
     expect(packageArtifactExports).toContain("packageVersionFromTgz");
     expect(packageArtifactExports).toContain("resolveOpenClawRegistryVersion");
     expect(common).not.toContain('export * from "./package-artifact.ts"');
@@ -495,7 +495,7 @@ fetch_host_metadata "https://example.test/metadata"`,
     expect(packageArtifact).toContain("withPackageLock");
     expect(packageArtifact).toContain("Wait for Parallels package lock");
     expect(packageArtifact).toContain("export async function packageVersionFromTgz");
-    expect(packageArtifact).toContain("export async function packOpenClaw");
+    expect(packageArtifact).toContain("export async function packNova");
     expect(packageArtifact).toContain('"--allow-unreleased-changelog"');
     expect(packageArtifact).toContain("function resolveNpmPackTarballFilename");
     expect(packageArtifact).toContain("filename !== path.basename(filename)");
@@ -1518,7 +1518,7 @@ exit 0
     expect(orchestrator).not.toContain("Remove-FuturePluginEntries");
     expect(updateScripts).toContain("Remove-FuturePluginEntries");
     expect(updateScripts).toContain("scrub_future_plugin_entries");
-    expect(updateScripts).toContain("Invoke-OpenClaw update");
+    expect(updateScripts).toContain("Invoke-Nova update");
     expect(updateScripts).toContain("Parallels npm update smoke test assistant.");
   });
 
@@ -1541,12 +1541,12 @@ exit 0
     const macos = readFileSync(TS_PATHS.macos, "utf8");
 
     expect(macos).toContain("/usr/local/bin:/usr/local/sbin");
-    expect(macos).toContain('const guestOpenClaw = "openclaw"');
+    expect(macos).toContain('const guestNova = "openclaw"');
     expect(macos).toContain('const guestNode = "node"');
     expect(macos).toContain('const guestNpm = "npm"');
     expect(macos).toContain("$(npm root -g)/openclaw/openclaw.mjs");
     expect(macos).toContain("guestOpenClawEntryExec");
-    expect(macos).not.toContain('const guestOpenClaw = "/opt/homebrew/bin/openclaw"');
+    expect(macos).not.toContain('const guestNova = "/opt/homebrew/bin/openclaw"');
     expect(macos).not.toContain('const guestNode = "/opt/homebrew/bin/node"');
     expect(macos).not.toContain('const guestNpm = "/opt/homebrew/bin/npm"');
     expect(macos).not.toContain("/opt/homebrew/lib/node_modules/openclaw/openclaw.mjs");
@@ -2288,7 +2288,7 @@ setInterval(() => {}, 1000);
     expect(npmUpdate).toContain("recordTiming");
   });
 
-  it("resolves Windows OpenClaw commands without assuming the npm shim path", () => {
+  it("resolves Windows Nova commands without assuming the npm shim path", () => {
     const powershell = readFileSync(TS_PATHS.powershell, "utf8");
     const windows = readFileSync(TS_PATHS.windows, "utf8");
 
@@ -2303,7 +2303,7 @@ setInterval(() => {}, 1000);
     expect(powershell).toContain("$ErrorActionPreference = 'Continue'");
     expect(powershell).toContain("$PSNativeCommandUseErrorActionPreference = $false");
     expect(windows).toContain("windowsOpenClawResolver");
-    expect(windows).toContain("Invoke-OpenClaw gateway");
+    expect(windows).toContain("Invoke-Nova gateway");
     expect(windows).not.toContain("Join-Path $env:APPDATA 'npm\\\\openclaw.cmd'");
   });
 });

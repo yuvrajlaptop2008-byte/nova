@@ -1374,14 +1374,12 @@ describe("modelsAuthLoginCommand", () => {
       },
       agentDir: "/tmp/openclaw/agents/main",
     });
+    expect(runtime.log).toHaveBeenCalledWith("Anthropic setup-token auth is supported in Nova.");
     expect(runtime.log).toHaveBeenCalledWith(
-      "Anthropic setup-token auth is supported in OpenClaw.",
+      "Nova prefers Claude CLI reuse when it is available on the host.",
     );
     expect(runtime.log).toHaveBeenCalledWith(
-      "OpenClaw prefers Claude CLI reuse when it is available on the host.",
-    );
-    expect(runtime.log).toHaveBeenCalledWith(
-      "Anthropic staff told us this OpenClaw path is allowed again.",
+      "Anthropic staff told us this Nova path is allowed again.",
     );
   });
 

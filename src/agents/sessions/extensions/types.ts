@@ -365,7 +365,7 @@ export interface ExtensionContext {
   abort(): void;
   /** Whether there are queued messages waiting */
   hasPendingMessages(): boolean;
-  /** Gracefully shut down OpenClaw and exit. Available in all contexts. */
+  /** Gracefully shut down Nova and exit. Available in all contexts. */
   shutdown(): void;
   /** Get current context usage for the active model. */
   getContextUsage(): ContextUsage | undefined;
@@ -1478,7 +1478,7 @@ interface ProviderModelConfig {
   baseUrl?: string;
   /** Whether the model supports extended thinking. */
   reasoning: boolean;
-  /** Maps OpenClaw thinking levels to provider/model-specific values; null marks a level unsupported. */
+  /** Maps Nova thinking levels to provider/model-specific values; null marks a level unsupported. */
   thinkingLevelMap?: Model["thinkingLevelMap"];
   /** Supported input types. */
   input: ("text" | "image")[];

@@ -1011,7 +1011,7 @@ describe("release candidate checklist", () => {
         "--plugins",
         "@openclaw/diffs",
       ]),
-    ).toThrow("release candidates publish OpenClaw with --plugin-publish-scope all-publishable");
+    ).toThrow("release candidates publish Nova with --plugin-publish-scope all-publishable");
   });
 
   it("extracts a workflow run id from gh dispatch output", () => {

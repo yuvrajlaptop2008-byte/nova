@@ -108,7 +108,7 @@ export function parseIssue78851ModelResolutionOptions(
 }
 
 export function issue78851ModelResolutionUsage(): string {
-  return `OpenClaw issue #78851 model-resolution profiler
+  return `Nova issue #78851 model-resolution profiler
 
 Usage:
   pnpm perf:issue-78851 -- [options]

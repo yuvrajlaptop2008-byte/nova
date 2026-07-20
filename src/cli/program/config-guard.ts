@@ -329,7 +329,7 @@ export async function ensureConfigReady(
   const heading = (value: string) => colorize(rich, theme.heading, value);
   const commandText = (value: string) => colorize(rich, theme.command, value);
 
-  params.runtime.error(heading("OpenClaw config is invalid"));
+  params.runtime.error(heading("Nova config is invalid"));
   params.runtime.error(`${muted("File:")} ${muted(shortenHomePath(snapshot.path))}`);
   if (issues.length > 0) {
     params.runtime.error(muted("Problem:"));

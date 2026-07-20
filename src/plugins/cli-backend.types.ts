@@ -11,7 +11,7 @@ export type PluginTextReplacement = {
 export type PluginTextTransforms = {
   /** Rewrites applied to outbound prompt text before provider/CLI transport. */
   input?: PluginTextReplacement[];
-  /** Rewrites applied to inbound assistant text before OpenClaw consumes it. */
+  /** Rewrites applied to inbound assistant text before Nova consumes it. */
   output?: PluginTextReplacement[];
 };
 
@@ -26,7 +26,7 @@ export type CliBackendPrepareExecutionContext = {
   agentDir?: string;
   provider: string;
   modelId: string;
-  /** Effective OpenClaw context budget selected for this run. */
+  /** Effective Nova context budget selected for this run. */
   contextTokenBudget?: number;
   authProfileId?: string;
   executionMode?: CliBackendExecutionMode;
@@ -148,9 +148,9 @@ export type CliBackendPlugin = {
   /** Required whenever this backend can become a verified inference owner. */
   runtimeArtifact?: CliBackendRuntimeArtifactPolicy;
   /**
-   * Whether OpenClaw should inject bundle MCP config for this backend.
+   * Whether Nova should inject bundle MCP config for this backend.
    *
-   * Keep this opt-in. Only backends that explicitly consume OpenClaw's bundle
+   * Keep this opt-in. Only backends that explicitly consume Nova's bundle
    * MCP bridge should enable it.
    */
   bundleMcp?: boolean;
@@ -198,7 +198,7 @@ export type CliBackendPlugin = {
   /**
    * Preferred auth-profile id when the caller did not explicitly lock one.
    *
-   * Use this when the backend should consume a canonical OpenClaw auth profile
+   * Use this when the backend should consume a canonical Nova auth profile
    * rather than ambient host auth by default.
    */
   defaultAuthProfileId?: string;
@@ -206,7 +206,7 @@ export type CliBackendPlugin = {
    * Session/auth epoch source policy.
    *
    * `combined` keeps the legacy "host credential + auth profile" fingerprint.
-   * `profile-only` treats the selected OpenClaw auth profile as the sole auth
+   * `profile-only` treats the selected Nova auth profile as the sole auth
    * owner for session invalidation when one is present.
    */
   authEpochMode?: CliBackendAuthEpochMode;
@@ -214,7 +214,7 @@ export type CliBackendPlugin = {
    * Whether `prepareExecution` may auto-select a configured auth profile.
    *
    * Defaults to true for auth bridges. Set false for environment/config-only
-   * hooks that do not consume OpenClaw auth profiles.
+   * hooks that do not consume Nova auth profiles.
    */
   autoSelectAuthProfile?: boolean;
   /**
@@ -235,12 +235,12 @@ export type CliBackendPlugin = {
    * Backend-owned per-run argv rewrite.
    *
    * Use this for request-scoped CLI dialect flags that should not be modeled
-   * as static config, such as mapping OpenClaw thinking levels to a backend's
+   * as static config, such as mapping Nova thinking levels to a backend's
    * native effort flag.
    */
   resolveExecutionArgs?: CliBackendResolveExecutionArgs;
   /**
-   * Whether this CLI backend can expose native tools outside OpenClaw's tool
+   * Whether this CLI backend can expose native tools outside Nova's tool
    * catalog. `selectable` backends must enforce `toolAvailability` through
    * `resolveExecutionArgs`; `always-on` backends fail closed for restricted
    * callers.

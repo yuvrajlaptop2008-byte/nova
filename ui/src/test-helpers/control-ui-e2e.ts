@@ -256,7 +256,7 @@ function normalizeScenario(
       : basePathWithSlash;
   return {
     assistantAgentId: scenario.assistantAgentId?.trim() || defaultAgentId,
-    assistantName: scenario.assistantName?.trim() || "OpenClaw",
+    assistantName: scenario.assistantName?.trim() || "Nova",
     basePath,
     controlUiTabs: scenario.controlUiTabs ?? [],
     featureCapabilities: scenario.featureCapabilities ?? [],

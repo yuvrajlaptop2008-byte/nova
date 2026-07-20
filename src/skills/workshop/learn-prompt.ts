@@ -7,7 +7,7 @@ export const DEFAULT_LEARN_REQUEST =
 export function buildLearnPrompt(request: string): string {
   const normalizedRequest = request.trim() || DEFAULT_LEARN_REQUEST;
   return [
-    "Create one reviewable OpenClaw skill proposal from the learning request below.",
+    "Create one reviewable Nova skill proposal from the learning request below.",
     "",
     `Learning request (JSON string): ${JSON.stringify(normalizedRequest)}`,
     "",
@@ -22,7 +22,7 @@ export function buildLearnPrompt(request: string): string {
     'Author exactly ONE new skill draft by calling `skill_workshop` with action `"create"`. The call creates a pending proposal; do not apply it. If `skill_workshop` is unavailable, tell the user and do not write proposal or skill files by another route.',
     "Put non-trivial scripts in proposal support files under `scripts/` and reference them by relative path from the proposal body. Do not inline those scripts in the body.",
     "",
-    "Follow these OpenClaw skill-authoring standards:",
+    "Follow these Nova skill-authoring standards:",
     "- Choose a lowercase-hyphenated `name` using only lowercase letters, digits, and hyphens. It must match the intended skill directory name.",
     "- Set `description` to ONE short generic trigger phrase in double quotes: say what the skill does and when to use it; do not use marketing words or restate the skill name.",
     "- Include optional `metadata.openclaw` fields such as `emoji` or `requires.bins` only when the gathered sources prove they are true and useful.",

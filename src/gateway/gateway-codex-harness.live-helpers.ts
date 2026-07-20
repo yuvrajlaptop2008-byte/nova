@@ -81,7 +81,7 @@ export const EXPECTED_CODEX_MODELS_COMMAND_TEXT = [
   "Active model: `codex/",
   "Current active model is `openai/",
   "Current active model is `codex/",
-  "Current OpenClaw session status reports the active model as:",
+  "Current Nova session status reports the active model as:",
 ] as const;
 
 export function shouldUseCodexHarnessSubagentOnlyFastPath(params: {
@@ -320,7 +320,7 @@ const HEALTHY_CODEX_MODELS_COMMAND_TEXT = [
   "Active model: `codex/",
   "Current active model is `openai/",
   "Current active model is `codex/",
-  "Current OpenClaw session status reports the active model as:",
+  "Current Nova session status reports the active model as:",
 ] as const;
 
 /** Accepted `/codex status` response fragments for live harness probes. */
@@ -330,13 +330,13 @@ export const EXPECTED_CODEX_STATUS_COMMAND_TEXT = [
   "Model: codex/",
   "Session: `agent:dev:live-codex-harness`",
   "Session: agent:dev:live-codex-harness",
-  "OpenClaw `",
-  "OpenClaw status:",
+  "Nova `",
+  "Nova status:",
   "Status: running on",
   "model `codex/",
   "session `agent:dev:live-codex-harness`",
   "Model/status card shown above",
-  "OpenClaw status shown above.",
+  "Nova status shown above.",
   "Status shown above.",
   "No active task is running.",
   "No active work is running.",

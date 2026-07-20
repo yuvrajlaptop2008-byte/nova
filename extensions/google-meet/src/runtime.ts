@@ -155,9 +155,8 @@ export class GoogleMeetRuntime {
           audioBridgeUnavailable: "Realtime speech requires an active Chrome audio bridge.",
           browserUnverified: "Google Meet browser state has not been verified yet.",
           manualActionFallback:
-            "Resolve the Google Meet browser prompt before asking OpenClaw to speak.",
-          microphoneMuted:
-            "Turn on the OpenClaw Google Meet microphone before asking OpenClaw to speak.",
+            "Resolve the Google Meet browser prompt before asking Nova to speak.",
+          microphoneMuted: "Turn on the Nova Google Meet microphone before asking Nova to speak.",
           microphoneMutedReason: "meet-microphone-muted",
           notInCall: "Google Meet has not reported that the browser participant is in the call.",
           notInCallReason: "not-in-call",

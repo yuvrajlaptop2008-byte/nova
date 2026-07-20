@@ -19,7 +19,7 @@ const LEGACY_OAUTH_SECRET_DIRNAME = "auth-profiles";
 const LEGACY_OAUTH_SECRET_VERSION = 1;
 const LEGACY_OAUTH_SECRET_ALGORITHM = "aes-256-gcm";
 const LEGACY_OAUTH_SECRET_KEY_ENV = "OPENCLAW_AUTH_PROFILE_SECRET_KEY";
-const LEGACY_OAUTH_SECRET_KEYCHAIN_SERVICE = "OpenClaw Auth Profile Secrets";
+const LEGACY_OAUTH_SECRET_KEYCHAIN_SERVICE = "Nova Auth Profile Secrets";
 const LEGACY_OAUTH_SECRET_KEYCHAIN_ACCOUNT = "oauth-profile-master-key";
 const LEGACY_OAUTH_SECRET_KEY_FILE_NAME = "auth-profile-secret-key";
 
@@ -160,7 +160,7 @@ function resolveLegacyOAuthSecretKeyFileCandidates(env: NodeJS.ProcessEnv): stri
     const home = env.USERPROFILE?.trim() || os.homedir();
     const root = env.APPDATA?.trim() || (home ? path.join(home, "AppData", "Roaming") : undefined);
     return uniquePaths([
-      root ? path.join(root, "OpenClaw", LEGACY_OAUTH_SECRET_KEY_FILE_NAME) : undefined,
+      root ? path.join(root, "Nova", LEGACY_OAUTH_SECRET_KEY_FILE_NAME) : undefined,
       home
         ? path.join(home, ".openclaw-auth-profile-secrets", LEGACY_OAUTH_SECRET_KEY_FILE_NAME)
         : undefined,
@@ -175,7 +175,7 @@ function resolveLegacyOAuthSecretKeyFileCandidates(env: NodeJS.ProcessEnv): stri
             home,
             "Library",
             "Application Support",
-            "OpenClaw",
+            "Nova",
             LEGACY_OAUTH_SECRET_KEY_FILE_NAME,
           )
         : undefined,

@@ -226,12 +226,12 @@ export function describeChannelPluginCatalogEntriesContract() {
               $schema: "./manifest.schema.json",
               schemaVersion: 1,
               description:
-                "Extension manifest. Declares plugin packages that OpenClaw can discover during onboarding and install on demand via `openclaw plugins install`.",
+                "Extension manifest. Declares plugin packages that Nova can discover during onboarding and install on demand via `openclaw plugins install`.",
               entries: [
                 {
                   name: "@wecom/wecom-openclaw-plugin",
                   description:
-                    "OpenClaw WeCom (企业微信) channel plugin — community maintained, published on npm.",
+                    "Nova WeCom (企业微信) channel plugin — community maintained, published on npm.",
                   source: "external",
                   kind: "channel",
                   openclaw: {
@@ -340,7 +340,7 @@ export function describeChannelPluginCatalogEntriesContract() {
               $schema: "./manifest.schema.json",
               schemaVersion: 1,
               description:
-                "Extension manifest. Declares plugin packages that OpenClaw can discover during onboarding and install on demand via `openclaw plugins install`.",
+                "Extension manifest. Declares plugin packages that Nova can discover during onboarding and install on demand via `openclaw plugins install`.",
               entries: [
                 {
                   source: "external",
@@ -412,12 +412,12 @@ export function describeChannelPluginCatalogEntriesContract() {
               $schema: "./manifest.schema.json",
               schemaVersion: 1,
               description:
-                "Extension manifest. Declares plugin packages that OpenClaw can discover during onboarding and install on demand via `openclaw plugins install`.",
+                "Extension manifest. Declares plugin packages that Nova can discover during onboarding and install on demand via `openclaw plugins install`.",
               entries: [
                 {
                   name: "openclaw-plugin-yuanbao",
                   description:
-                    "OpenClaw Yuanbao (元宝) channel plugin — community maintained, published on npm.",
+                    "Nova Yuanbao (元宝) channel plugin — community maintained, published on npm.",
                   source: "external",
                   kind: "channel",
                   openclaw: {

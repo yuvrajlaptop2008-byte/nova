@@ -697,7 +697,7 @@ describe.runIf(runE2E)("browser copilot Chromium side panel", () => {
       )
       .toEqual({
         detail:
-          "Sharing adds this tab to the OpenClaw group. The copilot can act here, but nowhere else.",
+          "Sharing adds this tab to the Nova group. The copilot can act here, but nowhere else.",
         title: "Keep the boundary visible",
       });
     expect(await alphaPanel.disabled("#message-input")).toBe(true);

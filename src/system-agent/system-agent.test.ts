@@ -1,4 +1,4 @@
-// OpenClaw tests cover main rescue and audit command behavior.
+// Nova tests cover main rescue and audit command behavior.
 import { describe, expect, it, vi } from "vitest";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { SystemAgentInferenceUnavailableError } from "./inference-error.js";
@@ -327,7 +327,7 @@ describe("runSystemAgent", () => {
     expect(lines).not.toContain("stale reply");
   });
 
-  it("starts interactive OpenClaw in the TUI shell", async () => {
+  it("starts interactive Nova in the TUI shell", async () => {
     const { runtime, lines } = createSystemAgentTestRuntime();
     let runInteractiveTuiCalls = 0;
     let onReadyCalls = 0;
@@ -415,7 +415,7 @@ describe("runSystemAgent", () => {
 
     expect(runInteractiveTuiCalls).toBe(0);
     expect(lines.join("\n")).toContain(
-      "OpenClaw needs an interactive TTY. Use --message for one command.",
+      "Nova needs an interactive TTY. Use --message for one command.",
     );
   });
 });

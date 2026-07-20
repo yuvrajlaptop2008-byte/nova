@@ -14,7 +14,7 @@ import {
 export { normalizeAgentId };
 export { splitShellArgs } from "./openclaw-runtime-io.js";
 
-// Shared OpenClaw config helpers used by memory host, QMD, and agent context code.
+// Shared Nova config helpers used by memory host, QMD, and agent context code.
 
 /** Chat shape used by memory send-policy matching. */
 type ChatType = "direct" | "group" | "channel";
@@ -147,7 +147,7 @@ type AgentConfig = {
   contextLimits?: AgentContextLimitsConfig;
 };
 
-/** Narrow OpenClaw config shape consumed by memory host utilities. */
+/** Narrow Nova config shape consumed by memory host utilities. */
 export type OpenClawConfig = {
   agents?: {
     defaults?: {
@@ -214,7 +214,7 @@ function normalizeHomeValue(value: string | undefined): string | undefined {
   return trimmed;
 }
 
-/** Resolve the underlying OS home before applying OpenClaw-specific overrides. */
+/** Resolve the underlying OS home before applying Nova-specific overrides. */
 function resolveRawOsHomeDir(env: NodeJS.ProcessEnv, homedir: () => string): string | undefined {
   return (
     normalizeHomeValue(env.HOME) ??

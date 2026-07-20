@@ -37,7 +37,7 @@ const teamsMeetingsConfigSchema = {
   uiHints: {
     defaultMode: {
       label: "Default Mode",
-      help: "Agent consults OpenClaw, bidi uses direct realtime voice, and transcribe observes only.",
+      help: "Agent consults Nova, bidi uses direct realtime voice, and transcribe observes only.",
     },
     "chrome.browserProfile": { label: "Chrome Profile", advanced: true },
     "chrome.guestName": { label: "Guest Name" },
@@ -387,7 +387,7 @@ export default definePluginEntry({
         name: "teams_meetings",
         label: "Microsoft Teams meetings",
         description:
-          "Join and manage Microsoft Teams meeting browser guests. Guest admission, tenant sign-in, and media permissions may require manual action in the OpenClaw Chrome profile.",
+          "Join and manage Microsoft Teams meeting browser guests. Guest admission, tenant sign-in, and media permissions may require manual action in the Nova Chrome profile.",
         parameters: TeamsMeetingsToolSchema,
         async execute(_toolCallId, params) {
           const raw = asRecord(params);

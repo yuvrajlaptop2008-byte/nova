@@ -110,7 +110,7 @@ export function buildCodexUserMcpServersThreadConfigPatch(
   return { mcp_servers };
 }
 
-/** Async runtime projection that resolves OpenClaw-managed MCP bearer tokens. */
+/** Async runtime projection that resolves Nova-managed MCP bearer tokens. */
 export async function buildCodexUserMcpServersThreadConfigPatchForRuntime(
   cfg: OpenClawConfig | undefined,
   options?: CodexUserMcpServersProjectionOptions,

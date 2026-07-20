@@ -1466,7 +1466,7 @@ describe("runMessageAction media behavior", () => {
       },
     );
 
-    it("allows media paths under preferred OpenClaw tmp root", async () => {
+    it("allows media paths under preferred Nova tmp root", async () => {
       const tmpRoot = resolvePreferredOpenClawTmpDir();
       await fs.mkdir(tmpRoot, { recursive: true });
       const sandboxDir = await fs.mkdtemp(path.join(os.tmpdir(), "msg-sandbox-"));
@@ -1490,7 +1490,7 @@ describe("runMessageAction media behavior", () => {
           throw new Error("expected send result");
         }
         expect(result.sendResult?.mediaUrl).toBe(path.resolve(tmpFile));
-        const hostTmpOutsideOpenClaw = path.join(os.tmpdir(), "outside-openclaw", "test-media.png");
+        const hostTmpOutsideNova = path.join(os.tmpdir(), "outside-openclaw", "test-media.png");
         await expect(
           runMessageAction({
             cfg: workspaceConfig,
@@ -1498,7 +1498,7 @@ describe("runMessageAction media behavior", () => {
             params: {
               channel: "workspace",
               target: "12345678",
-              media: hostTmpOutsideOpenClaw,
+              media: hostTmpOutsideNova,
               message: "",
             },
             sandboxRoot: sandboxDir,

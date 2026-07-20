@@ -1,4 +1,4 @@
-// Copilot BYOK transport proxy keeps OpenClaw in charge of outbound network policy.
+// Copilot BYOK transport proxy keeps Nova in charge of outbound network policy.
 import { randomBytes } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { Readable } from "node:stream";

@@ -218,7 +218,7 @@ function createPluginModuleLoader(params: {
   createLoader?: PluginModuleLoaderFactory;
 }): PluginModuleLoader {
   // A declined native require can leave an ESM dependency in flight. The
-  // fallback must transform both the entry and OpenClaw SDK dependencies.
+  // fallback must transform both the entry and Nova SDK dependencies.
   const getLoadWithSourceTransform = createLazySourceTransformLoader({
     ...params,
   });

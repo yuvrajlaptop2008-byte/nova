@@ -92,7 +92,7 @@ export function createQaChannelGatewayConfig(params: {
         enabled: true,
         baseUrl: params.baseUrl,
         botUserId: "openclaw",
-        botDisplayName: "OpenClaw QA",
+        botDisplayName: "Nova QA",
         allowFrom: senderAllowlist ? [...senderAllowlist] : ["*"],
         ...(senderAllowlist
           ? {

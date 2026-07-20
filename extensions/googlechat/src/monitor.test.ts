@@ -419,7 +419,7 @@ describe("googlechat monitor inbound space classification", () => {
     expect(apiMocks.sendGoogleChatMessage).toHaveBeenCalledWith({
       account,
       space: "spaces/CLASSIFY",
-      text: "_OpenClaw is typing..._",
+      text: "_Nova is typing..._",
       thread: expectedThread,
     });
   });
@@ -559,7 +559,7 @@ describe("googlechat monitor direct messages", () => {
     expect(apiMocks.sendGoogleChatMessage).toHaveBeenCalledWith({
       account,
       space: "spaces/DM",
-      text: "_OpenClaw is typing..._",
+      text: "_Nova is typing..._",
       thread: undefined,
     });
     expect(runTurn).toHaveBeenCalledOnce();
@@ -644,7 +644,7 @@ describe("googlechat monitor direct messages", () => {
     expect(apiMocks.sendGoogleChatMessage).toHaveBeenCalledWith({
       account,
       space: "spaces/DM",
-      text: "_OpenClaw is typing..._",
+      text: "_Nova is typing..._",
       thread: undefined,
     });
     expect(runTurn).toHaveBeenCalledOnce();

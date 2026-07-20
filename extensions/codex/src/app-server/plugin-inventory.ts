@@ -308,7 +308,7 @@ async function listCodexPluginMetadata(
   queryKind: CodexPluginMetadataQueryKind,
   requestParams: v2.PluginListParams,
 ): Promise<v2.PluginListResponse> {
-  // Workspace-directory plugins are activated OUTSIDE OpenClaw, so a cached
+  // Workspace-directory plugins are activated OUTSIDE Nova, so a cached
   // miss has no invalidation signal; keep those queries live so external
   // activation is visible on the next turn (bounded by the build deadline).
   if (!params.metadataCache || !params.appCacheKey || queryKind === "workspace-directory") {

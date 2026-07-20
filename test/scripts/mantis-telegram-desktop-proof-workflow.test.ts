@@ -184,7 +184,7 @@ describe("Mantis Telegram Desktop proof workflow", () => {
     expect(proofScript).toContain("throw error;");
   });
 
-  it("uses the OpenClaw Mantis mention as the comment trigger", () => {
+  it("uses the Nova Mantis mention as the comment trigger", () => {
     const workflow = readFileSync(WORKFLOW, "utf8");
     const liveWorkflow = readFileSync(LIVE_WORKFLOW, "utf8");
     expect(workflow).toContain("@openclaw-mantis");

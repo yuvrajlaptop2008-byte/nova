@@ -28,7 +28,7 @@ const WORKER_RESULT_REF_PREFIX = "refs/openclaw/worker-results";
 const WORKER_RESULT_CANDIDATE_REF_PREFIX = "refs/openclaw/worker-result-candidates";
 const WORKER_RESULT_CLEANUP_REF_PREFIX = "refs/openclaw/worker-result-cleanup";
 const WORKER_RESULT_CLAIM_ID_PATTERN = /^[A-Za-z0-9-]+$/u;
-const STAGED_RESULT_MESSAGE = "OpenClaw worker workspace result";
+const STAGED_RESULT_MESSAGE = "Nova worker workspace result";
 const STAGED_RESULT_METADATA_LIMIT = 128 * 1024 * 1024 + 4_096;
 // Git documents the platform null device as the per-command way to disable
 // hooks. An unowned path under a shared temp dir could be populated by another user.
@@ -311,7 +311,7 @@ async function stageWorkerWorkspaceResult(params: {
   }
   chunks.push(
     Buffer.from(
-      `commit ${stagedResultRef}\nauthor OpenClaw <openclaw@localhost> 0 +0000\ncommitter OpenClaw <openclaw@localhost> 0 +0000\ndata ${message.byteLength}\n`,
+      `commit ${stagedResultRef}\nauthor Nova <openclaw@localhost> 0 +0000\ncommitter Nova <openclaw@localhost> 0 +0000\ndata ${message.byteLength}\n`,
     ),
     message,
     Buffer.from("\ndeleteall\n"),

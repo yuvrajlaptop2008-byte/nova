@@ -126,8 +126,8 @@ export class ZoomMeetingsRuntime {
         speech: {
           audioBridgeUnavailable: "Realtime speech requires an active Chrome audio bridge.",
           browserUnverified: "Zoom browser state has not been verified yet.",
-          manualActionFallback: "Resolve the Zoom browser prompt before asking OpenClaw to speak.",
-          microphoneMuted: "Turn on the OpenClaw Zoom microphone before asking OpenClaw to speak.",
+          manualActionFallback: "Resolve the Zoom browser prompt before asking Nova to speak.",
+          microphoneMuted: "Turn on the Nova Zoom microphone before asking Nova to speak.",
           microphoneMutedReason: "zoom-microphone-muted",
           notInCall: "Zoom has not reported that the browser guest is in the call.",
           notInCallReason: "not-in-call",

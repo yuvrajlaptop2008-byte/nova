@@ -953,7 +953,7 @@ describe("openai transport stream", () => {
     }
   });
 
-  it("enforces the code mode responses tool surface before requests leave OpenClaw", () => {
+  it("enforces the code mode responses tool surface before requests leave Nova", () => {
     const payload = {
       tools: [
         { type: "function", name: "exec" },
@@ -1025,7 +1025,7 @@ describe("openai transport stream", () => {
     ).toThrow(/Code mode payload tool surface violation/);
   });
 
-  it("adds OpenClaw attribution to native OpenAI transport headers and protects it from provider overrides", () => {
+  it("adds Nova attribution to native OpenAI transport headers and protects it from provider overrides", () => {
     vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
     const headers = testing.buildOpenAIClientHeaders(
       makeResponsesModel({
@@ -1054,7 +1054,7 @@ describe("openai transport stream", () => {
     });
   });
 
-  it("adds OpenClaw attribution to native OpenAI Codex transport headers", () => {
+  it("adds Nova attribution to native OpenAI Codex transport headers", () => {
     vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
     const headers = testing.buildOpenAIClientHeaders(
       makeResponsesModel({

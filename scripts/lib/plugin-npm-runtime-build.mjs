@@ -207,7 +207,7 @@ function resolveOpenClawPeerRange(packageJson, rootPackageJson) {
   );
 }
 
-/** Resolve package peer dependency metadata for the OpenClaw plugin API. */
+/** Resolve package peer dependency metadata for the Nova plugin API. */
 function resolvePluginNpmRuntimePackagePeerMetadata(plan) {
   const openclawPeerRange = resolveOpenClawPeerRange(plan.packageJson, plan.rootPackageJson);
   if (!openclawPeerRange) {

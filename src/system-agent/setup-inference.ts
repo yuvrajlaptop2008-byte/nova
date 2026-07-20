@@ -352,7 +352,7 @@ function invalidSetupConfigError(snapshot: {
 }): string {
   const issue = snapshot.issues?.[0];
   const detail = issue ? ` (${issue.path ? `${issue.path}: ` : ""}${issue.message})` : "";
-  return `OpenClaw config ${snapshot.path} is invalid${detail}. Fix it before running setup.`;
+  return `Nova config ${snapshot.path} is invalid${detail}. Fix it before running setup.`;
 }
 
 function resolveCandidatePresentation(
@@ -600,7 +600,7 @@ type SetupInferenceTestPlan = {
   model: string;
   modelRef: string;
   config: OpenClawConfig;
-  /** Execution identity used by the real OpenClaw turn. */
+  /** Execution identity used by the real Nova turn. */
   agentId?: string;
   /** Default-agent owner whose model/runtime config is being selected. */
   routeAgentId?: string;
@@ -953,7 +953,7 @@ function findSelectedProviderConfigKey(
 
 /**
  * Provider auth hooks are untrusted setup input. Carry only the selected
- * inference route's config into the probe; OpenClaw owns every other setup
+ * inference route's config into the probe; Nova owns every other setup
  * surface after intelligence exists.
  */
 function projectManualInferenceConfig(params: {
@@ -1836,7 +1836,7 @@ async function activateSetupInferenceUnredacted(
       sourceCfg,
       stagedRoute.modelLabel,
     );
-    // OpenClaw executes through the reserved agent id but reuses the default
+    // Nova executes through the reserved agent id but reuses the default
     // route's agent directory. Only a submitted key stays in the isolated store.
     if (testPlan.runner === "embedded" && stagedRoute.runner === "embedded") {
       testPlan = {
@@ -1941,7 +1941,7 @@ async function activateSetupInferenceUnredacted(
         ok: false,
         status: "unknown",
         error:
-          "Inference succeeded, but its runtime did not report an owner that OpenClaw can safely reuse. No model or credential route was saved.",
+          "Inference succeeded, but its runtime did not report an owner that Nova can safely reuse. No model or credential route was saved.",
       };
     }
     if (
@@ -2327,7 +2327,7 @@ async function activateSetupInferenceUnredacted(
       try {
         await appendSystemAgentAuditEntry({
           operation: "openclaw.setup",
-          summary: "Verified and configured AI access through OpenClaw setup",
+          summary: "Verified and configured AI access through Nova setup",
           configPath: after?.path ?? snapshot.path,
           configHashBefore: snapshot.hash ?? null,
           configHashAfter: after?.hash ?? null,
@@ -2336,7 +2336,7 @@ async function activateSetupInferenceUnredacted(
       } catch (error) {
         // Inference is already verified and its route may already be durable.
         // Surface audit failure as a warning instead of misreporting setup failure.
-        const warning = `Inference setup completed, but OpenClaw could not record its audit entry: ${formatErrorMessage(error)}`;
+        const warning = `Inference setup completed, but Nova could not record its audit entry: ${formatErrorMessage(error)}`;
         params.runtime.error?.(warning);
         lines = [...lines, warning];
       }
@@ -2436,7 +2436,7 @@ export async function verifySetupInference(
     return {
       ok: false,
       status: "unavailable",
-      error: "No OpenClaw config exists. Run `openclaw onboard` first.",
+      error: "No Nova config exists. Run `openclaw onboard` first.",
     };
   }
   if (!snapshot.valid) {
@@ -2495,7 +2495,7 @@ export async function verifySetupInference(
       ok: false,
       status: "unknown",
       error:
-        "The successful inference run did not report an exact execution binding. Retry setup before starting OpenClaw.",
+        "The successful inference run did not report an exact execution binding. Retry setup before starting Nova.",
     };
   }
   return { ...verification, binding: verifiedBinding };
@@ -2834,7 +2834,7 @@ export async function completeSetupInference(params: {
     (await import("../config/config.js")).readConfigFileSnapshot;
   const snapshot = await readSnapshot();
   if (!snapshot.exists) {
-    return { ok: false, status: "unavailable", error: "No OpenClaw config exists." };
+    return { ok: false, status: "unavailable", error: "No Nova config exists." };
   }
   if (!snapshot.valid) {
     return { ok: false, status: "format", error: invalidSetupConfigError(snapshot) };
@@ -3467,7 +3467,7 @@ async function runSetupInferenceTest(params: {
         ok: false,
         status: "unknown",
         error:
-          "Inference succeeded, but its runtime did not report an owner that OpenClaw can safely reuse.",
+          "Inference succeeded, but its runtime did not report an owner that Nova can safely reuse.",
       };
     }
     return {

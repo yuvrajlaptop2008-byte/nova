@@ -116,7 +116,7 @@ const mockBuildActiveMusicGenerationTaskPromptContextForSession = vi.mocked(
 );
 
 function wrappedPluginSystemContext(text: string): string {
-  return `---\n\nOpenClaw plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
+  return `---\n\nNova plugin-injected system context. This block is not workspace file content.\n\n${text}\n\n---`;
 }
 
 function createTestMcpLoopbackServerConfig(port: number) {
@@ -235,7 +235,7 @@ function setCliBackendForPrepareTest(
 }
 
 function createSessionFile() {
-  // Prepare tests use canonical OpenClaw session paths because several cases
+  // Prepare tests use canonical Nova session paths because several cases
   // assert that external or stale transcript paths are ignored.
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-cli-prepare-"));
   sessionFileEnvSnapshot ??= captureEnv(["OPENCLAW_STATE_DIR"]);
@@ -1760,7 +1760,7 @@ describe("prepareCliRunContext", () => {
     });
     try {
       // Room resumes carry compact event text into the CLI prompt but keep the
-      // richer room context in OpenClaw history for reseed and audits.
+      // richer room context in Nova history for reseed and audits.
       const context = await prepareCliRunContext({
         sessionId: "session-test",
         sessionKey: "agent:main:test",
@@ -1768,7 +1768,7 @@ describe("prepareCliRunContext", () => {
         trigger: "user",
         sessionFile,
         workspaceDir: dir,
-        prompt: "[OpenClaw room event]",
+        prompt: "[Nova room event]",
         currentInboundEventKind: "room_event",
         currentInboundContext: {
           text: "Room context:\nAlice: lunch?\n\nCurrent event:\nBob: yes",
@@ -1787,7 +1787,7 @@ describe("prepareCliRunContext", () => {
       });
 
       expect(context.reusableCliSession).toEqual({ mode: "reuse", sessionId: "cli-session" });
-      expect(context.params.prompt).toBe("Current event:\nBob: yes\n\n[OpenClaw room event]");
+      expect(context.params.prompt).toBe("Current event:\nBob: yes\n\n[Nova room event]");
       expect(context.openClawHistoryPrompt).toContain("Room context:\nAlice: lunch?");
       expect(context.openClawHistoryPrompt).toContain("Current event:\nBob: yes");
     } finally {
@@ -1970,9 +1970,7 @@ describe("prepareCliRunContext", () => {
       });
 
       expect(context.params.prompt).toBe("latest ask");
-      expect(context.systemPrompt).toContain(
-        "You are a personal assistant running inside OpenClaw.",
-      );
+      expect(context.systemPrompt).toContain("You are a personal assistant running inside Nova.");
       expect(context.systemPrompt).toContain("Current model identity: test-cli/test-model.");
       expect(context.systemPrompt).not.toContain("hook exploded");
       expect(hookRunner.runBeforePromptBuild).toHaveBeenCalledOnce();
@@ -2093,7 +2091,7 @@ describe("prepareCliRunContext", () => {
           hostRequirements: {
             "agent-run": {
               requiredCapabilities: ["assemble-before-prompt"],
-              unsupportedMessage: "Use the native Codex or OpenClaw embedded runtime.",
+              unsupportedMessage: "Use the native Codex or Nova embedded runtime.",
             },
           },
         },
@@ -2418,7 +2416,7 @@ describe("prepareCliRunContext", () => {
       });
       expect(context.openClawHistoryPrompt).toBeUndefined();
       expect(context.params.prompt).toContain(
-        "OpenClaw resumed this CLI session after prompt content changed.",
+        "Nova resumed this CLI session after prompt content changed.",
       );
       expect(context.params.prompt).toContain("changed=system-prompt");
       expect(context.params.prompt).toContain("latest ask");
@@ -2454,7 +2452,7 @@ describe("prepareCliRunContext", () => {
         invalidatedReason: "system-prompt",
       });
       expect(context.params.prompt).not.toContain(
-        "OpenClaw resumed this CLI session after prompt content changed.",
+        "Nova resumed this CLI session after prompt content changed.",
       );
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -3818,7 +3816,7 @@ describe("prepareCliRunContext", () => {
       });
 
       // Candidate is invalidated (no native --resume) yet reseed still fires:
-      // prepare hands the prior OpenClaw conversation forward as history.
+      // prepare hands the prior Nova conversation forward as history.
       expect(context.reusableCliSession).toEqual({
         mode: "invalidate",
         invalidatedReason: "missing-transcript",
@@ -4677,7 +4675,7 @@ describe("prepareCliRunContext", () => {
 
       expect(context.openClawHistoryPrompt).toBeDefined();
       expect(context.openClawHistoryPrompt).toContain(summaryMarker);
-      expect(context.openClawHistoryPrompt).not.toContain("OpenClaw reseed history truncated");
+      expect(context.openClawHistoryPrompt).not.toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -4732,7 +4730,7 @@ describe("prepareCliRunContext", () => {
 
       expect(context.openClawHistoryPrompt).toBeDefined();
       expect(context.openClawHistoryPrompt).toContain(summaryMarker);
-      expect(context.openClawHistoryPrompt).not.toContain("OpenClaw reseed history truncated");
+      expect(context.openClawHistoryPrompt).not.toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -4765,7 +4763,7 @@ describe("prepareCliRunContext", () => {
       });
 
       expect(context.openClawHistoryPrompt).toBeDefined();
-      expect(context.openClawHistoryPrompt).toContain("OpenClaw reseed history truncated");
+      expect(context.openClawHistoryPrompt).toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -4843,7 +4841,7 @@ describe("prepareCliRunContext", () => {
       expect(context.openClawHistoryPrompt).toBeDefined();
       expect(context.openClawHistoryPrompt).toContain(recentMarker);
       expect(context.openClawHistoryPrompt).toContain("EARLIEST_USER");
-      expect(context.openClawHistoryPrompt).not.toContain("OpenClaw reseed history truncated");
+      expect(context.openClawHistoryPrompt).not.toContain("Nova reseed history truncated");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

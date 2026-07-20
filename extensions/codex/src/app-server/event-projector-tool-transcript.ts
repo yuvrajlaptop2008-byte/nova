@@ -54,7 +54,7 @@ const ZERO_USAGE: Usage = {
 };
 
 const MISSING_TOOL_RESULT_ERROR =
-  "OpenClaw recorded a native Codex tool.call without a matching tool.result before the turn completed.";
+  "Nova recorded a native Codex tool.call without a matching tool.result before the turn completed.";
 
 export class CodexToolTranscriptProjection {
   private readonly messages: AgentMessage[] = [];

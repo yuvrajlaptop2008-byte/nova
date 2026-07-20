@@ -1,4 +1,4 @@
-// Public OpenClaw SDK entrypoint. Re-export client namespaces, event helpers,
+// Public Nova SDK entrypoint. Re-export client namespaces, event helpers,
 // transport, and stable SDK types from focused modules.
 export {
   Agent,
@@ -7,7 +7,7 @@ export {
   ArtifactsNamespace,
   EnvironmentsNamespace,
   ModelsNamespace,
-  OpenClaw,
+  Nova,
   Run,
   RunsNamespace,
   Session,

@@ -1,7 +1,7 @@
-// Bundled OpenClaw provider index advertises pre-install provider metadata for model picker discovery.
+// Bundled Nova provider index advertises pre-install provider metadata for model picker discovery.
 import type { OpenClawProviderIndex } from "./types.js";
 
-// OpenClaw-owned preview metadata for providers whose plugins may not be
+// Nova-owned preview metadata for providers whose plugins may not be
 // installed yet. Installed plugin manifests remain authoritative; this index is
 // a fallback for installable-provider and pre-install model picker surfaces.
 // Preview catalogs use the shared model catalog type, but intentionally keep to

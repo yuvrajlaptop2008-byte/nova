@@ -86,7 +86,7 @@ const zoomMeetingsNodeHost = createMeetingNodeHost({
     buildProfileArgs: (profile) => ["--args", `--profile-directory=${profile}`],
     openedStatus: "chrome-opened",
     openedNotes: [
-      "Zoom page control is handled by OpenClaw browser automation when using chrome-node.",
+      "Zoom page control is handled by Nova browser automation when using chrome-node.",
     ],
   },
 });

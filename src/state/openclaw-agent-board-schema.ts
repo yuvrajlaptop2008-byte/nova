@@ -7,7 +7,7 @@ function splitBoardSchema(sql: string): { board: string; withoutBoard: string } 
   const start = sql.indexOf(BOARD_SCHEMA_START);
   const end = sql.indexOf(BOARD_SCHEMA_END, start);
   if (start === -1 || end === -1) {
-    throw new Error("OpenClaw agent board schema markers are missing from the canonical schema.");
+    throw new Error("Nova agent board schema markers are missing from the canonical schema.");
   }
   return {
     board: sql.slice(start, end),

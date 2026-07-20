@@ -21,7 +21,7 @@ afterEach(() => {
 
 function makeTtsStyleVoiceFile(): string {
   // Mirrors cron auto-TTS: speech-core writes the voice file under the preferred
-  // OpenClaw temp root, which is outside the QQ Bot media storage tree.
+  // Nova temp root, which is outside the QQ Bot media storage tree.
   const tmpRoot = resolvePreferredOpenClawTmpDir();
   const ttsDir = makeTrackedDir(tmpRoot, "tts-");
   const voicePath = path.join(ttsDir, "voice-123.mp3");
@@ -37,7 +37,7 @@ function makeTrackedDir(parentDir: string, prefix: string): string {
 }
 
 describe("resolveTrustedOutboundMediaPath", () => {
-  it("trusts framework media under OpenClaw's hardened temp root", () => {
+  it("trusts framework media under Nova's hardened temp root", () => {
     const voicePath = makeTtsStyleVoiceFile();
     expect(resolveTrustedOutboundMediaPath(voicePath)).toBe(fs.realpathSync(voicePath));
   });

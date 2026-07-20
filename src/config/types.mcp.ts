@@ -2,7 +2,7 @@
 export type McpCodexToolApprovalMode = "auto" | "prompt" | "approve";
 
 export type McpServerCodexConfig = {
-  /** OpenClaw agent ids that should receive this server in Codex app-server threads. */
+  /** Nova agent ids that should receive this server in Codex app-server threads. */
   agents?: string[];
   /** Codex MCP tool approval mode emitted as default_tools_approval_mode. */
   defaultToolsApprovalMode?: McpCodexToolApprovalMode;
@@ -46,7 +46,7 @@ export type McpServerConfig = {
   requestTimeoutMs?: number;
   /** Whether this server can safely handle concurrent tool calls. */
   supportsParallelToolCalls?: boolean;
-  /** HTTP OAuth mode. Tokens are stored in OpenClaw state, not in config. */
+  /** HTTP OAuth mode. Tokens are stored in Nova state, not in config. */
   auth?: "oauth";
   /** Optional OAuth client metadata overrides for HTTP MCP servers. */
   oauth?: {
@@ -68,7 +68,7 @@ export type McpServerConfig = {
   clientKey?: string;
   /** Alias for clientKey. */
   client_key?: string;
-  /** Optional per-server OpenClaw MCP tool selection. */
+  /** Optional per-server Nova MCP tool selection. */
   toolFilter?: McpServerToolFilterConfig;
   /** Codex-specific projection controls for Codex app-server/runtime config. */
   codex?: McpServerCodexConfig;
@@ -76,7 +76,7 @@ export type McpServerConfig = {
 };
 
 export type McpConfig = {
-  /** Named MCP server definitions managed by OpenClaw. */
+  /** Named MCP server definitions managed by Nova. */
   servers?: Record<string, McpServerConfig>;
   /** Opt-in MCP Apps rendering and app-to-server bridge. */
   apps?: {

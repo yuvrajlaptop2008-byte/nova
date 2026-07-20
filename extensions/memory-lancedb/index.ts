@@ -1,5 +1,5 @@
 /**
- * OpenClaw Memory (LanceDB) Plugin
+ * Nova Memory (LanceDB) Plugin
  *
  * Long-term memory with vector search for AI conversations.
  * Uses LanceDB for storage and OpenAI for embeddings.
@@ -783,7 +783,7 @@ const LEADING_CURRENT_MESSAGE_ID_SENDER_RE = /^#\d+\s+[^\n:]{1,100}:\s*/;
 const UNTRUSTED_CONTEXT_HEADER_RE = /^Untrusted context \(metadata/m;
 
 /**
- * Matches JSON blobs that look like OpenClaw transport envelope metadata.
+ * Matches JSON blobs that look like Nova transport envelope metadata.
  * Allows `{` on its own line so pretty-printed JSON (the `JSON.stringify(..., null, 2)`
  * output produced by `formatUntrustedJsonBlock` in core) is also caught when it
  * leaks outside its ```json fence. Key list mirrors envelope identifiers used
@@ -898,7 +898,7 @@ function matchKnownChannelMarkerFreeEnvelopePrefix(
 }
 
 /**
- * Returns true if `text` looks like it contains OpenClaw-injected envelope or
+ * Returns true if `text` looks like it contains Nova-injected envelope or
  * transport metadata that should never be persisted as a long-term memory.
  */
 export function looksLikeEnvelopeSludge(text: string): boolean {
@@ -1186,7 +1186,7 @@ function stripLeadingChronologicalContextBlocks(text: string): string {
 }
 
 /**
- * Strips OpenClaw-injected envelope metadata from a user message so that only
+ * Strips Nova-injected envelope metadata from a user message so that only
  * the user's actual intent text remains. Returns empty string if nothing
  * meaningful survives.
  */

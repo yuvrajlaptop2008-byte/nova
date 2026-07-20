@@ -43,7 +43,7 @@ describe("prepareCliPromptImagePayload prompt references", () => {
     expect(sanitizeImageBlocksSpy).not.toHaveBeenCalled();
   });
 
-  it("does not reload OpenClaw CLI image cache paths from prior prompt text", async () => {
+  it("does not reload Nova CLI image cache paths from prior prompt text", async () => {
     const loadImageFromRefSpy = vi.spyOn(promptImageUtils, "loadImageFromRef");
     const sanitizeImageBlocksSpy = vi.spyOn(toolImages, "sanitizeImageBlocks");
 

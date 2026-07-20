@@ -23,7 +23,7 @@ describe("android screenshots script", () => {
     );
     expect(result.stdout).toContain(".artifacts/android-screenshots/latest");
     expect(result.stdout).toContain("Android screenshot size: 1440x2560");
-    expect(result.stdout).toContain("Screenshot AVD: OpenClaw_Screenshots_API36");
+    expect(result.stdout).toContain("Screenshot AVD: Nova_Screenshots_API36");
     expect(result.stdout).toContain("Screenshot device profile: pixel_2");
     expect(result.stdout).toContain("Scenes: home chat voice settings gateway");
     expect(result.stdout).not.toContain("connect chat voice screen settings");
@@ -47,11 +47,9 @@ describe("android screenshots script", () => {
     expect(script).toContain("chat) printf '%s\\n' \"Draft a short status update for the team.\"");
     expect(script).not.toContain("chat) printf '%s\\n' \"Ready when you are\"");
     expect(fixture).toContain('"Draft a short status update for the team."');
-    expect(script).toContain("settings) printf '%s\\n' \"OpenClaw mobile\"");
+    expect(script).toContain("settings) printf '%s\\n' \"Nova mobile\"");
     expect(script).not.toContain("settings) printf '%s\\n' \"Settings\"");
-    expect(script).toContain(
-      "gateway) printf '%s\\n' \"Connection between this phone and OpenClaw.\"",
-    );
+    expect(script).toContain("gateway) printf '%s\\n' \"Connection between this phone and Nova.\"");
     expect(script).not.toContain("gateway) printf '%s\\n' \"Add Gateway\"");
   });
 
@@ -84,7 +82,7 @@ describe("android screenshots script", () => {
   it("provisions a retained no-cutout screenshot emulator by default", () => {
     const script = readFileSync(SCRIPT, "utf8");
 
-    expect(script).toContain('DEFAULT_SCREENSHOT_AVD="OpenClaw_Screenshots_API36"');
+    expect(script).toContain('DEFAULT_SCREENSHOT_AVD="Nova_Screenshots_API36"');
     expect(script).toContain('DEFAULT_SCREENSHOT_DEVICE_PROFILE="pixel_2"');
     expect(script).toContain('ensure_screenshot_avd "$avd"');
     expect(script).toContain('--device "$SCREENSHOT_DEVICE_PROFILE"');

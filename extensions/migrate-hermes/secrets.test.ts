@@ -286,7 +286,7 @@ describe("Hermes migration secret items", () => {
     );
   });
 
-  it("imports a configured provider key_env as matching OpenClaw provider auth", async () => {
+  it("imports a configured provider key_env as matching Nova provider auth", async () => {
     const root = await makeTempRoot();
     const source = path.join(root, "hermes");
     const workspaceDir = path.join(root, "workspace");

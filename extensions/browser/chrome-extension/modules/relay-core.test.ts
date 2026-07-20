@@ -1,4 +1,4 @@
-// Pure-logic tests for the OpenClaw Chrome extension. Runs under the
+// Pure-logic tests for the Nova Chrome extension. Runs under the
 // extension-browser vitest glob (extensions/browser/**/*.test.ts).
 import { describe, expect, it } from "vitest";
 import {

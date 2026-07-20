@@ -1,4 +1,4 @@
-// Write Cli Startup Metadata script supports OpenClaw repository automation.
+// Write Cli Startup Metadata script supports Nova repository automation.
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";

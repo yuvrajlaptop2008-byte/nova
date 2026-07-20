@@ -65,7 +65,7 @@ function makeMismatchedWrapperRepo() {
   );
   chmodSync(join(canonical, "scripts", "pr"), 0o755);
 
-  git(canonical, ["config", "user.name", "OpenClaw Test"]);
+  git(canonical, ["config", "user.name", "Nova Test"]);
   git(canonical, ["config", "user.email", "test@example.invalid"]);
   git(canonical, ["config", "commit.gpgSign", "false"]);
   git(canonical, ["config", "core.hooksPath", "/dev/null"]);
@@ -76,7 +76,7 @@ function makeMismatchedWrapperRepo() {
   git(canonical, ["worktree", "add", "-b", "feature", linkedPath, "main"]);
 
   const linked = realpathSync(linkedPath);
-  git(linked, ["config", "user.name", "OpenClaw Test"]);
+  git(linked, ["config", "user.name", "Nova Test"]);
   git(linked, ["config", "user.email", "test@example.invalid"]);
   git(linked, ["config", "commit.gpgSign", "false"]);
   expect(git(linked, ["rev-parse", "refs/remotes/origin/main"]).stdout.trim()).toBe(
@@ -293,7 +293,7 @@ describe("scripts/pr wrappers", () => {
     const git = (cwd: string, args: string[]) =>
       spawnSync("git", args, { cwd, encoding: "utf8", stdio: "pipe" });
     expect(git(repo, ["init", "-b", "main"]).status).toBe(0);
-    expect(git(repo, ["config", "user.name", "OpenClaw Test"]).status).toBe(0);
+    expect(git(repo, ["config", "user.name", "Nova Test"]).status).toBe(0);
     expect(git(repo, ["config", "user.email", "test@example.invalid"]).status).toBe(0);
     expect(git(repo, ["add", "scripts"]).status).toBe(0);
     expect(git(repo, ["commit", "-m", "test: canonical wrapper"]).status).toBe(0);
@@ -352,7 +352,7 @@ describe("scripts/pr wrappers", () => {
     const git = (cwd: string, args: string[]) =>
       spawnSync("git", args, { cwd, encoding: "utf8", stdio: "pipe" });
     expect(git(repo, ["init", "-b", "main"]).status).toBe(0);
-    expect(git(repo, ["config", "user.name", "OpenClaw Test"]).status).toBe(0);
+    expect(git(repo, ["config", "user.name", "Nova Test"]).status).toBe(0);
     expect(git(repo, ["config", "user.email", "test@example.invalid"]).status).toBe(0);
     expect(git(repo, ["add", "scripts"]).status).toBe(0);
     expect(git(repo, ["commit", "-m", "test: canonical wrapper"]).status).toBe(0);

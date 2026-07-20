@@ -463,7 +463,7 @@ function resolveAudioProviderPrompt(params: {
     return params.prompt;
   }
   // OpenAI-compatible transcription prompts guide style/context and should
-  // match the audio language; omit OpenClaw's English default for non-English
+  // match the audio language; omit Nova's English default for non-English
   // language hints unless the user supplied an explicit prompt.
   return undefined;
 }

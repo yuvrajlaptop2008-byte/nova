@@ -167,7 +167,7 @@ async function buildOpenCodeSecretCandidates(
       secretField: "key",
     });
   }
-  // OpenClaw's Copilot token profile cannot preserve OpenCode enterprise routing yet.
+  // Nova's Copilot token profile cannot preserve OpenCode enterprise routing yet.
   if (readString(githubCopilot.refresh) && !githubCopilotEnterpriseUrl) {
     candidates.push({
       id: "secret:github-copilot:opencode-auth-json",

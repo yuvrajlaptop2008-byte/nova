@@ -1,8 +1,8 @@
-/** ACP runtime error exports wired to OpenClaw secret redaction. */
+/** ACP runtime error exports wired to Nova secret redaction. */
 import { configureAcpErrorRedactor } from "@openclaw/acp-core";
 import { redactSensitiveText } from "../../logging/redact.js";
 
-// Ensure ACP-core runtime errors use OpenClaw's secret redaction before re-export.
+// Ensure ACP-core runtime errors use Nova's secret redaction before re-export.
 configureAcpErrorRedactor(redactSensitiveText);
 
 export * from "@openclaw/acp-core/runtime/errors";

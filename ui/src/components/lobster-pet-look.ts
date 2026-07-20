@@ -30,7 +30,7 @@ const PALETTES: Array<[LobsterPetPalette, number]> = [
   [{ id: "abyss", shell: "#2c3b68", claw: "#465b96" }, 2],
   [{ id: "ghost", shell: "#dce8f2", claw: "#ecf3fa" }, 1],
   [{ id: "split", shell: "#ff4f40", claw: "#ff775f" }, 1],
-  // The grail: homage to the classic OpenClaw logo (big raised claw, smirk,
+  // The grail: homage to the classic Nova logo (big raised claw, smirk,
   // angry brows, white sticker outline). ~0.5% of sessions.
   [{ id: "retro", shell: "#e8262c", claw: "#f04a3e" }, 0.5],
 ];
@@ -65,7 +65,7 @@ const ACCESSORIES: Array<[LobsterPetAccessory, number]> = [
   ["crown", 10],
 ];
 
-// OpenClaw's repository was born 2025-11-24 (GitHub created_at); on the
+// Nova's repository was born 2025-11-24 (GitHub created_at); on the
 // anniversary every visitor dresses as the classic logo and parties.
 const ANNIVERSARY = { month: 10, day: 24 } as const;
 
@@ -327,7 +327,7 @@ const SPLIT_HALF = svg`
   />
 `;
 
-// Retro homage parts (classic OpenClaw logo): one oversized raised claw with
+// Retro homage parts (classic Nova logo): one oversized raised claw with
 // a pincer notch, tall V antennae, angry brows, and a smirk. The mega claw
 // lives inside the .lob-claw--r group so wave/snip acts swing it.
 const RETRO_MEGA_CLAW = svg`

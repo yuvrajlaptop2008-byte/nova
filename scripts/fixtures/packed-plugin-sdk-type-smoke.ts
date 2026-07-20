@@ -1,4 +1,4 @@
-// Packed Plugin Sdk Type Smoke script supports OpenClaw repository automation.
+// Packed Plugin Sdk Type Smoke script supports Nova repository automation.
 type PublicPluginSdkModules = [
   typeof import("openclaw/plugin-sdk/core"),
   typeof import("openclaw/plugin-sdk/channel-entry-contract"),

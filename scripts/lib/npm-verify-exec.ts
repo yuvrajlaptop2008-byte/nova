@@ -1,4 +1,4 @@
-// Npm Verify Exec script supports OpenClaw repository automation.
+// Npm Verify Exec script supports Nova repository automation.
 import { execFileSync, type ExecFileSyncOptionsWithStringEncoding } from "node:child_process";
 
 export type NpmVerifyCommandInvocation = {

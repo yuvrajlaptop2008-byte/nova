@@ -1,9 +1,9 @@
-// Pure helpers for the OpenClaw extension: pairing-string parsing, reconnect
+// Pure helpers for the Nova extension: pairing-string parsing, reconnect
 // backoff, and Chrome tab-group color mapping. No chrome.* usage here so the
 // repo's vitest suite can exercise the logic directly.
 
 /** Tab group shown to the user; membership == what the agent may touch. */
-export const OPENCLAW_TAB_GROUP_TITLE = "OpenClaw";
+export const OPENCLAW_TAB_GROUP_TITLE = "Nova";
 const EXTENSION_RELAY_PROTOCOL = "openclaw-extension-relay";
 const EXTENSION_RELAY_TOKEN_PROTOCOL_PREFIX = "openclaw-extension-token.";
 

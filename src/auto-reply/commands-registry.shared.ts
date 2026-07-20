@@ -318,7 +318,7 @@ export function buildBuiltinChatCommands(
     }),
     defineChatCommand({
       key: "openclaw",
-      description: "Run the OpenClaw setup and repair helper.",
+      description: "Run the Nova setup and repair helper.",
       textAlias: "/openclaw",
       acceptsArgs: true,
       scope: "text",
@@ -629,7 +629,7 @@ export function buildBuiltinChatCommands(
     defineChatCommand({
       key: "mcp",
       nativeName: "mcp",
-      description: "Show or set OpenClaw MCP servers.",
+      description: "Show or set Nova MCP servers.",
       textAlias: "/mcp",
       category: "management",
       tier: "power",
@@ -735,7 +735,7 @@ export function buildBuiltinChatCommands(
     defineChatCommand({
       key: "restart",
       nativeName: "restart",
-      description: "Restart OpenClaw.",
+      description: "Restart Nova.",
       textAlias: "/restart",
       category: "tools",
       tier: "power",

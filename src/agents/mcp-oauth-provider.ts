@@ -1,4 +1,4 @@
-/** MCP SDK OAuth provider backed by canonical OpenClaw state. */
+/** MCP SDK OAuth provider backed by canonical Nova state. */
 import { randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 import type { OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
@@ -42,7 +42,7 @@ function buildOAuthClientMetadata(
 ): OAuthClientMetadata {
   const redirectUrl = resolveOAuthRedirectUrl(config, store);
   return {
-    client_name: "OpenClaw MCP",
+    client_name: "Nova MCP",
     redirect_uris: [redirectUrl],
     grant_types: ["authorization_code", "refresh_token"],
     response_types: ["code"],

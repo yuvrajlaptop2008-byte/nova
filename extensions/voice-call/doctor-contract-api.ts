@@ -146,7 +146,7 @@ function describeVoiceCallSchemaMigration(migration: OpenClawStateDatabaseSchema
     case "audit-events-v2":
       return "audit event ledger -> versioned message lifecycle schema";
     case "operator-approvals-system-agent":
-      return "operator approvals -> OpenClaw system changes";
+      return "operator approvals -> Nova system changes";
     case "session-watch-cursor-provenance-v4":
       return "session watch cursors -> provenance column";
     case "strict-tables-v3":

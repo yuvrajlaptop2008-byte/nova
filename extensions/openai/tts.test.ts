@@ -120,7 +120,7 @@ describe("openai tts", () => {
   });
 
   describe("openaiTTS diagnostics", () => {
-    it("adds OpenClaw attribution headers to native OpenAI speech requests", async () => {
+    it("adds Nova attribution headers to native OpenAI speech requests", async () => {
       vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
       const fetchMock = vi.fn(
         async (_url: string | URL, _init?: RequestInit) =>

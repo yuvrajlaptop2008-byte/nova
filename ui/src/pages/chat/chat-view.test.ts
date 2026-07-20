@@ -2286,7 +2286,7 @@ describe("chat voice controls", () => {
   it.each([
     ["connecting", "Connecting voice input..."],
     ["listening", "Listening..."],
-    ["thinking", "Asking OpenClaw..."],
+    ["thinking", "Asking Nova..."],
   ] as const)("renders %s voice activity without visible status copy", (status, label) => {
     const inputLevel = new RealtimeTalkLevelSignal();
     inputLevel.set(0.64);

@@ -288,7 +288,7 @@ export const GOOGLE_MEET_PLATFORM_ADAPTER: MeetingPlatformAdapter<
       category: "browser-control-unavailable",
       reason: "browser-control-unavailable",
       message:
-        "Open the OpenClaw browser profile, finish Google Meet login, admission, or permission prompts, then retry.",
+        "Open the Nova browser profile, finish Google Meet login, admission, or permission prompts, then retry.",
     }),
     buildLeaveScript: meetLeaveScript,
     parseLeaveResult: parseMeetLeaveResult,

@@ -1,4 +1,4 @@
-// Validates the current runtime against OpenClaw's Node engine floor.
+// Validates the current runtime against Nova's Node engine floor.
 import process from "node:process";
 import { expectDefined } from "@openclaw/normalization-core";
 import type { RuntimeEnv } from "../runtime.js";
@@ -82,7 +82,7 @@ function detectRuntime(): RuntimeDetails {
   };
 }
 
-/** Returns whether a detected runtime meets OpenClaw's minimum runtime contract. */
+/** Returns whether a detected runtime meets Nova's minimum runtime contract. */
 function runtimeSatisfies(details: RuntimeDetails): boolean {
   if (details.kind === "node") {
     return isSupportedNodeVersion(details.version);
@@ -90,7 +90,7 @@ function runtimeSatisfies(details: RuntimeDetails): boolean {
   return false;
 }
 
-/** Checks a Node version label against OpenClaw's supported Node version range. */
+/** Checks a Node version label against Nova's supported Node version range. */
 export function isSupportedNodeVersion(version: string | null): boolean {
   const parsed = parseSemver(version);
   if (!parsed) {
@@ -179,7 +179,7 @@ export function assertSupportedRuntime(
       : "openclaw requires Node >=22.22.3 <23, >=24.15.0 <25, or >=25.9.0.";
   const retryHint =
     details.kind === "bun"
-      ? "Run OpenClaw with Node; Bun remains supported for installs and package scripts."
+      ? "Run Nova with Node; Bun remains supported for installs and package scripts."
       : "Upgrade Node and re-run openclaw.";
 
   runtime.error(

@@ -462,7 +462,7 @@ describe("worker turn launcher", () => {
           },
           runLocal,
         ),
-      ).rejects.toThrow(`Cloud worker turns require the OpenClaw runtime, not ${runtimeId}`);
+      ).rejects.toThrow(`Cloud worker turns require the Nova runtime, not ${runtimeId}`);
 
       expect(runLocal).not.toHaveBeenCalled();
       expect(getEnvironment).not.toHaveBeenCalled();

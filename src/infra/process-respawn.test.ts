@@ -96,7 +96,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
-  it("returns supervised when OpenClaw launchd markers are present on macOS (no kickstart)", () => {
+  it("returns supervised when Nova launchd markers are present on macOS (no kickstart)", () => {
     clearSupervisorHints();
     expectLaunchdSupervisedWithoutKickstart({ launchJobLabel: "ai.openclaw.gateway" });
   });
@@ -208,7 +208,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
     clearSupervisorHints();
     setPlatform("win32");
     process.env.OPENCLAW_SUPERVISOR_MODE = "external";
-    process.env.OPENCLAW_WINDOWS_TASK_NAME = "OpenClaw Gateway";
+    process.env.OPENCLAW_WINDOWS_TASK_NAME = "Nova Gateway";
 
     const result = restartGatewayProcessWithFreshPid();
 
@@ -217,7 +217,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
-  it("returns supervised when OpenClaw gateway task markers are set on Windows", () => {
+  it("returns supervised when Nova gateway task markers are set on Windows", () => {
     clearSupervisorHints();
     setPlatform("win32");
     process.env.OPENCLAW_SERVICE_MARKER = "openclaw";
@@ -353,7 +353,7 @@ describe("respawnGatewayProcessForUpdate", () => {
     expect(triggerOpenClawRestartMock).not.toHaveBeenCalled();
   });
 
-  it("rewrites a pnpm-versioned OpenClaw entry before detached update respawn", () => {
+  it("rewrites a pnpm-versioned Nova entry before detached update respawn", () => {
     clearSupervisorHints();
     setPlatform("linux");
     process.execArgv = [];

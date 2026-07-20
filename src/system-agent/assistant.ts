@@ -1,4 +1,4 @@
-// OpenClaw assistant planning converts fuzzy user text into one safe command.
+// Nova assistant planning converts fuzzy user text into one safe command.
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";

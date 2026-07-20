@@ -43,7 +43,7 @@ function normalizeOptionalString(value: unknown): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
-/** Read OpenClaw package.json blocks without trusting caller input shape. */
+/** Read Nova package.json blocks without trusting caller input shape. */
 function readOpenClawBlock(packageJson: unknown) {
   const root = isRecord(packageJson) ? packageJson : undefined;
   const openclaw = isRecord(root?.openclaw) ? root.openclaw : undefined;

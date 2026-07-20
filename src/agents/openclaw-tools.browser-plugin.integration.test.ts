@@ -1,4 +1,4 @@
-// Verifies OpenClaw plugin tools are resolved with browser/runtime context.
+// Verifies Nova plugin tools are resolved with browser/runtime context.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { OpenClawConfig } from "../config/config.js";
 import { resetConfigRuntimeState, setRuntimeConfigSnapshot } from "../config/config.js";
@@ -15,7 +15,7 @@ vi.mock("../plugins/tools.js", () => ({
 }));
 
 function firstResolvePluginToolsParams(): Record<string, unknown> {
-  // Captures the plugin runtime contract passed from OpenClaw tool resolution.
+  // Captures the plugin runtime contract passed from Nova tool resolution.
   const call = hoisted.resolvePluginTools.mock.calls[0];
   if (!call) {
     throw new Error("Expected plugin tool resolution");

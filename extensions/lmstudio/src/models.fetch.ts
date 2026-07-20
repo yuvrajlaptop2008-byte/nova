@@ -169,7 +169,7 @@ export async function fetchLmstudioModels(params: {
   }
 }
 
-/** Discovers LLM models from LM Studio and maps them to OpenClaw model definitions. */
+/** Discovers LLM models from LM Studio and maps them to Nova model definitions. */
 export async function discoverLmstudioModels(
   params: DiscoverLmstudioModelsParams,
 ): Promise<ModelDefinitionConfig[]> {

@@ -844,7 +844,7 @@ export async function inspectWindowsGatewayFirewall(
         applies: true,
         severity: "warning",
         code: "windows_firewall_inspection_failed",
-        message: "OpenClaw could not quickly inspect Windows Firewall LAN Gateway policy.",
+        message: "Nova could not quickly inspect Windows Firewall LAN Gateway policy.",
         details: [
           "Run `openclaw gateway status --deep` again, or verify the advertised LAN URL from another device.",
         ],
@@ -856,7 +856,7 @@ export async function inspectWindowsGatewayFirewall(
         applies: true,
         severity: "warning",
         code: "windows_firewall_inspection_failed",
-        message: "OpenClaw could not parse Windows Firewall LAN Gateway policy.",
+        message: "Nova could not parse Windows Firewall LAN Gateway policy.",
         details: [
           "Run `openclaw gateway status --deep` again, or verify the advertised LAN URL from another device.",
         ],
@@ -877,7 +877,7 @@ export async function inspectWindowsGatewayFirewall(
         applies: true,
         severity: "warning",
         code: "windows_firewall_inspection_failed",
-        message: "OpenClaw could not parse Windows Firewall LAN Gateway policy.",
+        message: "Nova could not parse Windows Firewall LAN Gateway policy.",
         details: [
           "Run `openclaw gateway status --deep` again, or verify the advertised LAN URL from another device.",
         ],
@@ -894,7 +894,7 @@ export async function inspectWindowsGatewayFirewall(
           applies: true,
           severity: "warning",
           code: "windows_firewall_inspection_failed",
-          message: "OpenClaw could not parse Windows Firewall LAN Gateway policy.",
+          message: "Nova could not parse Windows Firewall LAN Gateway policy.",
           details: [
             "Run `openclaw gateway status --deep` again, or verify the advertised LAN URL from another device.",
           ],
@@ -923,7 +923,7 @@ export async function inspectWindowsGatewayFirewall(
       applies: true,
       severity: "warning",
       code: "windows_firewall_inspection_failed",
-      message: "OpenClaw could not inspect Windows Firewall policy for LAN Gateway reachability.",
+      message: "Nova could not inspect Windows Firewall policy for LAN Gateway reachability.",
       details: [
         "Run `openclaw gateway status --deep` from a normal PowerShell session and verify the advertised LAN URL from another device.",
       ],
@@ -944,7 +944,7 @@ export async function inspectWindowsGatewayFirewall(
       applies: true,
       severity: "warning",
       code: "windows_firewall_inspection_failed",
-      message: "OpenClaw could not parse Windows Firewall policy for LAN Gateway reachability.",
+      message: "Nova could not parse Windows Firewall policy for LAN Gateway reachability.",
       details: [
         "Run `openclaw gateway status --deep` from a normal PowerShell session and verify the advertised LAN URL from another device.",
       ],
@@ -957,7 +957,7 @@ export async function inspectWindowsGatewayFirewall(
       applies: true,
       severity: "warning",
       code: "windows_firewall_inspection_failed",
-      message: "OpenClaw could not parse Windows Firewall policy for LAN Gateway reachability.",
+      message: "Nova could not parse Windows Firewall policy for LAN Gateway reachability.",
       details: [
         "Run `openclaw gateway status --deep` from a normal PowerShell session and verify the advertised LAN URL from another device.",
       ],
@@ -979,7 +979,7 @@ export async function inspectWindowsGatewayFirewall(
           applies: true,
           severity: "warning",
           code: "windows_firewall_inspection_failed",
-          message: "OpenClaw could not parse Windows Firewall policy for LAN Gateway reachability.",
+          message: "Nova could not parse Windows Firewall policy for LAN Gateway reachability.",
           details: [
             "Run `openclaw gateway status --deep` from a normal PowerShell session and verify the advertised LAN URL from another device.",
           ],
@@ -991,7 +991,7 @@ export async function inspectWindowsGatewayFirewall(
         severity: "warning",
         code: "windows_firewall_inspection_failed",
         message:
-          "OpenClaw could not inspect managed Windows Firewall rules for LAN Gateway reachability.",
+          "Nova could not inspect managed Windows Firewall rules for LAN Gateway reachability.",
         details: [
           "Run `openclaw gateway status --deep` from a normal PowerShell session and verify Group Policy or administrator-managed allow rules for the Gateway port.",
         ],

@@ -1,4 +1,4 @@
-// Defines the top-level OpenClaw configuration type.
+// Defines the top-level Nova configuration type.
 import type { SilentReplyPolicyShape } from "../shared/silent-reply-policy.js";
 import type { TranscriptsConfig } from "../transcripts/config.js";
 import type { AccessGroupsConfig } from "./types.access-groups.js";
@@ -86,12 +86,12 @@ export type SurfaceConfigEntry = {
   silentReply?: SilentReplyPolicyShape;
 };
 
-/** Top-level OpenClaw config as read from user/project config files. */
+/** Top-level Nova config as read from user/project config files. */
 export type OpenClawConfig = {
   /** JSON schema URL used by editors and generated config files. */
   $schema?: string;
   meta?: {
-    /** Last OpenClaw version that wrote this config. */
+    /** Last Nova version that wrote this config. */
     lastTouchedVersion?: string;
     /** ISO timestamp when this config was last written. */
     lastTouchedAt?: string;
@@ -130,7 +130,7 @@ export type OpenClawConfig = {
     appRecommendations?: boolean;
     /** Last setup wizard completion timestamp. */
     lastRunAt?: string;
-    /** OpenClaw version used by the last completed wizard run. */
+    /** Nova version used by the last completed wizard run. */
     lastRunVersion?: string;
     /** Git commit used by the last completed wizard run, when available. */
     lastRunCommit?: string;
@@ -169,7 +169,7 @@ export type OpenClawConfig = {
   /** Browser automation and browser plugin integration settings. */
   browser?: BrowserConfig;
   ui?: {
-    /** Accent color for OpenClaw UI chrome (hex). */
+    /** Accent color for Nova UI chrome (hex). */
     seamColor?: string;
     assistant?: {
       /** Assistant display name for UI surfaces. */

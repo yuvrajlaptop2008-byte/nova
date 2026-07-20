@@ -1,4 +1,4 @@
-// OpenClaw TUI backend tests cover rescue status integration with the TUI backend.
+// Nova TUI backend tests cover rescue status integration with the TUI backend.
 import { describe, expect, it, vi } from "vitest";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -115,7 +115,7 @@ describe("runSystemAgentTui", () => {
     expect(runChannelsAdd).not.toHaveBeenCalled();
   });
 
-  it("runs OpenClaw inside the shared TUI shell", async () => {
+  it("runs Nova inside the shared TUI shell", async () => {
     let runTuiCalls = 0;
     let runTuiOptions: unknown;
     const verified = await createVerifiedTuiOptions({ loadOverview: async () => overview });

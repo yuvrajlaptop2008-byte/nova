@@ -11,7 +11,7 @@ export function compareOpenClawVersions(leftVersion, rightVersion) {
   const left = parseVersion(leftVersion);
   const right = parseVersion(rightVersion);
   if (!left || !right) {
-    throw new Error(`cannot compare OpenClaw versions: ${leftVersion} ${rightVersion}`);
+    throw new Error(`cannot compare Nova versions: ${leftVersion} ${rightVersion}`);
   }
   for (const key of ["year", "month", "patch"]) {
     const delta = left[key] - right[key];
@@ -42,7 +42,7 @@ function normalizePublishedVersions(publishedVersions) {
 export function resolveDefaultReleaseUpgradeBaseline(candidateVersion, publishedVersions) {
   const candidate = parseVersion(candidateVersion);
   if (!candidate) {
-    throw new Error(`invalid candidate OpenClaw version: ${candidateVersion}`);
+    throw new Error(`invalid candidate Nova version: ${candidateVersion}`);
   }
 
   const versions = normalizePublishedVersions(publishedVersions);
@@ -58,7 +58,7 @@ export function resolveDefaultReleaseUpgradeBaseline(candidateVersion, published
     return `openclaw@${same}`;
   }
 
-  throw new Error(`no published OpenClaw baseline is <= candidate ${candidate.version}`);
+  throw new Error(`no published Nova baseline is <= candidate ${candidate.version}`);
 }
 
 export function parseArgs(argv) {

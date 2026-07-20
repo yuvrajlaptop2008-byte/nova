@@ -113,40 +113,40 @@ export function buildLiveCronProbeMessage(params: {
   const claudeLike = isClaudeLikeLiveAgent(params.agent);
   if (params.attempt === 0) {
     return (
-      "Use the OpenClaw MCP cron tool from server `openclaw`. " +
+      "Use the Nova MCP cron tool from server `openclaw`. " +
       "If it is not already visible, search/load MCP tools for `openclaw cron` or `cron`, " +
-      "then call the matching OpenClaw MCP tool; Claude-style names may appear as `mcp__openclaw__cron`. " +
-      "Do not use Claude native `CronCreate`, `CronList`, or `CronDelete`; those are not OpenClaw proof. " +
+      "then call the matching Nova MCP tool; Claude-style names may appear as `mcp__openclaw__cron`. " +
+      "Do not use Claude native `CronCreate`, `CronList`, or `CronDelete`; those are not Nova proof. " +
       `Call it with JSON arguments ${params.argsJson}. ` +
       "Preserve the JSON exactly, including job.sessionTarget and job.sessionKey; do not omit, rename, or flatten those fields. " +
-      "Do the actual tool call; I will verify externally with the OpenClaw cron CLI. " +
+      "Do the actual tool call; I will verify externally with the Nova cron CLI. " +
       `After the cron job is created, reply exactly: ${params.exactReply}`
     );
   }
   if (claudeLike) {
     return (
-      "Retry the OpenClaw MCP cron tool from server `openclaw` now. " +
+      "Retry the Nova MCP cron tool from server `openclaw` now. " +
       "If it is not already visible, search/load MCP tools for `openclaw cron` or `cron`, " +
-      "then call the matching OpenClaw MCP tool; Claude-style names may appear as `mcp__openclaw__cron`. " +
-      "Do not use Claude native `CronCreate`, `CronList`, or `CronDelete`; those are not OpenClaw proof. " +
+      "then call the matching Nova MCP tool; Claude-style names may appear as `mcp__openclaw__cron`. " +
+      "Do not use Claude native `CronCreate`, `CronList`, or `CronDelete`; those are not Nova proof. " +
       `Use these exact JSON arguments: ${params.argsJson}. ` +
       "Preserve job.sessionTarget and job.sessionKey exactly as provided. " +
       `If the cron job is created, reply exactly: ${params.exactReply}. ` +
       "If the tool call is cancelled, the job is not created, or you cannot confirm creation, " +
       "reply briefly saying that and ask me to retry. No markdown. " +
-      "I will verify externally with the OpenClaw cron CLI."
+      "I will verify externally with the Nova cron CLI."
     );
   }
   return (
-    "Your previous OpenClaw cron MCP tool call was cancelled before the job was created. " +
-    "Retry the OpenClaw MCP cron tool from server `openclaw` now. " +
+    "Your previous Nova cron MCP tool call was cancelled before the job was created. " +
+    "Retry the Nova MCP cron tool from server `openclaw` now. " +
     "If the harness shows Claude-style MCP names, use `mcp__openclaw__cron`. " +
     `Use these exact JSON arguments: ${params.argsJson}. ` +
     "Preserve job.sessionTarget and job.sessionKey exactly as provided. " +
     `If the cron job is created, reply exactly: ${params.exactReply}. ` +
     "If the tool call is cancelled, the job is not created, or you cannot confirm creation, " +
     "reply briefly saying that and ask me to retry. No markdown. " +
-    "I will verify externally with the OpenClaw cron CLI."
+    "I will verify externally with the Nova cron CLI."
   );
 }
 

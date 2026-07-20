@@ -1,4 +1,4 @@
-// Stepfun plugin entrypoint registers its OpenClaw integration.
+// Stepfun plugin entrypoint registers its Nova integration.
 import {
   definePluginEntry,
   type OpenClawConfig,

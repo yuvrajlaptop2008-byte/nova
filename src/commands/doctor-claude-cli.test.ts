@@ -210,7 +210,7 @@ describe("noteClaudeCliHealth", () => {
       );
 
       const body = noteBody(noteFn);
-      expect(body).toContain(`OpenClaw auth profile: missing (${CLAUDE_CLI_PROFILE_ID})`);
+      expect(body).toContain(`Nova auth profile: missing (${CLAUDE_CLI_PROFILE_ID})`);
       expect(body).toContain(
         "openclaw models auth login --provider anthropic --method cli --set-default",
       );

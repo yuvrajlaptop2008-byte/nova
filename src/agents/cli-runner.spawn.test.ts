@@ -916,7 +916,7 @@ describe("runCliAgent spawn path", () => {
     expect(allArgs).toContain("You are a helpful assistant.");
   });
 
-  it("includes the OpenClaw skills prompt in CLI system prompts", () => {
+  it("includes the Nova skills prompt in CLI system prompts", () => {
     const systemPrompt = buildCliAgentSystemPrompt({
       workspaceDir: "/tmp",
       modelDisplay: "claude-cli/sonnet",
@@ -1542,7 +1542,7 @@ describe("runCliAgent spawn path", () => {
     }
   });
 
-  it("passes OpenClaw skills to Claude as a session plugin", async () => {
+  it("passes Nova skills to Claude as a session plugin", async () => {
     const workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-cli-skills-"));
     const skillDir = path.join(workspaceDir, "skills", "weather");
     await fs.mkdir(skillDir, { recursive: true });
@@ -2460,12 +2460,12 @@ describe("runCliAgent spawn path", () => {
       reason: "session_expired",
       code: "cli_live_session_changed",
     });
-    missingContext.openClawHistoryPrompt = "bounded OpenClaw history\n\nsecond";
+    missingContext.openClawHistoryPrompt = "bounded Nova history\n\nsecond";
     expect((await executePreparedCliRun(missingContext)).text).toBe("one");
     expect(supervisorSpawnMock).toHaveBeenCalledTimes(3);
     expect(
       (JSON.parse(writes.at(-1) ?? "") as { message: { content: string } }).message.content,
-    ).toBe("bounded OpenClaw history\n\nsecond");
+    ).toBe("bounded Nova history\n\nsecond");
   });
 
   it("keeps pre-tool commentary out of an empty-result Claude live reply", async () => {
@@ -4659,7 +4659,7 @@ ${JSON.stringify({
     );
   });
 
-  it("answers Claude live control_request can_use_tool with allow when OpenClaw exec is YOLO despite raw --permission-mode default", async () => {
+  it("answers Claude live control_request can_use_tool with allow when Nova exec is YOLO despite raw --permission-mode default", async () => {
     let stdoutListener: ((chunk: string) => void) | undefined;
     const writes: string[] = [];
     const stdin = {
@@ -4708,7 +4708,7 @@ ${JSON.stringify({
     });
 
     // tools.exec resolves to full/off (would normally allow native Bash), and
-    // OpenClaw policy is authoritative over raw Claude permission-mode args.
+    // Nova policy is authoritative over raw Claude permission-mode args.
     const result = await executePreparedCliRun(
       buildPreparedCliRunContext({
         provider: "claude-cli",
@@ -5056,7 +5056,7 @@ ${JSON.stringify({
         name: "FailoverError",
         message:
           "Claude CLI stopped after reaching the maximum number of turns (limit: 1). " +
-          "OpenClaw run: run-live-max-turns. OpenClaw session: s1. " +
+          "Nova run: run-live-max-turns. Nova session: s1. " +
           "Claude session: live-max-turns. Tool actions may already have run; verify their effects before retrying. " +
           "Retry with a higher --max-turns value or a narrower task.",
         sessionId: "s1",

@@ -12,7 +12,7 @@ function importedClaudeMessage(
   const timestamp = Number.isFinite(parsedTimestamp) ? parsedTimestamp : fallbackTimestamp;
   const text = item.text?.trim() || "[Unsupported Claude transcript item]";
   if (item.type === "userMessage") {
-    // Imported native rows are not OpenClaw-authored; mirrorOrigin excludes them
+    // Imported native rows are not Nova-authored; mirrorOrigin excludes them
     // from self-echo provenance so a repeated native prompt stays observable.
     return {
       role: "user",

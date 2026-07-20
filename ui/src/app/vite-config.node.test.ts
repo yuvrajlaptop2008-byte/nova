@@ -271,7 +271,7 @@ describe("Control UI Vite config", () => {
     });
   });
 
-  it("resolves published OpenClaw packages before the broad plugin alias", () => {
+  it("resolves published Nova packages before the broad plugin alias", () => {
     const aliases = resolveExternalPackageAliasesForVite();
     expect(aliases.find((alias) => alias.find === "@openclaw/libterminal/browser")).toEqual({
       find: "@openclaw/libterminal/browser",

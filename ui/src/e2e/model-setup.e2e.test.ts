@@ -70,7 +70,7 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
         },
         "openclaw.chat": {
           sessionId: "e2e-custodian",
-          reply: "## Hi, I'm OpenClaw",
+          reply: "## Hi, I'm Nova",
           action: "none",
         },
       },
@@ -95,7 +95,7 @@ describeControlUiE2e("Control UI Model Setup mocked Gateway E2E", () => {
       await page.getByRole("button", { name: "Open Chat" }).click();
       await expect.poll(() => new URL(page.url()).pathname).toBe("/custodian");
       expect(new URL(page.url()).searchParams.get("onboarding")).toBe("1");
-      await page.getByRole("heading", { name: "OpenClaw", exact: true }).waitFor();
+      await page.getByRole("heading", { name: "Nova", exact: true }).waitFor();
       await expect
         .poll(() => page.locator(".shell").getAttribute("class"))
         .toContain("shell--onboarding");

@@ -19,7 +19,7 @@ export function toGatewayAccount(account: ResolvedQQBotAccount): GatewayAccount 
 }
 
 /**
- * Persist OpenClaw config through the injected plugin runtime (typed entry point).
+ * Persist Nova config through the injected plugin runtime (typed entry point).
  */
 export async function writeOpenClawConfigThroughRuntime(
   runtime: PluginRuntime,

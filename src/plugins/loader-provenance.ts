@@ -311,7 +311,7 @@ export function warnAboutUntrackedLoadedPlugins(params: {
     ) {
       continue;
     }
-    const message = `loaded without install/load-path provenance; treat as untracked local code. Verify source with '${formatPluginInspectCommand(plugin.id)}', then pin trust via plugins.allow (e.g. "plugins": { "allow": [${JSON.stringify(plugin.id)}] }) or reinstall from a trusted source so OpenClaw records install provenance.`;
+    const message = `loaded without install/load-path provenance; treat as untracked local code. Verify source with '${formatPluginInspectCommand(plugin.id)}', then pin trust via plugins.allow (e.g. "plugins": { "allow": [${JSON.stringify(plugin.id)}] }) or reinstall from a trusted source so Nova records install provenance.`;
     params.registry.diagnostics.push({
       level: "warn",
       pluginId: plugin.id,

@@ -793,7 +793,7 @@ describe("monitorDiscordProvider", () => {
     expect(drained[0]?.message).toContain("4014");
   });
 
-  it("passes OpenClaw event queue defaults to the Discord client", async () => {
+  it("passes Nova event queue defaults to the Discord client", async () => {
     await monitorDiscordProvider({
       config: baseConfig(),
       runtime: baseRuntime(),

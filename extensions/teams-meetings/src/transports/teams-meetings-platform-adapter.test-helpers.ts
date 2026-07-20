@@ -294,7 +294,7 @@ export async function runStatusScript(params: {
     allowSessionAdoption: params.allowSessionAdoption ?? true,
     autoJoin: params.autoJoin ?? true,
     captureCaptions: params.captureCaptions ?? false,
-    guestName: "OpenClaw Guest",
+    guestName: "Nova Guest",
     meetingSessionId: params.meetingSessionId === undefined ? "session-1" : params.meetingSessionId,
     meetingUrl: params.meetingUrl ?? URL,
     readOnly: params.readOnly,

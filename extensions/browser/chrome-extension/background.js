@@ -4,13 +4,13 @@ import {
   capturePageShare,
   waitForCondition,
 } from "./modules/page-share-core.js";
-// OpenClaw extension service worker.
+// Nova extension service worker.
 //
-// Thin transport between the OpenClaw extension relay (loopback WebSocket) and
+// Thin transport between the Nova extension relay (loopback WebSocket) and
 // chrome.debugger. All CDP target synthesis lives server-side in the relay
 // bridge; this worker only attaches tabs, forwards frames, and keeps the
-// OpenClaw tab group in sync. Membership in that group is the user-visible
-// consent boundary: only grouped tabs are reported to (and driven by) OpenClaw.
+// Nova tab group in sync. Membership in that group is the user-visible
+// consent boundary: only grouped tabs are reported to (and driven by) Nova.
 import {
   OPENCLAW_TAB_GROUP_TITLE,
   buildRelayWsProtocols,
@@ -489,7 +489,7 @@ async function sendPageShareRequest(payload) {
   return await new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       pendingPageShares.delete(requestId);
-      reject(new Error("Timed out waiting for OpenClaw."));
+      reject(new Error("Timed out waiting for Nova."));
     }, 10_000);
     pendingPageShares.set(requestId, { resolve, reject, timer });
     try {
@@ -515,7 +515,7 @@ async function ensureRelayReady() {
   }
 }
 
-async function sendPageToOpenClaw(tabId, note) {
+async function sendPageToNova(tabId, note) {
   await ensureRelayReady();
   const tab = await chrome.tabs.get(tabId);
   const capture = await capturePageShare(tab);
@@ -549,14 +549,14 @@ function withShareBadge(promise) {
 }
 
 function sendPageFromChromeEntry(tabId) {
-  return withShareBadge(sendPageToOpenClaw(tabId, ""));
+  return withShareBadge(sendPageToNova(tabId, ""));
 }
 
 async function installPageShareContextMenu() {
   await chrome.contextMenus.removeAll();
   chrome.contextMenus.create({
     id: "openclaw-send-page",
-    title: "Send page to OpenClaw",
+    title: "Send page to Nova",
     contexts: ["page", "selection"],
   });
 }
@@ -689,13 +689,13 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         sendResponse({ shared: await isTabShared(msg.tabId) });
         return;
       }
-      case "sendPageToOpenClaw": {
+      case "sendPageToNova": {
         if (typeof msg.tabId !== "number") {
           sendResponse({ ok: false, error: "No tab." });
           return;
         }
         try {
-          await sendPageToOpenClaw(msg.tabId, msg.note);
+          await sendPageToNova(msg.tabId, msg.note);
           sendResponse({ ok: true });
         } catch (error) {
           sendResponse({

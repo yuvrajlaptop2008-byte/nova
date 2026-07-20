@@ -164,7 +164,7 @@ export function parseArgs(argv) {
     !RELEASE_BRANCH_PATTERN.test(args.targetRef) &&
     !RELEASE_TAG_PATTERN.test(args.targetRef)
   ) {
-    throw new Error("--target-ref must be a canonical OpenClaw release branch or tag");
+    throw new Error("--target-ref must be a canonical Nova release branch or tag");
   }
   return args;
 }

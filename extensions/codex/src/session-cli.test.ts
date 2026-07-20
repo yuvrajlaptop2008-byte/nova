@@ -292,7 +292,7 @@ describe("registerCodexSessionCli", () => {
         { catalogId: "codex", hostId: "gateway:local", threadId: "thread-1" },
         { mode: "cli", scopes: ["operator.write"] },
       );
-      expect(output).toBe("OpenClaw session: harness:codex:supervision:branch\n");
+      expect(output).toBe("Nova session: harness:codex:supervision:branch\n");
       expect(output).not.toContain("\u001b");
     });
 

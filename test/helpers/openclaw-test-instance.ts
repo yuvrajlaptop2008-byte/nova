@@ -1,4 +1,4 @@
-// OpenClaw test instance helper spawns isolated OpenClaw processes.
+// Nova test instance helper spawns isolated Nova processes.
 import { type ChildProcessByStdio, spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";

@@ -55,7 +55,7 @@ describe("resolveIosVersion", () => {
   it("prints selected fields from the CLI", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.6",
-      changelog: "# OpenClaw iOS Changelog\n\n## 2026.4.6\n\nStable notes.\n",
+      changelog: "# Nova iOS Changelog\n\n## 2026.4.6\n\nStable notes.\n",
     });
     const result = spawnSync(
       process.execPath,
@@ -82,7 +82,7 @@ describe("resolveIosVersion", () => {
   it("prints explicit release version fields from the CLI", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.6",
-      changelog: "# OpenClaw iOS Changelog\n\n## 2026.4.7\n\nStable notes.\n",
+      changelog: "# Nova iOS Changelog\n\n## 2026.4.7\n\nStable notes.\n",
     });
     const result = spawnSync(
       process.execPath,
@@ -111,7 +111,7 @@ describe("resolveIosVersion", () => {
   it("prints derived release notes from the CLI", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.6",
-      changelog: "# OpenClaw iOS Changelog\n\n## 2026.4.7\n\nGenerated notes.\n",
+      changelog: "# Nova iOS Changelog\n\n## 2026.4.7\n\nGenerated notes.\n",
     });
     const result = spawnSync(
       process.execPath,
@@ -166,7 +166,7 @@ describe("resolveIosVersion", () => {
   it("derives Apple marketing fields from the root package release version", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.6",
-      changelog: "# OpenClaw iOS Changelog\n\n## 2026.4.6\n\nStable notes.\n",
+      changelog: "# Nova iOS Changelog\n\n## 2026.4.6\n\nStable notes.\n",
     });
 
     expect(resolveIosVersion(rootDir)).toEqual({
@@ -182,7 +182,7 @@ describe("resolveIosVersion", () => {
   it("rejects semver-only package versions", () => {
     const rootDir = writeIosFixture({
       packageVersion: "1.2.3",
-      changelog: "# OpenClaw iOS Changelog\n\n## Unreleased\n\nNotes.\n",
+      changelog: "# Nova iOS Changelog\n\n## Unreleased\n\nNotes.\n",
     });
 
     expect(() => resolveIosVersion(rootDir)).toThrow("Expected YYYY.M.PATCH");
@@ -191,7 +191,7 @@ describe("resolveIosVersion", () => {
   it("rejects prerelease suffixes in explicit release versions", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.6",
-      changelog: "# OpenClaw iOS Changelog\n\n## Unreleased\n\nNotes.\n",
+      changelog: "# Nova iOS Changelog\n\n## Unreleased\n\nNotes.\n",
     });
 
     expect(() => resolveIosVersion(rootDir, { releaseVersion: "2026.4.6-beta.1" })).toThrow(
@@ -238,7 +238,7 @@ describe("gateway version normalization", () => {
   it("reads and normalizes the root package version for iOS releases", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.7-beta.5",
-      changelog: "# OpenClaw iOS Changelog\n\n## Unreleased\n\nNotes.\n",
+      changelog: "# Nova iOS Changelog\n\n## Unreleased\n\nNotes.\n",
     });
 
     expect(resolveGatewayVersionForIosRelease(rootDir)).toEqual({
@@ -252,7 +252,7 @@ describe("release note extraction", () => {
   it("extracts exact pinned version sections first", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.6",
-      changelog: `# OpenClaw iOS Changelog
+      changelog: `# Nova iOS Changelog
 
 ## Unreleased
 
@@ -272,7 +272,7 @@ Draft notes.
   it("falls back to Unreleased when the release section does not exist yet", () => {
     const rootDir = writeIosFixture({
       packageVersion: "2026.4.6",
-      changelog: `# OpenClaw iOS Changelog
+      changelog: `# Nova iOS Changelog
 
 ## Unreleased
 
@@ -291,7 +291,7 @@ Draft notes.
   it("extracts markdown bodies without the version heading", () => {
     expect(
       extractChangelogSection(
-        `# OpenClaw iOS Changelog\n\n## 2026.4.6 - 2026-04-06\n\nLine one.\n\n## 2026.4.5\n`,
+        `# Nova iOS Changelog\n\n## 2026.4.6 - 2026-04-06\n\nLine one.\n\n## 2026.4.5\n`,
         "2026.4.6",
       ),
     ).toBe("Line one.");

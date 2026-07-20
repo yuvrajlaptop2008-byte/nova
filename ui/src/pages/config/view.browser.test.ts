@@ -76,7 +76,7 @@ describe("config view", () => {
     catalogOpenTarget: "viewer" as const,
     setCatalogOpenTarget: vi.fn(),
     gatewayUrl: "",
-    assistantName: "OpenClaw",
+    assistantName: "Nova",
   });
 
   it("lets config pages grow with their content instead of creating an inner viewport", async () => {

@@ -70,12 +70,12 @@ function kovaMatrixEntries(): Array<Record<string, string>> {
   return readWorkflow().jobs?.kova?.strategy?.matrix?.include ?? [];
 }
 
-describe("OpenClaw performance workflow", () => {
+describe("Nova performance workflow", () => {
   it("uses an optional dispatch identifier to name parent-owned runs", () => {
     const workflow = readFileSync(WORKFLOW, "utf8");
 
     expect(workflow).toContain(
-      "run-name: ${{ inputs.dispatch_id != '' && format('OpenClaw Performance {0}', inputs.dispatch_id) || 'OpenClaw Performance' }}",
+      "run-name: ${{ inputs.dispatch_id != '' && format('Nova Performance {0}', inputs.dispatch_id) || 'Nova Performance' }}",
     );
     expect(workflow).toContain("dispatch_id:");
     expect(workflow).toContain("Optional parent workflow dispatch identifier");
@@ -128,10 +128,10 @@ describe("OpenClaw performance workflow", () => {
 
   it("resolves each target once before benchmark and publication fan out", () => {
     const workflow = readWorkflow();
-    const resolveTarget = findStep("Resolve OpenClaw target ref", "resolve_target");
-    const checkout = findStep("Checkout OpenClaw");
+    const resolveTarget = findStep("Resolve Nova target ref", "resolve_target");
+    const checkout = findStep("Checkout Nova");
     const record = findStep("Record tested revision");
-    const sourceCheckout = findStep("Checkout OpenClaw source target", "source_performance");
+    const sourceCheckout = findStep("Checkout Nova source target", "source_performance");
     const sourceRecord = findStep("Record source performance revision", "source_performance");
 
     expect(workflow.jobs?.kova?.needs).toBe("resolve_target");
@@ -152,7 +152,7 @@ describe("OpenClaw performance workflow", () => {
     expect(
       Object.values(workflow.jobs ?? {})
         .flatMap((job) => job.steps ?? [])
-        .filter((step) => step.name === "Resolve OpenClaw target ref"),
+        .filter((step) => step.name === "Resolve Nova target ref"),
     ).toHaveLength(1);
   });
 
@@ -188,7 +188,7 @@ describe("OpenClaw performance workflow", () => {
   });
 
   it("builds only the QA and startup artifacts required by source probes", () => {
-    const run = findStep("Run OpenClaw source performance probes", "source_performance").run ?? "";
+    const run = findStep("Run Nova source performance probes", "source_performance").run ?? "";
     const build = "OPENCLAW_BUILD_PRIVATE_QA=1 node scripts/build-all.mjs sourcePerformance";
 
     expect(run).toContain("module.BUILD_ALL_PROFILES?.sourcePerformance");
@@ -199,7 +199,7 @@ describe("OpenClaw performance workflow", () => {
   });
 
   it("keeps source gateway health waits within one startup budget", () => {
-    const run = findStep("Run OpenClaw source performance probes", "source_performance").run ?? "";
+    const run = findStep("Run Nova source performance probes", "source_performance").run ?? "";
     const deadline = "gateway_ready_deadline=$((SECONDS + gateway_ready_timeout_seconds))";
     const remaining = "gateway_ready_remaining=$((gateway_ready_deadline - SECONDS))";
     const deadlineFailure = [
@@ -257,12 +257,12 @@ describe("OpenClaw performance workflow", () => {
       "${{ github.event_name == 'schedule' || inputs.profile == 'release' }}",
     );
     expect(kovaSteps.some((step) => step.name === "Upload Kova artifacts")).toBe(true);
-    expect(kovaSteps.some((step) => step.name === "Run OpenClaw source performance probes")).toBe(
+    expect(kovaSteps.some((step) => step.name === "Run Nova source performance probes")).toBe(
       false,
     );
     expect(
       workflow.jobs?.source_performance?.steps?.some(
-        (step) => step.name === "Run OpenClaw source performance probes",
+        (step) => step.name === "Run Nova source performance probes",
       ),
     ).toBe(true);
     expect(JSON.stringify(kovaSteps)).not.toContain("CLAWSWEEPER_APP_PRIVATE_KEY");

@@ -1,4 +1,4 @@
-// Macos Discord script supports OpenClaw repository automation.
+// Macos Discord script supports Nova repository automation.
 import { randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -19,7 +19,7 @@ export class MacosDiscordSmoke {
       config: MacosDiscordConfig;
       guest: MacosGuest;
       guestNode: string;
-      guestOpenClaw: string;
+      guestNova: string;
       guestOpenClawEntry: string;
       runDir: string;
       vmName: string;
@@ -66,7 +66,7 @@ ${this.input.guestNode} ${this.input.guestOpenClawEntry} channels status --probe
     const sentIdFile = path.join(this.input.runDir, `${phase}.discord-sent-message-id`);
     const hostIdFile = path.join(this.input.runDir, `${phase}.discord-host-message-id`);
     const outbound = this.input.guest.exec([
-      this.input.guestOpenClaw,
+      this.input.guestNova,
       "message",
       "send",
       "--channel",
@@ -196,7 +196,7 @@ ${this.input.guestNode} ${this.input.guestOpenClawEntry} channels status --probe
     while (Date.now() < deadline) {
       const result = this.input.guest.run(
         [
-          this.input.guestOpenClaw,
+          this.input.guestNova,
           "message",
           "read",
           "--channel",

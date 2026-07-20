@@ -164,7 +164,7 @@ describe("ClickClack discussion service", () => {
       .mockReturnValue({ sessionId: "session-new", label: "Reset race", updatedAt: 2 });
 
     await expect(harness.service.open(sessionKey)).rejects.toThrow(
-      "OpenClaw session changed while opening",
+      "Nova session changed while opening",
     );
     expect(harness.updateChannel).toHaveBeenCalledWith("chn_discussion", { archived: true });
     expect(harness.store.lookup(sessionKey)).toBeUndefined();

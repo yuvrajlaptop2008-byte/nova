@@ -1,4 +1,4 @@
-// Firecrawl plugin entrypoint registers its OpenClaw integration.
+// Firecrawl plugin entrypoint registers its Nova integration.
 import { definePluginEntry, type AnyAgentTool } from "openclaw/plugin-sdk/plugin-entry";
 import { createFirecrawlWebFetchProvider } from "./src/firecrawl-fetch-provider.js";
 import { createFirecrawlFreeWebSearchProvider } from "./src/firecrawl-free-search-provider.js";

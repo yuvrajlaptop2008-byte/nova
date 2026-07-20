@@ -1,4 +1,4 @@
-// OpenClaw state database manages shared persisted state and migrations.
+// Nova state database manages shared persisted state and migrations.
 import { existsSync } from "node:fs";
 import type { DatabaseSync } from "node:sqlite";
 import {
@@ -83,7 +83,7 @@ export { detectOpenClawStateDatabaseSchemaMigrations } from "./openclaw-state-db
 export { withOpenClawStateStartupMigrationCheckpointDatabase } from "./openclaw-state-db-startup-checkpoint.js";
 
 /**
- * Shared OpenClaw SQLite state database lifecycle and metadata writers.
+ * Shared Nova SQLite state database lifecycle and metadata writers.
  *
  * This module owns schema creation, additive migrations for released state
  * tables, private file permissions, cached handles, and audit rows for

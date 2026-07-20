@@ -275,14 +275,14 @@ export const es: TranslationMap = {
     genericSubtitle: "Se produjo un error al cargar este panel.",
     staleTitle: "Hay una nueva versión disponible",
     staleSubtitle:
-      "OpenClaw se actualizó en segundo plano. Recarga para obtener el panel más reciente.",
+      "Nova se actualizó en segundo plano. Recarga para obtener el panel más reciente.",
     retry: "Reintentar",
   },
   nodes: {
     pairing: {
       button: "Vincular dispositivo móvil",
       adminRequired: "Se requiere acceso de administrador para crear códigos de configuración.",
-      title: "OpenClaw móvil",
+      title: "Nova móvil",
       subtitle: "Escanea este código QR en la app móvil para conectar un teléfono nuevo.",
       generating: "Creando un código de configuración seguro…",
       accessTitle: "Acceso móvil",
@@ -296,7 +296,7 @@ export const es: TranslationMap = {
       transportLimitedHint:
         "Esta URL del Gateway usa texto sin cifrar mediante ws://. Usa wss:// o Tailscale Serve y, a continuación, crea un código nuevo para obtener acceso completo.",
       failed: "No se pudo crear un código de configuración.",
-      qrAlt: "Código QR de vinculación de OpenClaw móvil",
+      qrAlt: "Código QR de vinculación de Nova móvil",
       qrUnavailable: "QR no disponible. Copia el código de configuración en su lugar.",
       copySetupCode: "Copiar código de configuración",
       newCode: "Código nuevo",
@@ -304,7 +304,7 @@ export const es: TranslationMap = {
       pending: "Solicitudes de dispositivos pendientes de revisión: {count}",
       review: "Revisión",
       waiting:
-        "Las apps móviles oficiales de OpenClaw se conectan automáticamente después de escanear.",
+        "Las apps móviles oficiales de Nova se conectan automáticamente después de escanear.",
       help: "Ayuda de vinculación",
       manageDevices: "Gestionar dispositivos",
     },
@@ -449,11 +449,11 @@ export const es: TranslationMap = {
     ownerSession: "Sesión",
     ownerWorkboard: "Workboard",
     title: "Worktrees administrados",
-    subtitle: "Checkouts de repositorios aislados propiedad de OpenClaw.",
+    subtitle: "Checkouts de repositorios aislados propiedad de Nova.",
     cleanNow: "Limpiar ahora",
     cleanupTitle: "Limpieza",
     cleanupSubtitle:
-      "OpenClaw elimina periódicamente los worktrees antiguos para liberar espacio en disco. Ajusta la intensidad de la limpieza.",
+      "Nova elimina periódicamente los worktrees antiguos para liberar espacio en disco. Ajusta la intensidad de la limpieza.",
     cleanupMaxCount: "Máximo de worktrees",
     cleanupMaxCountHelp:
       "Número máximo de worktrees administrados que se conservarán en todos los repositorios. Primero se crean instantáneas de los worktrees más antiguos y luego se eliminan. Establécelo en 0 para desactivar el límite de cantidad.",
@@ -1404,7 +1404,7 @@ export const es: TranslationMap = {
     },
   },
   approvalPage: {
-    brandName: "OpenClaw",
+    brandName: "Nova",
     eyebrow: "Operator approval",
     loadingTitle: "Loading approval",
     loadingDescription: "Checking the current approval state with the Gateway.",
@@ -1413,7 +1413,7 @@ export const es: TranslationMap = {
       "This approval could not be found or this device is not authorized to review it.",
     connectionErrorTitle: "Connection interrupted",
     connectionErrorDescription:
-      "OpenClaw cannot confirm or record a decision while disconnected. Reconnect to check the current status.",
+      "Nova cannot confirm or record a decision while disconnected. Reconnect to check the current status.",
     retry: "Retry",
     execTitle: "Command approval",
     pending: "Waiting for your decision",
@@ -1761,7 +1761,7 @@ export const es: TranslationMap = {
   modelSetup: {
     heading: "Conecta tu IA",
     intro:
-      "OpenClaw reutiliza el acceso a IA que ya tienes: un inicio de sesión mediante CLI, una clave de API o un inicio de sesión con un proveedor.",
+      "Nova reutiliza el acceso a IA que ya tienes: un inicio de sesión mediante CLI, una clave de API o un inicio de sesión con un proveedor.",
     loading: "Comprobando el acceso a IA disponible en este Gateway…",
     retry: "Reintentar",
     checkAgain: "Comprobar de nuevo",
@@ -1774,7 +1774,7 @@ export const es: TranslationMap = {
     },
     access: {
       adminRequired: "La configuración del modelo requiere acceso operator.admin.",
-      gatewayTooOld: "El Gateway está ejecutando una versión anterior de OpenClaw",
+      gatewayTooOld: "El Gateway está ejecutando una versión anterior de Nova",
     },
     candidates: {
       title: "Encontrados en este Gateway",
@@ -1877,12 +1877,12 @@ export const es: TranslationMap = {
     confirmReplace:
       "Antes de reemplazarlos, se realizará una copia de seguridad de los archivos de destino existentes en el informe de migración.",
     confirmBackup:
-      "OpenClaw crea una copia de seguridad verificada previa a la importación antes de copiar la memoria.",
+      "Nova crea una copia de seguridad verificada previa a la importación antes de copiar la memoria.",
     confirmImport: "Importar memoria",
     disconnected: "Conéctate al Gateway para importar memoria.",
     title: "Importar memoria del asistente",
     subtitle:
-      "Revisa la memoria consolidada de Codex y la memoria automática de Claude Code antes de copiarlas en OpenClaw.",
+      "Revisa la memoria consolidada de Codex y la memoria automática de Claude Code antes de copiarlas en Nova.",
     agent: "Agente de destino",
     replaceExisting: "Reemplazar importaciones existentes",
     replaceHint:
@@ -1891,7 +1891,7 @@ export const es: TranslationMap = {
   onboarding: {
     memoryImport: {
       title: "Lleva contigo la memoria de tu asistente",
-      body: "OpenClaw encontró memoria de otros asistentes de programación. ¿Quieres importarla al espacio de trabajo de tu agente?",
+      body: "Nova encontró memoria de otros asistentes de programación. ¿Quieres importarla al espacio de trabajo de tu agente?",
       plannedCount: "{count} listos para importar",
       alreadyImported: "Ya importados: {count}",
       sourceUnavailable: "La ruta de origen no está disponible",
@@ -1906,8 +1906,7 @@ export const es: TranslationMap = {
       connectionChanged: "Omitido: la conexión con el Gateway cambió durante la importación",
       unknownError: "Error en la solicitud",
       doneTitle: "Importación de memoria finalizada",
-      doneBody:
-        "Migrados: {migrated}; omitidos: {skipped}. Puedes continuar configurando OpenClaw.",
+      doneBody: "Migrados: {migrated}; omitidos: {skipped}. Puedes continuar configurando Nova.",
     },
   },
   mcpPage: {
@@ -2005,7 +2004,7 @@ export const es: TranslationMap = {
       notes: "Captura notas en Markdown, Obsidian, Notion o Bear.",
     },
     noInstalledTitle: "No hay plugins opcionales instalados",
-    noInstalledBody: "Descubre un plugin destacado o busca en ClawHub para ampliar OpenClaw.",
+    noInstalledBody: "Descubre un plugin destacado o busca en ClawHub para ampliar Nova.",
     noInstalledMatchTitle: "Ningún plugin instalado coincide",
     noMatchBody: "Prueba con una búsqueda diferente.",
     filterAll: "Todos",
@@ -2052,7 +2051,7 @@ export const es: TranslationMap = {
     detailPluginId: "ID de plugin",
     offlineTitle: "Gateway sin conexión",
     offlineBody: "Conéctate para explorar plugins instalados y recomendados.",
-    optionalCapability: "Capacidad opcional de OpenClaw.",
+    optionalCapability: "Capacidad opcional de Nova.",
     enabled: "Activado",
     disabled: "Desactivado",
     available: "Disponible",
@@ -2085,7 +2084,7 @@ export const es: TranslationMap = {
       "{name} deshabilitado. Se requiere reiniciar el Gateway para aplicar el cambio.",
   },
   aboutPage: {
-    productName: "OpenClaw",
+    productName: "Nova",
     tagline: "Tu asistente personal de IA, ejecutándose en tus propios dispositivos.",
     waveHello: "Saluda a Clawd",
     linksLabel: "Comunidad y recursos",
@@ -2094,7 +2093,7 @@ export const es: TranslationMap = {
     linkGitHub: "GitHub",
     linkDiscord: "Discord",
     linkChangelog: "Registro de cambios",
-    license: "© 2026 OpenClaw Foundation — Licencia MIT.",
+    license: "© 2026 Nova Foundation — Licencia MIT.",
     artifactTitle: "Control UI",
     artifactSubtitle: "Identidad integrada cuando se compiló este artefacto del navegador.",
     artifactDetails: "Detalles de compilación de Control UI",
@@ -2275,7 +2274,7 @@ export const es: TranslationMap = {
     selfLearning: {
       pitchTitle: "Activar el autoaprendizaje",
       pitchBody:
-        "OpenClaw revisa las correcciones y las ejecuciones sustanciales completadas y, a continuación, redacta propuestas de Skills para este tablero. Consume tokens adicionales en segundo plano y los borradores aparecen como propuestas pendientes.",
+        "Nova revisa las correcciones y las ejecuciones sustanciales completadas y, a continuación, redacta propuestas de Skills para este tablero. Consume tokens adicionales en segundo plano y los borradores aparecen como propuestas pendientes.",
       enable: "Activar el autoaprendizaje",
       enabling: "Activando…",
       updateError: "No se pudo actualizar la configuración de autoaprendizaje.",
@@ -3562,7 +3561,7 @@ export const es: TranslationMap = {
         stepDevUi:
           "Si usas pnpm ui:dev, reconstruye o reinicia la UI de desarrollo contra el checkout actual.",
         stepRestart:
-          "Reinicia el Gateway después de actualizar OpenClaw para que sirva el protocolo actual.",
+          "Reinicia el Gateway después de actualizar Nova para que sirva el protocolo actual.",
       },
       network: {
         title: "No se pudo conectar",
@@ -3598,7 +3597,7 @@ export const es: TranslationMap = {
       remoteViewOnly: "Esta sesión está en un nodo emparejado y es de solo lectura.",
       unsupportedViewOnly: "Esta fuente de sesión externa es de solo lectura.",
       sessionMenu: "External session actions",
-      openInOpenClaw: "Open in OpenClaw",
+      openInNova: "Open in Nova",
       openInTerminal: "Open in terminal",
       terminalUnavailable: "Terminal opening is unavailable for this session.",
     },
@@ -3654,7 +3653,7 @@ export const es: TranslationMap = {
     followUpModeOverriding: "Anulando el valor predeterminado del servidor ({mode})",
     followUpModeReset: "Restablecer al valor predeterminado del servidor",
     catalogOpenTarget: "Open Codex/Claude sessions in",
-    catalogOpenTargetViewer: "OpenClaw viewer",
+    catalogOpenTargetViewer: "Nova viewer",
     catalogOpenTargetTerminal: "Terminal",
     onboardingDisabled: "Deshabilitado durante el inicio guiado",
     gatewayStatus: "Estado del Gateway: {status}",
@@ -4096,7 +4095,7 @@ export const es: TranslationMap = {
       filters: "Filtros",
       shownOf: "{shown} de {total}",
       emptyTitle: "Aún no hay tareas programadas",
-      emptyHint: "Describe qué debe hacer OpenClaw y cuándo — se ejecuta según lo programado.",
+      emptyHint: "Describe qué debe hacer Nova y cuándo — se ejecuta según lo programado.",
       noMatching: "Ninguna tarea coincide con los filtros actuales.",
       loadMore: "Cargar más",
       loading: "Cargando...",
@@ -4163,7 +4162,7 @@ export const es: TranslationMap = {
     detail: {
       tabsLabel: "Detalles de la automatización",
       newTitle: "Nueva tarea programada",
-      newSubtitle: "Describe lo que OpenClaw debe hacer y luego elige cuándo se ejecuta.",
+      newSubtitle: "Describe lo que Nova debe hacer y luego elige cuándo se ejecuta.",
       back: "Todas las automatizaciones",
       settingsTab: "Configuración",
       historyTitle: "Historial de ejecuciones",
@@ -4237,7 +4236,7 @@ export const es: TranslationMap = {
       agentPlaceholder: "main u ops",
       agentHelp:
         "Comienza a escribir para seleccionar un agente conocido o ingresa uno personalizado.",
-      promptPlaceholder: "Describe lo que OpenClaw debe hacer...",
+      promptPlaceholder: "Describe lo que Nova debe hacer...",
       repeat: "Repetir",
       repeatInterval: "Intervalo",
       repeatOnce: "Una vez",

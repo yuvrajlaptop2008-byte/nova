@@ -1,4 +1,4 @@
-// Codex App Server Protocol Source script supports OpenClaw repository automation.
+// Codex App Server Protocol Source script supports Nova repository automation.
 import { spawnSync } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -150,7 +150,7 @@ export async function resolveCodexAppServerProtocolSource(repoRoot: string): Pro
   throw new Error(
     [
       "Codex app-server protocol schema not found.",
-      "Set OPENCLAW_CODEX_REPO to a checkout of openai/codex, or keep a sibling `codex` checkout next to the primary OpenClaw checkout.",
+      "Set OPENCLAW_CODEX_REPO to a checkout of openai/codex, or keep a sibling `codex` checkout next to the primary Nova checkout.",
       `Checked: ${checked.join(", ") || "<none>"}`,
     ].join("\n"),
   );

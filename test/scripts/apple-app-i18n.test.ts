@@ -387,8 +387,8 @@ describe("Apple app i18n catalogs", () => {
     expect(french).toContain('"NSMicrophoneUsageDescription" = ');
     expect(french).toContain('"NSHealthUpdateUsageDescription" = ');
     expect(watchChinese).toContain('"NSLocalNetworkUsageDescription" = ');
-    expect(shareGerman).toContain('"CFBundleDisplayName" = "OpenClaw Share";');
-    expect(activityJapanese).toContain('"CFBundleDisplayName" = "OpenClaw Activity";');
+    expect(shareGerman).toContain('"CFBundleDisplayName" = "Nova Share";');
+    expect(activityJapanese).toContain('"CFBundleDisplayName" = "Nova Activity";');
   });
 
   it("refreshes InfoPlist copy from translations for the current source", () => {
@@ -403,11 +403,11 @@ describe("Apple app i18n catalogs", () => {
       ),
     ).toBe("Utilisez l’appareil photo pour scanner les codes de configuration.");
     expect(
-      selectInfoPlistTranslation("OpenClaw Share", [], {
-        source: "OpenClaw Share",
-        value: "OpenClaw Partager",
+      selectInfoPlistTranslation("Nova Share", [], {
+        source: "Nova Share",
+        value: "Nova Partager",
       }),
-    ).toBe("OpenClaw Partager");
+    ).toBe("Nova Partager");
     expect(
       selectInfoPlistTranslation(
         "Use the camera to scan setup codes.",

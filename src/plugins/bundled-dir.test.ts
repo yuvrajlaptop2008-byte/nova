@@ -356,7 +356,7 @@ describe("resolveBundledPluginsDir", () => {
     expect(resolveSourceCheckoutDependencyDiagnostic()).toEqual({
       source: repoRoot,
       message:
-        "OpenClaw source checkout detected without pnpm workspace dependencies; run `pnpm install` from the repo root so bundled plugins can load package-local dependencies.",
+        "Nova source checkout detected without pnpm workspace dependencies; run `pnpm install` from the repo root so bundled plugins can load package-local dependencies.",
     });
 
     process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";

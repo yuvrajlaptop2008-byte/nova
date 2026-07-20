@@ -629,7 +629,7 @@ describe("installPluginFromClawHub", () => {
     expect(failure.code).toBe(CLAWHUB_INSTALL_ERROR_CODE.CLAWHUB_DOWNLOAD_BLOCKED);
     const warning = logger.warn.mock.calls[0]?.[0] ?? "";
     expect(warning).toContain(
-      "Latest plugin version is marked malicious; OpenClaw will not download it.",
+      "Latest plugin version is marked malicious; Nova will not download it.",
     );
     expect(warning).toContain(
       "Uninstall the installed plugin unless you have independently reviewed it.",
@@ -1964,7 +1964,7 @@ describe("installPluginFromClawHub", () => {
     const failure = expectInstallFailure(result);
     expect(failure.code).toBe(CLAWHUB_INSTALL_ERROR_CODE.INCOMPATIBLE_PLUGIN_API);
     expect(failure.error).toBe(
-      'Plugin "demo" requires plugin API *, but this OpenClaw runtime exposes invalid.',
+      'Plugin "demo" requires plugin API *, but this Nova runtime exposes invalid.',
     );
     expect(downloadClawHubPackageArchiveMock).not.toHaveBeenCalled();
     expect(installPluginFromArchiveMock).not.toHaveBeenCalled();
@@ -3160,7 +3160,7 @@ describe("installPluginFromClawHub", () => {
         ok: false,
         code: CLAWHUB_INSTALL_ERROR_CODE.INCOMPATIBLE_PLUGIN_API,
         error:
-          'Plugin "demo" requires plugin API >=2026.3.22, but this OpenClaw runtime exposes 2026.3.21.',
+          'Plugin "demo" requires plugin API >=2026.3.22, but this Nova runtime exposes 2026.3.21.',
       },
     },
     {

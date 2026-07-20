@@ -8,8 +8,8 @@ export const CORE_FIELD_HELP: Record<string, string> = {
     "OAuth2 client secret for the Discord application that hosts Activities. Keep this value secret; DISCORD_CLIENT_SECRET is used when this field is unset.",
   "channels.discord.activities.applicationId":
     "Optional Discord application ID for Activities. Defaults to the bot application ID learned from Discord at gateway startup.",
-  meta: "Metadata fields automatically maintained by OpenClaw to record write/version history for this config file. Keep these values system-managed and avoid manual edits unless debugging migration history.",
-  "meta.lastTouchedVersion": "Auto-set when OpenClaw writes the config.",
+  meta: "Metadata fields automatically maintained by Nova to record write/version history for this config file. Keep these values system-managed and avoid manual edits unless debugging migration history.",
+  "meta.lastTouchedVersion": "Auto-set when Nova writes the config.",
   "meta.lastTouchedAt": "ISO timestamp of the last config write (auto-set).",
   "meta.migrations": "System-managed completion markers for one-time config migrations.",
   "meta.migrations.modelPolicyAllowlist":
@@ -17,7 +17,7 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   marketplaces:
     "Marketplace feed and local package source profile settings. Feeds provide package selection and governance metadata, while sources define the local source names that install candidates may reference.",
   "marketplaces.feeds":
-    "Named marketplace feed profiles. The default public profile can be used as shipped, and deployments can add or override profiles to point OpenClaw at their effective feed endpoint.",
+    "Named marketplace feed profiles. The default public profile can be used as shipped, and deployments can add or override profiles to point Nova at their effective feed endpoint.",
   "marketplaces.feeds.*.url":
     "HTTPS URL for the marketplace feed profile. Remote feed documents cannot introduce new registry domains or credentials; they only reference locally configured sources by name.",
   "marketplaces.feeds.*.verification":
@@ -44,13 +44,13 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "env.shellEnv.timeoutMs":
     "Maximum time in milliseconds allowed for shell environment resolution before fallback behavior applies. Use tighter timeouts for faster startup, or increase when shell initialization is heavy.",
   "env.vars":
-    "Explicit key/value environment variable overrides merged into runtime process environment for OpenClaw. Use this for deterministic env configuration instead of relying only on shell profile side effects.",
+    "Explicit key/value environment variable overrides merged into runtime process environment for Nova. Use this for deterministic env configuration instead of relying only on shell profile side effects.",
   wizard:
     "Setup wizard state tracking fields that record the most recent guided setup run details. Keep these fields for observability and troubleshooting of setup flows across upgrades.",
   "wizard.lastRunAt":
     "ISO timestamp for when the setup wizard most recently completed on this host. Use this to confirm setup recency during support and operational audits.",
   "wizard.lastRunVersion":
-    "OpenClaw version recorded at the time of the most recent wizard run on this config. Use this when diagnosing behavior differences across version-to-version setup changes.",
+    "Nova version recorded at the time of the most recent wizard run on this config. Use this when diagnosing behavior differences across version-to-version setup changes.",
   "wizard.lastRunCommit":
     "Source commit identifier recorded for the last wizard execution in development builds. Use this to correlate setup behavior with exact source state during debugging.",
   "wizard.lastRunCommand":
@@ -93,7 +93,7 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "cli.banner.taglineMode":
     'Controls tagline style in the CLI startup banner: "random" (default) picks from the rotating tagline pool, "default" always shows the neutral default tagline, and "off" hides tagline text while keeping the banner version line.',
   update:
-    "Update-channel and startup-check behavior for keeping OpenClaw runtime versions current. Use conservative channels in production and more experimental channels only in controlled environments.",
+    "Update-channel and startup-check behavior for keeping Nova runtime versions current. Use conservative channels in production and more experimental channels only in controlled environments.",
   "update.channel":
     'Update channel for git + npm installs ("stable", "extended-stable", "beta", or "dev"). Extended-stable is package-only: installation is foreground-only, with optional read-only startup hints.',
   "update.checkOnStart":
@@ -173,9 +173,9 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "gateway.tailscale.resetOnExit":
     "Resets Tailscale Serve/Funnel state on gateway exit to avoid stale published routes after shutdown. Keep enabled unless another controller manages publish lifecycle outside the gateway.",
   "gateway.tailscale.serviceName":
-    'Optional Tailscale Service name for Serve mode, such as "svc:openclaw". The value must use Tailscale\'s svc:<dns-label> format. When set, OpenClaw passes it to tailscale serve --service and reports the derived Service URL.',
+    'Optional Tailscale Service name for Serve mode, such as "svc:openclaw". The value must use Tailscale\'s svc:<dns-label> format. When set, Nova passes it to tailscale serve --service and reports the derived Service URL.',
   "gateway.tailscale.preserveFunnel":
-    "When mode='serve' and an externally configured Tailscale Funnel route already covers the gateway port, skip re-applying tailscale serve on startup. Lets operators keep Funnel exposure managed outside OpenClaw without losing it across gateway restarts.",
+    "When mode='serve' and an externally configured Tailscale Funnel route already covers the gateway port, skip re-applying tailscale serve on startup. Lets operators keep Funnel exposure managed outside Nova without losing it across gateway restarts.",
   "gateway.remote":
     "Remote gateway connection settings for direct or SSH transport when this instance proxies to another runtime host. Use remote mode only when split-host operation is intentionally configured.",
   "gateway.remote.transport":
@@ -232,7 +232,7 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "talk.realtime.speakerVoiceId":
     "Realtime provider speaker voice id override for browser or Gateway-owned Talk sessions.",
   "talk.realtime.instructions":
-    "Additional system instructions appended to OpenClaw's built-in realtime Talk prompt. Use this for voice style, tone, and other provider-facing realtime behavior while keeping agent-consult guidance intact.",
+    "Additional system instructions appended to Nova's built-in realtime Talk prompt. Use this for voice style, tone, and other provider-facing realtime behavior while keeping agent-consult guidance intact.",
   "talk.realtime.mode": "Talk execution mode: realtime, stt-tts, or transcription.",
   "talk.realtime.transport":
     "Talk byte/session transport: webrtc, provider-websocket, gateway-relay, or managed-room.",
@@ -247,7 +247,7 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "talk.realtime.brain":
     "Talk reasoning strategy: agent-consult for Gateway-mediated agent help, direct-tools for local tool calls, or none.",
   "talk.realtime.consultRouting":
-    "Gateway relay fallback for final user transcripts when the realtime provider skips openclaw_agent_consult. provider-direct preserves provider replies; force-agent-consult routes through OpenClaw.",
+    "Gateway relay fallback for final user transcripts when the realtime provider skips openclaw_agent_consult. provider-direct preserves provider replies; force-agent-consult routes through Nova.",
   "talk.consultThinkingLevel":
     "Use this to override the thinking level for the regular agent run behind Talk realtime consults.",
   "talk.consultFastMode":
@@ -343,13 +343,13 @@ export const CORE_FIELD_HELP: Record<string, string> = {
   "agents.list[].fastModeDefault":
     'Optional per-agent default for fast mode ("auto", true, or false). Applies when no per-message or session fast-mode override is set.',
   "agents.list[].runtime":
-    "Optional runtime descriptor for this agent. Use embedded for default OpenClaw execution or acp for external ACP harness defaults.",
+    "Optional runtime descriptor for this agent. Use embedded for default Nova execution or acp for external ACP harness defaults.",
   "agents.list[].runtime.type":
-    'Runtime type for this agent: "embedded" (default OpenClaw runtime) or "acp" (ACP harness defaults).',
+    'Runtime type for this agent: "embedded" (default Nova runtime) or "acp" (ACP harness defaults).',
   "agents.list[].runtime.acp":
     "ACP runtime defaults for this agent when runtime.type=acp. Binding-level ACP overrides still take precedence per conversation.",
   "agents.list[].runtime.acp.agent":
-    "Optional ACP harness agent id to use for this OpenClaw agent (for example codex, claude, cursor, gemini, openclaw).",
+    "Optional ACP harness agent id to use for this Nova agent (for example codex, claude, cursor, gemini, openclaw).",
   "agents.list[].runtime.acp.backend":
     "Optional ACP backend override for this agent's ACP sessions (falls back to global acp.backend).",
   "agents.list[].runtime.acp.mode":

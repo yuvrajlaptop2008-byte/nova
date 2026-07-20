@@ -11,7 +11,7 @@ describe("issue 78851 model resolution profiler CLI", () => {
     const usage = issue78851ModelResolutionUsage();
 
     expect(issue78851ModelResolutionHelpRequested(["--help"])).toBe(true);
-    expect(usage).toContain("OpenClaw issue #78851 model-resolution profiler");
+    expect(usage).toContain("Nova issue #78851 model-resolution profiler");
     expect(usage).toContain(
       "node --import tsx scripts/perf/issue-78851-model-resolution.ts [options]",
     );

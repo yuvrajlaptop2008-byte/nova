@@ -10,7 +10,7 @@ import {
   SystemAgentSetupVerifyResultSchema,
 } from "./openclaw.js";
 
-describe("OpenClaw chat history protocol", () => {
+describe("Nova chat history protocol", () => {
   it("accepts the default request and bounds explicit limits", () => {
     expect(validateSystemAgentChatHistoryParams({})).toBe(true);
     expect(validateSystemAgentChatHistoryParams({ limit: 1 })).toBe(true);
@@ -36,7 +36,7 @@ describe("OpenClaw chat history protocol", () => {
   });
 });
 
-describe("OpenClaw setup detection protocol", () => {
+describe("Nova setup detection protocol", () => {
   it("accepts additive presentation metadata and older results without installs", () => {
     const result = {
       candidates: [
@@ -88,7 +88,7 @@ describe("OpenClaw setup detection protocol", () => {
   });
 });
 
-describe("OpenClaw setup verification protocol", () => {
+describe("Nova setup verification protocol", () => {
   it("accepts only an empty request", () => {
     expect(validateSystemAgentSetupVerifyParams({})).toBe(true);
     expect(validateSystemAgentSetupVerifyParams({ modelRef: "openai/gpt-5.5" })).toBe(false);

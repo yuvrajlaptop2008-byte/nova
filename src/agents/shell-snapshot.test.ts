@@ -520,7 +520,7 @@ describe("exec shell snapshots", () => {
     fs.writeFileSync(
       snapshotPath,
       [
-        "# OpenClaw exec shell snapshot. Generated; do not edit.",
+        "# Nova exec shell snapshot. Generated; do not edit.",
         "unalias -a 2>/dev/null || true",
         "oc_broken_fn() {",
         "        --!(no-*)dir*",

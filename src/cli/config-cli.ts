@@ -956,7 +956,7 @@ async function loadValidConfig(runtime: RuntimeEnv = defaultRuntime) {
   if (snapshot.valid) {
     return snapshot;
   }
-  runtime.error(`OpenClaw config is invalid: ${shortenHomePath(snapshot.path)}`);
+  runtime.error(`Nova config is invalid: ${shortenHomePath(snapshot.path)}`);
   const displayIssues = attachConfigIssueDiagnostics(snapshot.issues, {
     raw: snapshot.raw,
     parsed: snapshot.parsed,
@@ -1994,9 +1994,9 @@ function formatAutoManagedMetaError(paths: readonly PathSegment[][]): string {
   const targets = paths.map((path) => toDotPath(path));
   const subject = targets.length === 1 ? targets[0] : targets.join(", ");
   return [
-    `${subject} is auto-managed by OpenClaw and cannot be edited; the value would be overwritten on the next config write.`,
+    `${subject} is auto-managed by Nova and cannot be edited; the value would be overwritten on the next config write.`,
     "",
-    "These fields are stamped on every config write to record the OpenClaw version and timestamp that produced the file.",
+    "These fields are stamped on every config write to record the Nova version and timestamp that produced the file.",
   ].join("\n");
 }
 
@@ -2662,7 +2662,7 @@ async function runConfigValidate(opts: { json?: boolean; runtime?: RuntimeEnv } 
           formatPathForDisplay: true,
           includeReceivedValueHint: true,
         });
-        runtime.error(danger(`OpenClaw config is invalid: ${shortPath}`));
+        runtime.error(danger(`Nova config is invalid: ${shortPath}`));
         for (const line of formatConfigIssueLines(displayIssues, danger("×"), {
           normalizeRoot: true,
         })) {

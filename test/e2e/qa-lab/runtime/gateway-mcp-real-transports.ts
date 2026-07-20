@@ -279,7 +279,7 @@ function resolveChannelMcpInvocation(params: {
   }
 
   throw new Error(
-    "OpenClaw channel MCP entry not found: expected dist/index.(m)js or src/mcp/channel-server.ts",
+    "Nova channel MCP entry not found: expected dist/index.(m)js or src/mcp/channel-server.ts",
   );
 }
 

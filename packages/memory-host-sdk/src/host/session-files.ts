@@ -381,7 +381,7 @@ export function sessionPathForSessionIdentity(agentId: string, sessionId: string
 
 /**
  * Parses a deprecated path-shaped memory sync hint only when it points at an
- * OpenClaw-owned usage-counted transcript in the canonical agent sessions dir.
+ * Nova-owned usage-counted transcript in the canonical agent sessions dir.
  */
 export function parseCanonicalSessionSyncTargetFromPath(
   sessionFile: string,
@@ -548,7 +548,7 @@ function renderSessionExportLines(label: string, text: string): string[] {
 }
 
 /**
- * Strip OpenClaw-injected inbound metadata envelopes from a raw text block.
+ * Strip Nova-injected inbound metadata envelopes from a raw text block.
  *
  * User-role messages arriving from external channels (Telegram, Discord,
  * Slack, …) are stored with a multi-line prefix containing Conversation info,

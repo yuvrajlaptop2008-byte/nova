@@ -1,4 +1,4 @@
-// Msteams plugin entrypoint registers its OpenClaw integration.
+// Msteams plugin entrypoint registers its Nova integration.
 import { defineBundledChannelEntry } from "openclaw/plugin-sdk/channel-entry-contract";
 
 export default defineBundledChannelEntry({

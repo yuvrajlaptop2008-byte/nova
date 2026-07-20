@@ -1,5 +1,5 @@
 // Imported CLI history merge helpers.
-// Deduplicates external history messages against local OpenClaw transcripts.
+// Deduplicates external history messages against local Nova transcripts.
 import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
 import {
   normalizeOptionalString,

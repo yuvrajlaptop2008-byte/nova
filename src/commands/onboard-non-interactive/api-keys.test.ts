@@ -80,7 +80,7 @@ describe("resolveNonInteractiveApiKey", () => {
     expect(result).toBeNull();
     expect(resolveEnvApiKey).not.toHaveBeenCalled();
     expect(runtime.error).toHaveBeenCalledWith(
-      "Paste the API key value, not an OpenClaw onboarding command.",
+      "Paste the API key value, not an Nova onboarding command.",
     );
     expect(runtime.exit).toHaveBeenCalledWith(1);
   });

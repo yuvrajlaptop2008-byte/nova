@@ -1,5 +1,5 @@
 /**
- * Hosts the local OpenClaw sandbox exec-server that Codex app-server native
+ * Hosts the local Nova sandbox exec-server that Codex app-server native
  * execution can register as an external environment.
  */
 import { createHash, randomUUID } from "node:crypto";
@@ -62,7 +62,7 @@ export async function ensureCodexSandboxExecServerEnvironment(params: {
   }
   if (!canExposeLocalExecServerToAppServer(params.appServerStartOptions)) {
     throw new Error(
-      "OpenClaw Codex exec-server uses a local loopback URL and cannot be registered with a remote Codex app-server.",
+      "Nova Codex exec-server uses a local loopback URL and cannot be registered with a remote Codex app-server.",
     );
   }
   const execServer = await acquireOpenClawExecServer(params.sandbox);
@@ -173,7 +173,7 @@ async function startOpenClawExecServer(sandbox: SandboxContext): Promise<OpenCla
   await once(server, "listening");
   const address = server.address();
   if (!address || typeof address === "string") {
-    throw new Error("OpenClaw Codex exec-server did not bind to a TCP port.");
+    throw new Error("Nova Codex exec-server did not bind to a TCP port.");
   }
   const environmentId = buildEnvironmentId(sandbox);
   const authPath = `/openclaw-${randomUUID()}`;
@@ -340,6 +340,6 @@ async function dispatchRequest(
     case "http/request":
       return await httpRequest(execServer, socket, request.params);
     default:
-      throw new Error(`Unsupported OpenClaw sandbox exec-server method: ${request.method}`);
+      throw new Error(`Unsupported Nova sandbox exec-server method: ${request.method}`);
   }
 }

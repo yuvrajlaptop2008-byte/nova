@@ -1,4 +1,4 @@
-/** Persists hosted official external plugin catalog snapshots in OpenClaw state. */
+/** Persists hosted official external plugin catalog snapshots in Nova state. */
 import { existsSync } from "node:fs";
 import {
   executeSqliteQuerySync,

@@ -168,7 +168,7 @@ function notePluginVersionDrift(drift: PluginVersionDriftReport | undefined) {
   const lines = [
     `${drift.drifts.length} active official plugin${
       drift.drifts.length === 1 ? "" : "s"
-    } not on OpenClaw ${drift.gatewayVersion}`,
+    } not on Nova ${drift.gatewayVersion}`,
     ...drift.drifts.map((entry) => {
       const sourceLabel = entry.source === "clawhub" ? "clawhub" : "npm";
       return `- ${entry.pluginId}: ${entry.installedVersion} (${sourceLabel}) -> expected ${drift.gatewayVersion}`;
