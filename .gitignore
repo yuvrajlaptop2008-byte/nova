@@ -193,8 +193,6 @@ USER.md
 !.agents/skills/nova-testing/**
 !.agents/skills/nova-learn/
 !.agents/skills/nova-learn/**
-!.agents/skills/openclaw/
-!.agents/skills/openclaw/**
 !.agents/skills/parallels-discord-roundtrip/
 !.agents/skills/parallels-discord-roundtrip/**
 !.agents/skills/release-nova-announcement/
