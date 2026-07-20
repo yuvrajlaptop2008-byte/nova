@@ -1,6 +1,6 @@
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 // Directive tag helpers parse inline directive tags from user text.
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 
 export type InlineDirectiveParseResult = {
   text: string;

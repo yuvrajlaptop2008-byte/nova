@@ -1,6 +1,6 @@
 import path from "node:path";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { normalizeStringEntries } from "@nova/normalization-core/string-normalization";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { emitDiagnosticEvent } from "../infra/diagnostic-events.js";
 import {
   type EventSessionRoutingPolicy,

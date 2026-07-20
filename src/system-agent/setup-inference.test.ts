@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveAgentDir } from "../agents/agent-scope-config.js";
 import {
@@ -3573,7 +3573,7 @@ describe("activateSetupInference", () => {
               ...params.cfg.plugins?.installs,
               codex: {
                 source: "npm" as const,
-                spec: "@openclaw/codex",
+                spec: "@nova/codex",
                 installPath: "/tmp/plugins/codex",
               },
             },
@@ -3833,7 +3833,7 @@ describe("activateSetupInference", () => {
     expect(persistedConfig.plugins?.installs).toBeUndefined();
     expect(pendingCodexInstalls[0]).toMatchObject({
       source: "npm",
-      spec: "@openclaw/codex",
+      spec: "@nova/codex",
       installPath: "/tmp/plugins/codex",
     });
     expect(pendingCodexInstalls).toHaveLength(1);
@@ -3970,30 +3970,30 @@ describe("activateSetupInference", () => {
     const staleAuthoredRecords = {
       codex: {
         source: "npm" as const,
-        spec: "@openclaw/codex@1.0.0",
+        spec: "@nova/codex@1.0.0",
         installPath: "/tmp/plugins/codex-v1",
       },
       unrelated: {
         source: "npm" as const,
-        spec: "@openclaw/unrelated@1.0.0",
+        spec: "@nova/unrelated@1.0.0",
         installPath: "/tmp/plugins/unrelated-v1",
       },
     };
     const canonicalRecords = {
       codex: {
         source: "npm" as const,
-        spec: "@openclaw/codex@2.0.0",
+        spec: "@nova/codex@2.0.0",
         installPath: "/tmp/plugins/codex-v2",
       },
       unrelated: {
         source: "npm" as const,
-        spec: "@openclaw/unrelated@2.0.0",
+        spec: "@nova/unrelated@2.0.0",
         installPath: "/tmp/plugins/unrelated-v2",
       },
     };
     const refreshedCodexRecord = {
       source: "npm" as const,
-      spec: "@openclaw/codex@3.0.0",
+      spec: "@nova/codex@3.0.0",
       installPath: "/tmp/plugins/codex-v3",
     };
     const sourceConfig = {
@@ -4113,7 +4113,7 @@ describe("activateSetupInference", () => {
   it("fails closed before inference when the staged Codex package cannot be retained", async () => {
     const installRecord: PluginInstallRecord = {
       source: "npm",
-      spec: "@openclaw/codex",
+      spec: "@nova/codex",
       installPath: "/tmp/plugins/codex-unretained",
     };
     const runEmbeddedAgent = vi.fn();
@@ -4179,7 +4179,7 @@ describe("activateSetupInference", () => {
   it("reports an indeterminate activation when final Codex retention fails", async () => {
     const installRecord: PluginInstallRecord = {
       source: "npm",
-      spec: "@openclaw/codex",
+      spec: "@nova/codex",
       installPath: "/tmp/plugins/codex-final-retention-failure",
     };
     const markRetainedInstall = vi.fn().mockResolvedValueOnce(true).mockResolvedValueOnce(false);
@@ -4237,7 +4237,7 @@ describe("activateSetupInference", () => {
     resetPluginRuntimeStateForTest();
     const installRecord: PluginInstallRecord = {
       source: "npm",
-      spec: "@openclaw/codex",
+      spec: "@nova/codex",
       installPath: "/tmp/plugins/codex-staged-registry",
     };
     const persistedConfig = { plugins: { enabled: false } } satisfies OpenClawConfig;
@@ -4383,7 +4383,7 @@ describe("activateSetupInference", () => {
                   ...params.cfg.plugins?.installs,
                   codex: {
                     source: "npm" as const,
-                    spec: "@openclaw/codex",
+                    spec: "@nova/codex",
                     installPath: packageDir,
                   },
                 },
@@ -4426,12 +4426,12 @@ describe("activateSetupInference", () => {
     const installRecords = [
       {
         source: "npm" as const,
-        spec: "@openclaw/codex@generation-1",
+        spec: "@nova/codex@generation-1",
         installPath: "/tmp/plugins/codex-generation-1",
       },
       {
         source: "npm" as const,
-        spec: "@openclaw/codex@generation-2",
+        spec: "@nova/codex@generation-2",
         installPath: "/tmp/plugins/codex-generation-2",
       },
     ];
@@ -4561,7 +4561,7 @@ describe("activateSetupInference", () => {
       installRecords: {
         codex: {
           source: "npm" as const,
-          spec: "@openclaw/codex@other",
+          spec: "@nova/codex@other",
           installPath: "/tmp/plugins/codex-other",
         },
       },
@@ -4575,7 +4575,7 @@ describe("activateSetupInference", () => {
   ])("reconciles a post-write Codex error only with an $name install record", async (testCase) => {
     const installRecord: PluginInstallRecord = {
       source: "npm",
-      spec: "@openclaw/codex",
+      spec: "@nova/codex",
       installPath: "/tmp/plugins/codex",
     };
     const installRecords = testCase.installRecords ?? { codex: installRecord };

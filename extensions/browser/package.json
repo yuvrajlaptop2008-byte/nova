@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/browser-plugin",
+  "name": "@nova/browser-plugin",
   "version": "2026.7.2",
   "private": true,
   "description": "OpenClaw browser tool plugin",
@@ -14,8 +14,8 @@
     "ws": "8.21.0"
   },
   "devDependencies": {
-    "@openclaw/gateway-client": "workspace:*",
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/gateway-client": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "undici": "8.6.0"
   },
   "openclaw": {

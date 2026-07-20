@@ -9,7 +9,7 @@ import {
   resolvePositiveTimerTimeoutMs,
   resolveTimerTimeoutMs,
   resolveTimestampMsToIsoString,
-} from "@openclaw/normalization-core/number-coercion";
+} from "@nova/normalization-core/number-coercion";
 import { z } from "zod";
 import { resolveConfigPath, resolveGatewayLockDir, resolveStateDir } from "../config/paths.js";
 import { getFileLockProcessStartTime, isPidAlive } from "../shared/pid-alive.js";

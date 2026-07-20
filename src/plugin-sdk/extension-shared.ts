@@ -1,6 +1,6 @@
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 // Extension shared helpers expose cross-plugin runtime utilities that remain SDK-safe.
-import { createAmbientNodeProxyAgent, hasAmbientNodeProxyConfigured } from "@openclaw/proxyline";
+import { createAmbientNodeProxyAgent, hasAmbientNodeProxyConfigured } from "@nova/proxyline";
 import type { z } from "zod";
 import type { OpenClawConfig } from "../config/config.js";
 import { resolveActiveManagedProxyTlsOptions } from "../infra/net/proxy/managed-proxy-undici.js";

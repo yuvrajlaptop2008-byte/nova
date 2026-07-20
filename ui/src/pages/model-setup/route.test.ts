@@ -1,4 +1,4 @@
-import type { RouteLocation } from "@openclaw/uirouter";
+import type { RouteLocation } from "@nova/uirouter";
 import { describe, expect, it } from "vitest";
 import type { ApplicationContext } from "../../app/context.ts";
 import { page } from "./route.ts";

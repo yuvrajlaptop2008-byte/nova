@@ -10,7 +10,7 @@ import {
   reconcileOpenAICompletionsToolChoice,
   resolveOpenAIReasoningEffortForModel,
   type OpenAIReasoningEffort,
-} from "@openclaw/ai/internal/openai";
+} from "@nova/ai/internal/openai";
 import {
   applyProviderReportedUsageCost,
   calculateCost,
@@ -21,10 +21,10 @@ import {
   getFirstStreamEventTimeoutMs,
   parseStreamingJson,
   withFirstStreamEventTimeout,
-} from "@openclaw/ai/internal/runtime";
-import { stripSystemPromptCacheBoundary } from "@openclaw/ai/internal/shared";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+} from "@nova/ai/internal/runtime";
+import { stripSystemPromptCacheBoundary } from "@nova/ai/internal/shared";
+import { isRecord } from "@nova/normalization-core/record-coerce";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import OpenAI from "openai";
 import type { ChatCompletionChunk } from "openai/resources/chat/completions.js";
 import type { Context, Model } from "../llm/types.js";

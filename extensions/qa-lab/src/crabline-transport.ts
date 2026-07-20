@@ -7,7 +7,7 @@ import {
   type OpenClawCrablineChannelDriverSelection,
   type OpenClawCrablineInbound,
   type StartedOpenClawCrablineAdapter,
-} from "@openclaw/crabline";
+} from "@nova/crabline";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
 import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";

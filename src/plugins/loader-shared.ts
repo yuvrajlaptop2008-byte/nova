@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { err as resultError, ok, type Result } from "@openclaw/normalization-core/result";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { err as resultError, ok, type Result } from "@nova/normalization-core/result";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { clearAgentHarnesses } from "../agents/harness/registry.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";

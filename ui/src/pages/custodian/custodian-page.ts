@@ -4,7 +4,7 @@ import type {
   SystemAgentChatResult,
   SystemChangeEntry,
   SystemChangesListResult,
-} from "@openclaw/gateway-protocol";
+} from "@nova/gateway-protocol";
 import { html, nothing, type PropertyValues } from "lit";
 import { property, state } from "lit/decorators.js";
 import type { GatewayBrowserClient } from "../../api/gateway.ts";

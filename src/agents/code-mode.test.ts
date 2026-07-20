@@ -1,6 +1,6 @@
 /** Tests Code Mode tool registration, namespace filtering, and run lifecycle. */
 
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { Type } from "typebox";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runWithAgentToolExecutionContext } from "../../packages/agent-core/src/tool-execution-context.js";

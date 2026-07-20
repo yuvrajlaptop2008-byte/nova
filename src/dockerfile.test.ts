@@ -340,8 +340,8 @@ describe("Dockerfile", () => {
     expect(dockerfile).toContain(
       'NOVA_EXTENSIONS="$(cat /tmp/openclaw-selected-plugin-dirs)" NOVA_BUNDLED_PLUGIN_DIR="$NOVA_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
     );
-    expect(dockerfile).toContain("readlink -f /app/node_modules/@openclaw/ai");
-    expect(dockerfile).toContain('mv "$ai_runtime_tmp/ai" /app/node_modules/@openclaw/ai');
+    expect(dockerfile).toContain("readlink -f /app/node_modules/@nova/ai");
+    expect(dockerfile).toContain('mv "$ai_runtime_tmp/ai" /app/node_modules/@nova/ai');
     expect(dockerfile).toContain("CI=true pnpm prune --prod \\");
     expect(dockerfile.indexOf("CI=true pnpm prune --prod \\")).toBeLessThan(
       dockerfile.indexOf(

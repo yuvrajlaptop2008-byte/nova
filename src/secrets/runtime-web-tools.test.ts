@@ -742,7 +742,7 @@ describe("runtime web tools resolution", () => {
     };
     resolvePluginWebSearchProvidersMock.mockReturnValue([dottedProvider]);
     loadInstalledPluginIndexInstallRecordsSyncMock.mockReturnValue({
-      [pluginId]: { source: "npm", spec: "@openclaw/external-search" },
+      [pluginId]: { source: "npm", spec: "@nova/external-search" },
     });
     resolveManifestContractOwnerPluginIdMock.mockReturnValue(undefined);
     const sourceConfig = asConfig({
@@ -802,7 +802,7 @@ describe("runtime web tools resolution", () => {
     };
     resolvePluginWebSearchProvidersMock.mockReturnValue([provider]);
     loadInstalledPluginIndexInstallRecordsSyncMock.mockReturnValue({
-      [pluginId]: { source: "npm", spec: "@openclaw/external-search" },
+      [pluginId]: { source: "npm", spec: "@nova/external-search" },
     });
     resolveManifestContractOwnerPluginIdMock.mockImplementation(
       ({ value, origin }: { value: string; origin?: string }) =>
@@ -858,7 +858,7 @@ describe("runtime web tools resolution", () => {
     };
     resolvePluginWebFetchProvidersMock.mockReturnValueOnce([provider]);
     loadInstalledPluginIndexInstallRecordsSyncMock.mockReturnValue({
-      [pluginId]: { source: "npm", spec: "@openclaw/external-fetch" },
+      [pluginId]: { source: "npm", spec: "@nova/external-fetch" },
     });
     resolveManifestContractOwnerPluginIdMock.mockImplementation(
       ({ value, origin }: { value: string; origin?: string }) =>
@@ -902,7 +902,7 @@ describe("runtime web tools resolution", () => {
     };
     resolvePluginWebSearchProvidersMock.mockReturnValue([provider]);
     loadInstalledPluginIndexInstallRecordsSyncMock.mockReturnValue({
-      [pluginId]: { source: "npm", spec: "@openclaw/external-search" },
+      [pluginId]: { source: "npm", spec: "@nova/external-search" },
     });
     resolveManifestContractOwnerPluginIdMock.mockReturnValue(undefined);
     const config = (baseUrl: string) =>
@@ -1633,7 +1633,7 @@ describe("runtime web tools resolution", () => {
     loadInstalledPluginIndexInstallRecordsSyncMock.mockReturnValue({
       "external-search": {
         source: "npm",
-        spec: "@openclaw/external-search",
+        spec: "@nova/external-search",
       },
     });
 
@@ -1681,7 +1681,7 @@ describe("runtime web tools resolution", () => {
     loadInstalledPluginIndexInstallRecordsSyncMock.mockReturnValue({
       firecrawl: {
         source: "npm",
-        spec: "@openclaw/firecrawl-plugin",
+        spec: "@nova/firecrawl-plugin",
       },
     });
     resolveManifestContractOwnerPluginIdMock.mockReturnValueOnce(undefined);
@@ -2099,7 +2099,7 @@ describe("runtime web tools resolution", () => {
 
     beforeEach(() => {
       loadInstalledPluginIndexInstallRecordsSyncMock.mockReturnValue({
-        brave: { source: "npm", spec: "@openclaw/brave-search" },
+        brave: { source: "npm", spec: "@nova/brave-search" },
       });
       resolveManifestContractOwnerPluginIdMock.mockImplementation(externalBraveImpl);
     });

@@ -1,6 +1,6 @@
 /** Resolves ACP request metadata into Nova Gateway session keys and reset behavior. */
-import { readBool, readString } from "@openclaw/acp-core/meta";
-import type { AcpServerOptions } from "@openclaw/acp-core/types";
+import { readBool, readString } from "@nova/acp-core/meta";
+import type { AcpServerOptions } from "@nova/acp-core/types";
 import type { GatewayClient } from "../gateway/client.js";
 
 type AcpSessionMeta = {

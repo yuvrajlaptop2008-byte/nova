@@ -1157,7 +1157,7 @@ describe("bundled plugin postinstall", () => {
     await fs.mkdir(path.join(extensionsDir, "fixtures", "node_modules"), { recursive: true });
     await fs.writeFile(
       path.join(extensionsDir, "acpx", "package.json"),
-      JSON.stringify({ name: "@openclaw/acpx" }),
+      JSON.stringify({ name: "@nova/acpx" }),
     );
 
     pruneBundledPluginSourceNodeModules({ extensionsDir });

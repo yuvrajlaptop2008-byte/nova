@@ -1,8 +1,5 @@
 // Normalizes talk-mode config for voice and channel interactions.
-import {
-  normalizeFastMode,
-  normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+import { normalizeFastMode, normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { normalizeThinkLevel } from "../auto-reply/thinking.js";
 import { isRecord } from "../utils.js";
 import type {

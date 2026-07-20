@@ -130,7 +130,7 @@ ghx workflow run plugin-npm-release.yml \
   --ref main \
   -f preflight_only=true \
   -f publish_scope=selected \
-  -f plugins=@openclaw/meta-provider \
+  -f plugins=@nova/meta-provider \
   -f ref="${release_sha}" \
   -f npm_dist_tag=default
 ```

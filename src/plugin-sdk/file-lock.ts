@@ -5,7 +5,7 @@ import {
   acquireFileLock as acquireFsSafeFileLock,
   drainFileLockManagerForTest,
   resetFileLockManagerForTest,
-} from "@openclaw/fs-safe/file-lock";
+} from "@nova/fs-safe/file-lock";
 import {
   isLockOwnerDefinitelyStale,
   shouldRemoveDeadOwnerOrExpiredLock,

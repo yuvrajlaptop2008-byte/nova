@@ -1,8 +1,8 @@
 /** Tests node-host MCP startup, descriptors, calls, and failure isolation. */
 
 import { ErrorCode, type CallToolResult, type Tool } from "@modelcontextprotocol/sdk/types.js";
-import { expectDefined } from "@openclaw/normalization-core";
-import { MAX_TIMER_TIMEOUT_MS } from "@openclaw/normalization-core/number-coercion";
+import { expectDefined } from "@nova/normalization-core";
+import { MAX_TIMER_TIMEOUT_MS } from "@nova/normalization-core/number-coercion";
 import { describe, expect, it, vi } from "vitest";
 import { OpenClawSchema } from "../config/zod-schema.js";
 import { startNodeHostMcpManager } from "./mcp.js";

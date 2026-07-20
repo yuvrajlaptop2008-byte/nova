@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/mattermost",
+  "name": "@nova/mattermost",
   "version": "2026.7.2",
   "description": "OpenClaw Mattermost channel plugin",
   "repository": {
@@ -12,7 +12,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
@@ -46,8 +46,8 @@
       "order": 65
     },
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/mattermost",
-      "npmSpec": "@openclaw/mattermost",
+      "clawhubSpec": "clawhub:@nova/mattermost",
+      "npmSpec": "@nova/mattermost",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.6.9",
       "allowInvalidConfigRecovery": true

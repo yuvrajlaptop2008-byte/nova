@@ -1,5 +1,5 @@
-import type { Context, Model } from "@openclaw/ai";
-import { streamOpenAICompletions, streamOpenAIResponses } from "@openclaw/ai/internal/openai";
+import type { Context, Model } from "@nova/ai";
+import { streamOpenAICompletions, streamOpenAIResponses } from "@nova/ai/internal/openai";
 // OpenAI-compatible auth tests cover API key and base URL normalization.
 // Lives in core: it proves the facade-installed guarded fetch routes provider
 // requests through Nova's SSRF guard.

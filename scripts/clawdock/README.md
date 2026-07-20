@@ -206,7 +206,7 @@ This means:
 - Downloadable external plugin packages and install records live under the mounted OpenClaw home
 - Bundled OpenClaw channel plugins, such as Discord when present in the image,
   should normally load from the image-matched bundled copy. Avoid installing
-  pinned `@openclaw/*` channel packages into the mounted home unless you
+  pinned `@nova/*` channel packages into the mounted home unless you
   deliberately want an external npm override.
 - No need to add API keys to `docker-compose.yml` or configure anything inside the container
 - Keys survive `clawdock-update`, `clawdock-rebuild`, and `clawdock-clean` because they live on the host

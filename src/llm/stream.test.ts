@@ -1,4 +1,4 @@
-import { createApiRegistry, createLlmRuntime } from "@openclaw/ai";
+import { createApiRegistry, createLlmRuntime } from "@nova/ai";
 import { describe, expect, it, vi } from "vitest";
 import { bindModelLlmRuntime } from "./model-runtime-binding.js";
 import { streamSimple } from "./stream.js";

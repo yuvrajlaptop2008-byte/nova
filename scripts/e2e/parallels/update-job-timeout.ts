@@ -1,5 +1,5 @@
 // Update Job Timeout script supports Nova repository automation.
-import { resolveTimerTimeoutMs } from "@openclaw/normalization-core/number-coercion";
+import { resolveTimerTimeoutMs } from "@nova/normalization-core/number-coercion";
 
 interface TimedUpdateJobOptions {
   abortSettleMs?: number;

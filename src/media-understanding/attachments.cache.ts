@@ -3,11 +3,8 @@
 import { realpathSync, statSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
-import {
-  isInboundPathAllowed,
-  mergeInboundPathRoots,
-} from "@openclaw/media-core/inbound-path-policy";
-import { detectMime } from "@openclaw/media-core/mime";
+import { isInboundPathAllowed, mergeInboundPathRoots } from "@nova/media-core/inbound-path-policy";
+import { detectMime } from "@nova/media-core/mime";
 import { MediaUnderstandingSkipError } from "../../packages/media-understanding-common/src/errors.js";
 import { resolveStateDir } from "../config/paths.js";
 import { logVerbose, shouldLogVerbose } from "../globals.js";

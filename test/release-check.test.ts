@@ -343,7 +343,7 @@ describe("collectBundledExtensionManifestErrors", () => {
           id: "broken",
           packageJson: {
             openclaw: {
-              install: { npmSpec: "@openclaw/broken", minHostVersion: "2026.3.14" },
+              install: { npmSpec: "@nova/broken", minHostVersion: "2026.3.14" },
             },
           },
         },
@@ -406,7 +406,7 @@ describe("bundled plugin package dependency checks", () => {
       );
       writeFileSync(
         join(tempRoot, "dist", "extensions", "memory-lancedb", "package.json"),
-        `{"name":"@openclaw/memory-lancedb","dependencies":{"root-owned-test-dep":"^1.0.0"}}\n`,
+        `{"name":"@nova/memory-lancedb","dependencies":{"root-owned-test-dep":"^1.0.0"}}\n`,
         "utf8",
       );
       writeFileSync(
@@ -433,7 +433,7 @@ describe("bundled plugin package dependency checks", () => {
       );
       writeFileSync(
         join(tempRoot, "dist", "extensions", "memory-lancedb", "package.json"),
-        `{"name":"@openclaw/memory-lancedb","dependencies":{"root-owned-test-dep":"^1.0.0"}}\n`,
+        `{"name":"@nova/memory-lancedb","dependencies":{"root-owned-test-dep":"^1.0.0"}}\n`,
         "utf8",
       );
       writeFileSync(
@@ -870,7 +870,7 @@ describe("createPackedPluginSdkTypescriptSmokeProject", () => {
       );
 
       expect(packageJson.dependencies?.openclaw).toBe(`file:${packageRoot}`);
-      expect(packageJson.dependencies?.["@openclaw/ai"]).toBe("file:/tmp/openclaw-ai.tgz");
+      expect(packageJson.dependencies?.["@nova/ai"]).toBe("file:/tmp/openclaw-ai.tgz");
       expect(tsconfig.compilerOptions?.skipLibCheck).toBe(true);
       expect(source).toBe(fixtureSource);
       expect(source).toContain('"openclaw/plugin-sdk/core"');

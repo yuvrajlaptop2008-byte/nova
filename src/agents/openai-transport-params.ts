@@ -2,9 +2,9 @@ import {
   findOpenAIStrictToolProjectionDiagnostics,
   resolveOpenAIProjectedToolsStrictToolFlag,
   type OpenAIToolProjection,
-} from "@openclaw/ai/internal/openai";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+} from "@nova/ai/internal/openai";
+import { isRecord } from "@nova/normalization-core/record-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { sha256Hex } from "../infra/crypto-digest.js";
 import type { Context, Model } from "../llm/types.js";
 import { isCodeModeModelVisibleToolName } from "./code-mode-control-tools.js";

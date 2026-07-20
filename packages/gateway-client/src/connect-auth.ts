@@ -1,9 +1,9 @@
-import type { ConnectParams } from "@openclaw/gateway-protocol";
+import type { ConnectParams } from "@nova/gateway-protocol";
 import {
   ConnectErrorDetailCodes,
   readConnectErrorDetailCode,
   readConnectErrorRecoveryAdvice,
-} from "@openclaw/gateway-protocol/connect-error-details";
+} from "@nova/gateway-protocol/connect-error-details";
 
 export type GatewayConnectAuthSelection = {
   authToken?: string;

@@ -73,16 +73,16 @@ export function collectSourcePackWorkspaceDependencyErrors(
   if (env[PREPARED_RELEASE_ENV]?.trim() === "1") {
     return [];
   }
-  const aiDependency = packageJson.dependencies?.["@openclaw/ai"];
+  const aiDependency = packageJson.dependencies?.["@nova/ai"];
   if (typeof aiDependency !== "string" || !aiDependency.trim().startsWith("workspace:")) {
     return [];
   }
-  if (ocmExternalizesWorkspacePackage("@openclaw/ai", env)) {
+  if (ocmExternalizesWorkspacePackage("@nova/ai", env)) {
     return [];
   }
   return [
-    `plain root packing cannot safely resolve @openclaw/ai from ${aiDependency}: pnpm rewrites the workspace dependency to an exact version without bundling the package`,
-    `use \`${SELF_CONTAINED_SOURCE_PACK_COMMAND}\` for a self-contained source package; official npm release automation prepares and publishes @openclaw/ai separately`,
+    `plain root packing cannot safely resolve @nova/ai from ${aiDependency}: pnpm rewrites the workspace dependency to an exact version without bundling the package`,
+    `use \`${SELF_CONTAINED_SOURCE_PACK_COMMAND}\` for a self-contained source package; official npm release automation prepares and publishes @nova/ai separately`,
   ];
 }
 

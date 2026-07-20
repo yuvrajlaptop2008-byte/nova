@@ -8,7 +8,7 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   readStringValue,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@nova/normalization-core/string-coerce";
 import type { AgentMessage } from "./runtime/index.js";
 import { isThinkingLikeBlock } from "./thinking-block.js";
 import {

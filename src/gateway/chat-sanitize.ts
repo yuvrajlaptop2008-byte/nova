@@ -1,6 +1,6 @@
 // Gateway chat display sanitizer.
 // Removes Nova-only envelopes before messages are shown in UI/RPC results.
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import {
   stripInternalMetadataForDisplay,
   stripUserEnvelopeForDisplay,

@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/slack",
+  "name": "@nova/slack",
   "version": "2026.7.2",
   "description": "OpenClaw Slack channel plugin for channels, DMs, commands, and app events.",
   "repository": {
@@ -17,7 +17,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
@@ -59,7 +59,7 @@
       }
     },
     "install": {
-      "npmSpec": "@openclaw/slack",
+      "npmSpec": "@nova/slack",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.5.28",
       "allowInvalidConfigRecovery": true

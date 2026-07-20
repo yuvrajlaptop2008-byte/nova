@@ -3,11 +3,11 @@
 
 import { existsSync } from "node:fs";
 import type { DatabaseSync } from "node:sqlite";
-import { isLoopbackIpAddress } from "@openclaw/net-policy/ip";
+import { isLoopbackIpAddress } from "@nova/net-policy/ip";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@nova/normalization-core/string-coerce";
 import {
   GATEWAY_CLIENT_MODES,
   GATEWAY_CLIENT_NAMES,

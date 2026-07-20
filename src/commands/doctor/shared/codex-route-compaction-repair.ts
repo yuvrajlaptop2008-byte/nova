@@ -1,5 +1,5 @@
-import { asOptionalRecord as asMutableRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalLowercaseString as normalizeString } from "@openclaw/normalization-core/string-coerce";
+import { asOptionalRecord as asMutableRecord } from "@nova/normalization-core/record-coerce";
+import { normalizeOptionalLowercaseString as normalizeString } from "@nova/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../../../config/types.openclaw.js";
 import {
   canAutoMigrateLegacyLosslessCompaction,

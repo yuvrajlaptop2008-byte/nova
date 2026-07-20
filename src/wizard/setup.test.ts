@@ -1195,7 +1195,7 @@ describe("runSetupWizard", () => {
       config: {
         plugins: {
           installs: {
-            demo: { source: "npm", spec: "@openclaw/demo-plugin" },
+            demo: { source: "npm", spec: "@nova/demo-plugin" },
           },
         },
       },

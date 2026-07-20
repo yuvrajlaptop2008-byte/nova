@@ -1,7 +1,7 @@
 /* @vitest-environment jsdom */
 /* @vitest-environment-options {"url":"http://chat-page.test/"} */
 
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // The dedicated unit-mock-registry project keeps this complete, side-effect-only

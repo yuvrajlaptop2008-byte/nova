@@ -1,5 +1,5 @@
 // Control UI shared Gateway error helpers.
-import { readMissingScopeError } from "@openclaw/gateway-client/browser";
+import { readMissingScopeError } from "@nova/gateway-client/browser";
 import { ConnectErrorDetailCodes } from "../../../packages/gateway-protocol/src/connect-error-details.js";
 import { resolveGatewayErrorDetailCode } from "../api/gateway.ts";
 

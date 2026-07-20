@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/sms",
+  "name": "@nova/sms",
   "version": "2026.7.2",
   "description": "OpenClaw SMS channel plugin for Twilio text messages.",
   "repository": {
@@ -11,7 +11,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [
@@ -50,8 +50,8 @@
       "bundledDist": false
     },
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/sms",
-      "npmSpec": "@openclaw/sms",
+      "clawhubSpec": "clawhub:@nova/sms",
+      "npmSpec": "@nova/sms",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.6.9",
       "allowInvalidConfigRecovery": true

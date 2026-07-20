@@ -6,7 +6,7 @@ OpenAI-compatible API.
 Install from OpenClaw:
 
 ```bash
-openclaw plugins install @openclaw/longcat-provider
+openclaw plugins install @nova/longcat-provider
 openclaw gateway restart
 ```
 

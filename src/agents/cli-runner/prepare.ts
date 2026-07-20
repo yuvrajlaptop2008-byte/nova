@@ -1,9 +1,9 @@
-import { ensureSystemPromptCacheBoundary } from "@openclaw/ai/internal/shared";
+import { ensureSystemPromptCacheBoundary } from "@nova/ai/internal/shared";
 /**
  * Prepares CLI backend run context: backend config, prompts, bootstrap context,
  * MCP, auth epoch, and reusable session metadata.
  */
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { getRuntimeConfig } from "../../config/config.js";
 import type { CliBackendConfig } from "../../config/types.agent-defaults.js";
 import {

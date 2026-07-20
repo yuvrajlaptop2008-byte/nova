@@ -1,6 +1,6 @@
-import { supportsOpenAIReasoningEffort } from "@openclaw/ai/internal/openai";
-import { defaultApiRegistry } from "@openclaw/ai/internal/runtime";
-import { resolveClaudeSonnet5ModelIdentity } from "@openclaw/llm-core";
+import { supportsOpenAIReasoningEffort } from "@nova/ai/internal/openai";
+import { defaultApiRegistry } from "@nova/ai/internal/runtime";
+import { resolveClaudeSonnet5ModelIdentity } from "@nova/llm-core";
 /**
  * Simple completion runtime preparation.
  *

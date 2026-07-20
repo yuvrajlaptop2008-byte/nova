@@ -20,7 +20,7 @@ const PROCESS_GROUP_EXIT_POLL_MS = 25;
 const POST_FORCE_KILL_WAIT_MS = 1_000;
 const DEFAULT_CAPTURED_STDOUT_MAX_BYTES = 1024 * 1024;
 const MAX_TIMER_TIMEOUT_MS = 2_147_000_000;
-const AI_RUNTIME_PACKAGE = "@openclaw/ai";
+const AI_RUNTIME_PACKAGE = "@nova/ai";
 const AI_RUNTIME_BACKUP_DIR = ".openclaw-ai-package-backup";
 const ACTIVE_CHILD_KILLERS = new Set();
 const PACKAGE_BUILD_PLUGIN_SELECTION_ENV_NAMES = [
@@ -548,10 +548,10 @@ export async function prepareBundledAiRuntimePackage(
     return async () => {};
   }
   if (!hasAiRuntimeWorkspace) {
-    throw new Error("@openclaw/ai dependency requires the packages/ai workspace");
+    throw new Error("@nova/ai dependency requires the packages/ai workspace");
   }
   if (typeof aiRuntimeDependency !== "string") {
-    throw new Error("root package.json must declare @openclaw/ai as a dependency");
+    throw new Error("root package.json must declare @nova/ai as a dependency");
   }
 
   try {
@@ -615,7 +615,7 @@ export async function prepareBundledAiRuntimePackage(
       .map((filename) => path.join(outputDir, filename));
     if (packedAiTarballs.length !== 1) {
       throw new Error(
-        `expected one packed @openclaw/ai tarball in ${outputDir}, found ${packedAiTarballs.length}`,
+        `expected one packed @nova/ai tarball in ${outputDir}, found ${packedAiTarballs.length}`,
       );
     }
 
@@ -635,12 +635,12 @@ export async function prepareBundledAiRuntimePackage(
     const stagedPackageJsonPath = path.join(aiRuntimePath, "package.json");
     const stagedPackageJson = JSON.parse(await fs.readFile(stagedPackageJsonPath, "utf8"));
     if (typeof stagedPackageJson.version !== "string" || !stagedPackageJson.version) {
-      throw new Error("packed @openclaw/ai package must declare a version");
+      throw new Error("packed @nova/ai package must declare a version");
     }
     for (const [name, version] of Object.entries(stagedPackageJson.dependencies ?? {})) {
       if (packageJson.dependencies[name] !== version) {
         throw new Error(
-          `root package.json must declare ${name}@${version} to bundle @openclaw/ai without duplicate dependencies`,
+          `root package.json must declare ${name}@${version} to bundle @nova/ai without duplicate dependencies`,
         );
       }
     }

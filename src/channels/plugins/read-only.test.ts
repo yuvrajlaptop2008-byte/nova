@@ -374,7 +374,7 @@ function writeBundledSetupChannelPlugin(
     path.join(pluginDir, "package.json"),
     JSON.stringify(
       {
-        name: `@openclaw/${pluginId}`,
+        name: `@nova/${pluginId}`,
         version: "1.0.0",
         type: "commonjs",
         openclaw: {

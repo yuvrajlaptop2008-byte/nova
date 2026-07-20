@@ -1,6 +1,6 @@
 // Validates the current runtime against Nova's Node engine floor.
 import process from "node:process";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import type { RuntimeEnv } from "../runtime.js";
 
 // Runtime validation precedes terminal setup. Keep this default path from

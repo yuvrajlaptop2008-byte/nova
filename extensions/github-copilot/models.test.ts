@@ -1,6 +1,6 @@
 // Github Copilot tests cover models plugin behavior.
 import { createHash } from "node:crypto";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
 import { deriveCopilotApiBaseUrlFromToken } from "openclaw/plugin-sdk/provider-auth";
 import { createProviderUsageFetch, makeResponse } from "openclaw/plugin-sdk/test-env";

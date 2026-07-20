@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/gmi-provider",
+  "name": "@nova/gmi-provider",
   "version": "2026.7.2",
   "description": "OpenClaw GMI Cloud provider plugin.",
   "repository": {
@@ -8,15 +8,15 @@
   },
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/gmi-provider",
-      "npmSpec": "@openclaw/gmi-provider",
+      "clawhubSpec": "clawhub:@nova/gmi-provider",
+      "npmSpec": "@nova/gmi-provider",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.6.8"
     },

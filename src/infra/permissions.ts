@@ -10,9 +10,9 @@ export {
   safeStat,
   type PermissionCheck,
   type PermissionCheckOptions,
-} from "@openclaw/fs-safe/permissions";
+} from "@nova/fs-safe/permissions";
 export {
   createIcaclsResetCommand,
   formatIcaclsResetCommand,
   type PermissionExec as ExecFn,
-} from "@openclaw/fs-safe/advanced";
+} from "@nova/fs-safe/advanced";

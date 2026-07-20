@@ -1,6 +1,6 @@
 // Dependency Guard Workflow tests cover dependency guard workflow script behavior.
 import { readFileSync } from "node:fs";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
 
@@ -258,16 +258,14 @@ describe("dependency guard workflow", () => {
 
   it("requires secops review for future workflow or guard changes", () => {
     const codeowners = readFileSync(CODEOWNERS, "utf8");
+    expect(codeowners).toContain("/.github/workflows/dependency-guard.yml @nova/openclaw-secops");
     expect(codeowners).toContain(
-      "/.github/workflows/dependency-guard.yml @openclaw/openclaw-secops",
+      "/test/scripts/dependency-guard-workflow.test.ts @nova/openclaw-secops",
     );
-    expect(codeowners).toContain(
-      "/test/scripts/dependency-guard-workflow.test.ts @openclaw/openclaw-secops",
-    );
-    expect(codeowners).toContain("/scripts/github/dependency-guard.mjs @openclaw/openclaw-secops");
-    expect(codeowners).toContain("/package-lock.json @openclaw/openclaw-secops");
-    expect(codeowners).toContain("/npm-shrinkwrap.json @openclaw/openclaw-secops");
-    expect(codeowners).toContain("/extensions/*/package-lock.json @openclaw/openclaw-secops");
-    expect(codeowners).toContain("/extensions/*/npm-shrinkwrap.json @openclaw/openclaw-secops");
+    expect(codeowners).toContain("/scripts/github/dependency-guard.mjs @nova/openclaw-secops");
+    expect(codeowners).toContain("/package-lock.json @nova/openclaw-secops");
+    expect(codeowners).toContain("/npm-shrinkwrap.json @nova/openclaw-secops");
+    expect(codeowners).toContain("/extensions/*/package-lock.json @nova/openclaw-secops");
+    expect(codeowners).toContain("/extensions/*/npm-shrinkwrap.json @nova/openclaw-secops");
   });
 });

@@ -5,7 +5,7 @@ Official OpenClaw provider plugin for Groq.
 Install from OpenClaw:
 
 ```bash
-openclaw plugins install @openclaw/groq-provider
+openclaw plugins install @nova/groq-provider
 openclaw gateway restart
 ```
 

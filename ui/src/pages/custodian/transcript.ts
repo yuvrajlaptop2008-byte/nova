@@ -1,7 +1,7 @@
 import type {
   SystemAgentChatHistoryResult,
   SystemAgentChatHistoryTurn,
-} from "@openclaw/gateway-protocol";
+} from "@nova/gateway-protocol";
 import { nothing } from "lit";
 import type { GatewayBrowserClient } from "../../api/gateway.ts";
 import { t } from "../../i18n/index.ts";

@@ -6,7 +6,7 @@
  * routing from drifting apart. Kept separate from the dispatch module so
  * the plugin runtime surface does not eagerly load the run machinery.
  */
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveRuntimeCliBackends } from "../../plugins/cli-backends.runtime.js";
 import {

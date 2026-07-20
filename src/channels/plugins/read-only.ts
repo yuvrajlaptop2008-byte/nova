@@ -6,10 +6,7 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import {
-  sortUniqueStrings,
-  uniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
+import { sortUniqueStrings, uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { sanitizeForLog } from "../../../packages/terminal-core/src/ansi.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { resolveRuntimeConfigCacheKey } from "../../config/runtime-snapshot.js";

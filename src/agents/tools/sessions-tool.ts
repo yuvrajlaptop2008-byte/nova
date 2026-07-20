@@ -1,5 +1,5 @@
 /** Session self-service tool. */
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { Type } from "typebox";
 import { SESSION_AGENT_ATTENTION_ICON_IDS } from "../../../packages/gateway-protocol/src/session-icon.js";
 import { getRuntimeConfig } from "../../config/config.js";

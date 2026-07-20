@@ -5,8 +5,8 @@
  */
 import fs from "node:fs";
 import os from "node:os";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import {
   hasBundledChannelPersistedAuthState,
   listBundledChannelIdsWithPersistedAuthState,

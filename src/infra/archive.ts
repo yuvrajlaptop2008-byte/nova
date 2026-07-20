@@ -18,4 +18,4 @@ export {
   resolvePackedRootDir,
   withStagedArchiveDestination,
   type ArchiveLogger,
-} from "@openclaw/fs-safe/archive";
+} from "@nova/fs-safe/archive";

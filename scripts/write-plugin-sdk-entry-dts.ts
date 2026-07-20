@@ -13,13 +13,13 @@ const USE_CANONICAL_DECLARATIONS = process.env.NOVA_PLUGIN_SDK_CANONICAL_DTS ===
 
 function isBareImportSpecifier(id: string): boolean {
   if (
-    id === "@openclaw/llm-core" ||
-    id.startsWith("@openclaw/llm-core/") ||
-    id === "@openclaw/model-catalog-core/model-catalog-types" ||
-    id === "@openclaw/retry" ||
-    id.startsWith("@openclaw/normalization-core/") ||
-    id.startsWith("@openclaw/media-core/") ||
-    id.startsWith("@openclaw/acp-core/")
+    id === "@nova/llm-core" ||
+    id.startsWith("@nova/llm-core/") ||
+    id === "@nova/model-catalog-core/model-catalog-types" ||
+    id === "@nova/retry" ||
+    id.startsWith("@nova/normalization-core/") ||
+    id.startsWith("@nova/media-core/") ||
+    id.startsWith("@nova/acp-core/")
   ) {
     return false;
   }

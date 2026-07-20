@@ -831,8 +831,8 @@ describe("printDaemonStatus", () => {
               installedVersion: "2026.6.9",
               gatewayVersion: "2026.6.10-beta.1",
               source: "npm",
-              packageName: "@openclaw/brave-plugin",
-              spec: "@openclaw/brave-plugin@2026.6.9",
+              packageName: "@nova/brave-plugin",
+              spec: "@nova/brave-plugin@2026.6.9",
             },
           ],
         },
@@ -844,7 +844,7 @@ describe("printDaemonStatus", () => {
     expectMockLineContains(runtime.log, "- brave: 2026.6.9 (npm)");
     expectMockLineContains(
       runtime.log,
-      "openclaw plugins update @openclaw/brave-plugin@2026.6.10-beta.1",
+      "openclaw plugins update @nova/brave-plugin@2026.6.10-beta.1",
     );
     expectMockLineContains(runtime.log, "openclaw gateway restart");
   });

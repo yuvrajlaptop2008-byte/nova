@@ -1,5 +1,5 @@
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import {
   assertOkOrThrowHttpError,
   createProviderOperationDeadline,

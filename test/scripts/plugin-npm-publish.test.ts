@@ -30,10 +30,7 @@ function makePackage(version: string): { packageDir: string; path: string } {
   const binDir = join(root, "bin");
   mkdirSync(packageDir, { recursive: true });
   mkdirSync(binDir, { recursive: true });
-  writeFileSync(
-    join(packageDir, "package.json"),
-    JSON.stringify({ name: "@openclaw/demo", version }),
-  );
+  writeFileSync(join(packageDir, "package.json"), JSON.stringify({ name: "@nova/demo", version }));
   const npmPath = join(binDir, "npm");
   writeFileSync(npmPath, "#!/bin/sh\nexit 1\n");
   chmodSync(npmPath, 0o755);

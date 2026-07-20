@@ -1,4 +1,4 @@
-import type { WhatsAppQaDriverSession } from "@openclaw/whatsapp/api.js";
+import type { WhatsAppQaDriverSession } from "@nova/whatsapp/api.js";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import type { QaRunnerCliRegistration } from "openclaw/plugin-sdk/qa-runner-runtime";
 import { QaSuiteScenarioSkipError } from "../../errors.js";

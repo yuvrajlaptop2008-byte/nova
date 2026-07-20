@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/linux-canvas",
+  "name": "@nova/linux-canvas",
   "version": "2026.7.2",
   "description": "OpenClaw Linux desktop canvas bridge",
   "type": "module",
@@ -7,7 +7,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [

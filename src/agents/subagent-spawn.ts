@@ -5,8 +5,8 @@
  */
 import crypto from "node:crypto";
 import { promises as fs } from "node:fs";
-import { finiteSecondsToTimerSafeMilliseconds } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { finiteSecondsToTimerSafeMilliseconds } from "@nova/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { isAcpRuntimeSpawnAvailable } from "../acp/runtime/availability.js";
 import { routeFromBindingRecord, routeToDeliveryFields } from "../channels/route-projection.js";
 import {

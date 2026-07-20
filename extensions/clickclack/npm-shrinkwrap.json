@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/clickclack",
+  "name": "@nova/clickclack",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/clickclack",
+      "name": "@nova/clickclack",
       "version": "2026.7.2",
       "dependencies": {
         "ws": "8.21.0",

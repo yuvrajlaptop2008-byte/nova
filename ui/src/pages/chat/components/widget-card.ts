@@ -1,4 +1,4 @@
-import type { BoardMcpAppPinDescriptor } from "@openclaw/gateway-protocol";
+import type { BoardMcpAppPinDescriptor } from "@nova/gateway-protocol";
 import { html, nothing } from "lit";
 import { keyed } from "lit/directives/keyed.js";
 import { ensureCustomElementDefined } from "../../../app/lazy-custom-element.ts";

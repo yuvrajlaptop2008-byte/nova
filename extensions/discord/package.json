@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/discord",
+  "name": "@nova/discord",
   "version": "2026.7.2",
   "description": "OpenClaw Discord channel plugin for channels, DMs, commands, and app events.",
   "repository": {
@@ -18,7 +18,7 @@
     "ws": "8.21.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
@@ -62,7 +62,7 @@
       }
     },
     "install": {
-      "npmSpec": "@openclaw/discord",
+      "npmSpec": "@nova/discord",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.5.26",
       "allowInvalidConfigRecovery": true

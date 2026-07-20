@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs OpenClaw from a prepared package tarball, installs @openclaw/codex
+# Installs OpenClaw from a prepared package tarball, installs @nova/codex
 # from a registry/git/tarball spec, and verifies a live Codex app-server turn.
 set -Eeuo pipefail
 

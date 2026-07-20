@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/policy",
+  "name": "@nova/policy",
   "version": "2026.7.2",
   "private": true,
   "description": "OpenClaw policy doctor checks for workspace conformance",
@@ -8,7 +8,7 @@
     "json5": "2.2.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {

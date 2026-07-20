@@ -41,7 +41,7 @@ const canCreateDirectorySymlinks = (() => {
 
 describe("unscopedPackageName", () => {
   it.each([
-    { value: "@openclaw/matrix", expected: "matrix" },
+    { value: "@nova/matrix", expected: "matrix" },
     { value: " matrix ", expected: "matrix" },
     { value: "", expected: "" },
   ])("normalizes package names for %j", ({ value, expected }) => {
@@ -51,11 +51,11 @@ describe("unscopedPackageName", () => {
 
 describe("packageNameMatchesId", () => {
   it.each([
-    { packageName: "@openclaw/matrix", id: "matrix", expected: true },
-    { packageName: "@openclaw/matrix", id: "@openclaw/matrix", expected: true },
-    { packageName: "@openclaw/matrix", id: "quietchat", expected: false },
+    { packageName: "@nova/matrix", id: "matrix", expected: true },
+    { packageName: "@nova/matrix", id: "@nova/matrix", expected: true },
+    { packageName: "@nova/matrix", id: "quietchat", expected: false },
     { packageName: " ", id: "matrix", expected: false },
-    { packageName: "@openclaw/matrix", id: " ", expected: false },
+    { packageName: "@nova/matrix", id: " ", expected: false },
   ])("matches ids for %j", ({ packageName, id, expected }) => {
     expect(packageNameMatchesId(packageName, id)).toBe(expected);
   });
@@ -102,7 +102,7 @@ describe("resolveSafeInstallDir", () => {
     expect(
       resolveSafeInstallDir({
         baseDir: "/tmp/plugins",
-        id: "@openclaw/matrix",
+        id: "@nova/matrix",
         invalidNameMessage: "invalid plugin name",
       }),
     ).toEqual({

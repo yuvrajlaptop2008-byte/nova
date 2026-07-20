@@ -3,7 +3,7 @@
  * Resolves plugin-owned or transport-aware stream functions and registers the
  * model API once a concrete stream implementation exists.
  */
-import type { ApiRegistry } from "@openclaw/ai";
+import type { ApiRegistry } from "@nova/ai";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { getModelLlmRuntime } from "../llm/model-runtime-binding.js";
 import type { Api, Model } from "../llm/types.js";

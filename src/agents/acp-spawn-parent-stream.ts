@@ -1,7 +1,7 @@
 /** Relays child ACP session stream updates back into the requester parent session. */
-import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { sliceUtf16Safe, truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { asFiniteNumber } from "@nova/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
+import { sliceUtf16Safe, truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import {
   isAcpTagVisible,
   resolveAcpProjectionSettings,

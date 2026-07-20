@@ -2,8 +2,8 @@
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
-} from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+} from "@nova/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@nova/normalization-core/string-normalization";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import type {
   ChannelResolveKind,

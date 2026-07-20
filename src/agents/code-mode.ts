@@ -9,10 +9,10 @@ import { Worker } from "node:worker_threads";
 import {
   isFutureDateTimestampMs,
   resolveExpiresAtMsFromDurationSeconds,
-} from "@openclaw/normalization-core/number-coercion";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import type { Result } from "@openclaw/normalization-core/result";
-import { uniqueValues } from "@openclaw/normalization-core/string-normalization";
+} from "@nova/normalization-core/number-coercion";
+import { isRecord } from "@nova/normalization-core/record-coerce";
+import type { Result } from "@nova/normalization-core/result";
+import { uniqueValues } from "@nova/normalization-core/string-normalization";
 import { Type } from "typebox";
 import { getAgentToolExecutionContext } from "../../packages/agent-core/src/tool-execution-context.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";

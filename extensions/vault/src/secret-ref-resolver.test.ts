@@ -395,7 +395,7 @@ describe("plugin manifest", () => {
     expect(resolverSource).toContain("#!/usr/bin/env node");
     const pluginSdkRootImport = ["openclaw", "plugin-sdk"].join("/");
     expect(resolverSource).not.toContain(pluginSdkRootImport);
-    expect(resolverSource).toContain("@openclaw/fs-safe/secret");
+    expect(resolverSource).toContain("@nova/fs-safe/secret");
     expect(packageJson.openclaw?.build?.staticAssets).toContainEqual({
       source: "./vault-secret-ref-resolver.js",
       output: "vault-secret-ref-resolver.js",

@@ -2,7 +2,7 @@
 /* oxlint-disable typescript/no-base-to-string -- fetch mock normalizes standard RequestInfo inputs for URL assertions. */
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   downloadClawHubBootstrapReadback,
@@ -114,7 +114,7 @@ describe("parseReleaseVerifyBetaArgs", () => {
         "--clawhub-workflow-ref",
         "v2026.5.10-beta.3",
         "--plugins",
-        "@openclaw/plugin-a,@openclaw/plugin-b",
+        "@nova/plugin-a,@nova/plugin-b",
         "--full-release-validation-run",
         "10",
         "--openclaw-npm-run",
@@ -126,7 +126,7 @@ describe("parseReleaseVerifyBetaArgs", () => {
         "--plugin-clawhub-bootstrap-run",
         "34",
         "--clawhub-bootstrap-plugins",
-        "@openclaw/plugin-b",
+        "@nova/plugin-b",
         "--npm-telegram-run",
         "44",
         "--evidence-out",
@@ -146,8 +146,8 @@ describe("parseReleaseVerifyBetaArgs", () => {
       releaseSha: "a".repeat(40),
       workflowRef: "release/2026.5.10",
       clawHubWorkflowRef: "v2026.5.10-beta.3",
-      pluginSelection: ["@openclaw/plugin-a", "@openclaw/plugin-b"],
-      clawHubBootstrapPlugins: ["@openclaw/plugin-b"],
+      pluginSelection: ["@nova/plugin-a", "@nova/plugin-b"],
+      clawHubBootstrapPlugins: ["@nova/plugin-b"],
       evidenceOut: ".artifacts/release-evidence.json",
       postpublishVerifier: "/tmp/trusted-postpublish.ts",
       skipPostpublish: false,
@@ -203,7 +203,7 @@ describe("parseReleaseVerifyBetaArgs", () => {
       parseReleaseVerifyBetaArgs([
         "2026.5.10-beta.3",
         "--clawhub-bootstrap-plugins",
-        "@openclaw/plugin-b",
+        "@nova/plugin-b",
       ]),
     ).toThrow("--clawhub-bootstrap-plugins requires --plugin-clawhub-bootstrap-run");
   });
@@ -266,11 +266,11 @@ describe("validateClawHubBootstrapEvidence", () => {
     clawhubToolchainIntegrity,
     clawhubToolchainSha256,
     clawhubToolchainVersion,
-    requestedPlugins: ["@openclaw/meta"],
+    requestedPlugins: ["@nova/meta"],
     verificationMode: "postpublish",
     packages: [
       {
-        packageName: "@openclaw/meta",
+        packageName: "@nova/meta",
         version: "2026.7.1-beta.3",
         expectedSha256: packageSha,
         expectedSize: 123,
@@ -284,7 +284,7 @@ describe("validateClawHubBootstrapEvidence", () => {
           size: 123,
           npmIntegrity: "sha512-test",
           npmShasum: "1".repeat(40),
-          packageName: "@openclaw/meta",
+          packageName: "@nova/meta",
           version: "2026.7.1-beta.3",
         },
       },
@@ -305,7 +305,7 @@ describe("validateClawHubBootstrapEvidence", () => {
       runId: "34",
       releaseSha,
       expectedVersion: "2026.7.1-beta.3",
-      expectedPackages: overrides.expectedPackages ?? ["@openclaw/meta"],
+      expectedPackages: overrides.expectedPackages ?? ["@nova/meta"],
       run: overrides.run ?? run,
       readbackArtifact: overrides.readbackArtifact ?? readbackArtifact,
       readbackArchiveSha256: readbackSha,
@@ -349,7 +349,7 @@ describe("validateClawHubBootstrapEvidence", () => {
     expect(() => validate({ evidence: { ...evidence, targetSha: "e".repeat(40) } })).toThrow(
       "target SHA mismatch",
     );
-    expect(() => validate({ expectedPackages: ["@openclaw/other"] })).toThrow(
+    expect(() => validate({ expectedPackages: ["@nova/other"] })).toThrow(
       "requested package set mismatch",
     );
   });

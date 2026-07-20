@@ -5,7 +5,7 @@ Official OpenClaw plugin for Firecrawl.
 Install from OpenClaw:
 
 ```bash
-openclaw plugins install @openclaw/firecrawl-plugin
+openclaw plugins install @nova/firecrawl-plugin
 openclaw gateway restart
 ```
 

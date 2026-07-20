@@ -1,5 +1,5 @@
 // Reads provider thinking policy from the active runtime registry only.
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import type {
   ProviderDefaultThinkingPolicyContext,
   ProviderThinkingProfile,

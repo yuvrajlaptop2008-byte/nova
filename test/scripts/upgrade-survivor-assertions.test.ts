@@ -118,15 +118,15 @@ function assertConfiguredPluginState(params: { installPath?: string } = {}): voi
     });
     writeMigratedSessionState(stateDir);
     writeJson(join(matrixInstallDir, "package.json"), {
-      name: "@openclaw/matrix",
+      name: "@nova/matrix",
     });
     writeJson(join(stateDir, "plugins", "installs.json"), {
       installRecords: {
         matrix: {
           source: "clawhub",
-          spec: "clawhub:@openclaw/matrix",
+          spec: "clawhub:@nova/matrix",
           installPath: matrixInstallDir,
-          clawhubPackage: "@openclaw/matrix",
+          clawhubPackage: "@nova/matrix",
           clawhubChannel: "official",
           artifactKind: "npm-pack",
         },

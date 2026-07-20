@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/nostr",
+  "name": "@nova/nostr",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/nostr",
+      "name": "@nova/nostr",
       "version": "2026.7.2",
       "dependencies": {
         "nostr-tools": "2.23.9",

@@ -1,12 +1,12 @@
 // Config CLI command implementation for get/set/unset/patch/validate and secret refs.
-import { readByteStreamWithLimit } from "@openclaw/media-core/read-byte-stream-with-limit";
-import { expectDefined } from "@openclaw/normalization-core";
-import { isRecord as isPlainRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { readByteStreamWithLimit } from "@nova/media-core/read-byte-stream-with-limit";
+import { expectDefined } from "@nova/normalization-core";
+import { isRecord as isPlainRecord } from "@nova/normalization-core/record-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import {
   normalizeStringEntries,
   uniqueValues,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@nova/normalization-core/string-normalization";
 import type { Command } from "commander";
 import JSON5 from "json5";
 import { formatDocsLink } from "../../packages/terminal-core/src/links.js";

@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "name": "@openclaw/amazon-bedrock-provider",
+      "name": "@nova/amazon-bedrock-provider",
       "description": "OpenClaw Amazon Bedrock provider plugin",
       "source": "official",
       "kind": "provider",
@@ -19,14 +19,14 @@
           }
         ],
         "install": {
-          "npmSpec": "@openclaw/amazon-bedrock-provider",
+          "npmSpec": "@nova/amazon-bedrock-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.12-beta.1"
         }
       }
     },
     {
-      "name": "@openclaw/amazon-bedrock-mantle-provider",
+      "name": "@nova/amazon-bedrock-mantle-provider",
       "description": "OpenClaw Amazon Bedrock Mantle provider plugin",
       "source": "official",
       "kind": "provider",
@@ -44,14 +44,14 @@
           }
         ],
         "install": {
-          "npmSpec": "@openclaw/amazon-bedrock-mantle-provider",
+          "npmSpec": "@nova/amazon-bedrock-mantle-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.12-beta.1"
         }
       }
     },
     {
-      "name": "@openclaw/anthropic-vertex-provider",
+      "name": "@nova/anthropic-vertex-provider",
       "description": "OpenClaw Anthropic Vertex provider plugin",
       "source": "official",
       "kind": "provider",
@@ -69,14 +69,14 @@
           }
         ],
         "install": {
-          "npmSpec": "@openclaw/anthropic-vertex-provider",
+          "npmSpec": "@nova/anthropic-vertex-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.12-beta.1"
         }
       }
     },
     {
-      "name": "@openclaw/arcee-provider",
+      "name": "@nova/arcee-provider",
       "description": "OpenClaw Arcee provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -134,15 +134,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/arcee-provider",
-          "npmSpec": "@openclaw/arcee-provider",
+          "clawhubSpec": "clawhub:@nova/arcee-provider",
+          "npmSpec": "@nova/arcee-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/baseten-provider",
+      "name": "@nova/baseten-provider",
       "description": "OpenClaw Baseten provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -183,15 +183,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/baseten-provider",
-          "npmSpec": "@openclaw/baseten-provider",
+          "clawhubSpec": "clawhub:@nova/baseten-provider",
+          "npmSpec": "@nova/baseten-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.7.2"
         }
       }
     },
     {
-      "name": "@openclaw/cerebras-provider",
+      "name": "@nova/cerebras-provider",
       "description": "OpenClaw Cerebras provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -240,15 +240,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/cerebras-provider",
-          "npmSpec": "@openclaw/cerebras-provider",
+          "clawhubSpec": "clawhub:@nova/cerebras-provider",
+          "npmSpec": "@nova/cerebras-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/chutes-provider",
+      "name": "@nova/chutes-provider",
       "description": "OpenClaw Chutes.ai provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -311,15 +311,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/chutes-provider",
-          "npmSpec": "@openclaw/chutes-provider",
+          "clawhubSpec": "clawhub:@nova/chutes-provider",
+          "npmSpec": "@nova/chutes-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/cohere-provider",
+      "name": "@nova/cohere-provider",
       "description": "OpenClaw Cohere provider plugin",
       "source": "official",
       "kind": "provider",
@@ -357,15 +357,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/cohere-provider",
-          "npmSpec": "@openclaw/cohere-provider",
+          "clawhubSpec": "clawhub:@nova/cohere-provider",
+          "npmSpec": "@nova/cohere-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/cloudflare-ai-gateway-provider",
+      "name": "@nova/cloudflare-ai-gateway-provider",
       "description": "OpenClaw Cloudflare AI Gateway provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -407,15 +407,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/cloudflare-ai-gateway-provider",
-          "npmSpec": "@openclaw/cloudflare-ai-gateway-provider",
+          "clawhubSpec": "clawhub:@nova/cloudflare-ai-gateway-provider",
+          "npmSpec": "@nova/cloudflare-ai-gateway-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/deepinfra-provider",
+      "name": "@nova/deepinfra-provider",
       "description": "OpenClaw DeepInfra provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -482,15 +482,15 @@
           ]
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/deepinfra-provider",
-          "npmSpec": "@openclaw/deepinfra-provider",
+          "clawhubSpec": "clawhub:@nova/deepinfra-provider",
+          "npmSpec": "@nova/deepinfra-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/deepseek-provider",
+      "name": "@nova/deepseek-provider",
       "description": "OpenClaw DeepSeek provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -539,15 +539,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/deepseek-provider",
-          "npmSpec": "@openclaw/deepseek-provider",
+          "clawhubSpec": "clawhub:@nova/deepseek-provider",
+          "npmSpec": "@nova/deepseek-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/featherless-provider",
+      "name": "@nova/featherless-provider",
       "description": "OpenClaw Featherless AI provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -589,15 +589,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/featherless-provider",
-          "npmSpec": "@openclaw/featherless-provider",
+          "clawhubSpec": "clawhub:@nova/featherless-provider",
+          "npmSpec": "@nova/featherless-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.11"
         }
       }
     },
     {
-      "name": "@openclaw/gmi-provider",
+      "name": "@nova/gmi-provider",
       "description": "OpenClaw GMI Cloud provider plugin",
       "source": "official",
       "kind": "provider",
@@ -640,15 +640,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/gmi-provider",
-          "npmSpec": "@openclaw/gmi-provider",
+          "clawhubSpec": "clawhub:@nova/gmi-provider",
+          "npmSpec": "@nova/gmi-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/longcat-provider",
+      "name": "@nova/longcat-provider",
       "description": "OpenClaw LongCat provider plugin",
       "source": "official",
       "kind": "provider",
@@ -683,15 +683,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/longcat-provider",
-          "npmSpec": "@openclaw/longcat-provider",
+          "clawhubSpec": "clawhub:@nova/longcat-provider",
+          "npmSpec": "@nova/longcat-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/meta-provider",
+      "name": "@nova/meta-provider",
       "description": "OpenClaw Meta provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -732,15 +732,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/meta-provider",
-          "npmSpec": "@openclaw/meta-provider",
+          "clawhubSpec": "clawhub:@nova/meta-provider",
+          "npmSpec": "@nova/meta-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.11"
         }
       }
     },
     {
-      "name": "@openclaw/groq-provider",
+      "name": "@nova/groq-provider",
       "description": "OpenClaw Groq media-understanding provider.",
       "source": "official",
       "kind": "provider",
@@ -794,15 +794,15 @@
           ]
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/groq-provider",
-          "npmSpec": "@openclaw/groq-provider",
+          "clawhubSpec": "clawhub:@nova/groq-provider",
+          "npmSpec": "@nova/groq-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/kilocode-provider",
+      "name": "@nova/kilocode-provider",
       "description": "OpenClaw Kilo Gateway provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -844,15 +844,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/kilocode-provider",
-          "npmSpec": "@openclaw/kilocode-provider",
+          "clawhubSpec": "clawhub:@nova/kilocode-provider",
+          "npmSpec": "@nova/kilocode-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/kimi-provider",
+      "name": "@nova/kimi-provider",
       "description": "OpenClaw Kimi provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -897,15 +897,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/kimi-provider",
-          "npmSpec": "@openclaw/kimi-provider",
+          "clawhubSpec": "clawhub:@nova/kimi-provider",
+          "npmSpec": "@nova/kimi-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/pixverse-provider",
+      "name": "@nova/pixverse-provider",
       "description": "OpenClaw PixVerse video provider plugin",
       "source": "official",
       "kind": "provider",
@@ -939,14 +939,14 @@
           }
         ],
         "install": {
-          "npmSpec": "@openclaw/pixverse-provider",
+          "npmSpec": "@nova/pixverse-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.26"
         }
       }
     },
     {
-      "name": "@openclaw/qianfan-provider",
+      "name": "@nova/qianfan-provider",
       "description": "OpenClaw Qianfan provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -987,15 +987,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/qianfan-provider",
-          "npmSpec": "@openclaw/qianfan-provider",
+          "clawhubSpec": "clawhub:@nova/qianfan-provider",
+          "npmSpec": "@nova/qianfan-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/qwen-provider",
+      "name": "@nova/qwen-provider",
       "description": "OpenClaw Qwen Cloud provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -1180,15 +1180,15 @@
           ]
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/qwen-provider",
-          "npmSpec": "@openclaw/qwen-provider",
+          "clawhubSpec": "clawhub:@nova/qwen-provider",
+          "npmSpec": "@nova/qwen-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/fireworks-provider",
+      "name": "@nova/fireworks-provider",
       "description": "OpenClaw Fireworks provider plugin",
       "source": "official",
       "kind": "provider",
@@ -1233,15 +1233,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/fireworks-provider",
-          "npmSpec": "@openclaw/fireworks-provider",
+          "clawhubSpec": "clawhub:@nova/fireworks-provider",
+          "npmSpec": "@nova/fireworks-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9"
         }
       }
     },
     {
-      "name": "@openclaw/moonshot-provider",
+      "name": "@nova/moonshot-provider",
       "description": "OpenClaw Moonshot provider plugin",
       "source": "official",
       "kind": "provider",
@@ -1341,15 +1341,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/moonshot-provider",
-          "npmSpec": "@openclaw/moonshot-provider",
+          "clawhubSpec": "clawhub:@nova/moonshot-provider",
+          "npmSpec": "@nova/moonshot-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9"
         }
       }
     },
     {
-      "name": "@openclaw/tencent-provider",
+      "name": "@nova/tencent-provider",
       "description": "OpenClaw Tencent Cloud provider plugin (TokenHub + Token Plan)",
       "source": "official",
       "kind": "provider",
@@ -1421,15 +1421,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/tencent-provider",
-          "npmSpec": "@openclaw/tencent-provider",
+          "clawhubSpec": "clawhub:@nova/tencent-provider",
+          "npmSpec": "@nova/tencent-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9"
         }
       }
     },
     {
-      "name": "@openclaw/venice-provider",
+      "name": "@nova/venice-provider",
       "description": "OpenClaw Venice provider plugin",
       "source": "official",
       "kind": "provider",
@@ -1471,15 +1471,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/venice-provider",
-          "npmSpec": "@openclaw/venice-provider",
+          "clawhubSpec": "clawhub:@nova/venice-provider",
+          "npmSpec": "@nova/venice-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9"
         }
       }
     },
     {
-      "name": "@openclaw/vercel-ai-gateway-provider",
+      "name": "@nova/vercel-ai-gateway-provider",
       "description": "OpenClaw Vercel AI Gateway provider plugin",
       "source": "official",
       "kind": "provider",
@@ -1521,15 +1521,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/vercel-ai-gateway-provider",
-          "npmSpec": "@openclaw/vercel-ai-gateway-provider",
+          "clawhubSpec": "clawhub:@nova/vercel-ai-gateway-provider",
+          "npmSpec": "@nova/vercel-ai-gateway-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9"
         }
       }
     },
     {
-      "name": "@openclaw/zai-provider",
+      "name": "@nova/zai-provider",
       "description": "OpenClaw Z.AI provider plugin",
       "source": "official",
       "kind": "provider",
@@ -1652,15 +1652,15 @@
           ]
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/zai-provider",
-          "npmSpec": "@openclaw/zai-provider",
+          "clawhubSpec": "clawhub:@nova/zai-provider",
+          "npmSpec": "@nova/zai-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9"
         }
       }
     },
     {
-      "name": "@openclaw/stepfun-provider",
+      "name": "@nova/stepfun-provider",
       "description": "OpenClaw StepFun provider plugin.",
       "source": "official",
       "kind": "provider",
@@ -1764,8 +1764,8 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/stepfun-provider",
-          "npmSpec": "@openclaw/stepfun-provider",
+          "clawhubSpec": "clawhub:@nova/stepfun-provider",
+          "npmSpec": "@nova/stepfun-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9"
         }

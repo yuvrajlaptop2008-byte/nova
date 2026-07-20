@@ -255,7 +255,7 @@ const rootToolingAndWorkspaceDependencies = [
   // scripts/ui.js anchors these lookups at ui/package.json before invoking the UI workspace.
   "@vitest/browser-playwright",
   "dompurify",
-  // Root typecheck/test projects compile @openclaw/net-policy source directly.
+  // Root typecheck/test projects compile @nova/net-policy source directly.
   // Keep its exact dependency available without externalizing it from packaged builds.
   "ipaddr.js",
   "jscpd",
@@ -365,8 +365,8 @@ const config = {
   workspaces: {
     ".": {
       ignoreDependencies: [
-        "@openclaw/*",
-        // Docker packaging stages @openclaw/ai without nested dependencies after
+        "@nova/*",
+        // Docker packaging stages @nova/ai without nested dependencies after
         // verifying the root owns its exact runtime dependency versions.
         "@mistralai/mistralai",
         "cross-spawn",

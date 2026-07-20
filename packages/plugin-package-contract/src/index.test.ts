@@ -7,7 +7,7 @@ import {
   validateExternalCodePluginPackageJson,
 } from "./index.js";
 
-describe("@openclaw/plugin-package-contract", () => {
+describe("@nova/plugin-package-contract", () => {
   it("normalizes the Nova compatibility block for external plugins", () => {
     expect(
       normalizeExternalPluginCompatibility({

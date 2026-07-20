@@ -509,11 +509,11 @@ export function writePackedTarballInstallManifest(
   const aiTarball = localPackageTarballs[0];
   if (localPackageTarballs.length !== 1 || !aiTarball) {
     throw new Error(
-      `release-check: packed install requires exactly one @openclaw/ai tarball; found ${localPackageTarballs.length}.`,
+      `release-check: packed install requires exactly one @nova/ai tarball; found ${localPackageTarballs.length}.`,
     );
   }
   const dependencies: Record<string, string> = {
-    "@openclaw/ai": pathToFileURL(aiTarball).href,
+    "@nova/ai": pathToFileURL(aiTarball).href,
     openclaw: pathToFileURL(tarballPath).href,
   };
   mkdirSync(prefixDir, { recursive: true });
@@ -717,7 +717,7 @@ export function createPackedPluginSdkTypescriptSmokeProject(params: {
     openclaw: params.packageSpec,
   };
   if (params.aiPackageSpec) {
-    dependencies["@openclaw/ai"] = params.aiPackageSpec;
+    dependencies["@nova/ai"] = params.aiPackageSpec;
   }
   mkdirSync(join(params.consumerDir, "src"), { recursive: true });
   writeFileSync(

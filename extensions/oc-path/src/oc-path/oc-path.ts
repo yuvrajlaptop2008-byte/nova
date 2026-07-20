@@ -7,7 +7,7 @@
  * for canonical paths. Extra query parameters are ignored except for
  * the first non-empty `session=` value.
  *
- * @module @openclaw/oc-path/oc-path
+ * @module @nova/oc-path/oc-path
  */
 
 import { expectDefined } from "openclaw/plugin-sdk/expect-runtime";

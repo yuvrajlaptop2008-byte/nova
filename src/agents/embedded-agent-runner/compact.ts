@@ -3,7 +3,7 @@
  */
 import fs from "node:fs/promises";
 import os from "node:os";
-import type { ApiRegistry } from "@openclaw/ai";
+import type { ApiRegistry } from "@nova/ai";
 import { isAcpRuntimeSpawnAvailable } from "../../acp/runtime/availability.js";
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import { resolveAgentModelFallbackValues } from "../../config/model-input.js";

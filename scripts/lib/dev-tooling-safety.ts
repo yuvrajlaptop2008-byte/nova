@@ -1,6 +1,6 @@
 // Dev Tooling Safety script supports Nova repository automation.
 import path from "node:path";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { redactSensitiveText } from "../../src/logging/redact.js";
 
 const REDACT_OPTIONS = { mode: "tools" } as const;

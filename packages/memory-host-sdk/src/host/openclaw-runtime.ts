@@ -120,7 +120,7 @@ export type {
 export { installProcessWarningFilter } from "../../../../src/infra/warning-filter.js";
 export { redactSensitiveText } from "../../../../src/logging/redact.js";
 export { createSubsystemLogger } from "../../../../src/logging/subsystem.js";
-export { detectMime } from "@openclaw/media-core/mime";
+export { detectMime } from "@nova/media-core/mime";
 
 // Memory plugin helpers.
 export {

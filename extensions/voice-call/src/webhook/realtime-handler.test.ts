@@ -1,6 +1,6 @@
 // Voice Call tests cover realtime handler plugin behavior.
 import http from "node:http";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import type {
   RealtimeVoiceBridge,
   RealtimeVoiceProviderPlugin,

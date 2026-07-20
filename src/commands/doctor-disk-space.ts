@@ -1,6 +1,6 @@
 // Doctor contribution for low disk space around the Nova state directory.
 import os from "node:os";
-import { expectDefined, formatByteSize } from "@openclaw/normalization-core";
+import { expectDefined, formatByteSize } from "@nova/normalization-core";
 import { note } from "../../packages/terminal-core/src/note.js";
 import type { OpenClawConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";

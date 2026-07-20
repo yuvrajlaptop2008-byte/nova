@@ -84,7 +84,7 @@ openclaw_e2e_install_package /tmp/openclaw-install.log
 command -v openclaw >/dev/null
 openclaw_e2e_enable_openclaw_cli_timeout
 
-openclaw_e2e_assert_dep_absent "@openclaw/codex" "$HOME/.openclaw" "$NPM_CONFIG_PREFIX"
+openclaw_e2e_assert_dep_absent "@nova/codex" "$HOME/.openclaw" "$NPM_CONFIG_PREFIX"
 openclaw_e2e_assert_dep_absent "@openai/codex" "$HOME/.openclaw" "$NPM_CONFIG_PREFIX"
 
 echo "Running non-interactive OpenAI onboarding; Codex should install on demand..."

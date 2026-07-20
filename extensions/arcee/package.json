@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/arcee-provider",
+  "name": "@nova/arcee-provider",
   "version": "2026.7.2",
   "description": "OpenClaw Arcee provider plugin.",
   "repository": {
@@ -8,15 +8,15 @@
   },
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/arcee-provider",
-      "npmSpec": "@openclaw/arcee-provider",
+      "clawhubSpec": "clawhub:@nova/arcee-provider",
+      "npmSpec": "@nova/arcee-provider",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.6.8"
     },

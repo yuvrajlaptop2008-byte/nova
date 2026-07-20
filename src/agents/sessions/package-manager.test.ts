@@ -256,7 +256,7 @@ describe("DefaultPackageManager", () => {
     const manager = new DefaultPackageManager({
       cwd: root,
       agentDir: join(root, "agent"),
-      settingsManager: SettingsManager.inMemory({ packages: ["npm:@openclaw/missing-test"] }),
+      settingsManager: SettingsManager.inMemory({ packages: ["npm:@nova/missing-test"] }),
     });
 
     const resolved = await manager.resolve();
@@ -276,7 +276,7 @@ describe("DefaultPackageManager", () => {
       agentDir,
       settingsManager: SettingsManager.inMemory({}),
     }) as unknown as PackageManagerInternals;
-    const npmSource = manager.parseSource("npm:@openclaw/example");
+    const npmSource = manager.parseSource("npm:@nova/example");
     const gitSource = manager.parseSource("https://github.com/openclaw/example.git");
     if (npmSource.type !== "npm" || gitSource.type !== "git") {
       throw new Error("Expected package sources");

@@ -240,9 +240,9 @@ describe("handleCommands /plugins install", () => {
       version: "1.0.0",
       extensions: ["index.js"],
       npmResolution: {
-        name: "@openclaw/brave-plugin",
+        name: "@nova/brave-plugin",
         version: "1.0.0",
-        resolvedSpec: "@openclaw/brave-plugin@1.0.0",
+        resolvedSpec: "@nova/brave-plugin@1.0.0",
       },
     });
     persistPluginInstallMock.mockResolvedValue({});
@@ -253,24 +253,22 @@ describe("handleCommands /plugins install", () => {
         `${JSON.stringify(policyConfig, null, 2)}\n`,
       );
       const workspaceDir = await workspaceHarness.createWorkspace();
-      const params = buildPluginsParams(
-        "/plugins install npm:@openclaw/brave-plugin",
-        workspaceDir,
-        { cfg: policyConfig },
-      );
+      const params = buildPluginsParams("/plugins install npm:@nova/brave-plugin", workspaceDir, {
+        cfg: policyConfig,
+      });
 
       const result = await handlePluginsCommand(params, true);
 
       expect(result?.reply?.text).toContain('Installed plugin "brave"');
       expectObjectFields(mockFirstObjectArg(installPluginFromNpmSpecMock), {
-        spec: "@openclaw/brave-plugin",
+        spec: "@nova/brave-plugin",
         config: policyConfig,
         expectedPluginId: "brave",
         trustedSourceLinkedOfficialInstall: true,
       });
       expectPersistedInstall("brave", {
         source: "npm",
-        spec: "@openclaw/brave-plugin",
+        spec: "@nova/brave-plugin",
         installPath: "/tmp/brave",
         version: "1.0.0",
       });
@@ -285,28 +283,28 @@ describe("handleCommands /plugins install", () => {
       version: "1.0.0",
       extensions: ["index.js"],
       npmResolution: {
-        name: "@openclaw/discord",
+        name: "@nova/discord",
         version: "1.0.0",
-        resolvedSpec: "@openclaw/discord@1.0.0",
+        resolvedSpec: "@nova/discord@1.0.0",
       },
     });
     persistPluginInstallMock.mockResolvedValue({});
 
     await withTempHome("openclaw-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
-      const params = buildPluginsParams("/plugins install npm:@openclaw/discord", workspaceDir);
+      const params = buildPluginsParams("/plugins install npm:@nova/discord", workspaceDir);
 
       const result = await handlePluginsCommand(params, true);
 
       expect(result?.reply?.text).toContain('Installed plugin "discord"');
       expectObjectFields(mockFirstObjectArg(installPluginFromNpmSpecMock), {
-        spec: "@openclaw/discord",
+        spec: "@nova/discord",
         expectedPluginId: "discord",
         trustedSourceLinkedOfficialInstall: true,
       });
       expectPersistedInstall("discord", {
         source: "npm",
-        spec: "@openclaw/discord",
+        spec: "@nova/discord",
         installPath: "/tmp/discord",
         version: "1.0.0",
       });
@@ -682,11 +680,11 @@ describe("handleCommands /plugins install", () => {
       targetDir: "/tmp/clawhub-demo",
       version: "1.2.3",
       extensions: ["index.js"],
-      packageName: "@openclaw/clawhub-demo",
+      packageName: "@nova/clawhub-demo",
       clawhub: {
         source: "clawhub",
         clawhubUrl: "https://clawhub.ai",
-        clawhubPackage: "@openclaw/clawhub-demo",
+        clawhubPackage: "@nova/clawhub-demo",
         clawhubFamily: "code-plugin",
         clawhubChannel: "official",
         version: "1.2.3",
@@ -709,7 +707,7 @@ describe("handleCommands /plugins install", () => {
     await withTempHome("openclaw-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
-        "/plugins install clawhub:@openclaw/clawhub-demo@1.2.3",
+        "/plugins install clawhub:@nova/clawhub-demo@1.2.3",
         workspaceDir,
       );
       const result = await handlePluginsCommand(params, true);
@@ -718,15 +716,15 @@ describe("handleCommands /plugins install", () => {
       }
       expect(result.reply?.text).toContain('Installed plugin "clawhub-demo"');
       expect(mockFirstObjectArg(installPluginFromClawHubMock).spec).toBe(
-        "clawhub:@openclaw/clawhub-demo@1.2.3",
+        "clawhub:@nova/clawhub-demo@1.2.3",
       );
       expectPersistedInstall("clawhub-demo", {
         source: "clawhub",
-        spec: "clawhub:@openclaw/clawhub-demo@1.2.3",
+        spec: "clawhub:@nova/clawhub-demo@1.2.3",
         installPath: "/tmp/clawhub-demo",
         version: "1.2.3",
         integrity: "sha512-demo",
-        clawhubPackage: "@openclaw/clawhub-demo",
+        clawhubPackage: "@nova/clawhub-demo",
         clawhubChannel: "official",
         artifactKind: "npm-pack",
         artifactFormat: "tgz",
@@ -744,7 +742,7 @@ describe("handleCommands /plugins install", () => {
 
   it("includes non-blocking ClawHub warnings in successful chat install replies", async () => {
     const warning =
-      'ClawHub trust warning for "@openclaw/clawhub-demo@1.2.3": scan=pending; reasons=pending.';
+      'ClawHub trust warning for "@nova/clawhub-demo@1.2.3": scan=pending; reasons=pending.';
     const richWarning = `\u001b[33m${warning}\u001b[39m`;
     installPluginFromClawHubMock.mockImplementation(async (params: unknown) => {
       if (!params || typeof params !== "object" || !("logger" in params)) {
@@ -766,11 +764,11 @@ describe("handleCommands /plugins install", () => {
         targetDir: "/tmp/clawhub-demo",
         version: "1.2.3",
         extensions: ["index.js"],
-        packageName: "@openclaw/clawhub-demo",
+        packageName: "@nova/clawhub-demo",
         clawhub: {
           source: "clawhub",
           clawhubUrl: "https://clawhub.ai",
-          clawhubPackage: "@openclaw/clawhub-demo",
+          clawhubPackage: "@nova/clawhub-demo",
           clawhubFamily: "code-plugin",
           clawhubChannel: "official",
           version: "1.2.3",
@@ -784,7 +782,7 @@ describe("handleCommands /plugins install", () => {
     await withTempHome("openclaw-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
-        "/plugins install clawhub:@openclaw/clawhub-demo@1.2.3",
+        "/plugins install clawhub:@nova/clawhub-demo@1.2.3",
         workspaceDir,
       );
       const result = await handlePluginsCommand(params, true);
@@ -799,7 +797,7 @@ describe("handleCommands /plugins install", () => {
       );
       expectPersistedInstall("clawhub-demo", {
         source: "clawhub",
-        spec: "clawhub:@openclaw/clawhub-demo@1.2.3",
+        spec: "clawhub:@nova/clawhub-demo@1.2.3",
         installPath: "/tmp/clawhub-demo",
       });
     });
@@ -807,19 +805,19 @@ describe("handleCommands /plugins install", () => {
 
   it("reports risky ClawHub install failures without persisting install metadata", async () => {
     const warning =
-      'ClawHub trust warning for "@openclaw/risky-demo@1.2.3": scan=suspicious; moderation=none; blockedFromDownload=false; pending=false; stale=false; reasons=payload_string. Risk signals: scan status suspicious, payload_string.';
+      'ClawHub trust warning for "@nova/risky-demo@1.2.3": scan=suspicious; moderation=none; blockedFromDownload=false; pending=false; stale=false; reasons=payload_string. Risk signals: scan status suspicious, payload_string.';
     installPluginFromClawHubMock.mockResolvedValue({
       ok: false,
       code: "clawhub_risk_acknowledgement_required",
       error:
-        'ClawHub release "@openclaw/risky-demo@1.2.3" has trust warnings. Review the package and rerun with --acknowledge-clawhub-risk to continue.',
+        'ClawHub release "@nova/risky-demo@1.2.3" has trust warnings. Review the package and rerun with --acknowledge-clawhub-risk to continue.',
       warning,
     });
 
     await withTempHome("openclaw-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
-        "/plugins install clawhub:@openclaw/risky-demo@1.2.3 --force",
+        "/plugins install clawhub:@nova/risky-demo@1.2.3 --force",
         workspaceDir,
       );
       const result = await handlePluginsCommand(params, true);
@@ -835,7 +833,7 @@ describe("handleCommands /plugins install", () => {
       expect(result.reply?.text).toContain("trusted shell");
       const installParams = mockFirstObjectArg(installPluginFromClawHubMock);
       expectObjectFields(installParams, {
-        spec: "clawhub:@openclaw/risky-demo@1.2.3",
+        spec: "clawhub:@nova/risky-demo@1.2.3",
         mode: "update",
       });
       expect(installParams).not.toHaveProperty("acknowledgeClawHubRisk");
@@ -845,18 +843,18 @@ describe("handleCommands /plugins install", () => {
 
   it("includes ClawHub trust details for blocked chat install failures", async () => {
     const warning =
-      'ClawHub trust warning for "@openclaw/blocked-demo@1.2.3": scan=suspicious; moderation=blocked; blockedFromDownload=true; pending=false; stale=false; reasons=payload_string. Risk signals: blocked from download, scan status suspicious, moderation state blocked, payload_string.';
+      'ClawHub trust warning for "@nova/blocked-demo@1.2.3": scan=suspicious; moderation=blocked; blockedFromDownload=true; pending=false; stale=false; reasons=payload_string. Risk signals: blocked from download, scan status suspicious, moderation state blocked, payload_string.';
     installPluginFromClawHubMock.mockResolvedValue({
       ok: false,
       code: "clawhub_download_blocked",
-      error: 'ClawHub release "@openclaw/blocked-demo@1.2.3" is blocked from download by ClawHub.',
+      error: 'ClawHub release "@nova/blocked-demo@1.2.3" is blocked from download by ClawHub.',
       warning,
     });
 
     await withTempHome("openclaw-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
       const params = buildPluginsParams(
-        "/plugins install clawhub:@openclaw/blocked-demo@1.2.3",
+        "/plugins install clawhub:@nova/blocked-demo@1.2.3",
         workspaceDir,
       );
       const result = await handlePluginsCommand(params, true);
@@ -1008,11 +1006,11 @@ describe("handleCommands /plugins install", () => {
       targetDir: "/tmp/alias-demo",
       version: "1.0.0",
       extensions: ["index.js"],
-      packageName: "@openclaw/alias-demo",
+      packageName: "@nova/alias-demo",
       clawhub: {
         source: "clawhub",
         clawhubUrl: "https://clawhub.ai",
-        clawhubPackage: "@openclaw/alias-demo",
+        clawhubPackage: "@nova/alias-demo",
         clawhubFamily: "code-plugin",
         clawhubChannel: "official",
         version: "1.0.0",
@@ -1024,17 +1022,14 @@ describe("handleCommands /plugins install", () => {
 
     await withTempHome("openclaw-command-plugins-home-", async () => {
       const workspaceDir = await workspaceHarness.createWorkspace();
-      const params = buildPluginsParams(
-        "/plugin add clawhub:@openclaw/alias-demo@1.0.0",
-        workspaceDir,
-      );
+      const params = buildPluginsParams("/plugin add clawhub:@nova/alias-demo@1.0.0", workspaceDir);
       const result = await handlePluginsCommand(params, true);
       if (result === null) {
         throw new Error("expected plugin install result");
       }
       expect(result.reply?.text).toContain('Installed plugin "alias-demo"');
       expect(mockFirstObjectArg(installPluginFromClawHubMock).spec).toBe(
-        "clawhub:@openclaw/alias-demo@1.0.0",
+        "clawhub:@nova/alias-demo@1.0.0",
       );
     });
   });

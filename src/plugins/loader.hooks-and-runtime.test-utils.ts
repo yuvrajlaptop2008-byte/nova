@@ -78,7 +78,7 @@ describe("loadOpenClawPlugins", () => {
         path.join(globalDir, "package.json"),
         JSON.stringify(
           {
-            name: "@openclaw/trusted-global-channel",
+            name: "@nova/trusted-global-channel",
             version: "0.0.0-test",
             main: "./index.cjs",
             openclaw: {
@@ -191,7 +191,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-entry-test",
         label: "Setup Entry Test",
-        packageName: "@openclaw/setup-entry-test",
+        packageName: "@nova/setup-entry-test",
         fullBlurb: "full entry should not run in setup-only mode",
         setupBlurb: "setup entry",
         configured: false,
@@ -221,7 +221,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-only-bundled-contract-test",
         label: "Setup Only Bundled Contract Test",
-        packageName: "@openclaw/setup-only-bundled-contract-test",
+        packageName: "@nova/setup-only-bundled-contract-test",
         fullBlurb: "full entry should not run in setup-only mode",
         setupBlurb: "setup-only bundled contract",
         configured: false,
@@ -252,7 +252,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-test",
         label: "Setup Runtime Test",
-        packageName: "@openclaw/setup-runtime-test",
+        packageName: "@nova/setup-runtime-test",
         fullBlurb: "full entry should not run while unconfigured",
         setupBlurb: "setup runtime",
         configured: false,
@@ -276,7 +276,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-bundled-contract-test",
         label: "Setup Runtime Bundled Contract Test",
-        packageName: "@openclaw/setup-runtime-bundled-contract-test",
+        packageName: "@nova/setup-runtime-bundled-contract-test",
         fullBlurb: "full entry should not run while unconfigured",
         setupBlurb: "setup runtime bundled contract",
         configured: false,
@@ -301,7 +301,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-bundled-contract-secrets-test",
         label: "Setup Runtime Bundled Contract Secrets Test",
-        packageName: "@openclaw/setup-runtime-bundled-contract-secrets-test",
+        packageName: "@nova/setup-runtime-bundled-contract-secrets-test",
         fullBlurb: "full entry should not run while unconfigured",
         setupBlurb: "setup runtime bundled contract secrets",
         configured: false,
@@ -328,7 +328,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-bundled-contract-runtime-test",
         label: "Setup Runtime Bundled Contract Runtime Test",
-        packageName: "@openclaw/setup-runtime-bundled-contract-runtime-test",
+        packageName: "@nova/setup-runtime-bundled-contract-runtime-test",
         fullBlurb: "full entry should not run while unconfigured",
         setupBlurb: "setup runtime bundled contract runtime",
         configured: false,
@@ -355,7 +355,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-bundled-route-test",
         label: "Setup Runtime Bundled Route Test",
-        packageName: "@openclaw/setup-runtime-bundled-route-test",
+        packageName: "@nova/setup-runtime-bundled-route-test",
         fullBlurb: "full entry should defer while configured",
         setupBlurb: "setup runtime route",
         configured: true,
@@ -390,7 +390,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-bundled-runtime-merge-test",
         label: "Setup Runtime Bundled Runtime Merge Test",
-        packageName: "@openclaw/setup-runtime-bundled-runtime-merge-test",
+        packageName: "@nova/setup-runtime-bundled-runtime-merge-test",
         fullBlurb: "full runtime plugin",
         setupBlurb: "setup runtime override",
         configured: false,
@@ -418,7 +418,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-external-deferred-test",
         label: "Setup Runtime External Deferred Test",
-        packageName: "@openclaw/setup-runtime-external-deferred-test",
+        packageName: "@nova/setup-runtime-external-deferred-test",
         fullBlurb: "full entry should defer while configured",
         setupBlurb: "setup runtime external deferred",
         configured: true,
@@ -452,7 +452,7 @@ describe("loadOpenClawPlugins", () => {
       fixture: {
         id: "setup-runtime-not-preferred-test",
         label: "Setup Runtime Not Preferred Test",
-        packageName: "@openclaw/setup-runtime-not-preferred-test",
+        packageName: "@nova/setup-runtime-not-preferred-test",
         fullBlurb: "full entry should still load without explicit startup opt-in",
         setupBlurb: "setup runtime not preferred",
         configured: true,
@@ -537,7 +537,7 @@ describe("loadOpenClawPlugins", () => {
     const built = createSetupEntryChannelPluginFixture({
       id: "setup-runtime-order-test",
       label: "Setup Runtime Order Test",
-      packageName: "@openclaw/setup-runtime-order-test",
+      packageName: "@nova/setup-runtime-order-test",
       fullBlurb: "full runtime plugin",
       setupBlurb: "setup runtime override",
       configured: false,
@@ -567,7 +567,7 @@ describe("loadOpenClawPlugins", () => {
     const built = createSetupEntryChannelPluginFixture({
       id: "setup-runtime-error-test",
       label: "Setup Runtime Error Test",
-      packageName: "@openclaw/setup-runtime-error-test",
+      packageName: "@nova/setup-runtime-error-test",
       fullBlurb: "full runtime plugin",
       setupBlurb: "setup runtime override",
       configured: false,
@@ -605,7 +605,7 @@ describe("loadOpenClawPlugins", () => {
     const built = createSetupEntryChannelPluginFixture({
       id: "setup-runtime-route-error-test",
       label: "Setup Runtime Route Error Test",
-      packageName: "@openclaw/setup-runtime-route-error-test",
+      packageName: "@nova/setup-runtime-route-error-test",
       fullBlurb: "full runtime plugin",
       setupBlurb: "setup runtime route",
       configured: true,
@@ -655,7 +655,7 @@ describe("loadOpenClawPlugins", () => {
     const built = createSetupEntryChannelPluginFixture({
       id: "setup-runtime-late-route-test",
       label: "Setup Runtime Late Route Test",
-      packageName: "@openclaw/setup-runtime-late-route-test",
+      packageName: "@nova/setup-runtime-late-route-test",
       fullBlurb: "full runtime plugin",
       setupBlurb: "setup runtime route",
       configured: true,
@@ -698,7 +698,7 @@ describe("loadOpenClawPlugins", () => {
       id: "setup-runtime-mismatch-test",
       bundledFullEntryId: "wrong-runtime-id",
       label: "Setup Runtime Mismatch Test",
-      packageName: "@openclaw/setup-runtime-mismatch-test",
+      packageName: "@nova/setup-runtime-mismatch-test",
       fullBlurb: "full runtime plugin",
       setupBlurb: "setup runtime override",
       configured: false,
@@ -733,7 +733,7 @@ describe("loadOpenClawPlugins", () => {
       id: "setup-export-mismatch-test",
       bundledSetupEntryId: "wrong-setup-id",
       label: "Setup Export Mismatch Test",
-      packageName: "@openclaw/setup-export-mismatch-test",
+      packageName: "@nova/setup-export-mismatch-test",
       fullBlurb: "full runtime plugin",
       setupBlurb: "setup runtime override",
       configured: false,
@@ -772,7 +772,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(pluginDir, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/setup-entry-throws-test",
+          name: "@nova/setup-entry-throws-test",
           openclaw: {
             extensions: ["./index.cjs"],
             setupEntry: "./setup-entry.cjs",
@@ -839,7 +839,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(brokenDir, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/setup-entry-throws-sibling-test",
+          name: "@nova/setup-entry-throws-sibling-test",
           openclaw: {
             extensions: ["./index.cjs"],
             setupEntry: "./setup-entry.cjs",
@@ -937,7 +937,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(brokenDir, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/register-channel-throws-test",
+          name: "@nova/register-channel-throws-test",
           openclaw: {
             extensions: ["./index.cjs"],
             setupEntry: "./setup-entry.cjs",

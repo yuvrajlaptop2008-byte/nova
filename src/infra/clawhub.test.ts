@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { MAX_TIMER_TIMEOUT_MS } from "@openclaw/normalization-core/number-coercion";
+import { MAX_TIMER_TIMEOUT_MS } from "@nova/normalization-core/number-coercion";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { withTempDir } from "../test-helpers/temp-dir.js";
 import { captureEnv, setTestEnvValue } from "../test-utils/env.js";
@@ -805,7 +805,7 @@ describe("clawhub helpers", () => {
     let requestedUrl = "";
     await expect(
       fetchClawHubPackageArtifact({
-        name: "@openclaw/diagnostics-otel",
+        name: "@nova/diagnostics-otel",
         version: "2026.3.22",
         fetchImpl: async (input) => {
           requestedUrl = input instanceof Request ? input.url : String(input);
@@ -814,7 +814,7 @@ describe("clawhub helpers", () => {
               artifact: {
                 source: "clawhub",
                 artifactKind: "npm-pack",
-                packageName: "@openclaw/diagnostics-otel",
+                packageName: "@nova/diagnostics-otel",
                 version: "2026.3.22",
                 downloadUrl: "https://clawhub.ai/api/v1/clawpacks/abc",
                 npmIntegrity: "sha512-demo",
@@ -829,7 +829,7 @@ describe("clawhub helpers", () => {
       artifact: {
         source: "clawhub",
         artifactKind: "npm-pack",
-        packageName: "@openclaw/diagnostics-otel",
+        packageName: "@nova/diagnostics-otel",
         version: "2026.3.22",
         downloadUrl: "https://clawhub.ai/api/v1/clawpacks/abc",
         npmIntegrity: "sha512-demo",
@@ -845,14 +845,14 @@ describe("clawhub helpers", () => {
     let requestedUrl = "";
     await expect(
       fetchClawHubPackageSecurity({
-        name: "@openclaw/diagnostics-otel",
+        name: "@nova/diagnostics-otel",
         version: "2026.3.22",
         fetchImpl: async (input) => {
           requestedUrl = input instanceof Request ? input.url : String(input);
           return new Response(
             JSON.stringify({
               package: {
-                name: "@openclaw/diagnostics-otel",
+                name: "@nova/diagnostics-otel",
                 displayName: "Diagnostics",
                 family: "code-plugin",
               },
@@ -875,7 +875,7 @@ describe("clawhub helpers", () => {
       }),
     ).resolves.toEqual({
       package: {
-        name: "@openclaw/diagnostics-otel",
+        name: "@nova/diagnostics-otel",
         displayName: "Diagnostics",
         family: "code-plugin",
       },
@@ -900,7 +900,7 @@ describe("clawhub helpers", () => {
   it("rejects malformed package security reports", async () => {
     await expect(
       fetchClawHubPackageSecurity({
-        name: "@openclaw/diagnostics-otel",
+        name: "@nova/diagnostics-otel",
         version: "2026.3.22",
         fetchImpl: async () =>
           new Response(

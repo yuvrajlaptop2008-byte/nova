@@ -5,7 +5,7 @@ Official OpenClaw channel plugin for ClickClack.
 ## Install
 
 ```sh
-openclaw plugins install @openclaw/clickclack
+openclaw plugins install @nova/clickclack
 ```
 
 ## Setup

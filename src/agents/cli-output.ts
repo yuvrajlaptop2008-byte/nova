@@ -3,9 +3,9 @@
  * JSONL streaming, Claude stream-json dialects, usage metadata, and tool event
  * reconstruction.
  */
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@nova/normalization-core/string-normalization";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import type { AgentPlanStep } from "../channels/streaming.js";
 import type { CliBackendConfig } from "../config/types.js";
 import { extractBalancedJsonFragments } from "../shared/balanced-json.js";

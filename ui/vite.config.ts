@@ -283,7 +283,7 @@ function resolveTsconfigPathAlias(key: string, target: string): ControlUiViteAli
 
 function sourcePackageAlias(packageId: string, subpath?: string): ControlUiViteAlias {
   return {
-    find: `@openclaw/${packageId}${subpath ? `/${subpath}` : ""}`,
+    find: `@nova/${packageId}${subpath ? `/${subpath}` : ""}`,
     replacement: path.join(
       repoRoot,
       "packages",
@@ -311,7 +311,7 @@ export function resolveSourcePackageAliasesForVite(): ControlUiViteAlias[] {
 export function resolveExternalPackageAliasesForVite(): ControlUiViteAlias[] {
   return [
     {
-      find: "@openclaw/libterminal/browser",
+      find: "@nova/libterminal/browser",
       replacement: path.join(
         repoRoot,
         "node_modules",
@@ -322,7 +322,7 @@ export function resolveExternalPackageAliasesForVite(): ControlUiViteAlias[] {
       ),
     },
     {
-      find: "@openclaw/uirouter",
+      find: "@nova/uirouter",
       replacement: path.join(repoRoot, "node_modules", "@openclaw", "uirouter", "dist", "index.js"),
     },
   ];

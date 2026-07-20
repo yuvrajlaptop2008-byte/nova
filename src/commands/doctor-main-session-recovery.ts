@@ -1,4 +1,4 @@
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { inspectMainSessionRecoveryHealth } from "../agents/main-session-recovery-lifecycle.js";
 import { transitionMainSessionRecovery } from "../agents/main-session-recovery-state.js";
 import {

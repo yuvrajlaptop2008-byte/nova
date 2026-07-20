@@ -5,7 +5,7 @@ Official OpenClaw provider plugin for Tencent Cloud.
 ## Install
 
 ```sh
-openclaw plugins install @openclaw/tencent-provider
+openclaw plugins install @nova/tencent-provider
 ```
 
 ## Docs

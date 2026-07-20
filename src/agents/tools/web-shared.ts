@@ -3,13 +3,13 @@
  *
  * Keeps web_fetch and web_search providers aligned on bounded IO and cache semantics.
  */
-import { decodeTextPrefix } from "@openclaw/normalization-core";
+import { decodeTextPrefix } from "@nova/normalization-core";
 import {
   asDateTimestampMs,
   MAX_TIMER_TIMEOUT_SECONDS,
   resolveExpiresAtMsFromDurationMs,
-} from "@openclaw/normalization-core/number-coercion";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+} from "@nova/normalization-core/number-coercion";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 
 export type CacheEntry<T> = {
   value: T;

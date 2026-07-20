@@ -9,9 +9,9 @@ const { crablineRuntimeLoads, runQaFlowSuite, runQaTestFileScenarios } = vi.hois
   runQaTestFileScenarios: vi.fn(),
 }));
 
-vi.mock("@openclaw/crabline", async (importOriginal) => {
+vi.mock("@nova/crabline", async (importOriginal) => {
   crablineRuntimeLoads();
-  return await importOriginal<typeof import("@openclaw/crabline")>();
+  return await importOriginal<typeof import("@nova/crabline")>();
 });
 
 vi.mock("./suite.js", async (importOriginal) => ({

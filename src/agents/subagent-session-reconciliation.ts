@@ -3,7 +3,7 @@
  *
  * Infers child completion from persisted session entries when registry updates arrive late.
  */
-import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
+import { asFiniteNumber } from "@nova/normalization-core/number-coercion";
 import { getRuntimeConfig } from "../config/config.js";
 import {
   resolveAgentIdFromSessionKey,

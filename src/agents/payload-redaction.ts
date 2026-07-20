@@ -4,8 +4,8 @@
  * size and digest metadata.
  */
 import crypto from "node:crypto";
-import { estimateBase64DecodedBytes } from "@openclaw/media-core/base64";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { estimateBase64DecodedBytes } from "@nova/media-core/base64";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 
 const REDACTED_IMAGE_DATA = "<redacted>";
 

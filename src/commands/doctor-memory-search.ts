@@ -2,9 +2,9 @@ import fsSync from "node:fs";
 import {
   findNormalizedProviderValue,
   normalizeProviderId,
-} from "@openclaw/model-catalog-core/provider-id";
-import { formatByteSize } from "@openclaw/normalization-core";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+} from "@nova/model-catalog-core/provider-id";
+import { formatByteSize } from "@nova/normalization-core";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { note } from "../../packages/terminal-core/src/note.js";
 import {
   resolveAgentDir,
@@ -692,7 +692,7 @@ export async function noteMemorySearchHealth(
         gatewayDetail ? `Gateway probe: ${gatewayDetail}` : null,
         "",
         "Fix (pick one):",
-        `- Install the llama.cpp provider plugin: ${formatCliCommand("openclaw plugins install @openclaw/llama-cpp-provider")}`,
+        `- Install the llama.cpp provider plugin: ${formatCliCommand("openclaw plugins install @nova/llama-cpp-provider")}`,
         `- Set a local GGUF model path in config`,
         suggestedRemoteProvider
           ? `- Switch to a remote provider: ${formatCliCommand(`openclaw config set agents.defaults.memorySearch.provider ${suggestedRemoteProvider}`)}`

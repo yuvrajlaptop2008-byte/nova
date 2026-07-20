@@ -1,8 +1,4 @@
-import {
-  asSafeIntegerInRange,
-  expectDefined,
-  parseStrictInteger,
-} from "@openclaw/normalization-core";
+import { asSafeIntegerInRange, expectDefined, parseStrictInteger } from "@nova/normalization-core";
 export type UsageBarTemplate = Record<string, unknown>;
 export type UsageContract = Record<string, unknown>;
 type Vocab = Record<string, unknown>;

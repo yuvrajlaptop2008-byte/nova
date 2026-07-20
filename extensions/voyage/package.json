@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/voyage-provider",
+  "name": "@nova/voyage-provider",
   "version": "2026.7.2",
   "private": true,
   "description": "OpenClaw Voyage embedding provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [

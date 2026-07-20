@@ -4,9 +4,9 @@ import type {
   WorkboardDiagnostic,
   WorkboardWorkspace,
   WorkboardWorkspaceAccess,
-} from "@openclaw/workboard-contract";
+} from "@nova/workboard-contract";
 
-export type { WorkboardBoardSummary } from "@openclaw/workboard-contract";
+export type { WorkboardBoardSummary } from "@nova/workboard-contract";
 
 type WorkboardCardInput = {
   title?: unknown;

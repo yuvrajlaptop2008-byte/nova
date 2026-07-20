@@ -64,7 +64,7 @@ type NpmDistTagMirrorAuth = {
 };
 const EXPECTED_REPOSITORY_URL = "https://github.com/openclaw/openclaw";
 const OPTIONAL_LOCAL_EMBEDDING_RUNTIME_PACKAGE = "node-llama-cpp";
-const FS_SAFE_PACKAGE = "@openclaw/fs-safe";
+const FS_SAFE_PACKAGE = "@nova/fs-safe";
 const REQUIRED_PACKED_PATHS = [
   "npm-shrinkwrap.json",
   PACKAGE_DIST_INVENTORY_RELATIVE_PATH,

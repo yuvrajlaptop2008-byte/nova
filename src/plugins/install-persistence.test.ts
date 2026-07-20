@@ -200,7 +200,7 @@ describe("persistPluginInstall", () => {
     setInstalledPluginIndexInstallRecords({
       codex: {
         source: "clawhub",
-        spec: "clawhub:@openclaw/codex",
+        spec: "clawhub:@nova/codex",
         installPath: "/tmp/openclaw/extensions/codex",
       },
     });
@@ -237,8 +237,8 @@ describe("persistPluginInstall", () => {
       pluginId: "codex",
       install: {
         source: "npm",
-        spec: "@openclaw/codex",
-        installPath: "/tmp/openclaw/npm/node_modules/@openclaw/codex",
+        spec: "@nova/codex",
+        installPath: "/tmp/openclaw/npm/node_modules/@nova/codex",
       },
     });
 
@@ -248,7 +248,7 @@ describe("persistPluginInstall", () => {
           installs: {
             codex: {
               source: "clawhub",
-              spec: "clawhub:@openclaw/codex",
+              spec: "clawhub:@nova/codex",
               installPath: "/tmp/openclaw/extensions/codex",
             },
           },
@@ -287,8 +287,8 @@ describe("persistPluginInstall", () => {
     setInstalledPluginIndexInstallRecords({
       codex: {
         source: "npm",
-        spec: "@openclaw/codex",
-        installPath: "/tmp/openclaw/npm/node_modules/@openclaw/codex",
+        spec: "@nova/codex",
+        installPath: "/tmp/openclaw/npm/node_modules/@nova/codex",
       },
     });
 
@@ -301,8 +301,8 @@ describe("persistPluginInstall", () => {
       pluginId: "codex",
       install: {
         source: "npm",
-        spec: "@openclaw/codex@latest",
-        installPath: "/tmp/openclaw/npm/node_modules/@openclaw/codex",
+        spec: "@nova/codex@latest",
+        installPath: "/tmp/openclaw/npm/node_modules/@nova/codex",
       },
     });
 
@@ -346,7 +346,7 @@ describe("persistPluginInstall", () => {
     setInstalledPluginIndexInstallRecords({
       codex: {
         source: "npm",
-        spec: "@openclaw/codex@1.0.0",
+        spec: "@nova/codex@1.0.0",
         installPath: previousInstallPath,
       },
     });
@@ -370,7 +370,7 @@ describe("persistPluginInstall", () => {
         cleanup: {
           kind: "npm",
           npmRoot: previousProjectRoot,
-          packageName: "@openclaw/codex",
+          packageName: "@nova/codex",
         },
       },
     });
@@ -385,7 +385,7 @@ describe("persistPluginInstall", () => {
         pluginId: "codex",
         install: {
           source: "npm",
-          spec: "@openclaw/codex@2.0.0",
+          spec: "@nova/codex@2.0.0",
           installPath: nextInstallPath,
         },
       });
@@ -396,7 +396,7 @@ describe("persistPluginInstall", () => {
             installs: {
               codex: {
                 source: "npm",
-                spec: "@openclaw/codex@1.0.0",
+                spec: "@nova/codex@1.0.0",
                 installPath: previousInstallPath,
               },
             },
@@ -448,8 +448,8 @@ describe("persistPluginInstall", () => {
       pluginId: "discord",
       install: {
         source: "npm",
-        spec: "@openclaw/discord",
-        installPath: "/tmp/openclaw/npm/node_modules/@openclaw/discord/index.ts",
+        spec: "@nova/discord",
+        installPath: "/tmp/openclaw/npm/node_modules/@nova/discord/index.ts",
       },
     });
 
@@ -466,7 +466,7 @@ describe("persistPluginInstall", () => {
       "active config source: /tmp/openclaw-upstream/extensions/discord/index.ts",
     );
     expect(runtimeLogs.join("\n")).toContain(
-      "installed npm source: /tmp/openclaw/npm/node_modules/@openclaw/discord/index.ts",
+      "installed npm source: /tmp/openclaw/npm/node_modules/@nova/discord/index.ts",
     );
     expect(runtimeLogs.join("\n")).toContain("openclaw plugins doctor");
   });
@@ -491,7 +491,7 @@ describe("persistPluginInstall", () => {
         {
           id: "discord",
           origin: "config",
-          source: "/tmp/openclaw/npm/node_modules/@openclaw/discord/dist/index.js",
+          source: "/tmp/openclaw/npm/node_modules/@nova/discord/dist/index.js",
           status: "loaded",
         },
       ],
@@ -507,8 +507,8 @@ describe("persistPluginInstall", () => {
       pluginId: "discord",
       install: {
         source: "npm",
-        spec: "@openclaw/discord",
-        installPath: "/tmp/openclaw/npm/node_modules/@openclaw/discord",
+        spec: "@nova/discord",
+        installPath: "/tmp/openclaw/npm/node_modules/@nova/discord",
       },
     });
 

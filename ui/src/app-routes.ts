@@ -1,5 +1,5 @@
-import { createRouter } from "@openclaw/uirouter";
-import type { PageDefinition, Router, RouterHistory } from "@openclaw/uirouter";
+import { createRouter } from "@nova/uirouter";
+import type { PageDefinition, Router, RouterHistory } from "@nova/uirouter";
 import { routeIdFromPath, type RouteId } from "./app-route-paths.ts";
 import type { ApplicationContext } from "./app/context.ts";
 import { page as aboutPage } from "./pages/about/route.ts";

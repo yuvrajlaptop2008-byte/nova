@@ -1,4 +1,4 @@
-import { createApiRegistry, type ApiRegistry } from "@openclaw/ai";
+import { createApiRegistry, type ApiRegistry } from "@nova/ai";
 // Simple completion transport tests cover provider-specific stream alias
 // selection before the generic completion helper invokes the LLM layer.
 import type { Model } from "openclaw/plugin-sdk/llm";

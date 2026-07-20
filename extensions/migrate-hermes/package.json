@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/migrate-hermes",
+  "name": "@nova/migrate-hermes",
   "version": "2026.7.2",
   "private": true,
   "description": "Hermes to OpenClaw migration provider",
@@ -9,7 +9,7 @@
     "yaml": "2.9.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {

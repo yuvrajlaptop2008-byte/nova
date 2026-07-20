@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/clawrouter",
+  "name": "@nova/clawrouter",
   "version": "2026.7.2",
   "private": true,
   "description": "OpenClaw ClawRouter plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [

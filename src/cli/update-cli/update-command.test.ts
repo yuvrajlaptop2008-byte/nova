@@ -245,7 +245,7 @@ describe("collectMissingPluginInstallPayloads", () => {
     );
     try {
       await fs.mkdir(presentDir, { recursive: true });
-      await fs.writeFile(path.join(presentDir, "package.json"), '{"name":"@openclaw/present"}\n');
+      await fs.writeFile(path.join(presentDir, "package.json"), '{"name":"@nova/present"}\n');
       await fs.mkdir(noPackageJsonDir, { recursive: true });
 
       await expect(
@@ -254,22 +254,22 @@ describe("collectMissingPluginInstallPayloads", () => {
           records: {
             present: {
               source: "npm",
-              spec: "@openclaw/present@beta",
+              spec: "@nova/present@beta",
               installPath: presentDir,
             },
             missing: {
               source: "npm",
-              spec: "@openclaw/missing@beta",
+              spec: "@nova/missing@beta",
               installPath: missingDir,
             },
             "no-package-json": {
               source: "npm",
-              spec: "@openclaw/no-package-json@beta",
+              spec: "@nova/no-package-json@beta",
               installPath: noPackageJsonDir,
             },
             "missing-install-path": {
               source: "npm",
-              spec: "@openclaw/missing-install-path@beta",
+              spec: "@nova/missing-install-path@beta",
             },
             local: {
               source: "path",
@@ -439,7 +439,7 @@ describe("collectMissingPluginInstallPayloads", () => {
           records: {
             missing: {
               source: "npm",
-              spec: "@openclaw/missing@beta",
+              spec: "@nova/missing@beta",
               installPath: missingDir,
             },
           },
@@ -471,9 +471,9 @@ describe("collectMissingPluginInstallPayloads", () => {
           records: {
             codex: {
               source: "npm",
-              spec: "@openclaw/codex@2026.5.3",
-              resolvedName: "@openclaw/codex",
-              resolvedSpec: "@openclaw/codex@2026.5.3",
+              spec: "@nova/codex@2026.5.3",
+              resolvedName: "@nova/codex",
+              resolvedSpec: "@nova/codex@2026.5.3",
               installPath: missingDir,
             },
           },
@@ -511,7 +511,7 @@ describe("collectMissingPluginInstallPayloads", () => {
           records: {
             "diagnostics-otel": {
               source: "clawhub",
-              spec: "clawhub:@openclaw/diagnostics-otel@2026.5.3",
+              spec: "clawhub:@nova/diagnostics-otel@2026.5.3",
               installPath: missingDir,
             },
           },

@@ -412,61 +412,57 @@ describe("installOpenClawPluginSdkNativeResolver", () => {
       pluginSdkResolution: "dist",
     });
 
-    expect(installedAliases).toContain("@openclaw/normalization-core/string-coerce");
-    expect(installedAliases).toContain("@openclaw/normalization-core/boolean-coercion");
-    expect(installedAliases).toContain("@openclaw/normalization-core/result");
-    expect(installedAliases).toContain("@openclaw/normalization-core/agent-id");
-    expect(installedAliases).toContain("@openclaw/media-core/mime");
-    expect(installedAliases).toContain("@openclaw/markdown-core/code-spans");
-    expect(installedAliases).toContain("@openclaw/ai/internal/retry-after");
-    expect(installedAliases).toContain("@openclaw/ai/internal/runtime");
-    expect(installedAliases).toContain("@openclaw/acp-core/runtime/types");
-    expect(installedAliases).toContain("@openclaw/llm-core");
+    expect(installedAliases).toContain("@nova/normalization-core/string-coerce");
+    expect(installedAliases).toContain("@nova/normalization-core/boolean-coercion");
+    expect(installedAliases).toContain("@nova/normalization-core/result");
+    expect(installedAliases).toContain("@nova/normalization-core/agent-id");
+    expect(installedAliases).toContain("@nova/media-core/mime");
+    expect(installedAliases).toContain("@nova/markdown-core/code-spans");
+    expect(installedAliases).toContain("@nova/ai/internal/retry-after");
+    expect(installedAliases).toContain("@nova/ai/internal/runtime");
+    expect(installedAliases).toContain("@nova/acp-core/runtime/types");
+    expect(installedAliases).toContain("@nova/llm-core");
     const requireFromCoreSource = createRequire(coreSourceParent);
     const requireFromPlugin = createRequire(externalPluginEntry);
     expect(
-      fs.realpathSync(requireFromCoreSource.resolve("@openclaw/normalization-core/string-coerce")),
+      fs.realpathSync(requireFromCoreSource.resolve("@nova/normalization-core/string-coerce")),
     ).toBe(fs.realpathSync(normalizationSource));
     expect(
-      fs.realpathSync(
-        requireFromCoreSource.resolve("@openclaw/normalization-core/boolean-coercion"),
-      ),
+      fs.realpathSync(requireFromCoreSource.resolve("@nova/normalization-core/boolean-coercion")),
     ).toBe(fs.realpathSync(booleanCoercionSource));
+    expect(fs.realpathSync(requireFromCoreSource.resolve("@nova/normalization-core/result"))).toBe(
+      fs.realpathSync(resultSource),
+    );
     expect(
-      fs.realpathSync(requireFromCoreSource.resolve("@openclaw/normalization-core/result")),
-    ).toBe(fs.realpathSync(resultSource));
-    expect(
-      fs.realpathSync(requireFromCoreSource.resolve("@openclaw/normalization-core/agent-id")),
+      fs.realpathSync(requireFromCoreSource.resolve("@nova/normalization-core/agent-id")),
     ).toBe(fs.realpathSync(agentIdSource));
-    expect(fs.realpathSync(requireFromCoreSource.resolve("@openclaw/media-core/mime"))).toBe(
+    expect(fs.realpathSync(requireFromCoreSource.resolve("@nova/media-core/mime"))).toBe(
       fs.realpathSync(mediaCoreSource),
     );
-    expect(
-      fs.realpathSync(requireFromCoreSource.resolve("@openclaw/markdown-core/code-spans")),
-    ).toBe(fs.realpathSync(markdownCoreSource));
-    expect(
-      fs.realpathSync(requireFromCoreSource.resolve("@openclaw/ai/internal/retry-after")),
-    ).toBe(fs.realpathSync(aiRetryAfterSource));
-    expect(fs.realpathSync(requireFromCoreSource.resolve("@openclaw/ai/internal/runtime"))).toBe(
+    expect(fs.realpathSync(requireFromCoreSource.resolve("@nova/markdown-core/code-spans"))).toBe(
+      fs.realpathSync(markdownCoreSource),
+    );
+    expect(fs.realpathSync(requireFromCoreSource.resolve("@nova/ai/internal/retry-after"))).toBe(
+      fs.realpathSync(aiRetryAfterSource),
+    );
+    expect(fs.realpathSync(requireFromCoreSource.resolve("@nova/ai/internal/runtime"))).toBe(
       fs.realpathSync(aiRuntimeSource),
     );
-    expect(fs.realpathSync(requireFromCoreSource.resolve("@openclaw/acp-core/runtime/types"))).toBe(
+    expect(fs.realpathSync(requireFromCoreSource.resolve("@nova/acp-core/runtime/types"))).toBe(
       fs.realpathSync(acpCoreSource),
     );
-    expect(fs.realpathSync(requireFromCoreSource.resolve("@openclaw/llm-core"))).toBe(
+    expect(fs.realpathSync(requireFromCoreSource.resolve("@nova/llm-core"))).toBe(
       fs.realpathSync(llmCoreSource),
     );
-    expect(() => requireFromPlugin.resolve("@openclaw/normalization-core/string-coerce")).toThrow();
-    expect(() =>
-      requireFromPlugin.resolve("@openclaw/normalization-core/boolean-coercion"),
-    ).toThrow();
-    expect(() => requireFromPlugin.resolve("@openclaw/normalization-core/result")).toThrow();
-    expect(() => requireFromPlugin.resolve("@openclaw/media-core/mime")).toThrow();
-    expect(() => requireFromPlugin.resolve("@openclaw/markdown-core/code-spans")).toThrow();
-    expect(() => requireFromPlugin.resolve("@openclaw/ai/internal/retry-after")).toThrow();
-    expect(() => requireFromPlugin.resolve("@openclaw/ai/internal/runtime")).toThrow();
-    expect(() => requireFromPlugin.resolve("@openclaw/acp-core/runtime/types")).toThrow();
-    expect(() => requireFromPlugin.resolve("@openclaw/llm-core")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/normalization-core/string-coerce")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/normalization-core/boolean-coercion")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/normalization-core/result")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/media-core/mime")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/markdown-core/code-spans")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/ai/internal/retry-after")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/ai/internal/runtime")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/acp-core/runtime/types")).toThrow();
+    expect(() => requireFromPlugin.resolve("@nova/llm-core")).toThrow();
   });
 
   it("does not register source-only SDK subpaths for native resolution", () => {

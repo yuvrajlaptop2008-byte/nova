@@ -1,4 +1,4 @@
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 // Internal state and composed-registry view for the global hook runner.
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import type { GlobalHookRunnerRegistry } from "./hook-registry.types.js";

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { extractAssistantVisibleText } from "../../shared/chat-message-content.js";
 import {
   openOpenClawAgentDatabase,

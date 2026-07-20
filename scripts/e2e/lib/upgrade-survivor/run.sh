@@ -383,7 +383,7 @@ fs.writeFileSync(
   path.join(root, "package.json"),
   `${JSON.stringify(
     {
-      name: "@openclaw/brave-plugin",
+      name: "@nova/brave-plugin",
       version: "2026.5.2",
       openclaw: { extensions: ["./index.js"] },
     },
@@ -428,7 +428,7 @@ NODE
   NOVA_NPM_REGISTRY_UPSTREAM=https://registry.npmjs.org \
     node scripts/e2e/lib/plugins/npm-registry-server.mjs \
     "$port_file" \
-    "@openclaw/brave-plugin" \
+    "@nova/brave-plugin" \
     "2026.5.2" \
     "$tarball" \
     >"$log_file" 2>&1 &

@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AuthStorageBackend } from "./auth-storage.js";
 
 // auth-storage.ts persists via the named import `writeFileSync` from node:fs,
-// and replaceFileAtomicSync (in @openclaw/fs-safe) writes its temp file via the
+// and replaceFileAtomicSync (in @nova/fs-safe) writes its temp file via the
 // default import `syncFs.writeFileSync`. A namespace `vi.spyOn(fs, ...)` cannot
 // rebind an already-captured named import, so we mock node:fs and route every
 // writeFileSync (named + default) through a single controllable write-failure hook.

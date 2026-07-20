@@ -1,4 +1,4 @@
-import type { BoardOp, BoardSnapshot, BoardWidget } from "@openclaw/gateway-protocol";
+import type { BoardOp, BoardSnapshot, BoardWidget } from "@nova/gateway-protocol";
 
 export type BoardGrantDecision = "granted" | "rejected";
 export type BoardWidgetAppViewState =

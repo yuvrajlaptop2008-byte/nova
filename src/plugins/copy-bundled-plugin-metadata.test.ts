@@ -73,7 +73,7 @@ function expectBundledSkills(repoRoot: string, pluginId: string, skills: string[
 function createTlonSkillPlugin(repoRoot: string, skillPath = "node_modules/@tloncorp/tlon-skill") {
   return createPlugin(repoRoot, {
     id: "tlon",
-    packageName: "@openclaw/tlon",
+    packageName: "@nova/tlon",
     manifest: { skills: [skillPath] },
     packageNova: { extensions: ["./index.ts"] },
   });
@@ -88,7 +88,7 @@ describe("copyBundledPluginMetadata", () => {
     const repoRoot = makeRepoRoot("openclaw-bundled-plugin-meta-");
     const pluginDir = createPlugin(repoRoot, {
       id: "acpx",
-      packageName: "@openclaw/acpx",
+      packageName: "@nova/acpx",
       manifest: { skills: ["./skills"] },
       packageNova: { extensions: ["./index.ts"] },
     });
@@ -119,7 +119,7 @@ describe("copyBundledPluginMetadata", () => {
     const repoRoot = makeRepoRoot("openclaw-bundled-channel-config-meta-");
     createPlugin(repoRoot, {
       id: "telegram",
-      packageName: "@openclaw/telegram",
+      packageName: "@nova/telegram",
       manifest: {
         channels: ["telegram"],
         channelConfigs: {
@@ -275,7 +275,7 @@ describe("copyBundledPluginMetadata", () => {
     const repoRoot = makeRepoRoot("openclaw-bundled-plugin-retry-");
     const pluginDir = createPlugin(repoRoot, {
       id: "diffs",
-      packageName: "@openclaw/diffs",
+      packageName: "@nova/diffs",
       manifest: { skills: ["./skills"] },
       packageNova: { extensions: ["./index.ts"] },
     });
@@ -340,7 +340,7 @@ describe("copyBundledPluginMetadata", () => {
       skills: ["./bundled-skills/@scope/skill"],
     });
     writeJson(path.join(repoRoot, "dist", "extensions", "removed-plugin", "package.json"), {
-      name: "@openclaw/removed-plugin",
+      name: "@nova/removed-plugin",
     });
     fs.mkdirSync(path.join(repoRoot, "extensions"), { recursive: true });
 
@@ -361,7 +361,7 @@ describe("copyBundledPluginMetadata", () => {
       configSchema: { type: "object" },
     });
     writeJson(path.join(staleDistDir, "package.json"), {
-      name: "@openclaw/google-gemini-cli-auth",
+      name: "@nova/google-gemini-cli-auth",
     });
 
     copyBundledPluginMetadata({ repoRoot });
@@ -373,7 +373,7 @@ describe("copyBundledPluginMetadata", () => {
     const repoRoot = makeRepoRoot("openclaw-private-qa-metadata-");
     createPlugin(repoRoot, {
       id: "qa-lab",
-      packageName: "@openclaw/qa-lab",
+      packageName: "@nova/qa-lab",
       packageNova: { extensions: ["./index.ts"] },
     });
     const staleDistDir = path.join(repoRoot, "dist", "extensions", "qa-lab");
@@ -397,7 +397,7 @@ describe("copyBundledPluginMetadata", () => {
     {
       name: "skips metadata for optional bundled clusters only when explicitly disabled",
       pluginId: "acpx",
-      packageName: "@openclaw/acpx-plugin",
+      packageName: "@nova/acpx-plugin",
       packageNova: { extensions: ["./index.ts"] },
       env: excludeOptionalEnv,
       expectedExists: false,
@@ -405,10 +405,10 @@ describe("copyBundledPluginMetadata", () => {
     {
       name: "removes externalized optional plugin metadata from the core dist",
       pluginId: "whatsapp",
-      packageName: "@openclaw/whatsapp",
+      packageName: "@nova/whatsapp",
       packageNova: {
         extensions: ["./index.ts"],
-        install: { npmSpec: "@openclaw/whatsapp" },
+        install: { npmSpec: "@nova/whatsapp" },
       },
       env: {},
       expectedExists: false,
@@ -430,7 +430,7 @@ describe("copyBundledPluginMetadata", () => {
     const repoRoot = makeRepoRoot("openclaw-bundled-plugin-excluded-meta-");
     createPlugin(repoRoot, {
       id: "qqbot",
-      packageName: "@openclaw/qqbot",
+      packageName: "@nova/qqbot",
       packageNova: {
         extensions: ["./index.ts"],
         setupEntry: "./setup-entry.ts",
@@ -450,7 +450,7 @@ describe("copyBundledPluginMetadata", () => {
     const pluginDir = path.join(repoRoot, "extensions", "image-generation-core");
     fs.mkdirSync(pluginDir, { recursive: true });
     writeJson(path.join(pluginDir, "package.json"), {
-      name: "@openclaw/image-generation-core",
+      name: "@nova/image-generation-core",
       version: "0.0.1",
       private: true,
       type: "module",
@@ -488,7 +488,7 @@ describe("copyBundledPluginMetadata", () => {
         ),
       ),
     ).toEqual({
-      name: "@openclaw/image-generation-core",
+      name: "@nova/image-generation-core",
       version: "0.0.1",
       private: true,
       type: "module",

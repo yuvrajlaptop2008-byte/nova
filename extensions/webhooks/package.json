@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/webhooks",
+  "name": "@nova/webhooks",
   "version": "2026.7.2",
   "private": true,
   "description": "OpenClaw webhook bridge plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [

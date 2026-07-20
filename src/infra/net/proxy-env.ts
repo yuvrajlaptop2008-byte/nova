@@ -1,4 +1,4 @@
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 // Proxy environment helpers mirror undici EnvHttpProxyAgent selection while
 // adding Nova NO_PROXY CIDR/wildcard bypass checks.
 import { readTrimmedStringAlias } from "../../utils/string-readers.js";

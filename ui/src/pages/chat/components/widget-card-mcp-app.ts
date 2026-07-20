@@ -1,4 +1,4 @@
-import type { BoardMcpAppPinDescriptor } from "@openclaw/gateway-protocol";
+import type { BoardMcpAppPinDescriptor } from "@nova/gateway-protocol";
 import { normalizeBoardSessionKeyForComparison } from "../../../lib/board/provider.ts";
 import type { ToolPreview } from "../../../lib/chat/tool-cards.ts";
 

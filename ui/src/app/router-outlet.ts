@@ -1,4 +1,4 @@
-import type { Router } from "@openclaw/uirouter";
+import type { Router } from "@nova/uirouter";
 import { html, nothing } from "lit";
 import type { ReactiveController, ReactiveControllerHost } from "lit";
 import { property } from "lit/decorators.js";

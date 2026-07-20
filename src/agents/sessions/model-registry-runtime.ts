@@ -1,10 +1,5 @@
-import {
-  createApiRegistry,
-  createLlmRuntime,
-  type ApiRegistry,
-  type LlmRuntime,
-} from "@openclaw/ai";
-import { registerBuiltInApiProviders } from "@openclaw/ai/providers";
+import { createApiRegistry, createLlmRuntime, type ApiRegistry, type LlmRuntime } from "@nova/ai";
+import { registerBuiltInApiProviders } from "@nova/ai/providers";
 import "../../llm/ai-transport-host.js";
 import { bindStreamLlmRuntime } from "../../llm/model-runtime-binding.js";
 

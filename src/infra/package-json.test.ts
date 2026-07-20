@@ -21,7 +21,7 @@ describe("package-json helpers", () => {
         path.join(root, "package.json"),
         JSON.stringify({
           version: " 1.2.3 ",
-          name: "  @openclaw/demo  ",
+          name: "  @nova/demo  ",
           packageManager: " pnpm@10.8.1 ",
         }),
         "utf8",
@@ -30,7 +30,7 @@ describe("package-json helpers", () => {
       await expectPackageMeta({
         root,
         expectedVersion: "1.2.3",
-        expectedName: "@openclaw/demo",
+        expectedName: "@nova/demo",
       });
       await expect(readPackageManagerSpec(root)).resolves.toBe("pnpm@10.8.1");
     });
@@ -68,12 +68,12 @@ describe("package-json helpers", () => {
       writePackageJson: async (root: string) => {
         await fs.writeFile(
           path.join(root, "package.json"),
-          JSON.stringify({ version: "   ", name: "@openclaw/demo" }),
+          JSON.stringify({ version: "   ", name: "@nova/demo" }),
           "utf8",
         );
       },
       expectedVersion: null,
-      expectedName: "@openclaw/demo",
+      expectedName: "@nova/demo",
     },
   ])(
     "returns normalized nulls for $name",

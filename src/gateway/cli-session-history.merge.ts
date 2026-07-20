@@ -1,10 +1,7 @@
 // Imported CLI history merge helpers.
 // Deduplicates external history messages against local Nova transcripts.
-import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
-import {
-  normalizeOptionalString,
-  readStringValue,
-} from "@openclaw/normalization-core/string-coerce";
+import { asFiniteNumber } from "@nova/normalization-core/number-coercion";
+import { normalizeOptionalString, readStringValue } from "@nova/normalization-core/string-coerce";
 import { stripInboundMetadata } from "../auto-reply/reply/strip-inbound-meta.js";
 
 const DEDUPE_TIMESTAMP_WINDOW_MS = 5 * 60 * 1000;

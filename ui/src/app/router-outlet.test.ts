@@ -1,4 +1,4 @@
-import { createRouter, definePage, type Router } from "@openclaw/uirouter";
+import { createRouter, definePage, type Router } from "@nova/uirouter";
 import { html, type LitElement } from "lit";
 import { ref } from "lit/directives/ref.js";
 import { afterEach, describe, expect, it, vi } from "vitest";

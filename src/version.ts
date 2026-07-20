@@ -1,6 +1,6 @@
 // Resolves package version metadata for CLI and library callers.
 import { createRequire } from "node:module";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 
 // oxlint-disable-next-line eslint/no-underscore-dangle -- Bundled builds replace this compile-time define identifier.
 declare const __NOVA_VERSION__: string | undefined;

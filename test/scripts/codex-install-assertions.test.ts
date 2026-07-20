@@ -184,7 +184,7 @@ function runCodexNpmPluginLiveConfigure(root: string) {
 function runCodexNpmPluginLivePluginAssertions(root: string) {
   return spawnSync(
     process.execPath,
-    [CODEX_NPM_PLUGIN_LIVE_ASSERTIONS_SCRIPT, "assert-plugin", "npm:@openclaw/codex"],
+    [CODEX_NPM_PLUGIN_LIVE_ASSERTIONS_SCRIPT, "assert-plugin", "npm:@nova/codex"],
     {
       encoding: "utf8",
       env: {
@@ -532,8 +532,8 @@ function createCodexInstallFixture(root: string) {
   const stateDir = path.join(root, "state");
   const npmRoot = path.join(stateDir, "npm");
   const installPath = path.join(npmRoot, "projects", "codex", "node_modules", "@openclaw", "codex");
-  const projectRoot = npmProjectRootForInstalledPackage(installPath, "@openclaw/codex");
-  writeJson(path.join(installPath, "package.json"), { name: "@openclaw/codex" });
+  const projectRoot = npmProjectRootForInstalledPackage(installPath, "@nova/codex");
+  writeJson(path.join(installPath, "package.json"), { name: "@nova/codex" });
   const openAiCodexRoot = path.join(projectRoot, "node_modules", "@openai", "codex");
   writeJson(path.join(openAiCodexRoot, "package.json"), {
     name: "@openai/codex",
@@ -555,7 +555,7 @@ function createCodexInstallFixture(root: string) {
         codex: {
           installPath,
           source: "npm",
-          spec: "npm:@openclaw/codex",
+          spec: "npm:@nova/codex",
         },
       },
     },
@@ -621,9 +621,9 @@ describe("Codex install helpers", () => {
           codex: {
             installPath,
             source: "npm",
-            spec: "@openclaw/codex",
+            spec: "@nova/codex",
             resolvedVersion: "2026.7.2",
-            resolvedSpec: "@openclaw/codex@2026.7.2",
+            resolvedSpec: "@nova/codex@2026.7.2",
           },
         },
       },
@@ -662,7 +662,7 @@ describe("Codex install helpers", () => {
       "@openclaw",
       "codex",
     );
-    const projectRoot = npmProjectRootForInstalledPackage(packageRoot, "@openclaw/codex");
+    const projectRoot = npmProjectRootForInstalledPackage(packageRoot, "@nova/codex");
     const dependencyPackage = path.join(
       projectRoot,
       "node_modules",

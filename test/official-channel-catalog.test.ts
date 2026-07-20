@@ -73,7 +73,7 @@ describe("buildOfficialChannelCatalog", () => {
   it("includes publishable official channel plugins and skips non-publishable entries", () => {
     const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-");
     writeJson(path.join(repoRoot, "extensions", "whatsapp", "package.json"), {
-      name: "@openclaw/whatsapp",
+      name: "@nova/whatsapp",
       version: "2026.3.23",
       description: "Nova WhatsApp channel plugin",
       openclaw: {
@@ -86,8 +86,8 @@ describe("buildOfficialChannelCatalog", () => {
           blurb: "works with your own number; recommend a separate phone + eSIM.",
         },
         install: {
-          clawhubSpec: "clawhub:@openclaw/whatsapp",
-          npmSpec: "@openclaw/whatsapp",
+          clawhubSpec: "clawhub:@nova/whatsapp",
+          npmSpec: "@nova/whatsapp",
           localPath: bundledPluginRoot("whatsapp"),
           defaultChoice: "clawhub",
         },
@@ -97,7 +97,7 @@ describe("buildOfficialChannelCatalog", () => {
       },
     });
     writeJson(path.join(repoRoot, "extensions", "local-only", "package.json"), {
-      name: "@openclaw/local-only",
+      name: "@nova/local-only",
       openclaw: {
         channel: {
           id: "local-only",
@@ -178,11 +178,9 @@ describe("buildOfficialChannelCatalog", () => {
       },
     });
     expect(
-      summarizeCatalogEntry(
-        findCatalogEntry(entries, (entry) => entry.name === "@openclaw/whatsapp"),
-      ),
+      summarizeCatalogEntry(findCatalogEntry(entries, (entry) => entry.name === "@nova/whatsapp")),
     ).toEqual({
-      name: "@openclaw/whatsapp",
+      name: "@nova/whatsapp",
       description: "Nova WhatsApp channel plugin",
       source: "official",
       plugin: undefined,
@@ -197,8 +195,8 @@ describe("buildOfficialChannelCatalog", () => {
         systemImage: "message",
       },
       install: {
-        clawhubSpec: "clawhub:@openclaw/whatsapp",
-        npmSpec: "@openclaw/whatsapp",
+        clawhubSpec: "clawhub:@nova/whatsapp",
+        npmSpec: "@nova/whatsapp",
         defaultChoice: "clawhub",
         minHostVersion: ">=2026.4.25",
       },
@@ -208,7 +206,7 @@ describe("buildOfficialChannelCatalog", () => {
   it("keeps third-party official external catalog npm sources exactly pinned", () => {
     const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-policy-");
     const entries = buildOfficialChannelCatalog({ repoRoot }).entries.filter(
-      (entry) => entry.source === "external" && !entry.name?.startsWith("@openclaw/"),
+      (entry) => entry.source === "external" && !entry.name?.startsWith("@nova/"),
     );
 
     expect(entries.length).toBeGreaterThan(0);
@@ -229,9 +227,9 @@ describe("buildOfficialChannelCatalog", () => {
       name: twitch?.name,
       install: twitch?.openclaw?.install,
     }).toEqual({
-      name: "@openclaw/twitch",
+      name: "@nova/twitch",
       install: {
-        npmSpec: "@openclaw/twitch",
+        npmSpec: "@nova/twitch",
         defaultChoice: "npm",
         minHostVersion: ">=2026.4.10",
       },
@@ -244,7 +242,7 @@ describe("buildOfficialChannelCatalog", () => {
   it("preserves ClawHub specs when generating publishable channel catalog entries", () => {
     const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-clawhub-");
     writeJson(path.join(repoRoot, "extensions", "storepack-chat", "package.json"), {
-      name: "@openclaw/storepack-chat",
+      name: "@nova/storepack-chat",
       openclaw: {
         channel: {
           id: "storepack-chat",
@@ -254,8 +252,8 @@ describe("buildOfficialChannelCatalog", () => {
           blurb: "storepack-first channel",
         },
         install: {
-          clawhubSpec: "clawhub:@openclaw/storepack-chat",
-          npmSpec: "@openclaw/storepack-chat",
+          clawhubSpec: "clawhub:@nova/storepack-chat",
+          npmSpec: "@nova/storepack-chat",
           defaultChoice: "clawhub",
         },
         release: {
@@ -269,8 +267,8 @@ describe("buildOfficialChannelCatalog", () => {
     );
 
     expect(requireInstall(entry)).toEqual({
-      clawhubSpec: "clawhub:@openclaw/storepack-chat",
-      npmSpec: "@openclaw/storepack-chat",
+      clawhubSpec: "clawhub:@nova/storepack-chat",
+      npmSpec: "@nova/storepack-chat",
       defaultChoice: "clawhub",
     });
   });
@@ -278,7 +276,7 @@ describe("buildOfficialChannelCatalog", () => {
   it("writes the official catalog under dist", () => {
     const repoRoot = makeRepoRoot("openclaw-official-channel-catalog-write-");
     writeJson(path.join(repoRoot, "extensions", "whatsapp", "package.json"), {
-      name: "@openclaw/whatsapp",
+      name: "@nova/whatsapp",
       openclaw: {
         channel: {
           id: "whatsapp",
@@ -288,7 +286,7 @@ describe("buildOfficialChannelCatalog", () => {
           blurb: "wa",
         },
         install: {
-          npmSpec: "@openclaw/whatsapp",
+          npmSpec: "@nova/whatsapp",
         },
         release: {
           publishToNpm: true,
@@ -313,7 +311,7 @@ describe("buildOfficialChannelCatalog", () => {
         entry.openclaw?.channel?.id === "whatsapp",
     );
     expect(summarizeCatalogEntry(whatsappEntry)).toEqual({
-      name: "@openclaw/whatsapp",
+      name: "@nova/whatsapp",
       description: "Nova WhatsApp channel plugin",
       source: "official",
       plugin: undefined,
@@ -328,8 +326,8 @@ describe("buildOfficialChannelCatalog", () => {
         systemImage: "message",
       },
       install: {
-        clawhubSpec: "clawhub:@openclaw/whatsapp",
-        npmSpec: "@openclaw/whatsapp",
+        clawhubSpec: "clawhub:@nova/whatsapp",
+        npmSpec: "@nova/whatsapp",
         defaultChoice: "clawhub",
         minHostVersion: ">=2026.4.25",
       },

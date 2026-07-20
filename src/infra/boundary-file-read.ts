@@ -3,8 +3,8 @@ import "./fs-safe-defaults.js";
 import {
   readFileDescriptorBounded as readFileDescriptorBoundedFsSafe,
   readFileDescriptorBoundedSync as readFileDescriptorBoundedSyncFsSafe,
-} from "@openclaw/fs-safe/advanced";
-import { FsSafeError } from "@openclaw/fs-safe/errors";
+} from "@nova/fs-safe/advanced";
+import { FsSafeError } from "@nova/fs-safe/errors";
 
 // Root-scoped file open helpers. Use these for user paths that must stay under
 // an already trusted boundary.
@@ -15,7 +15,7 @@ export {
   openRootFileSync,
   type RootFileOpenFailure,
   type RootFileOpenResult,
-} from "@openclaw/fs-safe/advanced";
+} from "@nova/fs-safe/advanced";
 
 function preserveOpenClawOverflowError(error: unknown, maxBytes: number): never {
   if (error instanceof FsSafeError && error.code === "too-large") {

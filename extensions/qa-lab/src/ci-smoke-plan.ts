@@ -1,5 +1,5 @@
 // Qa Lab plugin module plans the bounded CI smoke profile parts.
-import { NOVA_CRABLINE_DEFAULT_CHANNEL } from "@openclaw/crabline";
+import { NOVA_CRABLINE_DEFAULT_CHANNEL } from "@nova/crabline";
 import { defaultQaModelForMode, normalizeQaProviderMode } from "./model-selection.js";
 import { readQaScenarioPack } from "./scenario-catalog.js";
 import { scenarioMatchesQaProviderLane } from "./scenario-lane.js";

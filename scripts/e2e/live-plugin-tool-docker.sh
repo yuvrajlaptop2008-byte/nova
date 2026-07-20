@@ -113,7 +113,7 @@ fi
 
 MODEL_REF="${NOVA_LIVE_PLUGIN_TOOL_MODEL:?missing NOVA_LIVE_PLUGIN_TOOL_MODEL}"
 PLUGIN_ID="e2e-slug-tool"
-PLUGIN_NAME="@openclaw/e2e-slug-tool"
+PLUGIN_NAME="@nova/e2e-slug-tool"
 PLUGIN_VERSION="0.0.0-e2e.1"
 TOOL_NAME="e2e_slug_probe"
 SEED="OpenClaw E2E Plugin Tool $(date +%s)-$RANDOM"

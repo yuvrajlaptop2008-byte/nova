@@ -1,4 +1,4 @@
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import type { ControlUiBuildInfo } from "../build-info.ts";
 
 const BRANCH_DISPLAY_LENGTH = 14;

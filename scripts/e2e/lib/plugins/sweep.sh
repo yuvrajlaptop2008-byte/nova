@@ -137,9 +137,9 @@ npm_registry_dir="$(mktemp -d "$NOVA_PLUGINS_TMP_DIR/openclaw-plugin-npm-registr
 pack_fixture_plugin_with_cli_registry_dependency "$npm_pack_dir" "$NOVA_PLUGINS_TMP_DIR/demo-plugin-npm.tgz" demo-plugin-npm 0.0.1 demo.npm "Demo Plugin NPM" demo-npm "demo-plugin-npm:pong"
 pack_fake_is_number_package "$npm_dep_pack_dir" "$NOVA_PLUGINS_TMP_DIR/is-number-7.0.0.tgz"
 pack_fixture_plugin_with_invalid_extension_entry "$invalid_npm_pack_dir" "$NOVA_PLUGINS_TMP_DIR/demo-plugin-invalid-metadata.tgz" demo-plugin-invalid-metadata 0.0.1 demo.invalid.metadata "Demo Plugin Invalid Metadata"
-start_npm_fixture_registry "@openclaw/demo-plugin-npm" "0.0.1" "$NOVA_PLUGINS_TMP_DIR/demo-plugin-npm.tgz" "$npm_registry_dir" "is-number" "7.0.0" "$NOVA_PLUGINS_TMP_DIR/is-number-7.0.0.tgz" "@openclaw/demo-plugin-invalid-metadata" "0.0.1" "$NOVA_PLUGINS_TMP_DIR/demo-plugin-invalid-metadata.tgz"
+start_npm_fixture_registry "@nova/demo-plugin-npm" "0.0.1" "$NOVA_PLUGINS_TMP_DIR/demo-plugin-npm.tgz" "$npm_registry_dir" "is-number" "7.0.0" "$NOVA_PLUGINS_TMP_DIR/is-number-7.0.0.tgz" "@nova/demo-plugin-invalid-metadata" "0.0.1" "$NOVA_PLUGINS_TMP_DIR/demo-plugin-invalid-metadata.tgz"
 
-run_plugins_openclaw_logged install-npm plugins install "npm:@openclaw/demo-plugin-npm@0.0.1" --force
+run_plugins_openclaw_logged install-npm plugins install "npm:@nova/demo-plugin-npm@0.0.1" --force
 run_plugins_openclaw_capture "$NOVA_PLUGINS_TMP_DIR/plugins-npm.json" plugins list --json
 run_plugins_openclaw_capture "$NOVA_PLUGINS_TMP_DIR/plugins-npm-inspect.json" plugins inspect demo-plugin-npm --runtime --json
 run_plugins_shell_logged exec-npm-plugin-cli 'node "$NOVA_ENTRY" demo-npm ping >"$NOVA_PLUGINS_TMP_DIR/plugins-npm-cli.txt"'
@@ -154,7 +154,7 @@ run_plugins_openclaw_capture "$NOVA_PLUGINS_TMP_DIR/plugins-npm-uninstalled.json
 node scripts/e2e/lib/plugins/assertions.mjs plugin-npm-removed
 
 echo "Testing npm install rejects malformed package metadata..."
-if openclaw_e2e_maybe_timeout "$NOVA_PLUGINS_CLI_TIMEOUT" node "$NOVA_ENTRY" plugins install "npm:@openclaw/demo-plugin-invalid-metadata@0.0.1" --force >"$NOVA_PLUGINS_TMP_DIR/plugins-invalid-openclaw-extensions.log" 2>&1; then
+if openclaw_e2e_maybe_timeout "$NOVA_PLUGINS_CLI_TIMEOUT" node "$NOVA_ENTRY" plugins install "npm:@nova/demo-plugin-invalid-metadata@0.0.1" --force >"$NOVA_PLUGINS_TMP_DIR/plugins-invalid-openclaw-extensions.log" 2>&1; then
   cat "$NOVA_PLUGINS_TMP_DIR/plugins-invalid-openclaw-extensions.log"
   echo "Expected malformed package metadata install to fail." >&2
   exit 1

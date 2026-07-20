@@ -1,5 +1,5 @@
 // Setup wizard helper tests cover channel setup step formatting and config writes.
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import {
   resolveSetupWizardAllowFromEntries,
   resolveSetupWizardGroupAllowlist,

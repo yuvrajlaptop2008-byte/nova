@@ -1,9 +1,6 @@
-import type { ErrorShape, EventFrame, HelloOk, ResponseFrame } from "@openclaw/gateway-protocol";
-import {
-  isGatewayEventFrame,
-  isGatewayResponseFrame,
-} from "@openclaw/gateway-protocol/frame-guards";
-import { RetrySupervisor, sleepWithAbort } from "@openclaw/retry";
+import type { ErrorShape, EventFrame, HelloOk, ResponseFrame } from "@nova/gateway-protocol";
+import { isGatewayEventFrame, isGatewayResponseFrame } from "@nova/gateway-protocol/frame-guards";
+import { RetrySupervisor, sleepWithAbort } from "@nova/retry";
 
 export type GatewayProtocolSocket = {
   isOpen: () => boolean;

@@ -1,6 +1,6 @@
 import { setTimeout as sleep } from "node:timers/promises";
 // Qa Lab plugin module owns Telegram live adapter API and credential behavior.
-import type { TelegramBotMessage, TelegramBotUpdate } from "@openclaw/telegram/api.js";
+import type { TelegramBotMessage, TelegramBotUpdate } from "@nova/telegram/api.js";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
 import {

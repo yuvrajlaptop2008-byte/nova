@@ -1,9 +1,6 @@
 /** Agent-runner execution loop, fallback handling, and user-facing failure mapping. */
 import crypto from "node:crypto";
-import {
-  hasNonEmptyString,
-  normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+import { hasNonEmptyString, normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { hasOutboundReplyContent } from "openclaw/plugin-sdk/reply-payload";
 import { peekSessionMcpRuntime } from "../../agents/agent-bundle-mcp-manager-api.js";
 import { resolveBootstrapWarningSignaturesSeen } from "../../agents/bootstrap-budget.js";

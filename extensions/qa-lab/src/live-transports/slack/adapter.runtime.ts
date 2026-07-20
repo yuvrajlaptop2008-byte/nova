@@ -1,5 +1,5 @@
 // Qa Lab plugin module implements Slack live transport adapter behavior.
-import { createSlackWebClient, createSlackWriteClient } from "@openclaw/slack/api.js";
+import { createSlackWebClient, createSlackWriteClient } from "@nova/slack/api.js";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import type { QaRunnerCliRegistration } from "openclaw/plugin-sdk/qa-runner-runtime";
 import {

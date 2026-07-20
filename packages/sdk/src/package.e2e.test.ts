@@ -32,7 +32,7 @@ type PackedPackage = {
 };
 
 function resolveWorkspacePackageRoot(repoRoot: string, packageName: string): string {
-  const prefix = "@openclaw/";
+  const prefix = "@nova/";
   if (!packageName.startsWith(prefix)) {
     throw new Error(`unsupported workspace package name: ${packageName}`);
   }
@@ -193,7 +193,7 @@ function normalizeWorkspaceDependencies(
   const normalized: Record<string, string> = {};
   for (const [name, spec] of Object.entries(dependencies)) {
     normalized[name] =
-      name.startsWith("@openclaw/") && spec.startsWith("workspace:") ? "0.0.0-private" : spec;
+      name.startsWith("@nova/") && spec.startsWith("workspace:") ? "0.0.0-private" : spec;
   }
   return normalized;
 }
@@ -412,7 +412,7 @@ describe("Nova SDK package e2e", () => {
       packedPackages.push({ manifest, tarball });
     }
     const sdkTarball =
-      packedPackages.find((pkg) => pkg.manifest.name === "@openclaw/sdk")?.tarball ?? "";
+      packedPackages.find((pkg) => pkg.manifest.name === "@nova/sdk")?.tarball ?? "";
     expect(sdkTarball).not.toBe("");
     const registry = await startOpenClawRegistry(packedPackages);
 
@@ -430,7 +430,7 @@ describe("Nova SDK package e2e", () => {
     }
 
     const importScript = `
-      import { GatewayClientTransport, Nova, normalizeGatewayEvent } from "@openclaw/sdk";
+      import { GatewayClientTransport, Nova, normalizeGatewayEvent } from "@nova/sdk";
       if (typeof GatewayClientTransport !== "function") throw new Error("missing transport export");
       if (typeof Nova !== "function") throw new Error("missing client export");
       const event = normalizeGatewayEvent({

@@ -1,7 +1,7 @@
 // Qa Lab plugin module implements WhatsApp live transport adapter behavior.
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { WhatsAppQaDriverSession } from "@openclaw/whatsapp/api.js";
+import type { WhatsAppQaDriverSession } from "@nova/whatsapp/api.js";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { buildQaTarget } from "openclaw/plugin-sdk/qa-channel-protocol";
 import type { QaRunnerCliRegistration } from "openclaw/plugin-sdk/qa-runner-runtime";

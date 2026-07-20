@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/raft",
+  "name": "@nova/raft",
   "version": "2026.7.2",
   "description": "OpenClaw Raft channel plugin for Raft CLI wake bridges.",
   "repository": {
@@ -11,7 +11,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
@@ -28,7 +28,7 @@
     ],
     "setupEntry": "./setup-entry.ts",
     "install": {
-      "npmSpec": "@openclaw/raft",
+      "npmSpec": "@nova/raft",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.6.8"
     },

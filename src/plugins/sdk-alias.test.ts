@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import {
   bundledDistPluginFile,
   bundledPluginFile,
@@ -232,7 +232,7 @@ function createBundledPluginPackagePublicSurfaceAliasFixture() {
   mkdirSafeDir(distExtensionRoot);
   fs.writeFileSync(
     path.join(extensionRoot, "package.json"),
-    JSON.stringify({ name: "@openclaw/slack", type: "module" }, null, 2),
+    JSON.stringify({ name: "@nova/slack", type: "module" }, null, 2),
     "utf-8",
   );
   const sourceApiPath = path.join(extensionRoot, "api.ts");
@@ -354,7 +354,7 @@ function expectPluginSdkAliasTargets(
     expect(fs.realpathSync(aliases["openclaw/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
       fs.realpathSync(params.channelRuntimePath),
     );
-    expect(fs.realpathSync(aliases["@openclaw/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/plugin-sdk/channel-runtime-context"] ?? "")).toBe(
       fs.realpathSync(params.channelRuntimePath),
     );
   }
@@ -362,7 +362,7 @@ function expectPluginSdkAliasTargets(
     expect(fs.realpathSync(aliases["openclaw/plugin-sdk/plugin-entry"] ?? "")).toBe(
       fs.realpathSync(params.pluginEntryPath),
     );
-    expect(fs.realpathSync(aliases["@openclaw/plugin-sdk/plugin-entry"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/plugin-sdk/plugin-entry"] ?? "")).toBe(
       fs.realpathSync(params.pluginEntryPath),
     );
   }
@@ -560,19 +560,19 @@ describe("plugin sdk alias helpers", () => {
     const { packageRoot: installedCodexRoot, pluginEntry: installedCodexEntry } =
       writeInstalledPluginEntry({
         installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
-        packageName: "@openclaw/codex",
+        packageName: "@nova/codex",
       });
     const { packageRoot: installedOtherRoot, pluginEntry: installedOtherEntry } =
       writeInstalledPluginEntry({
         installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
-        packageName: "@openclaw/demo",
+        packageName: "@nova/demo",
       });
     const shadowCodexRoot = path.join(makeTempDir(), ".openclaw", "extensions", "codex-shadow");
     const shadowCodexEntry = path.join(shadowCodexRoot, "dist", "index.js");
     mkdirSafeDir(path.dirname(shadowCodexEntry));
     fs.writeFileSync(
       path.join(shadowCodexRoot, "package.json"),
-      JSON.stringify({ name: "@openclaw/codex", type: "module" }, null, 2),
+      JSON.stringify({ name: "@nova/codex", type: "module" }, null, 2),
       "utf-8",
     );
     fs.writeFileSync(shadowCodexEntry, 'export const plugin = "shadow";\n', "utf-8");
@@ -884,19 +884,19 @@ describe("plugin sdk alias helpers", () => {
     const { packageRoot: installedCodexRoot, pluginEntry: installedCodexEntry } =
       writeInstalledPluginEntry({
         installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
-        packageName: "@openclaw/codex",
+        packageName: "@nova/codex",
       });
     const { packageRoot: installedOtherRoot, pluginEntry: installedOtherEntry } =
       writeInstalledPluginEntry({
         installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
-        packageName: "@openclaw/demo",
+        packageName: "@nova/demo",
       });
     const shadowCodexRoot = path.join(makeTempDir(), ".openclaw", "extensions", "codex-shadow");
     const shadowCodexEntry = path.join(shadowCodexRoot, "dist", "index.js");
     mkdirSafeDir(path.dirname(shadowCodexEntry));
     fs.writeFileSync(
       path.join(shadowCodexRoot, "package.json"),
-      JSON.stringify({ name: "@openclaw/codex", type: "module" }, null, 2),
+      JSON.stringify({ name: "@nova/codex", type: "module" }, null, 2),
       "utf-8",
     );
     fs.writeFileSync(shadowCodexEntry, 'export const plugin = "shadow";\n', "utf-8");
@@ -1042,7 +1042,7 @@ describe("plugin sdk alias helpers", () => {
     const { packageRoot: installedOllamaRoot, pluginEntry: installedOllamaEntry } =
       writeInstalledPluginEntry({
         installRoot: path.join(makeTempDir(), ".openclaw", "npm"),
-        packageName: "@openclaw/ollama",
+        packageName: "@nova/ollama",
       });
 
     const sourceSubpaths = withEnv({ NOVA_ENABLE_PRIVATE_QA_CLI: undefined }, () =>
@@ -1395,77 +1395,75 @@ describe("plugin sdk alias helpers", () => {
       buildPluginLoaderAliasMap(sourcePluginEntry, undefined, undefined, "dist"),
     );
 
-    expect(fs.realpathSync(aliases["@openclaw/gateway-client"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-client"] ?? "")).toBe(
       fs.realpathSync(gatewayClient.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/gateway-client/timeouts"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-client/timeouts"] ?? "")).toBe(
       fs.realpathSync(gatewayClientTimeouts.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/gateway-protocol"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-protocol"] ?? "")).toBe(
       fs.realpathSync(gatewayProtocol.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/gateway-protocol/schema"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-protocol/schema"] ?? "")).toBe(
       fs.realpathSync(gatewayProtocolSchema.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/gateway-protocol/frame-guards"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-protocol/frame-guards"] ?? "")).toBe(
       fs.realpathSync(gatewayProtocolFrameGuards.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/markdown-core"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/markdown-core"] ?? "")).toBe(
       fs.realpathSync(markdownCore.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/markdown-core/tables"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/markdown-core/tables"] ?? "")).toBe(
       fs.realpathSync(markdownCoreTables.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/media-generation-core"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/media-generation-core"] ?? "")).toBe(
       fs.realpathSync(mediaGenerationCore.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/media-generation-core/model-ref"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/media-generation-core/model-ref"] ?? "")).toBe(
       fs.realpathSync(mediaGenerationModelRef.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/media-core"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/media-core"] ?? "")).toBe(
       fs.realpathSync(mediaCore.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/media-core/mime"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/media-core/mime"] ?? "")).toBe(
       fs.realpathSync(mediaCoreMime.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/acp-core"] ?? "")).toBe(
-      fs.realpathSync(acpCore.srcFile),
-    );
-    expect(fs.realpathSync(aliases["@openclaw/acp-core/runtime/types"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/acp-core"] ?? "")).toBe(fs.realpathSync(acpCore.srcFile));
+    expect(fs.realpathSync(aliases["@nova/acp-core/runtime/types"] ?? "")).toBe(
       fs.realpathSync(acpCoreRuntimeTypes.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/normalization-core"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/normalization-core"] ?? "")).toBe(
       fs.realpathSync(normalizationCore.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/normalization-core/boolean-coercion"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/normalization-core/boolean-coercion"] ?? "")).toBe(
       fs.realpathSync(normalizationBooleanCoercion.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/normalization-core/result"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/normalization-core/result"] ?? "")).toBe(
       fs.realpathSync(normalizationResult.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/normalization-core/agent-id"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/normalization-core/agent-id"] ?? "")).toBe(
       fs.realpathSync(normalizationAgentId.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/normalization-core/string-coerce"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/normalization-core/string-coerce"] ?? "")).toBe(
       fs.realpathSync(normalizationStringCoerce.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/retry"] ?? "")).toBe(fs.realpathSync(retry.srcFile));
-    expect(fs.realpathSync(aliases["@openclaw/terminal-core"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/retry"] ?? "")).toBe(fs.realpathSync(retry.srcFile));
+    expect(fs.realpathSync(aliases["@nova/terminal-core"] ?? "")).toBe(
       fs.realpathSync(terminalCore.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/terminal-core/theme"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/terminal-core/theme"] ?? "")).toBe(
       fs.realpathSync(terminalCoreTheme.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/net-policy"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/net-policy"] ?? "")).toBe(
       fs.realpathSync(netPolicy.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/net-policy/ip"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/net-policy/ip"] ?? "")).toBe(
       fs.realpathSync(netPolicyIp.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/net-policy/url-protocol"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/net-policy/url-protocol"] ?? "")).toBe(
       fs.realpathSync(netPolicyUrlProtocol.srcFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/model-catalog-core/provider-id"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/model-catalog-core/provider-id"] ?? "")).toBe(
       fs.realpathSync(modelCatalogProviderId.srcFile),
     );
   });
@@ -1565,38 +1563,36 @@ describe("plugin sdk alias helpers", () => {
       buildPluginLoaderAliasMap(sourcePluginEntry, undefined, undefined, "dist"),
     );
 
-    expect(fs.realpathSync(aliases["@openclaw/gateway-client/readiness"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-client/readiness"] ?? "")).toBe(
       fs.realpathSync(gatewayClient.distFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/gateway-protocol/connect-error-details"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-protocol/connect-error-details"] ?? "")).toBe(
       fs.realpathSync(gatewayProtocol.distFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/gateway-protocol/frame-guards"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/gateway-protocol/frame-guards"] ?? "")).toBe(
       fs.realpathSync(gatewayProtocolFrameGuards.distFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/markdown-core/render"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/markdown-core/render"] ?? "")).toBe(
       fs.realpathSync(markdownCore.distFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/media-generation-core/catalog"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/media-generation-core/catalog"] ?? "")).toBe(
       fs.realpathSync(mediaGenerationCore.distFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/acp-core/normalize-text"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/acp-core/normalize-text"] ?? "")).toBe(
       fs.realpathSync(acpCoreRootDistFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/normalization-core/record-coerce"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/normalization-core/record-coerce"] ?? "")).toBe(
       fs.realpathSync(normalizationCoreRootDistFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/retry"] ?? "")).toBe(
-      fs.realpathSync(retryRootDistFile),
-    );
-    expect(fs.realpathSync(aliases["@openclaw/terminal-core/links"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/retry"] ?? "")).toBe(fs.realpathSync(retryRootDistFile));
+    expect(fs.realpathSync(aliases["@nova/terminal-core/links"] ?? "")).toBe(
       fs.realpathSync(terminalCoreRootDistFile),
     );
-    expect(fs.realpathSync(aliases["@openclaw/net-policy/url-protocol"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/net-policy/url-protocol"] ?? "")).toBe(
       fs.realpathSync(netPolicy.distFile),
     );
     expect(
-      fs.realpathSync(aliases["@openclaw/model-catalog-core/provider-model-id-normalize"] ?? ""),
+      fs.realpathSync(aliases["@nova/model-catalog-core/provider-model-id-normalize"] ?? ""),
     ).toBe(fs.realpathSync(modelCatalogCore.distFile));
   });
 
@@ -1625,10 +1621,10 @@ describe("plugin sdk alias helpers", () => {
       ),
     );
 
-    expect(fs.realpathSync(aliases["@openclaw/acp-core/runtime/errors"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/acp-core/runtime/errors"] ?? "")).toBe(
       fs.realpathSync(acpRuntimeErrors),
     );
-    expect(fs.realpathSync(aliases["@openclaw/normalization-core/agent-id"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/normalization-core/agent-id"] ?? "")).toBe(
       fs.realpathSync(normalizationAgentId),
     );
   });
@@ -1645,14 +1641,14 @@ describe("plugin sdk alias helpers", () => {
       buildPluginLoaderAliasMap(sourcePluginEntry),
     );
 
-    expect(fs.realpathSync(aliases["@openclaw/slack/api.js"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/slack/api.js"] ?? "")).toBe(
       fs.realpathSync(sourceApiPath),
     );
-    expect(fs.realpathSync(aliases["@openclaw/slack/runtime-api.js"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/slack/runtime-api.js"] ?? "")).toBe(
       fs.realpathSync(sourceRuntimeApiPath),
     );
-    expect(aliases["@openclaw/slack/test-api.js"]).toBeUndefined();
-    expect(aliases["@openclaw/slack/internal.js"]).toBeUndefined();
+    expect(aliases["@nova/slack/test-api.js"]).toBeUndefined();
+    expect(aliases["@nova/slack/internal.js"]).toBeUndefined();
   });
 
   it("aliases bundled plugin package test surfaces only in private QA mode", () => {
@@ -1666,7 +1662,7 @@ describe("plugin sdk alias helpers", () => {
       buildPluginLoaderAliasMap(sourcePluginEntry),
     );
 
-    expect(fs.realpathSync(aliases["@openclaw/slack/test-api.js"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/slack/test-api.js"] ?? "")).toBe(
       fs.realpathSync(sourceTestApiPath),
     );
   });
@@ -1683,10 +1679,8 @@ describe("plugin sdk alias helpers", () => {
       buildPluginLoaderAliasMap(sourcePluginEntry, undefined, undefined, "dist"),
     );
 
-    expect(fs.realpathSync(aliases["@openclaw/slack/api.js"] ?? "")).toBe(
-      fs.realpathSync(distApiPath),
-    );
-    expect(fs.realpathSync(aliases["@openclaw/slack/runtime-api.js"] ?? "")).toBe(
+    expect(fs.realpathSync(aliases["@nova/slack/api.js"] ?? "")).toBe(fs.realpathSync(distApiPath));
+    expect(fs.realpathSync(aliases["@nova/slack/runtime-api.js"] ?? "")).toBe(
       fs.realpathSync(distRuntimeApiPath),
     );
   });
@@ -2028,7 +2022,7 @@ describe("plugin sdk alias helpers", () => {
     fs.writeFileSync(sourceLoaderBaseFile, "export {};\n", "utf-8");
     fs.writeFileSync(
       path.join(copiedSourceDir, "channel.runtime.ts"),
-      `import { resolveOutboundSendDep } from "@openclaw/plugin-sdk/channel-outbound";
+      `import { resolveOutboundSendDep } from "@nova/plugin-sdk/channel-outbound";
 
 export const syntheticRuntimeMarker = {
   resolveOutboundSendDep,
@@ -2065,7 +2059,7 @@ export const syntheticRuntimeMarker = {
     const withAlias = createJiti(sourceLoaderBaseUrl, {
       ...buildPluginLoaderJitiOptions({
         "openclaw/plugin-sdk/channel-outbound": copiedChannelRuntimeShim,
-        "@openclaw/plugin-sdk/channel-outbound": copiedChannelRuntimeShim,
+        "@nova/plugin-sdk/channel-outbound": copiedChannelRuntimeShim,
       }),
       tryNative: false,
     });
@@ -2407,7 +2401,7 @@ describe("buildPluginLoaderJitiOptions", () => {
     const marker = Symbol.for("pathe:normalizedAlias");
     const aliasMap = {
       "openclaw/plugin-sdk/core": "/repo/src/plugin-sdk/core.ts",
-      "@openclaw/plugin-sdk/core": "/repo/src/plugin-sdk/core.ts",
+      "@nova/plugin-sdk/core": "/repo/src/plugin-sdk/core.ts",
     };
 
     const first = buildPluginLoaderJitiOptions(aliasMap).alias as Record<string, string>;

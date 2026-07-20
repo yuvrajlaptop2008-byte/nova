@@ -1,20 +1,17 @@
-import { createLlmRuntime, type LlmRuntime } from "@openclaw/ai";
-import type { OpenAICompletionsOptions } from "@openclaw/ai/internal/openai";
-import { getEnvApiKey } from "@openclaw/ai/internal/runtime";
-import { registerBuiltInApiProviders } from "@openclaw/ai/providers";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import {
-  asDateTimestampMs,
-  resolveTimerTimeoutMs,
-} from "@openclaw/normalization-core/number-coercion";
+import { createLlmRuntime, type LlmRuntime } from "@nova/ai";
+import type { OpenAICompletionsOptions } from "@nova/ai/internal/openai";
+import { getEnvApiKey } from "@nova/ai/internal/runtime";
+import { registerBuiltInApiProviders } from "@nova/ai/providers";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
+import { asDateTimestampMs, resolveTimerTimeoutMs } from "@nova/normalization-core/number-coercion";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@nova/normalization-core/string-coerce";
 import {
   normalizeStringEntries,
   uniqueStrings,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@nova/normalization-core/string-normalization";
 import pMap from "p-map";
 import { Type } from "typebox";
 import { formatErrorMessage } from "../infra/errors.js";

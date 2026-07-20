@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { formatCliCommand } from "../cli/command-format.js";
 import type { GatewayAuthChoice, OnboardMode, OnboardOptions } from "../commands/onboard-types.js";
 import { resolveGatewayPort } from "../config/config.js";

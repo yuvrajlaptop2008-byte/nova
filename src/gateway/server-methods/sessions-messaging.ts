@@ -1,7 +1,7 @@
 // Session message dispatch, steering, and active-run cancellation.
 import { randomUUID } from "node:crypto";
-import { expectDefined } from "@openclaw/normalization-core";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { expectDefined } from "@nova/normalization-core";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import {
   ErrorCodes,
   errorShape,

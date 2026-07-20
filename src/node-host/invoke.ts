@@ -2,9 +2,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { ContentBlock } from "@modelcontextprotocol/sdk/types.js";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
-import { sliceUtf16Safe, truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
+import { normalizeStringEntries } from "@nova/normalization-core/string-normalization";
+import { sliceUtf16Safe, truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { mcpContentBlockToAgentContent } from "../agents/mcp-content.js";
 import {
   analyzeArgvCommand,

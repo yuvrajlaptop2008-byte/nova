@@ -1,7 +1,7 @@
 /** Converts auth-profile credentials into agent runtime credential maps. */
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { asDateTimestampMs } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
+import { asDateTimestampMs } from "@nova/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { coerceSecretRef } from "../config/types.secrets.js";
 import { resolveAuthProfileOrder } from "./auth-profiles/order.js";

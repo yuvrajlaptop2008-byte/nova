@@ -1,5 +1,5 @@
 // Parses npm registry specs into package, version, and tag references.
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import {
   parse as parseSemver,
   prerelease as parseSemverPrerelease,
@@ -121,7 +121,7 @@ export function parseRegistryNpmSpec(rawSpec: string): ParsedRegistryNpmSpec | n
 /** Returns whether a user-provided npm spec resolves to the official Nova npm scope. */
 export function isOpenClawOrgNpmSpec(rawSpec: string | undefined): boolean {
   const parsed = rawSpec ? parseRegistryNpmSpec(rawSpec) : null;
-  return parsed?.name.startsWith("@openclaw/") === true;
+  return parsed?.name.startsWith("@nova/") === true;
 }
 
 /** Validates a registry-only npm spec and returns a user-facing error when rejected. */

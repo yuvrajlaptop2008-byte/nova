@@ -2,7 +2,7 @@
 import {
   isSensitiveUrlConfigPath,
   SENSITIVE_URL_HINT_TAG,
-} from "@openclaw/net-policy/redact-sensitive-url";
+} from "@nova/net-policy/redact-sensitive-url";
 import { z } from "zod";
 import type { ConfigUiHints } from "../shared/config-ui-hints-types.js";
 import { FIELD_HELP } from "./schema.help.js";

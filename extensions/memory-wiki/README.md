@@ -1,4 +1,4 @@
-# @openclaw/memory-wiki
+# @nova/memory-wiki
 
 Persistent wiki compiler and Obsidian-friendly knowledge vault for **OpenClaw**.
 

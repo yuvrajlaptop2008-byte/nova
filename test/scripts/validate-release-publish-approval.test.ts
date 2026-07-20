@@ -95,7 +95,7 @@ function writeClawHubApproval(overrides: Record<string, unknown> = {}) {
       bootstrapWorkflowSha: "b".repeat(40),
       releaseTag: "v2026.7.1-beta.3",
       targetSha: "a".repeat(40),
-      packages: ["@openclaw/meta-provider", "@openclaw/voice-call"],
+      packages: ["@nova/meta-provider", "@nova/voice-call"],
       ...overrides,
     })}\n`,
   );
@@ -178,7 +178,7 @@ describe("scripts/validate-release-publish-approval.mjs", () => {
         EXPECTED_WORKFLOW_BRANCH: "main",
         EXPECTED_RUN_ATTEMPT: "2",
         RELEASE_APPROVAL_KIND: "clawhub-bootstrap",
-        RELEASE_PACKAGES: "@openclaw/voice-call,@openclaw/meta-provider",
+        RELEASE_PACKAGES: "@nova/voice-call,@nova/meta-provider",
         RELEASE_TAG: "v2026.7.1-beta.3",
       },
     );
@@ -200,7 +200,7 @@ describe("scripts/validate-release-publish-approval.mjs", () => {
         EXPECTED_WORKFLOW_BRANCH: "main",
         EXPECTED_RUN_ATTEMPT: "2",
         RELEASE_APPROVAL_KIND: "clawhub-bootstrap",
-        RELEASE_PACKAGES: "@openclaw/meta-provider,@openclaw/voice-call",
+        RELEASE_PACKAGES: "@nova/meta-provider,@nova/voice-call",
         RELEASE_TAG: "v2026.7.1-beta.3",
       },
     );
@@ -223,7 +223,7 @@ describe("scripts/validate-release-publish-approval.mjs", () => {
         EXPECTED_WORKFLOW_BRANCH: "main",
         EXPECTED_RUN_ATTEMPT: "2",
         RELEASE_APPROVAL_KIND: "clawhub-bootstrap",
-        RELEASE_PACKAGES: "@openclaw/meta-provider,@openclaw/voice-call",
+        RELEASE_PACKAGES: "@nova/meta-provider,@nova/voice-call",
         RELEASE_TAG: "v2026.7.1-beta.3",
       },
     );
@@ -245,7 +245,7 @@ describe("scripts/validate-release-publish-approval.mjs", () => {
         EXPECTED_WORKFLOW_BRANCH: "main",
         EXPECTED_RUN_ATTEMPT: "2",
         RELEASE_APPROVAL_KIND: "clawhub-bootstrap",
-        RELEASE_PACKAGES: "@openclaw/meta-provider,@openclaw/voice-call",
+        RELEASE_PACKAGES: "@nova/meta-provider,@nova/voice-call",
         RELEASE_TAG: "v2026.7.1-beta.3",
       },
     );
@@ -259,7 +259,7 @@ describe("scripts/validate-release-publish-approval.mjs", () => {
   it.each([
     ["release tag", { releaseTag: "v2026.7.1-beta.2" }, {}],
     ["target SHA", { targetSha: "c".repeat(40) }, {}],
-    ["package set", { packages: ["@openclaw/meta-provider"] }, {}],
+    ["package set", { packages: ["@nova/meta-provider"] }, {}],
     ["parent attempt", { parentRunAttempt: 1 }, {}],
     ["parent workflow SHA", { parentWorkflowSha: "c".repeat(40) }, {}],
     ["bootstrap workflow SHA", { bootstrapWorkflowSha: "c".repeat(40) }, {}],
@@ -278,7 +278,7 @@ describe("scripts/validate-release-publish-approval.mjs", () => {
         EXPECTED_WORKFLOW_BRANCH: "main",
         EXPECTED_RUN_ATTEMPT: "2",
         RELEASE_APPROVAL_KIND: "clawhub-bootstrap",
-        RELEASE_PACKAGES: "@openclaw/meta-provider,@openclaw/voice-call",
+        RELEASE_PACKAGES: "@nova/meta-provider,@nova/voice-call",
         RELEASE_TAG: "v2026.7.1-beta.3",
         ...envOverrides,
       },

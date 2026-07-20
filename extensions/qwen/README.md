@@ -5,7 +5,7 @@ Official OpenClaw provider plugin for Qwen Cloud.
 Install from OpenClaw:
 
 ```bash
-openclaw plugins install @openclaw/qwen-provider
+openclaw plugins install @nova/qwen-provider
 openclaw gateway restart
 ```
 

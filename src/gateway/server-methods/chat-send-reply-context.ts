@@ -1,8 +1,8 @@
 // Hydrates Control UI (webchat) reply targets into the channel-agnostic
 // ReplyTo* envelope fields so downstream reply-context handling matches the
 // Discord path (reply_to_id + "Reply target of current user message" block).
-import { asOptionalRecord } from "@openclaw/normalization-core/record-coerce";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { asOptionalRecord } from "@nova/normalization-core/record-coerce";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import type { MsgContext } from "../../auto-reply/templating.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { sanitizeAssistantVisibleTextWithProfile } from "../../shared/text/assistant-visible-text.js";

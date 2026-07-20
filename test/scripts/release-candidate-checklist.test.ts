@@ -556,7 +556,7 @@ describe("release candidate checklist", () => {
       tarballSha256: "root-sha",
       dependencyTarballs: [
         {
-          packageName: "@openclaw/ai",
+          packageName: "@nova/ai",
           packageVersion: "2026.7.1-beta.3",
           tarballName: "openclaw-ai-2026.7.1-beta.3.tgz",
           tarballSha256: "ai-sha",
@@ -1009,7 +1009,7 @@ describe("release candidate checklist", () => {
         "--plugin-publish-scope",
         "selected",
         "--plugins",
-        "@openclaw/diffs",
+        "@nova/diffs",
       ]),
     ).toThrow("release candidates publish Nova with --plugin-publish-scope all-publishable");
   });

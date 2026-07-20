@@ -1,7 +1,7 @@
 /**
  * Updates persisted session metadata after agent command runs.
  */
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import {
   resolveCompactionSessionFile,
   setSessionRuntimeModel,

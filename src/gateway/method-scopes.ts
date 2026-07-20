@@ -1,6 +1,6 @@
 // Gateway method authorization scope resolver.
 // Maps static and plugin-defined gateway methods to operator scopes.
-import { normalizeOptionalString as normalizeSessionActionParam } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString as normalizeSessionActionParam } from "@nova/normalization-core/string-coerce";
 import { isAdminOnlyNodeInvokeCommand } from "../infra/node-commands.js";
 import { getPluginRegistryState } from "../plugins/runtime-state.js";
 import { resolveReservedGatewayMethodScope } from "../shared/gateway-method-policy.js";

@@ -1,6 +1,6 @@
 // Channel route target helpers normalize channel route targets for delivery.
-import { isRecord as hasRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { isRecord as hasRecord } from "@nova/normalization-core/record-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { normalizeChatChannelId } from "../channels/ids.js";
 import { listRouteBindings } from "../config/bindings.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";

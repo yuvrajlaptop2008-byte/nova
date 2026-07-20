@@ -17,7 +17,7 @@ describe("plugin install plan helpers", () => {
     const findBundledSource = vi.fn().mockReturnValue({
       pluginId: "voice-call",
       localPath: installedPluginRoot("/tmp", "voice-call"),
-      npmSpec: "@openclaw/voice-call",
+      npmSpec: "@nova/voice-call",
     });
 
     const result = resolveBundledInstallPlanBeforeNpm({
@@ -34,37 +34,37 @@ describe("plugin install plan helpers", () => {
     const findBundledSource = vi
       .fn()
       .mockImplementation(({ kind, value }: { kind: "pluginId" | "npmSpec"; value: string }) => {
-        if (kind === "npmSpec" && value === "@openclaw/voice-call") {
+        if (kind === "npmSpec" && value === "@nova/voice-call") {
           return {
             pluginId: "voice-call",
             localPath: installedPluginRoot("/tmp", "voice-call"),
-            npmSpec: "@openclaw/voice-call",
+            npmSpec: "@nova/voice-call",
           };
         }
         return undefined;
       });
     const result = resolveBundledInstallPlanBeforeNpm({
-      rawSpec: "@openclaw/voice-call@2026.5.20",
+      rawSpec: "@nova/voice-call@2026.5.20",
       findBundledSource,
     });
 
     expect(findBundledSource).toHaveBeenCalledWith({
       kind: "npmSpec",
-      value: "@openclaw/voice-call@2026.5.20",
+      value: "@nova/voice-call@2026.5.20",
     });
     expect(findBundledSource).toHaveBeenCalledWith({
       kind: "npmSpec",
-      value: "@openclaw/voice-call",
+      value: "@nova/voice-call",
     });
     expect(result?.bundledSource.pluginId).toBe("voice-call");
-    expect(result?.warning).toContain('npm install spec "@openclaw/voice-call@2026.5.20"');
-    expect(result?.warning).toContain("npm:@openclaw/voice-call@2026.5.20");
+    expect(result?.warning).toContain('npm install spec "@nova/voice-call@2026.5.20"');
+    expect(result?.warning).toContain("npm:@nova/voice-call@2026.5.20");
   });
 
   it("skips bundled pre-plan for npm specs that do not match bundled packages", () => {
     const findBundledSource = vi.fn();
     const result = resolveBundledInstallPlanBeforeNpm({
-      rawSpec: "@openclaw/not-bundled",
+      rawSpec: "@nova/not-bundled",
       findBundledSource,
     });
 
@@ -116,7 +116,7 @@ describe("plugin install plan helpers", () => {
           return {
             pluginId: "voice-call",
             localPath: installedPluginRoot("/tmp", "voice-call"),
-            npmSpec: "@openclaw/voice-call",
+            npmSpec: "@nova/voice-call",
           };
         }
         return undefined;
@@ -124,7 +124,7 @@ describe("plugin install plan helpers", () => {
 
     const result = resolveBundledInstallPlanForCatalogEntry({
       pluginId: "voice-call",
-      npmSpec: "@openclaw/voice-call",
+      npmSpec: "@nova/voice-call",
       findBundledSource,
     });
 
@@ -140,7 +140,7 @@ describe("plugin install plan helpers", () => {
           return {
             pluginId: "not-voice-call",
             localPath: installedPluginRoot("/tmp", "not-voice-call"),
-            npmSpec: "@openclaw/voice-call",
+            npmSpec: "@nova/voice-call",
           };
         }
         return undefined;
@@ -148,7 +148,7 @@ describe("plugin install plan helpers", () => {
 
     const result = resolveBundledInstallPlanForCatalogEntry({
       pluginId: "voice-call",
-      npmSpec: "@openclaw/voice-call",
+      npmSpec: "@nova/voice-call",
       findBundledSource,
     });
 
@@ -163,7 +163,7 @@ describe("plugin install plan helpers", () => {
           return {
             pluginId: "whatsapp",
             localPath: installedPluginRoot("/tmp", "whatsapp"),
-            npmSpec: "@openclaw/whatsapp",
+            npmSpec: "@nova/whatsapp",
           };
         }
         return undefined;
@@ -182,17 +182,17 @@ describe("plugin install plan helpers", () => {
     const findBundledSource = vi.fn().mockReturnValue({
       pluginId: "voice-call",
       localPath: installedPluginRoot("/tmp", "voice-call"),
-      npmSpec: "@openclaw/voice-call",
+      npmSpec: "@nova/voice-call",
     });
     const result = resolveBundledInstallPlanForNpmFailure({
-      rawSpec: "@openclaw/voice-call",
+      rawSpec: "@nova/voice-call",
       code: PLUGIN_INSTALL_ERROR_CODE.NPM_PACKAGE_NOT_FOUND,
       findBundledSource,
     });
 
     expect(findBundledSource).toHaveBeenCalledWith({
       kind: "npmSpec",
-      value: "@openclaw/voice-call",
+      value: "@nova/voice-call",
     });
     expect(result?.warning).toContain("npm package unavailable");
   });
@@ -200,7 +200,7 @@ describe("plugin install plan helpers", () => {
   it("skips fallback for non-not-found npm failures", () => {
     const findBundledSource = vi.fn();
     const result = resolveBundledInstallPlanForNpmFailure({
-      rawSpec: "@openclaw/voice-call",
+      rawSpec: "@nova/voice-call",
       code: "INSTALL_FAILED",
       findBundledSource,
     });

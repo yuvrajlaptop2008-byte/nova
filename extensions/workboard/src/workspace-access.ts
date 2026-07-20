@@ -1,4 +1,4 @@
-import type { WorkboardWorkspace, WorkboardWorkspaceAccess } from "@openclaw/workboard-contract";
+import type { WorkboardWorkspace, WorkboardWorkspaceAccess } from "@nova/workboard-contract";
 // Workboard workspace access follows the caller's canonical filesystem boundary.
 import {
   listAgentIds,
@@ -16,7 +16,7 @@ import {
   isPathInside,
 } from "openclaw/plugin-sdk/security-runtime";
 
-export type { WorkboardWorkspaceAccess } from "@openclaw/workboard-contract";
+export type { WorkboardWorkspaceAccess } from "@nova/workboard-contract";
 
 type WorkboardConfig = NonNullable<OpenClawPluginToolContext["config"]>;
 type ResolveSandboxWorkspaceAuthority =

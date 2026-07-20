@@ -1,6 +1,6 @@
-import { expectDefined } from "@openclaw/normalization-core";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { toRetryError } from "@openclaw/retry";
+import { expectDefined } from "@nova/normalization-core";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
+import { toRetryError } from "@nova/retry";
 import { DEFAULT_LOCAL_MODEL } from "./embedding-defaults.js";
 import { sanitizeAndNormalizeEmbedding } from "./embedding-vectors.js";
 import { createLocalEmbeddingWorkerProvider } from "./embeddings-worker.js";

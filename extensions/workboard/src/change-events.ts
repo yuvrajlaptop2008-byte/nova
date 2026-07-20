@@ -1,4 +1,4 @@
-import type { WorkboardChange } from "@openclaw/workboard-contract";
+import type { WorkboardChange } from "@nova/workboard-contract";
 import type { OpenClawPluginService } from "../api.js";
 import type { WorkboardStore } from "./store.js";
 

@@ -2,11 +2,11 @@ import { createHmac, randomBytes } from "node:crypto";
 import fs from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
-import { detectMime } from "@openclaw/media-core/mime";
+import { detectMime } from "@nova/media-core/mime";
 import {
   asDateTimestampMs,
   resolveTimestampMsToIsoString,
-} from "@openclaw/normalization-core/number-coercion";
+} from "@nova/normalization-core/number-coercion";
 import {
   type AgentAvatarResolution,
   resolvePublicAgentAvatarSource,

@@ -1,7 +1,7 @@
 /**
  * Public SDK subpath for LLM streaming, model utils, and validation.
  */
-export type { ApiProvider } from "@openclaw/ai";
+export type { ApiProvider } from "@nova/ai";
 export {
   calculateCost,
   clampThinkingLevel,
@@ -10,13 +10,13 @@ export {
   getEnvApiKey,
   parseStreamingJson,
   sanitizeSurrogates,
-} from "@openclaw/ai/internal/runtime";
+} from "@nova/ai/internal/runtime";
 export {
   adjustMaxTokensForThinking,
   buildBaseOptions,
   clampReasoning,
-} from "@openclaw/ai/internal/shared";
-export { transformMessages } from "@openclaw/ai/internal/shared";
+} from "@nova/ai/internal/shared";
+export { transformMessages } from "@nova/ai/internal/shared";
 export { complete, completeSimple, stream, streamSimple } from "../llm/stream.js";
 export type {
   Api,

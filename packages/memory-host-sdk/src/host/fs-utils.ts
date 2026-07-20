@@ -1,15 +1,11 @@
 // Memory Host SDK helper module supports fs utils behavior.
-import { configureFsSafePython } from "@openclaw/fs-safe/config";
+import { configureFsSafePython } from "@nova/fs-safe/config";
 // fs-safe facade with Python validation disabled by default for this package's
 // host-side memory file operations.
-export { root } from "@openclaw/fs-safe/root";
-export { isPathInside, isPathInsideWithRealpath } from "@openclaw/fs-safe/path";
-export {
-  assertNoSymlinkParents,
-  readRegularFile,
-  statRegularFile,
-} from "@openclaw/fs-safe/advanced";
-export { walkDirectory, type WalkDirectoryEntry } from "@openclaw/fs-safe/walk";
+export { root } from "@nova/fs-safe/root";
+export { isPathInside, isPathInsideWithRealpath } from "@nova/fs-safe/path";
+export { assertNoSymlinkParents, readRegularFile, statRegularFile } from "@nova/fs-safe/advanced";
+export { walkDirectory, type WalkDirectoryEntry } from "@nova/fs-safe/walk";
 
 const hasPythonModeOverride =
   process.env.FS_SAFE_PYTHON_MODE != null || process.env.NOVA_FS_SAFE_PYTHON_MODE != null;

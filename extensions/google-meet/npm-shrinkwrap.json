@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/google-meet",
+  "name": "@nova/google-meet",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/google-meet",
+      "name": "@nova/google-meet",
       "version": "2026.7.2",
       "dependencies": {
         "jszip": "3.10.1",

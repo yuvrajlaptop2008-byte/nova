@@ -71,7 +71,7 @@ function resolveUserPath(input: string, env: NodeJS.ProcessEnv): string {
 
 /** Read the configured voice-call store path from either package id. */
 function getVoiceCallConfigStore(config: PluginDoctorStateMigrationParams["config"]): string {
-  for (const pluginId of ["voice-call", "@openclaw/voice-call"]) {
+  for (const pluginId of ["voice-call", "@nova/voice-call"]) {
     const rawConfig = config.plugins?.entries?.[pluginId]?.config;
     if (!rawConfig || typeof rawConfig !== "object" || Array.isArray(rawConfig)) {
       continue;
@@ -97,7 +97,7 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
 /** Return Voice Call agents whose templated core session stores need migration. */
 export function resolveSessionStoreAgentIds(params: { cfg: OpenClawConfig }): string[] {
   const agentIds = new Set<string>();
-  for (const pluginId of ["voice-call", "@openclaw/voice-call"]) {
+  for (const pluginId of ["voice-call", "@nova/voice-call"]) {
     const entry = params.cfg.plugins?.entries?.[pluginId];
     if (!entry) {
       continue;

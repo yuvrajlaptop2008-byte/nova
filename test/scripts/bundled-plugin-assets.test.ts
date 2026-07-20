@@ -24,7 +24,7 @@ async function withPluginAssetFixture(run: (rootDir: string) => Promise<void>) {
     path.join(rootDir, "extensions", "canvas", "package.json"),
     JSON.stringify(
       {
-        name: "@openclaw/canvas-plugin",
+        name: "@nova/canvas-plugin",
         openclaw: {
           assetScripts: {
             build: "node scripts/bundle-a2ui.mjs",
@@ -79,7 +79,7 @@ describe("bundled plugin assets", () => {
     expect(hooks).toMatchObject([
       {
         command: "node ../../scripts/build-discord-activity-sdk.mjs",
-        packageName: "@openclaw/discord",
+        packageName: "@nova/discord",
         phase: "build",
         pluginId: "discord",
       },
@@ -148,9 +148,9 @@ describe("bundled plugin assets", () => {
 
       expect(hooks).toEqual([
         {
-          aliases: ["@openclaw/canvas-plugin", "canvas", "canvas-plugin"],
+          aliases: ["@nova/canvas-plugin", "canvas", "canvas-plugin"],
           command: "node scripts/bundle-a2ui.mjs",
-          packageName: "@openclaw/canvas-plugin",
+          packageName: "@nova/canvas-plugin",
           phase: "build",
           pluginDir: path.join(rootDir, "extensions", "canvas"),
           pluginId: "canvas",

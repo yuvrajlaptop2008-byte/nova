@@ -1,6 +1,6 @@
 import { ContextProvider } from "@lit/context";
-import type { UiCommandParams } from "@openclaw/gateway-protocol";
-import type { RouteLocation, RouterState } from "@openclaw/uirouter";
+import type { UiCommandParams } from "@nova/gateway-protocol";
+import type { RouteLocation, RouterState } from "@nova/uirouter";
 import { html, nothing } from "lit";
 import { property, query, state } from "lit/decorators.js";
 import {

@@ -1084,7 +1084,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(pluginDir, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/nested-default-channel",
+          name: "@nova/nested-default-channel",
           openclaw: {
             extensions: ["./index.cjs"],
           },
@@ -1620,7 +1620,7 @@ describe("loadOpenClawPlugins", () => {
         path.join(globalDir, "package.json"),
         JSON.stringify(
           {
-            name: "@openclaw/untrusted-global-channel",
+            name: "@nova/untrusted-global-channel",
             version: "0.0.0-test",
             main: "./index.cjs",
             openclaw: {

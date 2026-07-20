@@ -196,7 +196,7 @@ describe("plugins Docker assertions", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
+        CLAWHUB_PLUGIN_SPEC: "clawhub:@nova/kitchen-sink",
         NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1e3",
       },
     });
@@ -209,7 +209,7 @@ describe("plugins Docker assertions", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
+        CLAWHUB_PLUGIN_SPEC: "clawhub:@nova/kitchen-sink",
         NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: "1000bytes",
       },
     });
@@ -568,7 +568,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       [
         "scripts/e2e/lib/plugins/npm-registry-server.mjs",
         portFile,
-        "@openclaw/demo-plugin-npm",
+        "@nova/demo-plugin-npm",
         "1.0.0",
         tarballPath,
       ],
@@ -595,7 +595,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
 
       expect(valid.statusCode, stderr.text()).toBe(200);
       expect(JSON.parse(valid.body)).toMatchObject({
-        name: "@openclaw/demo-plugin-npm",
+        name: "@nova/demo-plugin-npm",
         "dist-tags": { latest: "1.0.0" },
       });
     } finally {
@@ -618,7 +618,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       name: "openclaw",
       version: "2026.7.1-beta.3",
       dependencies: {
-        "@openclaw/ai": "2026.7.1-beta.3",
+        "@nova/ai": "2026.7.1-beta.3",
         zod: "4.3.6",
       },
       optionalDependencies: {
@@ -654,7 +654,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
 
       expect(response.statusCode).toBe(200);
       expect(metadata.versions["2026.7.1-beta.3"].dependencies).toEqual({
-        "@openclaw/ai": "2026.7.1-beta.3",
+        "@nova/ai": "2026.7.1-beta.3",
         zod: "4.3.6",
       });
       expect(metadata.versions["2026.7.1-beta.3"].optionalDependencies).toEqual({
@@ -702,7 +702,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       [
         "scripts/e2e/lib/plugins/npm-registry-server.mjs",
         portFile,
-        "@openclaw/demo-plugin-npm",
+        "@nova/demo-plugin-npm",
         "1.0.0",
         tarballPath,
       ],
@@ -762,7 +762,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       [
         "scripts/e2e/lib/plugins/npm-registry-server.mjs",
         portFile,
-        "@openclaw/demo-plugin-npm",
+        "@nova/demo-plugin-npm",
         "1.0.0",
         tarballPath,
       ],
@@ -872,7 +872,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
         pathToFileURL(preloadPath).href,
         "scripts/e2e/lib/plugins/npm-registry-server.mjs",
         portFile,
-        "@openclaw/demo-plugin-npm",
+        "@nova/demo-plugin-npm",
         "1.0.0",
         tarballPath,
       ],
@@ -961,7 +961,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       [
         "scripts/e2e/lib/plugins/npm-registry-server.mjs",
         portFile,
-        "@openclaw/demo-plugin-npm",
+        "@nova/demo-plugin-npm",
         "1.0.0",
         tarballPath,
       ],
@@ -1368,10 +1368,10 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
           artifactFormat: "zip",
           artifactKind: "legacy-zip",
           clawhubFamily: "code-plugin",
-          clawhubPackage: "@openclaw/kitchen-sink",
+          clawhubPackage: "@nova/kitchen-sink",
           installPath: escapedInstallPath,
           source: "clawhub",
-          spec: "clawhub:@openclaw/kitchen-sink",
+          spec: "clawhub:@nova/kitchen-sink",
         },
       },
     });
@@ -1381,7 +1381,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       env: {
         ...process.env,
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
-        CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
+        CLAWHUB_PLUGIN_SPEC: "clawhub:@nova/kitchen-sink",
         HOME: home,
         NOVA_PLUGINS_TMP_DIR: scratchRoot,
       },
@@ -1404,14 +1404,14 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       }
       const result = await runAssertionAsync(["clawhub-preflight"], {
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
-        CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
+        CLAWHUB_PLUGIN_SPEC: "clawhub:@nova/kitchen-sink",
         NOVA_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
         NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "25",
       });
 
       expect(result.status).not.toBe(0);
       expect(result.stderr).toContain(
-        "ClawHub package preflight for @openclaw/kitchen-sink timed out after 25ms",
+        "ClawHub package preflight for @nova/kitchen-sink timed out after 25ms",
       );
     } finally {
       await new Promise<void>((resolve) => {
@@ -1437,14 +1437,14 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       }
       const result = await runAssertionAsync(["clawhub-preflight"], {
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
-        CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
+        CLAWHUB_PLUGIN_SPEC: "clawhub:@nova/kitchen-sink",
         NOVA_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
         NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "75",
       });
 
       expect(result.status).not.toBe(0);
       expect(result.stderr).toContain(
-        "ClawHub package preflight response for @openclaw/kitchen-sink timed out after 75ms",
+        "ClawHub package preflight response for @nova/kitchen-sink timed out after 75ms",
       );
     } finally {
       await new Promise<void>((resolve) => {
@@ -1469,7 +1469,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
       }
       const result = await runAssertionAsync(["clawhub-preflight"], {
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
-        CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
+        CLAWHUB_PLUGIN_SPEC: "clawhub:@nova/kitchen-sink",
         NOVA_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
         NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: "16",
         NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1000",
@@ -1477,7 +1477,7 @@ test -d "$NOVA_PLUGINS_TMP_DIR"
 
       expect(result.status).not.toBe(0);
       expect(result.stderr).toContain(
-        "ClawHub package preflight response for @openclaw/kitchen-sink response body exceeded 16 bytes",
+        "ClawHub package preflight response for @nova/kitchen-sink response body exceeded 16 bytes",
       );
       expect(result.stderr).not.toContain("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     } finally {

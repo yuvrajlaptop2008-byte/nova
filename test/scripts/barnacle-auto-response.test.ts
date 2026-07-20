@@ -1,6 +1,6 @@
 // Barnacle Auto Response tests cover barnacle auto response script behavior.
 import { readFileSync } from "node:fs";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it } from "vitest";
 import {
   candidateLabels,

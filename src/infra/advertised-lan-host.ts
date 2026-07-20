@@ -1,5 +1,5 @@
 // Resolves the LAN host Nova should advertise to nearby devices.
-import { isRfc1918Ipv4Address } from "@openclaw/net-policy/ip";
+import { isRfc1918Ipv4Address } from "@nova/net-policy/ip";
 import { runCommandWithTimeout as defaultRunCommandWithTimeout } from "../process/exec.js";
 import {
   listExternalInterfaceAddresses,

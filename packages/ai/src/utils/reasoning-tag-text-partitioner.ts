@@ -3,8 +3,8 @@ import {
   buildCodeSpanIndex,
   createInlineCodeState,
   type InlineCodeState,
-} from "@openclaw/markdown-core/code-spans";
-import type { FenceScanState } from "@openclaw/markdown-core/fences";
+} from "@nova/markdown-core/code-spans";
+import type { FenceScanState } from "@nova/markdown-core/fences";
 
 export type ReasoningTagTextDelta =
   | { kind: "text"; text: string }

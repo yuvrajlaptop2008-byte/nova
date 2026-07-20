@@ -1,6 +1,6 @@
 /** Runtime provider selection and tool construction for the `web_fetch` tool. */
 import { createHash } from "node:crypto";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import {
   hasWebProviderEntryCredential,
   providerRequiresCredential,

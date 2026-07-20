@@ -1,4 +1,4 @@
-import type { LlmRuntime } from "@openclaw/ai";
+import type { LlmRuntime } from "@nova/ai";
 import type { Model } from "./types.js";
 
 const MODEL_LLM_RUNTIME = Symbol("openclaw.modelLlmRuntime");

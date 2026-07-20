@@ -50,17 +50,17 @@ describe("buildNpmResolutionInstallFields", () => {
     {
       name: "maps npm resolution metadata into install record fields",
       input: {
-        name: "@openclaw/demo",
+        name: "@nova/demo",
         version: "1.2.3",
-        resolvedSpec: "@openclaw/demo@1.2.3",
+        resolvedSpec: "@nova/demo@1.2.3",
         integrity: "sha512-abc",
         shasum: "deadbeef",
         resolvedAt: "2026-02-22T00:00:00.000Z",
       },
       expected: createExpectedResolutionFields({
-        resolvedName: "@openclaw/demo",
+        resolvedName: "@nova/demo",
         resolvedVersion: "1.2.3",
-        resolvedSpec: "@openclaw/demo@1.2.3",
+        resolvedSpec: "@nova/demo@1.2.3",
         integrity: "sha512-abc",
         shasum: "deadbeef",
         resolvedAt: "2026-02-22T00:00:00.000Z",
@@ -74,10 +74,10 @@ describe("buildNpmResolutionInstallFields", () => {
     {
       name: "keeps missing partial resolution fields undefined",
       input: {
-        name: "@openclaw/demo",
+        name: "@nova/demo",
       },
       expected: createExpectedResolutionFields({
-        resolvedName: "@openclaw/demo",
+        resolvedName: "@nova/demo",
       }),
     },
   ] as const)("$name", expectResolutionFieldsCase);
@@ -87,47 +87,47 @@ describe("resolveNpmInstallRecordSpec", () => {
   it("uses an exact resolved registry spec when managed installs request pinning", () => {
     expect(
       resolveNpmInstallRecordSpec({
-        requestedSpec: "@openclaw/codex",
+        requestedSpec: "@nova/codex",
         resolution: {
-          name: "@openclaw/codex",
+          name: "@nova/codex",
           version: "2026.5.30-beta.1",
-          resolvedSpec: "@openclaw/codex@2026.5.30-beta.1",
+          resolvedSpec: "@nova/codex@2026.5.30-beta.1",
         },
         pinResolvedRegistrySpec: true,
       }),
-    ).toBe("@openclaw/codex@2026.5.30-beta.1");
+    ).toBe("@nova/codex@2026.5.30-beta.1");
   });
 
   it("keeps moving specs unless the caller owns managed pinning", () => {
     expect(
       resolveNpmInstallRecordSpec({
-        requestedSpec: "@openclaw/codex",
+        requestedSpec: "@nova/codex",
         resolution: {
-          name: "@openclaw/codex",
+          name: "@nova/codex",
           version: "2026.5.30-beta.1",
-          resolvedSpec: "@openclaw/codex@2026.5.30-beta.1",
+          resolvedSpec: "@nova/codex@2026.5.30-beta.1",
         },
       }),
-    ).toBe("@openclaw/codex");
+    ).toBe("@nova/codex");
   });
 
   it("does not replace the requested spec with tags or non-registry resolutions", () => {
     expect(
       resolveNpmInstallRecordSpec({
-        requestedSpec: "@openclaw/codex",
+        requestedSpec: "@nova/codex",
         resolution: {
-          name: "@openclaw/codex",
+          name: "@nova/codex",
           version: "2026.5.30-beta.1",
-          resolvedSpec: "@openclaw/codex@beta",
+          resolvedSpec: "@nova/codex@beta",
         },
         pinResolvedRegistrySpec: true,
       }),
-    ).toBe("@openclaw/codex");
+    ).toBe("@nova/codex");
     expect(
       resolveNpmInstallRecordSpec({
         requestedSpec: "file:codex.tgz",
         resolution: {
-          name: "@openclaw/codex",
+          name: "@nova/codex",
           version: "2026.5.30-beta.1",
           resolvedSpec: "file:codex.tgz",
         },
@@ -212,21 +212,21 @@ describe("recordPluginInstall", () => {
     const registryInstall = recordPluginInstall(localInstall, {
       pluginId: "diffs",
       source: "npm",
-      spec: "@openclaw/diffs",
+      spec: "@nova/diffs",
       installPath: "/tmp/openclaw/plugins/diffs",
-      resolvedName: "@openclaw/diffs",
+      resolvedName: "@nova/diffs",
       resolvedVersion: "1.1.0",
-      resolvedSpec: "@openclaw/diffs@1.1.0",
+      resolvedSpec: "@nova/diffs@1.1.0",
       installedAt: "2026-05-15T00:00:03.000Z",
     });
 
     expect(registryInstall.plugins?.installs?.diffs).toEqual({
       source: "npm",
-      spec: "@openclaw/diffs",
+      spec: "@nova/diffs",
       installPath: "/tmp/openclaw/plugins/diffs",
-      resolvedName: "@openclaw/diffs",
+      resolvedName: "@nova/diffs",
       resolvedVersion: "1.1.0",
-      resolvedSpec: "@openclaw/diffs@1.1.0",
+      resolvedSpec: "@nova/diffs@1.1.0",
       installedAt: "2026-05-15T00:00:03.000Z",
     });
   });

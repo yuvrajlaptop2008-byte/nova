@@ -1,4 +1,4 @@
-# @openclaw/mxc-sandbox
+# @nova/mxc-sandbox
 
 Official MXC sandbox execution plugin for OpenClaw.
 
@@ -8,7 +8,7 @@ ProcessContainer support.
 ## Install
 
 ```bash
-openclaw plugins install @openclaw/mxc-sandbox
+openclaw plugins install @nova/mxc-sandbox
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -37,7 +37,7 @@ readiness behavior to change as MXC host support matures.
 ## Package
 
 - Plugin id: `mxc`
-- Package: `@openclaw/mxc-sandbox`
+- Package: `@nova/mxc-sandbox`
 - Minimum OpenClaw host: `2026.6.11`
 
 ## Plugin config

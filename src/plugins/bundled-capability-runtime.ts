@@ -59,7 +59,7 @@ function buildVitestCapabilityShimAliasMap(): Record<string, string> {
       const targetPath = fileURLToPath(target);
       return [
         [`openclaw/plugin-sdk/${subpath}`, targetPath],
-        [`@openclaw/plugin-sdk/${subpath}`, targetPath],
+        [`@nova/plugin-sdk/${subpath}`, targetPath],
       ];
     }),
   );

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import type {
   WhatsAppQaDriverObservedMessage,
   WhatsAppQaDriverSession,
-} from "@openclaw/whatsapp/api.js";
+} from "@nova/whatsapp/api.js";
 import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
 import {
   assertApprovalDecisionResult,

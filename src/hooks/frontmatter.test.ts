@@ -1,5 +1,5 @@
 // Hook frontmatter tests cover hook metadata parsing from hook files.
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it } from "vitest";
 import {
   parseFrontmatter,
@@ -216,7 +216,7 @@ describe("resolveOpenClawMetadata", () => {
           events: ["command"],
           install: [
             { id: "bundled", kind: "bundled", label: "Bundled with Nova" },
-            { id: "npm", kind: "npm", package: "@openclaw/hook" },
+            { id: "npm", kind: "npm", package: "@nova/hook" },
           ],
         },
       }),
@@ -231,7 +231,7 @@ describe("resolveOpenClawMetadata", () => {
       "npm",
     );
     expect(expectDefined(result?.install?.[1], "result?.install?.[1] test invariant").package).toBe(
-      "@openclaw/hook",
+      "@nova/hook",
     );
   });
 

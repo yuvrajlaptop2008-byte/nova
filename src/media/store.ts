@@ -8,10 +8,10 @@ import {
   basenameFromAnyPath,
   extnameFromAnyPath,
   nameFromAnyPath,
-} from "@openclaw/media-core/file-name";
-import { detectMime, extensionForMime, normalizeMimeType } from "@openclaw/media-core/mime";
-import { hasHttpUrlPrefix } from "@openclaw/net-policy/url-protocol";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+} from "@nova/media-core/file-name";
+import { detectMime, extensionForMime, normalizeMimeType } from "@nova/media-core/mime";
+import { hasHttpUrlPrefix } from "@nova/net-policy/url-protocol";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { fileStore } from "../infra/file-store.js";
 import { sanitizeUntrustedFileName } from "../infra/fs-safe-advanced.js";
 import { isPathInside } from "../infra/fs-safe.js";

@@ -1,18 +1,18 @@
 {
-  "name": "@openclaw/irc",
+  "name": "@nova/irc",
   "version": "2026.7.2",
   "description": "OpenClaw IRC channel plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/irc",
-      "npmSpec": "@openclaw/irc",
+      "clawhubSpec": "clawhub:@nova/irc",
+      "npmSpec": "@nova/irc",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.6.9",
       "allowInvalidConfigRecovery": true

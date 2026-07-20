@@ -3,10 +3,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { inspect } from "node:util";
 import { cancel, isCancel } from "@clack/prompts";
-import { resolveTimerTimeoutMs } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { resolveTimerTimeoutMs } from "@nova/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import {
   ConnectErrorDetailCodes,
   readConnectErrorDetailCode,

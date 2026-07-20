@@ -1,7 +1,7 @@
 // Model auth tests cover provider auth status, expiry, and display helpers.
 
-import { expectDefined } from "@openclaw/normalization-core";
-import { MAX_DATE_TIMESTAMP_MS } from "@openclaw/normalization-core/number-coercion";
+import { expectDefined } from "@nova/normalization-core";
+import { MAX_DATE_TIMESTAMP_MS } from "@nova/normalization-core/number-coercion";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { OpenClawConfig } from "../../config/config.js";
 import type { ProviderPlugin } from "../../plugins/types.js";

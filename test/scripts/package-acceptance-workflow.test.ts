@@ -402,7 +402,7 @@ describe("package acceptance workflow", () => {
     const selected = runReleasePublishInputValidation({
       FULL_RELEASE_VALIDATION_RUN_ATTEMPT: "",
       FULL_RELEASE_VALIDATION_RUN_ID: "",
-      PLUGINS: "@openclaw/meta",
+      PLUGINS: "@nova/meta",
       PLUGIN_PUBLISH_SCOPE: "selected",
       PREFLIGHT_RUN_ID: "",
       PUBLISH_NOVA_NPM: "false",
@@ -432,7 +432,7 @@ describe("package acceptance workflow", () => {
     const partialEvidence = runReleasePublishInputValidation({
       FULL_RELEASE_VALIDATION_RUN_ATTEMPT: "",
       FULL_RELEASE_VALIDATION_RUN_ID: "",
-      PLUGINS: "@openclaw/meta",
+      PLUGINS: "@nova/meta",
       PLUGIN_PUBLISH_SCOPE: "selected",
       PUBLISH_NOVA_NPM: "false",
     });
@@ -1208,7 +1208,7 @@ describe("package acceptance workflow", () => {
     expect(workflow).toContain("codex_plugin_spec:");
     expect(workflow).toContain('args+=(-f codex_plugin_spec="$CODEX_PLUGIN_SPEC")');
     expect(releaseChecksWorkflow).toContain(
-      'codex_plugin_spec="npm:@openclaw/codex@${BASH_REMATCH[1]}"',
+      'codex_plugin_spec="npm:@nova/codex@${BASH_REMATCH[1]}"',
     );
     expect(releaseChecksWorkflow).toContain(
       "codex_plugin_spec: ${{ needs.resolve_target.outputs.codex_plugin_spec }}",
@@ -3668,13 +3668,13 @@ describe("package artifact reuse", () => {
     );
     expect(npmWorkflow).toContain("tarballSha256");
     expect(npmWorkflow).toContain("dependencyTarballs");
-    expect(npmWorkflow).toContain('packageName: "@openclaw/ai"');
+    expect(npmWorkflow).toContain('packageName: "@nova/ai"');
     expect(npmWorkflow).toContain("AI_TARBALL_SHA256");
     expect(npmWorkflow).toContain("does not match openclaw");
-    expect(npmWorkflow).toContain("Frozen target does not depend on @openclaw/ai");
+    expect(npmWorkflow).toContain("Frozen target does not depend on @nova/ai");
     expect(npmWorkflow).toContain("dependencyTarballs: process.env.AI_TARBALL_NAME");
     expect(npmWorkflow).toContain('verify_args=("$TARBALL_PATH" "$PACKAGE_VERSION")');
-    expect(npmWorkflow).toContain("Frozen target without an @openclaw/ai dependency");
+    expect(npmWorkflow).toContain("Frozen target without an @nova/ai dependency");
     const npmTelegramWorkflow = readFileSync(NPM_TELEGRAM_WORKFLOW, "utf8");
     expect(npmTelegramWorkflow).toContain("preflight-manifest.json");
     expect(npmTelegramWorkflow).toContain("NOVA_NPM_TELEGRAM_PACKAGE_DIR");
@@ -4071,7 +4071,7 @@ describe("package artifact reuse", () => {
       "uses: openclaw/clawhub/.github/workflows/package-publish.yml@d8096dfc039e86ab942ddf9ef117d04849fd84c1",
     );
     expect(clawHubWorkflow).toContain(
-      'family: ${{ contains(fromJson(\'["@openclaw/acpx","@openclaw/diffs","@openclaw/feishu","@openclaw/qqbot"]\'), matrix.plugin.packageName) && \'bundle-plugin\' || \'\' }}',
+      'family: ${{ contains(fromJson(\'["@nova/acpx","@nova/diffs","@nova/feishu","@nova/qqbot"]\'), matrix.plugin.packageName) && \'bundle-plugin\' || \'\' }}',
     );
     expect(clawHubWorkflow).toContain("dry_run:");
     expect(clawHubWorkflow).toContain("default: false");

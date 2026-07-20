@@ -852,10 +852,10 @@ describe("collectReleasePackageMetadataErrors", () => {
         license: "MIT",
         repository: { url: "git+https://github.com/openclaw/openclaw.git" },
         bin: { nova: "nova.mjs" },
-        dependencies: { "@openclaw/fs-safe": "link:../fs-safe" },
+        dependencies: { "@nova/fs-safe": "link:../fs-safe" },
       }),
     ).toContain(
-      'package.json dependencies["@openclaw/fs-safe"] must use a published semver range before npm release; found "link:../fs-safe".',
+      'package.json dependencies["@nova/fs-safe"] must use a published semver range before npm release; found "link:../fs-safe".',
     );
   });
 

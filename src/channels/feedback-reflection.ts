@@ -1,4 +1,4 @@
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { resolveStorePath } from "../config/sessions/paths.js";
 import { appendTranscriptEvent, loadSessionEntry } from "../config/sessions/session-accessor.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";

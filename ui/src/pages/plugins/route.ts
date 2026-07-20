@@ -1,4 +1,4 @@
-import { definePage, type RouteLoaderOptions, type RouteLocation } from "@openclaw/uirouter";
+import { definePage, type RouteLoaderOptions, type RouteLocation } from "@nova/uirouter";
 import { html } from "lit";
 import type { ApplicationContext } from "../../app/context.ts";
 import { loadPluginCatalog } from "../../lib/plugins/index.ts";

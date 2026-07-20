@@ -1,7 +1,7 @@
 /** Preflights local model-provider endpoints before scheduled cron runner startup. */
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { expectDefined } from "@openclaw/normalization-core";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
+import { expectDefined } from "@nova/normalization-core";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import type { ModelProviderConfig } from "../../config/types.models.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { fetchWithSsrFGuard } from "../../infra/net/fetch-guard.js";

@@ -120,7 +120,7 @@ fs.writeFileSync(
   path.join(dir, "package.json"),
   `${JSON.stringify(
     {
-      name: `@openclaw/${id}`,
+      name: `@nova/${id}`,
       version,
       openclaw: { extensions: ["./index.js"] },
     },

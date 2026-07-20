@@ -1,8 +1,8 @@
 // Shares plugin auto-enable detection across config and runtime code.
-import { collectConfiguredModelRefs } from "@openclaw/model-catalog-core/configured-model-refs";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { expectDefined } from "@openclaw/normalization-core";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { collectConfiguredModelRefs } from "@nova/model-catalog-core/configured-model-refs";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
+import { expectDefined } from "@nova/normalization-core";
+import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { collectConfiguredAgentHarnessRuntimes } from "../agents/harness-runtimes.js";
 import {
   listPotentialConfiguredChannelPresenceSignals,

@@ -308,7 +308,7 @@ describe("plugins cli update", () => {
     const installRecords = {
       alpha: {
         source: "npm",
-        spec: "@openclaw/alpha@1.0.0",
+        spec: "@nova/alpha@1.0.0",
         installPath: "/tmp/alpha",
       },
     } as const;
@@ -384,7 +384,7 @@ describe("plugins cli update", () => {
     const persistedRecords = {
       alpha: {
         source: "npm",
-        spec: "@openclaw/alpha@1.0.0",
+        spec: "@nova/alpha@1.0.0",
         installPath: "/tmp/alpha",
       },
     } as const;
@@ -430,7 +430,7 @@ describe("plugins cli update", () => {
   it("rejects invalid config snapshots before updater side effects", async () => {
     const cfg = createTrackedPluginConfig({
       pluginId: "alpha",
-      spec: "@openclaw/alpha@1.0.0",
+      spec: "@nova/alpha@1.0.0",
     });
     primeUpdateConfigSnapshot({
       config: cfg,
@@ -479,16 +479,16 @@ describe("plugins cli update", () => {
     const cfg = { plugins: {} } as OpenClawConfig;
     const pluginRecords = createTrackedPluginConfig({
       pluginId: "voice-call",
-      spec: "@openclaw/voice-call@1.0.0",
+      spec: "@nova/voice-call@1.0.0",
     }).plugins?.installs;
     const nextConfig = {
       ...cfg,
       plugins: {
         ...cfg.plugins,
         installs: {
-          "@openclaw/voice-call": {
+          "@nova/voice-call": {
             source: "npm",
-            spec: "@openclaw/voice-call@1.1.0",
+            spec: "@nova/voice-call@1.1.0",
           },
         },
       },
@@ -500,9 +500,9 @@ describe("plugins cli update", () => {
       changed: true,
       outcomes: [
         {
-          pluginId: "@openclaw/voice-call",
+          pluginId: "@nova/voice-call",
           status: "updated",
-          message: "Updated @openclaw/voice-call.",
+          message: "Updated @nova/voice-call.",
         },
       ],
     });
@@ -584,16 +584,16 @@ describe("plugins cli update", () => {
     const previousRecords = {
       brave: {
         source: "npm",
-        spec: "@openclaw/brave-plugin@2026.6.11-beta.2",
+        spec: "@nova/brave-plugin@2026.6.11-beta.2",
         installPath: "/tmp/brave-beta",
-        resolvedName: "@openclaw/brave-plugin",
+        resolvedName: "@nova/brave-plugin",
         resolvedVersion: "2026.6.11-beta.2",
       },
     } as const;
     const nextRecords = {
       brave: {
         ...previousRecords.brave,
-        spec: "@openclaw/brave-plugin@2026.6.11",
+        spec: "@nova/brave-plugin@2026.6.11",
         installPath: "/tmp/brave-stable",
         resolvedVersion: "2026.6.11",
       },
@@ -654,16 +654,16 @@ describe("plugins cli update", () => {
     const previousRecords = {
       brave: {
         source: "npm",
-        spec: "@openclaw/brave-plugin@2026.6.11-beta.2",
+        spec: "@nova/brave-plugin@2026.6.11-beta.2",
         installPath: "/tmp/brave-beta",
-        resolvedName: "@openclaw/brave-plugin",
+        resolvedName: "@nova/brave-plugin",
         resolvedVersion: "2026.6.11-beta.2",
       },
     } as const;
     const nextRecords = {
       brave: {
         ...previousRecords.brave,
-        spec: "@openclaw/brave-plugin@2026.6.11",
+        spec: "@nova/brave-plugin@2026.6.11",
         installPath: "/tmp/brave-stable",
         resolvedVersion: "2026.6.11",
       },
@@ -729,16 +729,16 @@ describe("plugins cli update", () => {
     const previousRecords = {
       brave: {
         source: "npm",
-        spec: "@openclaw/brave-plugin@2026.6.11-beta.2",
+        spec: "@nova/brave-plugin@2026.6.11-beta.2",
         installPath: "/tmp/brave-beta",
-        resolvedName: "@openclaw/brave-plugin",
+        resolvedName: "@nova/brave-plugin",
         resolvedVersion: "2026.6.11-beta.2",
       },
     } as const;
     const nextRecords = {
       brave: {
         ...previousRecords.brave,
-        spec: "@openclaw/brave-plugin@2026.6.11",
+        spec: "@nova/brave-plugin@2026.6.11",
         installPath: "/tmp/brave-stable",
         resolvedVersion: "2026.6.11",
       },
@@ -815,16 +815,16 @@ describe("plugins cli update", () => {
     const previousRecords = {
       brave: {
         source: "npm",
-        spec: "@openclaw/brave-plugin@2026.6.11-beta.2",
+        spec: "@nova/brave-plugin@2026.6.11-beta.2",
         installPath: "/tmp/brave-beta",
-        resolvedName: "@openclaw/brave-plugin",
+        resolvedName: "@nova/brave-plugin",
         resolvedVersion: "2026.6.11-beta.2",
       },
     } as const;
     const nextRecords = {
       brave: {
         ...previousRecords.brave,
-        spec: "@openclaw/brave-plugin@2026.6.11",
+        spec: "@nova/brave-plugin@2026.6.11",
         installPath: "/tmp/brave-stable",
         resolvedVersion: "2026.6.11",
       },
@@ -888,7 +888,7 @@ describe("plugins cli update", () => {
     setInstalledPluginIndexInstallRecords({
       "voice-call": {
         source: "npm",
-        spec: "@openclaw/voice-call",
+        spec: "@nova/voice-call",
         installPath: "/tmp/voice-call",
       },
     });
@@ -910,8 +910,8 @@ describe("plugins cli update", () => {
       label: "ClawHub",
       record: {
         source: "clawhub",
-        spec: "clawhub:@openclaw/voice-call",
-        clawhubPackage: "@openclaw/voice-call",
+        spec: "clawhub:@nova/voice-call",
+        clawhubPackage: "@nova/voice-call",
         installPath: "/tmp/voice-call",
       },
     },
@@ -977,7 +977,7 @@ describe("plugins cli update", () => {
     setInstalledPluginIndexInstallRecords({
       "voice-call": {
         source: "npm",
-        spec: "@openclaw/voice-call",
+        spec: "@nova/voice-call",
         installPath: "/tmp/voice-call",
       },
     });
@@ -1010,7 +1010,7 @@ describe("plugins cli update", () => {
         installs: {
           legacy: {
             source: "npm",
-            spec: "@openclaw/legacy@1.0.0",
+            spec: "@nova/legacy@1.0.0",
             installPath: "/tmp/legacy",
           },
         },
@@ -1136,7 +1136,7 @@ describe("plugins cli update", () => {
     setInstalledPluginIndexInstallRecords({
       "voice-call": {
         source: "npm",
-        spec: "@openclaw/voice-call@1.0.0",
+        spec: "@nova/voice-call@1.0.0",
         installPath: "/tmp/voice-call",
       },
     });
@@ -1217,8 +1217,8 @@ describe("plugins cli update", () => {
   it("does not sync official catalog specs for manual plugin updates", async () => {
     const config = createTrackedPluginConfig({
       pluginId: "codex",
-      spec: "@openclaw/codex@2026.5.28",
-      resolvedName: "@openclaw/codex",
+      spec: "@nova/codex@2026.5.28",
+      resolvedName: "@nova/codex",
     });
     loadConfig.mockReturnValue(config);
     setInstalledPluginIndexInstallRecords(config.plugins?.installs ?? {});
@@ -1240,8 +1240,8 @@ describe("plugins cli update", () => {
   it("syncs official catalog specs with beta channel context for update --all", async () => {
     const config = createTrackedPluginConfig({
       pluginId: "codex",
-      spec: "@openclaw/codex@2026.6.8-beta.1",
-      resolvedName: "@openclaw/codex",
+      spec: "@nova/codex@2026.6.8-beta.1",
+      resolvedName: "@nova/codex",
     });
     config.update = { channel: "beta" };
     loadConfig.mockReturnValue(config);
@@ -1264,8 +1264,8 @@ describe("plugins cli update", () => {
   it("passes extended-stable channel and installed core version to update --all", async () => {
     const config = createTrackedPluginConfig({
       pluginId: "codex",
-      spec: "@openclaw/codex",
-      resolvedName: "@openclaw/codex",
+      spec: "@nova/codex",
+      resolvedName: "@nova/codex",
     });
     config.update = { channel: "extended-stable" };
     loadConfig.mockReturnValue(config);
@@ -1344,7 +1344,7 @@ describe("plugins cli update", () => {
         installs: {
           alpha: {
             source: "npm",
-            spec: "@openclaw/alpha@1.0.0",
+            spec: "@nova/alpha@1.0.0",
           },
         },
       },
@@ -1354,7 +1354,7 @@ describe("plugins cli update", () => {
         installs: {
           alpha: {
             source: "npm",
-            spec: "@openclaw/alpha@1.1.0",
+            spec: "@nova/alpha@1.1.0",
           },
         },
       },
@@ -1422,11 +1422,11 @@ describe("plugins cli update", () => {
         installs: {
           alpha: {
             source: "npm",
-            spec: "@openclaw/alpha@1.0.0",
+            spec: "@nova/alpha@1.0.0",
           },
           beta: {
             source: "npm",
-            spec: "@openclaw/beta@1.0.0",
+            spec: "@nova/beta@1.0.0",
           },
         },
       },
@@ -1436,11 +1436,11 @@ describe("plugins cli update", () => {
         installs: {
           alpha: {
             source: "npm",
-            spec: "@openclaw/alpha@1.1.0",
+            spec: "@nova/alpha@1.1.0",
           },
           beta: {
             source: "npm",
-            spec: "@openclaw/beta@1.0.0",
+            spec: "@nova/beta@1.0.0",
           },
         },
       },
@@ -1480,8 +1480,8 @@ describe("plugins cli update", () => {
         installs: {
           demo: {
             source: "clawhub",
-            spec: "clawhub:@openclaw/plugin-demo@1.0.0",
-            clawhubPackage: "@openclaw/plugin-demo",
+            spec: "clawhub:@nova/plugin-demo@1.0.0",
+            clawhubPackage: "@nova/plugin-demo",
           },
         },
       },
@@ -1519,8 +1519,8 @@ describe("plugins cli update", () => {
         installs: {
           demo: {
             source: "clawhub",
-            spec: "clawhub:@openclaw/plugin-demo",
-            clawhubPackage: "@openclaw/plugin-demo",
+            spec: "clawhub:@nova/plugin-demo",
+            clawhubPackage: "@nova/plugin-demo",
           },
         },
       },
@@ -1558,8 +1558,8 @@ describe("plugins cli update", () => {
         installs: {
           demo: {
             source: "clawhub",
-            spec: "clawhub:@openclaw/plugin-demo",
-            clawhubPackage: "@openclaw/plugin-demo",
+            spec: "clawhub:@nova/plugin-demo",
+            clawhubPackage: "@nova/plugin-demo",
           },
         },
       },
@@ -1573,7 +1573,7 @@ describe("plugins cli update", () => {
           status: "skipped",
           code: "clawhub_security_unavailable",
           message:
-            'Skipped demo ClawHub update: ClawHub security data for "@openclaw/plugin-demo@1.1.0" is unavailable, so Nova left the existing installed plugin unchanged. Try again later or choose a different version.',
+            'Skipped demo ClawHub update: ClawHub security data for "@nova/plugin-demo@1.1.0" is unavailable, so Nova left the existing installed plugin unchanged. Try again later or choose a different version.',
         },
       ],
       changed: false,

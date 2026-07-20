@@ -1,6 +1,6 @@
 // Nova gateway tests cover activation serialization and chat sessions.
 
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { SystemAgentApprovalRequestPayload } from "../../infra/system-agent-approvals.js";

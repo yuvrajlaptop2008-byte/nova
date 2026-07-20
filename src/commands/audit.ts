@@ -1,6 +1,6 @@
 /** Operator CLI for bounded metadata-only activity audit pages. */
-import { timestampMsToIsoString } from "@openclaw/normalization-core/number-coercion";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { timestampMsToIsoString } from "@nova/normalization-core/number-coercion";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import type {
   AuditActivityListParams,
   AuditActivityListResult,

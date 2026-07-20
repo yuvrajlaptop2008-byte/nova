@@ -6,7 +6,7 @@
  * the Nova session tools and foreign harnesses (Claude/Codex style).
  */
 
-import { asNullableRecord as asRecord } from "@openclaw/normalization-core/record-coerce";
+import { asNullableRecord as asRecord } from "@nova/normalization-core/record-coerce";
 import {
   buildWriteDiffLines,
   computeLineDiff,

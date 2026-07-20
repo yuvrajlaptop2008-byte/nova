@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/twitch",
+  "name": "@nova/twitch",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/twitch",
+      "name": "@nova/twitch",
       "version": "2026.7.2",
       "dependencies": {
         "@twurple/api-call": "8.1.4",

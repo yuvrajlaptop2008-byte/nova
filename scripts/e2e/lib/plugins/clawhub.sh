@@ -3,7 +3,7 @@ run_plugins_clawhub_scenario() {
     echo "Skipping ClawHub plugin install and uninstall (NOVA_PLUGINS_E2E_CLAWHUB=0)."
   else
     echo "Testing ClawHub plugin install and uninstall..."
-    CLAWHUB_PLUGIN_SPEC="${NOVA_PLUGINS_E2E_CLAWHUB_SPEC:-clawhub:@openclaw/kitchen-sink}"
+    CLAWHUB_PLUGIN_SPEC="${NOVA_PLUGINS_E2E_CLAWHUB_SPEC:-clawhub:@nova/kitchen-sink}"
     CLAWHUB_PLUGIN_ID="${NOVA_PLUGINS_E2E_CLAWHUB_ID:-openclaw-kitchen-sink-fixture}"
     export CLAWHUB_PLUGIN_SPEC CLAWHUB_PLUGIN_ID
 

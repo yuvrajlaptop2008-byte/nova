@@ -1,6 +1,6 @@
 // Control UI view renders config screen content.
 import "../../styles/lobster-pet.css";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { html, nothing } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import type { QueueMode } from "../../../../src/auto-reply/reply/queue/types.js";

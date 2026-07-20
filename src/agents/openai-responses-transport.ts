@@ -19,7 +19,7 @@ import {
   type OpenAIReasoningEffort,
   type OpenAIToolProjection,
   type ResponsesToolCallState,
-} from "@openclaw/ai/internal/openai";
+} from "@nova/ai/internal/openai";
 import {
   createFirstStreamEventAbortController,
   getEnvApiKey,
@@ -27,15 +27,15 @@ import {
   getFirstStreamEventTimeoutMs,
   parseStreamingJson,
   withFirstStreamEventTimeout,
-} from "@openclaw/ai/internal/runtime";
+} from "@nova/ai/internal/runtime";
 import {
   describeToolResultMediaPlaceholder,
   extractToolResultText,
   isImageWithMediaPayload,
   stripSystemPromptCacheBoundary,
-} from "@openclaw/ai/internal/shared";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+} from "@nova/ai/internal/shared";
+import { isRecord } from "@nova/normalization-core/record-coerce";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import OpenAI, { AzureOpenAI } from "openai";
 import type {
   FunctionTool,

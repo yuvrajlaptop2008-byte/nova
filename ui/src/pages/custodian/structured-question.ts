@@ -1,4 +1,4 @@
-import type { SystemAgentChatQuestion } from "@openclaw/gateway-protocol";
+import type { SystemAgentChatQuestion } from "@nova/gateway-protocol";
 
 export type CustodianStructuredQuestion = {
   id: string;

@@ -1,7 +1,7 @@
 // Command-specific secret target policy. Each exported helper returns the config secret IDs
 // a command may inspect, with optional concrete-path filters for selected providers/accounts.
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { sortUniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
+import { sortUniqueStrings } from "@nova/normalization-core/string-normalization";
 import { resolveChannelDefaultAccountId } from "../channels/plugins/helpers.js";
 import { listReadOnlyChannelPluginsForConfig } from "../channels/plugins/read-only.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";

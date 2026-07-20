@@ -2,8 +2,8 @@
 import {
   resolveAcpSessionCwd,
   resolveAcpThreadSessionDetailLines,
-} from "@openclaw/acp-core/runtime/session-identifiers";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+} from "@nova/acp-core/runtime/session-identifiers";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { getChannelPlugin, normalizeChannelId } from "../../../channels/plugins/index.js";
 import {
   resolveThreadBindingIntroText,

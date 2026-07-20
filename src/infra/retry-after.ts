@@ -1,4 +1,4 @@
-import { parseRetryAfterHttpDateMs } from "@openclaw/ai/internal/retry-after";
+import { parseRetryAfterHttpDateMs } from "@nova/ai/internal/retry-after";
 import { asFiniteNumberInRange, parseStrictNonNegativeInteger } from "../shared/number-coercion.js";
 
 const RETRY_AFTER_HEADER_DELAY_RE = /^\d+$/;

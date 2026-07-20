@@ -22,7 +22,7 @@ describe("codex package manifest", () => {
       fs.readFileSync(new URL("../package.json", import.meta.url), "utf8"),
     ) as CodexPackageManifest;
 
-    expect(packageJson.devDependencies).toHaveProperty("@openclaw/plugin-sdk");
+    expect(packageJson.devDependencies).toHaveProperty("@nova/plugin-sdk");
     expect(packageJson.dependencies?.["@openai/codex"]).toBe(MAX_CODEX_APP_SERVER_VERSION);
     expect(packageJson.openclaw?.release?.requireLatestDependencies).toEqual(["@openai/codex"]);
     expect(packageJson.openclaw?.install?.requiredPlatformPackages).toEqual([

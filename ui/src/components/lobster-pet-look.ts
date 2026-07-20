@@ -1,4 +1,4 @@
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { html, nothing, svg, type TemplateResult } from "lit";
 import { lobsterHonorific } from "./lobster-dex.ts";
 import type {

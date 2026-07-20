@@ -2,11 +2,11 @@ import path from "node:path";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+} from "@nova/normalization-core/string-coerce";
 import {
   normalizeStringEntries,
   normalizeUniqueStringEntries,
-} from "@openclaw/normalization-core/string-normalization";
+} from "@nova/normalization-core/string-normalization";
 import {
   normalizeCommandDescriptorName,
   sanitizeCommandDescriptorDescription,
@@ -42,14 +42,14 @@ function isOfficialCodexPluginRecord(
   if (record.id !== "codex" || record.origin !== "global") {
     return false;
   }
-  if (record.packageName === "@openclaw/codex") {
+  if (record.packageName === "@nova/codex") {
     return true;
   }
   const sourcePath = path
     .normalize(record.rootDir ?? record.source)
     .split(path.sep)
     .join("/");
-  return sourcePath.includes("/node_modules/@openclaw/codex");
+  return sourcePath.includes("/node_modules/@nova/codex");
 }
 
 function canClaimReservedCommandOwnership(

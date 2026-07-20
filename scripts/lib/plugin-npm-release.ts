@@ -364,10 +364,8 @@ export function collectPublishablePluginPackageErrors(
   const extensions = packageJson.openclaw?.extensions ?? [];
   const requiredLatestDependencies = collectRequiredLatestDependencies(packageJson);
 
-  if (!packageName.startsWith("@openclaw/")) {
-    errors.push(
-      `package name must start with "@openclaw/"; found "${packageName || "<missing>"}".`,
-    );
+  if (!packageName.startsWith("@nova/")) {
+    errors.push(`package name must start with "@nova/"; found "${packageName || "<missing>"}".`);
   }
   if (packageJson.private === true) {
     errors.push("package.json private must not be true.");

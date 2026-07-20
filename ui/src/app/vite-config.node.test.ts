@@ -256,7 +256,7 @@ describe("Control UI Vite config", () => {
   });
 
   it("resolves root tsconfig package aliases for source imports", () => {
-    expect(findStringAlias("@openclaw/net-policy/ip")?.replacement).toBe(
+    expect(findStringAlias("@nova/net-policy/ip")?.replacement).toBe(
       path.join(repoRoot, "packages/net-policy/src/ip.ts"),
     );
   });
@@ -264,27 +264,25 @@ describe("Control UI Vite config", () => {
   it("resolves Control UI dev-server source aliases for internal packages", () => {
     const aliases = resolveSourcePackageAliasesForVite();
     expect(
-      aliases.find((alias) => alias.find === "@openclaw/normalization-core/string-coerce"),
+      aliases.find((alias) => alias.find === "@nova/normalization-core/string-coerce"),
     )?.toEqual({
-      find: "@openclaw/normalization-core/string-coerce",
+      find: "@nova/normalization-core/string-coerce",
       replacement: path.join(repoRoot, "packages/normalization-core/src/string-coerce.ts"),
     });
   });
 
   it("resolves published Nova packages before the broad plugin alias", () => {
     const aliases = resolveExternalPackageAliasesForVite();
-    expect(aliases.find((alias) => alias.find === "@openclaw/libterminal/browser")).toEqual({
-      find: "@openclaw/libterminal/browser",
-      replacement: path.join(repoRoot, "node_modules/@openclaw/libterminal/dist/browser.js"),
+    expect(aliases.find((alias) => alias.find === "@nova/libterminal/browser")).toEqual({
+      find: "@nova/libterminal/browser",
+      replacement: path.join(repoRoot, "node_modules/@nova/libterminal/dist/browser.js"),
     });
   });
 
   it("keeps specific tsconfig aliases ahead of broad package aliases", () => {
     const aliases = resolveTsconfigPathAliasesForVite();
-    const netPolicyIpIndex = aliases.findIndex((alias) => alias.find === "@openclaw/net-policy/ip");
-    const netPolicyPackageIndex = aliases.findIndex(
-      (alias) => alias.find === "@openclaw/net-policy",
-    );
+    const netPolicyIpIndex = aliases.findIndex((alias) => alias.find === "@nova/net-policy/ip");
+    const netPolicyPackageIndex = aliases.findIndex((alias) => alias.find === "@nova/net-policy");
     const netPolicyWildcardIndex = aliases.findIndex(
       (alias) =>
         alias.find instanceof RegExp && alias.replacement.includes("packages/net-policy/src/$1"),

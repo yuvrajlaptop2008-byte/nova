@@ -8,7 +8,7 @@ const bundledSources = new Map<string, BundledPluginSource>([
     {
       pluginId: "discord",
       localPath: "/opt/openclaw/extensions/discord",
-      npmSpec: "@openclaw/discord",
+      npmSpec: "@nova/discord",
     },
   ],
 ]);
@@ -16,11 +16,11 @@ const bundledSources = new Map<string, BundledPluginSource>([
 describe("plugin install provenance", () => {
   it.each([
     "discord",
-    "@openclaw/discord",
-    "npm:@openclaw/discord",
+    "@nova/discord",
+    "npm:@nova/discord",
     "/opt/openclaw/extensions/discord",
     "brave",
-    "npm:@openclaw/brave-plugin",
+    "npm:@nova/brave-plugin",
     "clawhub:openclaw-demo",
   ])("trusts Nova-owned install source %s", (spec) => {
     expect(isOpenClawTrustedPluginInstallSpec(spec, bundledSources)).toBe(true);

@@ -206,7 +206,7 @@ const explicitNeverBundleDependencies = [
   "@lancedb/lancedb",
   "@larksuiteoapi/node-sdk",
   "@matrix-org/matrix-sdk-crypto-nodejs",
-  "@openclaw/ai",
+  "@nova/ai",
   "@vitest/expect",
   "jimp",
   "matrix-js-sdk",
@@ -226,15 +226,15 @@ function shouldNeverBundleDependency(id: string): boolean {
 function shouldAlwaysBundleDependency(id: string): boolean {
   return (
     id === "openclaw/plugin-sdk/ssrf-runtime-internal" ||
-    id === "@openclaw/fs-safe" ||
-    id.startsWith("@openclaw/fs-safe/") ||
-    id === "@openclaw/normalization-core" ||
-    id.startsWith("@openclaw/normalization-core/") ||
-    id === "@openclaw/retry" ||
-    id === "@openclaw/media-core" ||
-    id.startsWith("@openclaw/media-core/") ||
-    ["@openclaw/acp-core", "@openclaw/workboard-contract"].includes(id) ||
-    id.startsWith("@openclaw/acp-core/") ||
+    id === "@nova/fs-safe" ||
+    id.startsWith("@nova/fs-safe/") ||
+    id === "@nova/normalization-core" ||
+    id.startsWith("@nova/normalization-core/") ||
+    id === "@nova/retry" ||
+    id === "@nova/media-core" ||
+    id.startsWith("@nova/media-core/") ||
+    ["@nova/acp-core", "@nova/workboard-contract"].includes(id) ||
+    id.startsWith("@nova/acp-core/") ||
     id === "zod" ||
     id.startsWith("zod/")
   );
@@ -416,10 +416,10 @@ function buildLlmCoreDistEntries(): Record<string, string> {
 
 function shouldExternalizeAgentCoreDependency(id: string): boolean {
   return (
-    id === "@openclaw/ai" ||
-    id.startsWith("@openclaw/ai/") ||
-    id === "@openclaw/llm-core" ||
-    id.startsWith("@openclaw/llm-core/") ||
+    id === "@nova/ai" ||
+    id.startsWith("@nova/ai/") ||
+    id === "@nova/llm-core" ||
+    id.startsWith("@nova/llm-core/") ||
     id === "ignore" ||
     id === "openclaw" ||
     id.startsWith("openclaw/") ||
@@ -435,7 +435,7 @@ function shouldExternalizeGatewayProtocolDependency(id: string): boolean {
 }
 
 function shouldExternalizeGatewayClientDependency(id: string): boolean {
-  return ["ws", "@openclaw/net-policy", "@openclaw/gateway-protocol"].some(
+  return ["ws", "@nova/net-policy", "@nova/gateway-protocol"].some(
     (dependency) => id === dependency || id.startsWith(`${dependency}/`),
   );
 }

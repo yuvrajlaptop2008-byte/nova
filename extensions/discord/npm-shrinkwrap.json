@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/discord",
+  "name": "@nova/discord",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/discord",
+      "name": "@nova/discord",
       "version": "2026.7.2",
       "dependencies": {
         "@discord/embedded-app-sdk": "2.5.0",

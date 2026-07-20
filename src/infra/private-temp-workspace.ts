@@ -11,4 +11,4 @@ export {
   type TempWorkspaceSync,
   withTempWorkspace,
   withTempWorkspaceSync,
-} from "@openclaw/fs-safe/temp";
+} from "@nova/fs-safe/temp";

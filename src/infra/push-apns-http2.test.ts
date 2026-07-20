@@ -1,6 +1,6 @@
 // Covers APNs HTTP/2 session and proxy behavior.
 import type http2 from "node:http2";
-import { MAX_TIMER_TIMEOUT_MS } from "@openclaw/normalization-core/number-coercion";
+import { MAX_TIMER_TIMEOUT_MS } from "@nova/normalization-core/number-coercion";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   registerActiveManagedProxyUrl,
@@ -8,7 +8,7 @@ import {
 } from "./net/proxy/active-proxy-state.js";
 
 type ProxyConnectTunnelParams = Parameters<
-  typeof import("@openclaw/proxyline").openProxyConnectTunnel
+  typeof import("@nova/proxyline").openProxyConnectTunnel
 >[0];
 
 const {
@@ -134,7 +134,7 @@ vi.mock("node:tls", () => ({
   connect: tlsConnectSpy,
 }));
 
-vi.mock("@openclaw/proxyline", () => ({
+vi.mock("@nova/proxyline", () => ({
   openProxyConnectTunnel: tunnelSpy,
 }));
 

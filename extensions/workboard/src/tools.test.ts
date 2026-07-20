@@ -1,5 +1,5 @@
 // Workboard tests cover tools plugin behavior.
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it, vi } from "vitest";
 import type { OpenClawPluginApi } from "../api.js";
 import type { PersistedWorkboardCard, WorkboardKeyedStore } from "./persistence-types.js";

@@ -69,7 +69,7 @@ const lobsterPlugin = {
   state: "not-installed",
   featured: true,
   order: 50,
-  install: { source: "clawhub", packageName: "@openclaw/lobster" },
+  install: { source: "clawhub", packageName: "@nova/lobster" },
 } satisfies PluginCatalogItem;
 
 const remoteIconPlugin = {
@@ -84,7 +84,7 @@ const remoteIconPlugin = {
   featured: true,
   order: 60,
   hasIcon: true,
-  install: { source: "clawhub", packageName: "@openclaw/firecrawl" },
+  install: { source: "clawhub", packageName: "@nova/firecrawl" },
 } satisfies PluginCatalogItem;
 
 const calendarPlugin = {

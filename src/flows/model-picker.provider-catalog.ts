@@ -1,5 +1,5 @@
 // Model picker provider choices projected from the lifecycle-owned catalog.
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
 import { resolveDefaultAgentDir } from "../agents/agent-scope.js";
 import {
   canonicalizePreparedModelCatalogProvider,

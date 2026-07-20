@@ -5,7 +5,7 @@
 // (viewer scope, offline). Sync policy: a server-side *change* wins over the
 // local mirror; an unchanged server value never reverts local edits, so a
 // failed push degrades to device-local behavior instead of flip-flopping.
-import { asNullableRecord as asRecord } from "@openclaw/normalization-core/record-coerce";
+import { asNullableRecord as asRecord } from "@nova/normalization-core/record-coerce";
 import type { GatewayBrowserClient } from "../api/gateway.ts";
 import { normalizeSidebarEntries } from "../app-navigation.ts";
 import { isSupportedLocale } from "../i18n/index.ts";

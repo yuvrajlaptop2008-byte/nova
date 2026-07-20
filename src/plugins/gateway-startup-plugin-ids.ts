@@ -1,15 +1,15 @@
 /** Resolves plugin ids that should load during Gateway startup. */
-import { collectConfiguredModelRefs } from "@openclaw/model-catalog-core/configured-model-refs";
+import { collectConfiguredModelRefs } from "@nova/model-catalog-core/configured-model-refs";
 import {
   buildModelCatalogMergeKey,
   parseModelCatalogRef,
-} from "@openclaw/model-catalog-core/model-catalog-refs";
+} from "@nova/model-catalog-core/model-catalog-refs";
 import {
   findNormalizedProviderValue,
   normalizeProviderId,
-} from "@openclaw/model-catalog-core/provider-id";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+} from "@nova/model-catalog-core/provider-id";
+import { isRecord } from "@nova/normalization-core/record-coerce";
+import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { collectConfiguredAgentHarnessRuntimes } from "../agents/harness-runtimes.js";
 import { splitTrailingAuthProfile } from "../agents/model-ref-profile.js";
 import {

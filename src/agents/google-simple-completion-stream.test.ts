@@ -1,4 +1,4 @@
-import type { ApiRegistry } from "@openclaw/ai";
+import type { ApiRegistry } from "@nova/ai";
 // Verifies the Google simple-completion wrapper and thinking-payload sanitizer hook.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Model } from "../llm/types.js";

@@ -6,7 +6,7 @@
 import {
   findNormalizedProviderKey,
   normalizeProviderId,
-} from "@openclaw/model-catalog-core/provider-id";
+} from "@nova/model-catalog-core/provider-id";
 import type { AuthProfileConfig } from "../../config/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveAuthProfileMetadata } from "./identity.js";

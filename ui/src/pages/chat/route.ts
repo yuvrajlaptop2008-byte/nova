@@ -1,5 +1,5 @@
-import type { RouteLocation } from "@openclaw/uirouter";
-import { definePage, notFound } from "@openclaw/uirouter";
+import type { RouteLocation } from "@nova/uirouter";
+import { definePage, notFound } from "@nova/uirouter";
 import { html } from "lit";
 import type { ApplicationContext } from "../../app/context.ts";
 

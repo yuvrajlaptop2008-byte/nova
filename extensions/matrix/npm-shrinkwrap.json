@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/matrix",
+  "name": "@nova/matrix",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/matrix",
+      "name": "@nova/matrix",
       "version": "2026.7.2",
       "dependencies": {
         "@matrix-org/matrix-sdk-crypto-nodejs": "0.6.1",

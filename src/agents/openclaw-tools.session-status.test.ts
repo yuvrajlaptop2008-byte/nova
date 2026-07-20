@@ -1,6 +1,6 @@
 // Verifies session status output across scoped stores, tasks, and runtime hooks.
 
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { Value } from "typebox/value";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveSessionStoreEntry } from "../config/sessions/store-entry.js";

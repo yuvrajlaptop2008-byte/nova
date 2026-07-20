@@ -30,15 +30,12 @@ import type {
   ToolCallLocation,
   ToolKind,
 } from "@agentclientprotocol/sdk";
-import { readBool, readNonNegativeInteger, readString } from "@openclaw/acp-core/meta";
-import { defaultAcpSessionStore, type AcpSessionStore } from "@openclaw/acp-core/session";
-import { toAcpSessionLineageMeta } from "@openclaw/acp-core/session-lineage-meta";
-import type { AcpServerOptions } from "@openclaw/acp-core/types";
-import { timestampMsToIsoString } from "@openclaw/normalization-core/number-coercion";
-import {
-  normalizeFastMode,
-  normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
+import { readBool, readNonNegativeInteger, readString } from "@nova/acp-core/meta";
+import { defaultAcpSessionStore, type AcpSessionStore } from "@nova/acp-core/session";
+import { toAcpSessionLineageMeta } from "@nova/acp-core/session-lineage-meta";
+import type { AcpServerOptions } from "@nova/acp-core/types";
+import { timestampMsToIsoString } from "@nova/normalization-core/number-coercion";
+import { normalizeFastMode, normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import type { EventFrame } from "../../packages/gateway-protocol/src/index.js";
 import type { GatewayClient } from "../gateway/client.js";
 import type { GatewaySessionRow, SessionsListResult } from "../gateway/session-utils.js";

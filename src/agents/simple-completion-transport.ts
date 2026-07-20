@@ -1,4 +1,4 @@
-import type { ApiRegistry } from "@openclaw/ai";
+import type { ApiRegistry } from "@nova/ai";
 /**
  * Simple completion transport preparation.
  *

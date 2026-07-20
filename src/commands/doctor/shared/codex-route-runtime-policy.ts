@@ -1,7 +1,7 @@
-import { AGENT_MODEL_CONFIG_KEYS } from "@openclaw/model-catalog-core/configured-model-refs";
-import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
-import { asOptionalRecord as asMutableRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalLowercaseString as normalizeString } from "@openclaw/normalization-core/string-coerce";
+import { AGENT_MODEL_CONFIG_KEYS } from "@nova/model-catalog-core/configured-model-refs";
+import { normalizeProviderId } from "@nova/model-catalog-core/provider-id";
+import { asOptionalRecord as asMutableRecord } from "@nova/normalization-core/record-coerce";
+import { normalizeOptionalLowercaseString as normalizeString } from "@nova/normalization-core/string-coerce";
 import { resolveModelRuntimePolicy } from "../../../agents/model-runtime-policy.js";
 import type { OpenClawConfig } from "../../../config/types.openclaw.js";
 import { normalizeAgentId } from "../../../routing/session-key.js";

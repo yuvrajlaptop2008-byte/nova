@@ -1,10 +1,10 @@
 /** Main reply dispatch pipeline from finalized config/context to delivery payloads. */
-import { isParentOwnedBackgroundAcpSession } from "@openclaw/acp-core/session-interaction-mode";
+import { isParentOwnedBackgroundAcpSession } from "@nova/acp-core/session-interaction-mode";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "@openclaw/normalization-core/string-coerce";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+} from "@nova/normalization-core/string-coerce";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import {
   hasOutboundReplyContent,
   isFastModeAutoProgressPayload,

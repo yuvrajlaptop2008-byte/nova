@@ -1,4 +1,4 @@
-import type { LlmRuntime } from "@openclaw/ai";
+import type { LlmRuntime } from "@nova/ai";
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";

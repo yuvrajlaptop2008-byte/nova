@@ -1,9 +1,9 @@
 /**
  * Formats generated attachment references for agent-visible output.
  */
-import { basenameFromAnyPath } from "@openclaw/media-core/file-name";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { basenameFromAnyPath } from "@nova/media-core/file-name";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 
 // Shared helpers for generated media/file attachments returned by tools or
 // subagents. They normalize paths/URLs for prompt text and delivery routing.

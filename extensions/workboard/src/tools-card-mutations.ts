@@ -1,4 +1,4 @@
-import { WORKBOARD_STATUSES, type WorkboardCard } from "@openclaw/workboard-contract";
+import { WORKBOARD_STATUSES, type WorkboardCard } from "@nova/workboard-contract";
 import type { AnyAgentTool } from "openclaw/plugin-sdk/plugin-entry";
 import type { AgentToolResult } from "openclaw/plugin-sdk/tool-results";
 import { Type } from "typebox";

@@ -1,6 +1,6 @@
 // Qa Lab tests cover bounded CI smoke profile planning.
-import { NOVA_CRABLINE_DEFAULT_CHANNEL } from "@openclaw/crabline";
-import { expectDefined } from "@openclaw/normalization-core";
+import { NOVA_CRABLINE_DEFAULT_CHANNEL } from "@nova/crabline";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it } from "vitest";
 import { createQaSmokeCiPart } from "./ci-smoke-plan.js";
 import { readQaScenarioPack } from "./scenario-catalog.js";

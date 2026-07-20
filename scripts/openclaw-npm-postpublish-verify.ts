@@ -694,7 +694,7 @@ export function collectInstalledPluginSdkZodArtifactErrors(packageRoot: string):
 function collectInstalledPluginSdkDeclarationErrors(packageRoot: string): string[] {
   const pluginSdkDistRoot = join(packageRoot, "dist", "plugin-sdk");
   const errors: string[] = [];
-  const forbiddenPrivateWorkspaceSpecifiers = ["@openclaw/llm-core"];
+  const forbiddenPrivateWorkspaceSpecifiers = ["@nova/llm-core"];
 
   if (!existsSync(pluginSdkDistRoot)) {
     return [];

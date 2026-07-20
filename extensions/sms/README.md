@@ -5,7 +5,7 @@ Official OpenClaw channel plugin for SMS.
 ## Install
 
 ```sh
-openclaw plugins install @openclaw/sms
+openclaw plugins install @nova/sms
 ```
 
 ## Docs

@@ -1,4 +1,4 @@
-import { definePage } from "@openclaw/uirouter";
+import { definePage } from "@nova/uirouter";
 import { html } from "lit";
 import type { ApplicationContext } from "../../app/context.ts";
 import type { SkillWorkshopRouteData } from "./proposals.ts";

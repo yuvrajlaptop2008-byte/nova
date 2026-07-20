@@ -291,7 +291,7 @@ export type {
   UnifiedModelCatalogEntry,
   UnifiedModelCatalogKind,
   UnifiedModelCatalogSource,
-} from "@openclaw/model-catalog-core/model-catalog-types";
+} from "@nova/model-catalog-core/model-catalog-types";
 export type { OpenClawConfig };
 
 export {

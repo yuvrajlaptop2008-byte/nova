@@ -556,7 +556,7 @@ describe("loadOpenClawPlugins", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/discord",
+          name: "@nova/discord",
           version: "1.0.0",
           type: "module",
           openclaw: { extensions: ["./index.js"] },
@@ -876,7 +876,7 @@ describe("loadOpenClawPlugins", () => {
   it("preserves package.json metadata for bundled memory plugins", () => {
     const registry = loadBundledMemoryPluginRegistry({
       packageMeta: {
-        name: "@openclaw/memory-core",
+        name: "@nova/memory-core",
         version: "1.2.3",
         description: "Memory plugin package",
       },

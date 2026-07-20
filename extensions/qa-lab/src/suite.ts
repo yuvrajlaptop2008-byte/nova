@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import type { OpenClawCrablineChannelDriverSelection } from "@openclaw/crabline";
+import type { OpenClawCrablineChannelDriverSelection } from "@nova/crabline";
 import { disposeRegisteredAgentHarnesses } from "openclaw/plugin-sdk/agent-harness";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
@@ -93,7 +93,7 @@ import type { QaSuiteRuntimeEnv } from "./suite-runtime-types.js";
 import { countQaSuiteFailedScenarios, type QaSuiteSummaryJson } from "./suite-summary.js";
 import { closeQaWebSessions } from "./web-runtime.js";
 
-type QaCrablineRuntime = typeof import("@openclaw/crabline");
+type QaCrablineRuntime = typeof import("@nova/crabline");
 type QaCrablineChannelDriverSmokeResult = Awaited<
   ReturnType<QaCrablineRuntime["runOpenClawCrablineChannelDriverSmoke"]>
 >;
@@ -1035,7 +1035,7 @@ async function writeQaSuiteArtifacts(params: {
   // Non-Crabline package acceptance mounts this source without plugin-local
   // dependencies. Keep the owner runtime outside every unrelated live path.
   const crablineRuntime = crablineChannelDriverSelection
-    ? await import("@openclaw/crabline")
+    ? await import("@nova/crabline")
     : undefined;
   let crablineChannelDriverSmoke: QaCrablineChannelDriverSmokeResult | undefined;
   if (crablineChannelDriverSelection) {

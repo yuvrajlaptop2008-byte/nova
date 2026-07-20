@@ -2,7 +2,7 @@
 //
 // `response.completed` and `response.incomplete` are both terminal and both carry usage, so they
 // finalize through one path here. Splitting them is how incomplete turns silently recorded zero
-// usage. The mapping itself is owned by `@openclaw/ai/internal/openai`, shared with the
+// usage. The mapping itself is owned by `@nova/ai/internal/openai`, shared with the
 // package-side processor; this module is the agent-specific adapter that adds reasoning-token
 // accounting on top and works off raw records rather than typed SDK events.
 import {
@@ -10,9 +10,9 @@ import {
   readResponsesReasoningTokens,
   resolveResponsesTerminalStopReason,
   type ResponsesTerminalUsagePayload,
-} from "@openclaw/ai/internal/openai";
-import { calculateCost } from "@openclaw/ai/internal/runtime";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+} from "@nova/ai/internal/openai";
+import { calculateCost } from "@nova/ai/internal/runtime";
+import { isRecord } from "@nova/normalization-core/record-coerce";
 import type OpenAI from "openai";
 import type { ResponseCreateParamsStreaming } from "openai/resources/responses/responses.js";
 import type { Model } from "../llm/types.js";

@@ -1,7 +1,7 @@
 // Doctor-only import for the retired primary device identity JSON.
 import { createHash } from "node:crypto";
 import path from "node:path";
-import { root, type Root } from "@openclaw/fs-safe";
+import { root, type Root } from "@nova/fs-safe";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
 import {
   openOpenClawStateDatabase,

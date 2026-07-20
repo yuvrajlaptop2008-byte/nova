@@ -240,7 +240,7 @@ describe("security audit install metadata findings", () => {
           await writePluginIndexInstallRecords(stateDir, {
             "voice-call": {
               source: "npm",
-              spec: "@openclaw/voice-call",
+              spec: "@nova/voice-call",
             },
           });
           return runInstallMetadataAudit(
@@ -250,7 +250,7 @@ describe("security audit install metadata findings", () => {
                   installs: {
                     "test-hooks": {
                       source: "npm",
-                      spec: "@openclaw/test-hooks",
+                      spec: "@nova/test-hooks",
                     },
                   },
                 },
@@ -273,7 +273,7 @@ describe("security audit install metadata findings", () => {
           await writePluginIndexInstallRecords(stateDir, {
             "voice-call": {
               source: "npm",
-              spec: "@openclaw/voice-call@1.2.3",
+              spec: "@nova/voice-call@1.2.3",
               integrity: "sha512-plugin",
             },
           });
@@ -284,7 +284,7 @@ describe("security audit install metadata findings", () => {
                   installs: {
                     "test-hooks": {
                       source: "npm",
-                      spec: "@openclaw/test-hooks@1.2.3",
+                      spec: "@nova/test-hooks@1.2.3",
                       integrity: "sha512-hook",
                     },
                   },
@@ -308,8 +308,8 @@ describe("security audit install metadata findings", () => {
           await writePluginIndexInstallRecords(stateDir, {
             "voice-call": {
               source: "npm",
-              spec: "@openclaw/voice-call",
-              resolvedSpec: "@openclaw/voice-call@1.2.3",
+              spec: "@nova/voice-call",
+              resolvedSpec: "@nova/voice-call@1.2.3",
               integrity: "sha512-plugin",
             },
           });
@@ -320,8 +320,8 @@ describe("security audit install metadata findings", () => {
                   installs: {
                     "test-hooks": {
                       source: "npm",
-                      spec: "@openclaw/test-hooks",
-                      resolvedSpec: "@openclaw/test-hooks@1.2.3",
+                      spec: "@nova/test-hooks",
+                      resolvedSpec: "@nova/test-hooks@1.2.3",
                       integrity: "sha512-hook",
                     },
                   },
@@ -344,7 +344,7 @@ describe("security audit install metadata findings", () => {
           await writePluginIndexInstallRecords(stateDir, {
             "voice-call": {
               source: "npm",
-              spec: "@openclaw/voice-call@1.2.3",
+              spec: "@nova/voice-call@1.2.3",
               integrity: "sha512-plugin",
               resolvedVersion: "1.2.3",
             },
@@ -356,7 +356,7 @@ describe("security audit install metadata findings", () => {
                   installs: {
                     "test-hooks": {
                       source: "npm",
-                      spec: "@openclaw/test-hooks@1.2.3",
+                      spec: "@nova/test-hooks@1.2.3",
                       integrity: "sha512-hook",
                       resolvedVersion: "1.2.3",
                     },

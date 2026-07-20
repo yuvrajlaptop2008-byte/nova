@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/baseten-provider",
+  "name": "@nova/baseten-provider",
   "version": "2026.7.2",
   "description": "OpenClaw Baseten provider plugin.",
   "repository": {
@@ -8,15 +8,15 @@
   },
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/baseten-provider",
-      "npmSpec": "@openclaw/baseten-provider",
+      "clawhubSpec": "clawhub:@nova/baseten-provider",
+      "npmSpec": "@nova/baseten-provider",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.7.2"
     },

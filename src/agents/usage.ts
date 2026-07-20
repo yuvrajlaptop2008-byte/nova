@@ -3,7 +3,7 @@
  * Converts provider-specific usage shapes into Nova's normalized input,
  * output, cache, reasoning, and total token accounting fields.
  */
-import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
+import { asFiniteNumber } from "@nova/normalization-core/number-coercion";
 import type { Usage } from "../llm/types.js";
 
 export type ContextUsage = NonNullable<Usage["contextUsage"]>;

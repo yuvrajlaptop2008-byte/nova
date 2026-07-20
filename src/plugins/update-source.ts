@@ -1,4 +1,4 @@
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord } from "@nova/normalization-core/record-coerce";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import type { ClawHubTrustErrorCode } from "../infra/clawhub-install-trust.js";
@@ -312,7 +312,7 @@ export async function resolveTrustedOfficialPrereleaseFallbackMetadataForUpdate(
   const parsedSpec = parseRegistryNpmSpec(params.spec);
   if (
     !parsedSpec ||
-    !parsedSpec.name.startsWith("@openclaw/") ||
+    !parsedSpec.name.startsWith("@nova/") ||
     !params.metadata.version ||
     isPrereleaseResolutionAllowed({
       spec: parsedSpec,

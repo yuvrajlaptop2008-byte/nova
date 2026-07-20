@@ -2,8 +2,8 @@
 // Loads plugin registries and builds fallback request context for non-WS paths.
 import { randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
-import { parseModelCatalogRef } from "@openclaw/model-catalog-core/model-catalog-refs";
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { parseModelCatalogRef } from "@nova/model-catalog-core/model-catalog-refs";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import { normalizeModelRef, parseModelRef } from "../agents/model-selection.js";
 import { applyPluginAutoEnable } from "../config/plugin-auto-enable.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";

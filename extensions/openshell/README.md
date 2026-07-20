@@ -1,4 +1,4 @@
-# @openclaw/openshell-sandbox
+# @nova/openshell-sandbox
 
 Official NVIDIA OpenShell sandbox backend for OpenClaw.
 
@@ -7,7 +7,7 @@ This plugin lets OpenClaw use OpenShell-managed sandboxes with mirrored local wo
 ## Install
 
 ```bash
-openclaw plugins install @openclaw/openshell-sandbox
+openclaw plugins install @nova/openshell-sandbox
 ```
 
 Restart the Gateway after installing or updating the plugin.
@@ -21,5 +21,5 @@ Use the OpenShell docs for credentials, workspace mirroring, runtime selection, 
 ## Package
 
 - Plugin id: `openshell`
-- Package: `@openclaw/openshell-sandbox`
+- Package: `@nova/openshell-sandbox`
 - Minimum OpenClaw host: `2026.5.12-beta.1`

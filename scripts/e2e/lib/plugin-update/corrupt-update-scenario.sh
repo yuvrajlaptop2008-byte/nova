@@ -37,10 +37,10 @@ export NOVA_ENTRY="$entry"
 npm_pack_dir="$(mktemp -d "/tmp/openclaw-corrupt-plugin-pack.XXXXXX")"
 npm_registry_dir="$(mktemp -d "/tmp/openclaw-corrupt-plugin-registry.XXXXXX")"
 pack_fixture_plugin "$npm_pack_dir" /tmp/demo-corrupt-plugin.tgz demo-corrupt-plugin 0.0.1 demo.corrupt "Demo Corrupt Plugin"
-start_npm_fixture_registry "@openclaw/demo-corrupt-plugin" "0.0.1" /tmp/demo-corrupt-plugin.tgz "$npm_registry_dir"
+start_npm_fixture_registry "@nova/demo-corrupt-plugin" "0.0.1" /tmp/demo-corrupt-plugin.tgz "$npm_registry_dir"
 
 echo "Installing managed external plugin..."
-node "$entry" plugins install "npm:@openclaw/demo-corrupt-plugin@0.0.1" --force >/tmp/openclaw-corrupt-plugin-install.log 2>&1
+node "$entry" plugins install "npm:@nova/demo-corrupt-plugin@0.0.1" --force >/tmp/openclaw-corrupt-plugin-install.log 2>&1
 node "$entry" config set plugins.allow '["demo-corrupt-plugin"]' >/dev/null
 node "$entry" plugins inspect demo-corrupt-plugin --runtime --json >/tmp/openclaw-corrupt-plugin-before.json
 unset NPM_CONFIG_REGISTRY npm_config_registry

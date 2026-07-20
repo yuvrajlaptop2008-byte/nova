@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/nostr",
+  "name": "@nova/nostr",
   "version": "2026.7.2",
   "description": "OpenClaw Nostr channel plugin for NIP-04 encrypted direct messages.",
   "repository": {
@@ -12,7 +12,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
@@ -56,7 +56,7 @@
       ]
     },
     "install": {
-      "npmSpec": "@openclaw/nostr",
+      "npmSpec": "@nova/nostr",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
     },

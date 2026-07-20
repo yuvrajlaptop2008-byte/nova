@@ -5,7 +5,7 @@ Official OpenClaw channel plugin for IRC.
 ## Install
 
 ```sh
-openclaw plugins install @openclaw/irc
+openclaw plugins install @nova/irc
 ```
 
 ## Docs

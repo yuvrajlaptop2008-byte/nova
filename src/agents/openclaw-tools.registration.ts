@@ -3,7 +3,7 @@
  *
  * Keeps optional tool gating separate from tool construction so config and execution contracts decide exposure.
  */
-import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
+import { uniqueStrings } from "@nova/normalization-core/string-normalization";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { isPrimaryBootstrapRun } from "./bootstrap-routing.js";
 import { isToolAllowedByPolicyName } from "./tool-policy-match.js";

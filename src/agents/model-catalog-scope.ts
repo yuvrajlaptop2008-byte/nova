@@ -1,8 +1,8 @@
 /**
  * Resolves model catalog scope from config and discovery options.
  */
-import { findNormalizedProviderValue } from "@openclaw/model-catalog-core/provider-id";
-import { normalizeUniqueSingleOrTrimmedStringList } from "@openclaw/normalization-core/string-normalization";
+import { findNormalizedProviderValue } from "@nova/model-catalog-core/provider-id";
+import { normalizeUniqueSingleOrTrimmedStringList } from "@nova/normalization-core/string-normalization";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 
 function providerConfigDeclaresModel(

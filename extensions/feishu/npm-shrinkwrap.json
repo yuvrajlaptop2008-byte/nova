@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/feishu",
+  "name": "@nova/feishu",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/feishu",
+      "name": "@nova/feishu",
       "version": "2026.7.2",
       "dependencies": {
         "@larksuiteoapi/node-sdk": "1.68.0",

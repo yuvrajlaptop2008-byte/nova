@@ -1,8 +1,8 @@
 /**
  * Resolves provider stream functions and API keys for embedded agents.
  */
-import type { LlmRuntime } from "@openclaw/ai";
-import { stripSystemPromptCacheBoundary } from "@openclaw/ai/internal/shared";
+import type { LlmRuntime } from "@nova/ai";
+import { stripSystemPromptCacheBoundary } from "@nova/ai/internal/shared";
 import { getStreamLlmRuntime } from "../../llm/model-runtime-binding.js";
 import { createAnthropicVertexStreamFnForModel } from "../anthropic-vertex-stream.js";
 import { createBoundaryAwareStreamFnForModel } from "../provider-transport-stream.js";

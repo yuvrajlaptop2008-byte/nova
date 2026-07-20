@@ -1,5 +1,5 @@
 /** Detects inbound media and audio facts in channel message context. */
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 
 /** Minimal inbound media fields used by media/audio detection. */
 type InboundMediaContext = {

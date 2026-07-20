@@ -6,12 +6,8 @@ import {
   mergeSessionIdentity,
   resolveRuntimeHandleIdentifiersFromIdentity,
   resolveSessionIdentityFromMeta,
-} from "@openclaw/acp-core/runtime/session-identity";
-import type {
-  AcpRuntime,
-  AcpRuntimeHandle,
-  AcpRuntimeStatus,
-} from "@openclaw/acp-core/runtime/types";
+} from "@nova/acp-core/runtime/session-identity";
+import type { AcpRuntime, AcpRuntimeHandle, AcpRuntimeStatus } from "@nova/acp-core/runtime/types";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
 import { withAcpRuntimeErrorBoundary } from "../runtime/errors.js";

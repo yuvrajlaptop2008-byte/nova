@@ -1,5 +1,5 @@
 // Plugin management service tests cover cold state, catalog identity, and guarded mutations.
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -149,7 +149,7 @@ function metadataSnapshot(params: {
       plugins: [
         {
           pluginId: id,
-          packageName: `@openclaw/${id}`,
+          packageName: `@nova/${id}`,
           origin: params.origin ?? "bundled",
           enabled: params.enabled,
         },
@@ -174,19 +174,19 @@ function emptyMetadataSnapshot() {
 }
 
 const hostedDiffsEntry = {
-  name: "@openclaw/diffs",
+  name: "@nova/diffs",
   version: "2.0.0",
   description: "Hosted description",
   openclaw: {
     plugin: { id: "diffs", label: "Hosted Diffs" },
-    install: { clawhubSpec: "clawhub:@openclaw/diffs", defaultChoice: "clawhub" },
+    install: { clawhubSpec: "clawhub:@nova/diffs", defaultChoice: "clawhub" },
   },
 };
 
 // Mirrors the current default ClawHub feed shape: package identity lives in a
 // source candidate while runtime/editorial metadata remains local.
 const hostedFeedDiffsEntry = {
-  id: "@openclaw/diffs",
+  id: "@nova/diffs",
   title: "Diffs",
   state: "available",
   featured: true,
@@ -195,7 +195,7 @@ const hostedFeedDiffsEntry = {
     candidates: [
       {
         sourceRef: "public-clawhub",
-        package: "@openclaw/diffs",
+        package: "@nova/diffs",
         version: "2026.6.11",
         integrity: `sha256:${"a".repeat(64)}`,
       },
@@ -247,7 +247,7 @@ describe("plugin management service", () => {
         version: "2.0.0",
         featured: true,
         order: 40,
-        install: { source: "clawhub", packageName: "@openclaw/diffs" },
+        install: { source: "clawhub", packageName: "@nova/diffs" },
       }),
     ]);
   });
@@ -351,7 +351,7 @@ describe("plugin management service", () => {
     expect(catalog.plugins).toEqual([
       expect.objectContaining({
         id: "workboard",
-        packageName: "@openclaw/workboard",
+        packageName: "@nova/workboard",
         installed: true,
         enabled: false,
         state: "disabled",
@@ -387,7 +387,7 @@ describe("plugin management service", () => {
     const officialCatalog = {
       entries: [
         {
-          name: "@openclaw/firecrawl",
+          name: "@nova/firecrawl",
           description: "Web extraction and crawling.",
           openclaw: {
             plugin: { id: "firecrawl", label: "FireCrawl" },
@@ -637,11 +637,11 @@ describe("plugin management service", () => {
       pluginId: "impostor",
       targetDir: "/tmp/extensions/impostor",
       extensions: ["index.js"],
-      packageName: "@openclaw/diffs",
+      packageName: "@nova/diffs",
       clawhub: {
         source: "clawhub",
         clawhubUrl: "https://clawhub.ai",
-        clawhubPackage: "@openclaw/diffs",
+        clawhubPackage: "@nova/diffs",
         clawhubFamily: "code-plugin",
       },
     });
@@ -650,7 +650,7 @@ describe("plugin management service", () => {
       installManagedPlugin({
         request: {
           source: "clawhub",
-          packageName: "@openclaw/diffs",
+          packageName: "@nova/diffs",
           acknowledgeClawHubRisk: true,
         },
         env: {},
@@ -658,7 +658,7 @@ describe("plugin management service", () => {
     ).rejects.toThrow("expected diffs, got impostor");
     expect(mocks.clawhubInstall).toHaveBeenCalledWith(
       expect.objectContaining({
-        spec: "clawhub:@openclaw/diffs@2026.6.11",
+        spec: "clawhub:@nova/diffs@2026.6.11",
         expectedPluginId: "diffs",
         expectedIntegrity: `sha256-${Buffer.from("a".repeat(64), "hex").toString("base64")}`,
         acknowledgeClawHubRisk: true,
@@ -670,7 +670,7 @@ describe("plugin management service", () => {
   it("does not pin a runtime id when the hosted entry only exposes its package name", async () => {
     const installRecord = {
       source: "clawhub",
-      spec: "clawhub:@openclaw/bluebubbles",
+      spec: "clawhub:@nova/bluebubbles",
       installPath: "/tmp/extensions/bluebubbles",
     };
     mocks.readConfig.mockResolvedValue(configSnapshot());
@@ -680,12 +680,12 @@ describe("plugin management service", () => {
       // the package name, which must not become an expectedPluginId pin.
       entries: [
         {
-          id: "@openclaw/bluebubbles",
+          id: "@nova/bluebubbles",
           title: "BlueBubbles",
           state: "available",
           publisher: { id: "openclaw", trust: "official" },
           install: {
-            candidates: [{ sourceRef: "public-clawhub", package: "@openclaw/bluebubbles" }],
+            candidates: [{ sourceRef: "public-clawhub", package: "@nova/bluebubbles" }],
           },
         },
       ],
@@ -697,11 +697,11 @@ describe("plugin management service", () => {
       pluginId: "bluebubbles",
       targetDir: "/tmp/extensions/bluebubbles",
       extensions: ["index.js"],
-      packageName: "@openclaw/bluebubbles",
+      packageName: "@nova/bluebubbles",
       clawhub: {
         source: "clawhub",
         clawhubUrl: "https://clawhub.ai",
-        clawhubPackage: "@openclaw/bluebubbles",
+        clawhubPackage: "@nova/bluebubbles",
         clawhubFamily: "code-plugin",
       },
     });
@@ -718,7 +718,7 @@ describe("plugin management service", () => {
     );
 
     const result = await installManagedPlugin({
-      request: { source: "clawhub", packageName: "@openclaw/bluebubbles" },
+      request: { source: "clawhub", packageName: "@nova/bluebubbles" },
       env: {},
     });
 
@@ -784,11 +784,11 @@ describe("plugin management service", () => {
       pluginId: "diffs",
       targetDir: "/tmp/extensions/diffs",
       extensions: ["index.js"],
-      packageName: "@openclaw/diffs",
+      packageName: "@nova/diffs",
       clawhub: {
         source: "clawhub",
         clawhubUrl: "https://clawhub.ai",
-        clawhubPackage: "@openclaw/diffs",
+        clawhubPackage: "@nova/diffs",
         clawhubFamily: "code-plugin",
       },
     });
@@ -804,7 +804,7 @@ describe("plugin management service", () => {
 
     expect(mocks.clawhubInstall).toHaveBeenCalledWith(
       expect.objectContaining({
-        spec: "clawhub:@openclaw/diffs@2026.6.11",
+        spec: "clawhub:@nova/diffs@2026.6.11",
         expectedPluginId: "diffs",
         expectedIntegrity: `sha256-${Buffer.from("a".repeat(64), "hex").toString("base64")}`,
       }),
@@ -1001,7 +1001,7 @@ describe("plugin management service", () => {
   it("uninstalls an external plugin through commit, file removal, and registry refresh", async () => {
     const installRecord = {
       source: "clawhub",
-      spec: "clawhub:@openclaw/diffs",
+      spec: "clawhub:@nova/diffs",
       installPath: "/tmp/extensions/diffs",
     };
     const prepared = configSnapshot({ plugins: { entries: { diffs: { enabled: true } } } });

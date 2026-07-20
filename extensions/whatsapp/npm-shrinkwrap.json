@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/whatsapp",
+  "name": "@nova/whatsapp",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/whatsapp",
+      "name": "@nova/whatsapp",
       "version": "2026.7.2",
       "dependencies": {
         "audio-decode": "2.2.3",

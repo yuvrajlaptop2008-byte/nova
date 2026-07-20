@@ -8,11 +8,11 @@ packages:
 minimumReleaseAge: 2880
 
 minimumReleaseAgeExclude:
-  - "@openclaw/crabline@0.1.11"
-  - "@openclaw/fs-safe@0.4.4"
-  - "@openclaw/libterminal@0.3.2"
-  - "@openclaw/proxyline@0.3.3"
-  - "@openclaw/uirouter@0.1.0"
+  - "@nova/crabline@0.1.11"
+  - "@nova/fs-safe@0.4.4"
+  - "@nova/libterminal@0.3.2"
+  - "@nova/proxyline@0.3.3"
+  - "@nova/uirouter@0.1.0"
   - "acpx"
   - "tokenjuice"
   - "@agentclientprotocol/sdk"
@@ -127,7 +127,7 @@ overrides:
   uuid: 14.0.0
 
 allowBuilds:
-  "@openclaw/fs-safe": true
+  "@nova/fs-safe": true
   "@google/genai": true
   "@lydell/node-pty": true
   "@matrix-org/matrix-sdk-crypto-nodejs": true
@@ -142,9 +142,9 @@ allowBuilds:
   protobufjs: true
   tree-sitter-bash: false
   openclaw: true
-  "@openclaw/proxyline": true
+  "@nova/proxyline": true
   clawpdf: true
-  "@openclaw/crabline": true
+  "@nova/crabline": true
   rastermill: true
   node-pty: true
 

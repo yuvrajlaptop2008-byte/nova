@@ -1,5 +1,5 @@
 // Bridges ACP transcript events into persisted Nova session transcripts.
-import { resolveAcpSessionCwd } from "@openclaw/acp-core/runtime/session-identifiers";
+import { resolveAcpSessionCwd } from "@nova/acp-core/runtime/session-identifiers";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import { persistAcpTurnTranscript } from "../../agents/command/attempt-execution.js";
 import { resolveStorePath } from "../../config/sessions.js";

@@ -3,7 +3,7 @@ import type {
   OpenClawCrablineInbound,
   OpenClawCrablineInboundInput,
   StartedOpenClawCrablineAdapter,
-} from "@openclaw/crabline";
+} from "@nova/crabline";
 import type { QaBusInboundMessageInput } from "./runtime-api.js";
 
 const TELEGRAM_QA_DRIVER_ID = "100001";

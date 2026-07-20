@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/copilot",
+  "name": "@nova/copilot",
   "version": "2026.7.2",
   "description": "OpenClaw GitHub Copilot agent runtime plugin (registers a `github-copilot` AgentHarness backed by @github/copilot-sdk over JSON-RPC to the GitHub Copilot CLI)",
   "repository": {
@@ -11,15 +11,15 @@
     "@github/copilot-sdk": "1.0.5"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@nova/plugin-sdk": "workspace:*"
   },
   "openclaw": {
     "extensions": [
       "./index.ts"
     ],
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/copilot",
-      "npmSpec": "@openclaw/copilot",
+      "clawhubSpec": "clawhub:@nova/copilot",
+      "npmSpec": "@nova/copilot",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.5.28"
     },

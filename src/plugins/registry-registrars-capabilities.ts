@@ -1,4 +1,4 @@
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import { registerContextEngineForOwner } from "../context-engine/registry.js";
 import {
   getDetachedTaskLifecycleRuntimeRegistration,

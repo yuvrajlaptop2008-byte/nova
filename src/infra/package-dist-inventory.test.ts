@@ -1,7 +1,7 @@
 // Covers package dist inventory collection and validation.
 import fs from "node:fs/promises";
 import path from "node:path";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it } from "vitest";
 import {
   isLegacyPluginDependencyInstallStagePath,
@@ -341,7 +341,7 @@ describe("package dist inventory", () => {
       await fs.writeFile(
         externalizedPackageJson,
         JSON.stringify({
-          name: "@openclaw/external-chat",
+          name: "@nova/external-chat",
           openclaw: {
             release: {
               publishToClawHub: true,
@@ -354,7 +354,7 @@ describe("package dist inventory", () => {
       await fs.writeFile(
         bundledPackageJson,
         JSON.stringify({
-          name: "@openclaw/bundled-chat",
+          name: "@nova/bundled-chat",
           openclaw: {},
         }),
         "utf8",
@@ -377,7 +377,7 @@ describe("package dist inventory", () => {
       await fs.writeFile(
         corePackageJson,
         JSON.stringify({
-          name: "@openclaw/core-chat",
+          name: "@nova/core-chat",
           openclaw: {
             release: {
               publishToClawHub: true,

@@ -1,4 +1,4 @@
-import type { RouteLocation } from "@openclaw/uirouter";
+import type { RouteLocation } from "@nova/uirouter";
 
 export type ConfigRouteData = {
   section: string | null;

@@ -1,11 +1,11 @@
-import type { ApiRegistry } from "@openclaw/ai";
+import type { ApiRegistry } from "@nova/ai";
 /**
  * Google simple-completion stream adapter.
  *
  * This registers a patched Google stream API that keeps the normal Google
  * backend but sanitizes unsupported thinking payload options for simple models.
  */
-import { clampThinkingLevel } from "@openclaw/ai/internal/runtime";
+import { clampThinkingLevel } from "@nova/ai/internal/runtime";
 import type { Api, Model, ModelThinkingLevel } from "../llm/types.js";
 import {
   sanitizeGoogleThinkingPayload,

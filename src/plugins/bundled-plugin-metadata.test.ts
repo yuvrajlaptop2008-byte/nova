@@ -740,7 +740,7 @@ describe("bundled plugin metadata", () => {
     const pluginRoot = path.join(pluginsDir, "alpha");
 
     writeJson(path.join(pluginRoot, "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["./index.ts"],
@@ -776,7 +776,7 @@ describe("bundled plugin metadata", () => {
     const pluginRoot = path.join(tempRoot, "extensions", "alpha");
 
     writeJson(path.join(pluginRoot, "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["./index.ts"],
@@ -833,7 +833,7 @@ describe("bundled plugin metadata", () => {
     const distPluginRoot = path.join(tempRoot, "dist", "extensions", "alpha");
 
     writeJson(path.join(pluginRoot, "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["./index.ts"],
@@ -869,7 +869,7 @@ describe("bundled plugin metadata", () => {
     const pluginRoot = path.join(tempRoot, "extensions", "alpha");
 
     writeJson(path.join(pluginRoot, "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["../escape.ts"],
@@ -900,7 +900,7 @@ describe("bundled plugin metadata", () => {
     const tempRoot = createGeneratedPluginTempRoot("openclaw-bundled-plugin-channel-configs-");
 
     writeJson(path.join(tempRoot, "extensions", "alpha", "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["./index.ts"],
@@ -975,7 +975,7 @@ describe("bundled plugin metadata", () => {
     const tempRoot = createGeneratedPluginTempRoot("openclaw-bundled-plugin-public-artifacts-");
 
     writeJson(path.join(tempRoot, "extensions", "alpha", "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["./index.ts"],
@@ -1018,7 +1018,7 @@ describe("bundled plugin metadata", () => {
     const distRoot = path.join(tempRoot, "dist");
 
     writeJson(path.join(distRoot, "extensions", "alpha", "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["./index.ts"],
@@ -1094,7 +1094,7 @@ describe("bundled plugin metadata", () => {
     const markerPath = path.join(tempRoot, "runtime-api-loaded");
 
     writeJson(path.join(distRoot, "extensions", "alpha", "package.json"), {
-      name: "@openclaw/alpha",
+      name: "@nova/alpha",
       version: "0.0.1",
       openclaw: {
         extensions: ["./index.ts"],

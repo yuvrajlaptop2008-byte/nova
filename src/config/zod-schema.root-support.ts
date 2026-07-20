@@ -1,5 +1,5 @@
-import { isHttpsUrl, isHttpUrl } from "@openclaw/net-policy/url-protocol";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { isHttpsUrl, isHttpUrl } from "@nova/net-policy/url-protocol";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { z } from "zod";
 import { base64UrlDecode, normalizeEd25519PublicKeyBase64Url } from "../infra/ed25519-signature.js";
 import type { GatewayRemoteConfig } from "./types.gateway.js";

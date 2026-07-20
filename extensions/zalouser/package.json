@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/zalouser",
+  "name": "@nova/zalouser",
   "version": "2026.7.2",
   "description": "OpenClaw Zalo Personal Account plugin via native zca-js integration.",
   "repository": {
@@ -13,7 +13,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
@@ -57,7 +57,7 @@
       }
     },
     "install": {
-      "npmSpec": "@openclaw/zalouser",
+      "npmSpec": "@nova/zalouser",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
     },

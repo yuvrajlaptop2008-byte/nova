@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/clickclack",
+  "name": "@nova/clickclack",
   "version": "2026.7.2",
   "description": "OpenClaw ClickClack channel plugin",
   "type": "module",
@@ -13,7 +13,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
@@ -64,8 +64,8 @@
       ]
     },
     "install": {
-      "clawhubSpec": "clawhub:@openclaw/clickclack",
-      "npmSpec": "@openclaw/clickclack",
+      "clawhubSpec": "clawhub:@nova/clickclack",
+      "npmSpec": "@nova/clickclack",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.6.9",
       "allowInvalidConfigRecovery": true

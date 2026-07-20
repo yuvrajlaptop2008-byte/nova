@@ -6,7 +6,7 @@ import {
   ListToolsRequestSchema,
   type ListToolsResult,
 } from "@modelcontextprotocol/sdk/types.js";
-import { isMcpAppViewExpiredError } from "@openclaw/gateway-protocol";
+import { isMcpAppViewExpiredError } from "@nova/gateway-protocol";
 import { LitElement, css, html, nothing, type PropertyValues } from "lit";
 import { property, state } from "lit/decorators.js";
 import { createRef, ref } from "lit/directives/ref.js";

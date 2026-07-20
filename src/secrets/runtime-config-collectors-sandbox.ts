@@ -1,5 +1,5 @@
 /** Collects agent-scoped sandbox SSH SecretRefs during runtime preparation. */
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
+import { normalizeOptionalLowercaseString } from "@nova/normalization-core/string-coerce";
 import { resolveSandboxScope } from "../agents/sandbox/config.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";

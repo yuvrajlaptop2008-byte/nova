@@ -1,14 +1,11 @@
 // Projects raw transcript messages into bounded Control UI/history display records.
 import { createHash } from "node:crypto";
-import { estimateBase64DecodedBytes } from "@openclaw/media-core/base64";
-import { expectDefined } from "@openclaw/normalization-core";
-import {
-  asFiniteNumber,
-  asPositiveSafeInteger,
-} from "@openclaw/normalization-core/number-coercion";
-import { asOptionalRecord as readRecord } from "@openclaw/normalization-core/record-coerce";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { estimateBase64DecodedBytes } from "@nova/media-core/base64";
+import { expectDefined } from "@nova/normalization-core";
+import { asFiniteNumber, asPositiveSafeInteger } from "@nova/normalization-core/number-coercion";
+import { asOptionalRecord as readRecord } from "@nova/normalization-core/record-coerce";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import { NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE } from "../agents/internal-runtime-context.js";
 import { STREAM_ERROR_FALLBACK_TEXT } from "../agents/stream-message-shared.js";
 import { isHeartbeatOkResponse, isHeartbeatUserMessage } from "../auto-reply/heartbeat-filter.js";

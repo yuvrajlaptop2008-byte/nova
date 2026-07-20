@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import {
@@ -107,8 +107,8 @@ describe("plugin index install records store", () => {
       {
         twitch: {
           source: "npm",
-          spec: "@openclaw/plugin-twitch@1.0.0",
-          installPath: "plugins/npm/@openclaw/plugin-twitch",
+          spec: "@nova/plugin-twitch@1.0.0",
+          installPath: "plugins/npm/@nova/plugin-twitch",
         },
       },
       {
@@ -128,8 +128,8 @@ describe("plugin index install records store", () => {
     expect(persisted.generatedAtMs).toBe(1777118400000);
     expectRecordFields(persisted.installRecords?.twitch, {
       source: "npm",
-      spec: "@openclaw/plugin-twitch@1.0.0",
-      installPath: "plugins/npm/@openclaw/plugin-twitch",
+      spec: "@nova/plugin-twitch@1.0.0",
+      installPath: "plugins/npm/@nova/plugin-twitch",
     });
     expect(persisted.plugins).toHaveLength(1);
     expect(persisted.plugins?.[0]?.pluginId).toBe("twitch");
@@ -137,8 +137,8 @@ describe("plugin index install records store", () => {
     await expect(readPersistedInstalledPluginIndexInstallRecords({ stateDir })).resolves.toEqual({
       twitch: {
         source: "npm",
-        spec: "@openclaw/plugin-twitch@1.0.0",
-        installPath: "plugins/npm/@openclaw/plugin-twitch",
+        spec: "@nova/plugin-twitch@1.0.0",
+        installPath: "plugins/npm/@nova/plugin-twitch",
       },
     });
   });
@@ -336,34 +336,34 @@ describe("plugin index install records store", () => {
     const stateDir = makeStateDir();
     const discordDir = writeManagedNpmPlugin({
       stateDir,
-      packageName: "@openclaw/discord",
+      packageName: "@nova/discord",
       pluginId: "discord",
       version: "2026.5.2",
     });
     const codexDir = writeManagedNpmPlugin({
       stateDir,
-      packageName: "@openclaw/codex",
+      packageName: "@nova/codex",
       pluginId: "codex",
       version: "2026.5.2",
     });
     const loaded = await loadInstalledPluginIndexInstallRecords({ stateDir });
     expectRecordFields(loaded.codex, {
       source: "npm",
-      spec: "@openclaw/codex@2026.5.2",
+      spec: "@nova/codex@2026.5.2",
       installPath: codexDir,
       version: "2026.5.2",
-      resolvedName: "@openclaw/codex",
+      resolvedName: "@nova/codex",
       resolvedVersion: "2026.5.2",
-      resolvedSpec: "@openclaw/codex@2026.5.2",
+      resolvedSpec: "@nova/codex@2026.5.2",
     });
     expectRecordFields(loaded.discord, {
       source: "npm",
-      spec: "@openclaw/discord@2026.5.2",
+      spec: "@nova/discord@2026.5.2",
       installPath: discordDir,
       version: "2026.5.2",
-      resolvedName: "@openclaw/discord",
+      resolvedName: "@nova/discord",
       resolvedVersion: "2026.5.2",
-      resolvedSpec: "@openclaw/discord@2026.5.2",
+      resolvedSpec: "@nova/discord@2026.5.2",
     });
     const loadedSync = loadInstalledPluginIndexInstallRecordsSync({ stateDir });
     expectRecordFields(loadedSync.codex, { source: "npm", installPath: codexDir });
@@ -374,7 +374,7 @@ describe("plugin index install records store", () => {
     const stateDir = makeStateDir();
     const discordDir = writeManagedNpmPlugin({
       stateDir,
-      packageName: "@openclaw/discord",
+      packageName: "@nova/discord",
       pluginId: "discord",
       version: "2026.5.2",
       layout: "legacy",
@@ -382,7 +382,7 @@ describe("plugin index install records store", () => {
     const loaded = await loadInstalledPluginIndexInstallRecords({ stateDir });
     expectRecordFields(loaded.discord, {
       source: "npm",
-      spec: "@openclaw/discord@2026.5.2",
+      spec: "@nova/discord@2026.5.2",
       installPath: discordDir,
       version: "2026.5.2",
     });
@@ -393,7 +393,7 @@ describe("plugin index install records store", () => {
     const customInstallPath = path.join(stateDir, "custom", "node_modules", "@openclaw", "discord");
     writeManagedNpmPlugin({
       stateDir,
-      packageName: "@openclaw/discord",
+      packageName: "@nova/discord",
       pluginId: "discord",
       version: "2026.5.2",
     });
@@ -402,7 +402,7 @@ describe("plugin index install records store", () => {
       {
         discord: {
           source: "npm",
-          spec: "@openclaw/discord@beta",
+          spec: "@nova/discord@beta",
           installPath: customInstallPath,
           integrity: "sha512-persisted",
         },
@@ -413,7 +413,7 @@ describe("plugin index install records store", () => {
     const loaded = await loadInstalledPluginIndexInstallRecords({ stateDir });
     expectRecordFields(loaded.discord, {
       source: "npm",
-      spec: "@openclaw/discord@beta",
+      spec: "@nova/discord@beta",
       installPath: customInstallPath,
       integrity: "sha512-persisted",
     });
@@ -421,66 +421,66 @@ describe("plugin index install records store", () => {
 
   it.each([
     {
-      expectedSpec: "@openclaw/discord",
+      expectedSpec: "@nova/discord",
       label: "bare",
       persistedVersion: "2026.7.1",
       recoveredVersion: "2026.7.1",
-      spec: "@openclaw/discord",
+      spec: "@nova/discord",
     },
     {
-      expectedSpec: "@openclaw/discord@latest",
+      expectedSpec: "@nova/discord@latest",
       label: "latest",
       persistedVersion: "2026.7.1",
       recoveredVersion: "2026.7.1",
-      spec: "@openclaw/discord@latest",
+      spec: "@nova/discord@latest",
     },
     {
-      expectedSpec: "@openclaw/discord@beta",
+      expectedSpec: "@nova/discord@beta",
       label: "dist-tag",
       persistedVersion: "2026.7.1",
       recoveredVersion: "2026.7.1",
-      spec: "@openclaw/discord@beta",
+      spec: "@nova/discord@beta",
     },
     {
-      expectedSpec: "@openclaw/discord@2026.7.1",
+      expectedSpec: "@nova/discord@2026.7.1",
       label: "obsolete exact-version",
       persistedVersion: "2026.6.4",
       recoveredVersion: "2026.7.1",
-      spec: "@openclaw/discord@2026.6.4",
+      spec: "@nova/discord@2026.6.4",
     },
     {
-      expectedSpec: "@openclaw/discord@2027.1.0",
+      expectedSpec: "@nova/discord@2027.1.0",
       label: "unsupported legacy range",
       persistedVersion: "2026.6.4",
       recoveredVersion: "2027.1.0",
-      spec: "@openclaw/discord@^2026.6.0",
+      spec: "@nova/discord@^2026.6.0",
     },
     {
-      expectedSpec: "@openclaw/discord@2026.7.2-beta.1",
+      expectedSpec: "@nova/discord@2026.7.2-beta.1",
       label: "bare prerelease",
       persistedVersion: "2026.7.1",
       recoveredVersion: "2026.7.2-beta.1",
-      spec: "@openclaw/discord",
+      spec: "@nova/discord",
     },
     {
-      expectedSpec: "@openclaw/discord@2026.7.2-beta.1",
+      expectedSpec: "@nova/discord@2026.7.2-beta.1",
       label: "latest prerelease",
       persistedVersion: "2026.7.1",
       recoveredVersion: "2026.7.2-beta.1",
-      spec: "@openclaw/discord@latest",
+      spec: "@nova/discord@latest",
     },
     {
-      expectedSpec: "@openclaw/discord@beta",
+      expectedSpec: "@nova/discord@beta",
       label: "opted-in prerelease",
       persistedVersion: "2026.7.1",
       recoveredVersion: "2026.7.2-beta.1",
-      spec: "@openclaw/discord@beta",
+      spec: "@nova/discord@beta",
     },
   ])(
     "recovers a valid managed generation with a compatible $label selector",
     async ({ expectedSpec, persistedVersion, recoveredVersion, spec }) => {
       const stateDir = makeStateDir();
-      const packageName = "@openclaw/discord";
+      const packageName = "@nova/discord";
       const fixtureProjectRoot = resolvePluginNpmProjectDir({
         npmDir: path.join(stateDir, "npm"),
         packageName,
@@ -551,7 +551,7 @@ describe("plugin index install records store", () => {
 
   it("recovers when an ENOTDIR ancestor blocks the stale managed generation", async () => {
     const stateDir = makeStateDir();
-    const packageName = "@openclaw/discord";
+    const packageName = "@nova/discord";
     const npmDir = path.join(stateDir, "npm");
     const fixtureProjectRoot = resolvePluginNpmProjectDir({ npmDir, packageName });
     writeManagedNpmPlugin({
@@ -583,7 +583,7 @@ describe("plugin index install records store", () => {
       {
         discord: {
           source: "npm",
-          spec: "@openclaw/discord@latest",
+          spec: "@nova/discord@latest",
           installPath: stalePackageDir,
           resolvedName: packageName,
           resolvedVersion: "2026.6.4",
@@ -595,7 +595,7 @@ describe("plugin index install records store", () => {
 
     const loaded = await loadInstalledPluginIndexInstallRecords({ stateDir });
     const record = expectRecordFields(loaded.discord, {
-      spec: "@openclaw/discord@latest",
+      spec: "@nova/discord@latest",
       installPath: activePackageDir,
       resolvedVersion: "2026.7.1",
     });
@@ -604,7 +604,7 @@ describe("plugin index install records store", () => {
 
   it("recovers a Windows managed generation when the persisted root casing differs", async () => {
     const stateDir = makeStateDir();
-    const packageName = "@openclaw/discord";
+    const packageName = "@nova/discord";
     const npmDir = path.join(stateDir, "npm");
     const fixtureProjectRoot = resolvePluginNpmProjectDir({ npmDir, packageName });
     writeManagedNpmPlugin({
@@ -637,7 +637,7 @@ describe("plugin index install records store", () => {
       {
         discord: {
           source: "npm",
-          spec: "@openclaw/discord@latest",
+          spec: "@nova/discord@latest",
           installPath: stalePackageDir,
           resolvedName: packageName,
           resolvedVersion: "2026.6.4",
@@ -659,7 +659,7 @@ describe("plugin index install records store", () => {
     const stateDir = makeStateDir();
     const codexDir = writeManagedNpmPlugin({
       stateDir,
-      packageName: "@openclaw/codex",
+      packageName: "@nova/codex",
       pluginId: "codex",
       version: "2026.5.18-beta.1",
     });
@@ -668,12 +668,12 @@ describe("plugin index install records store", () => {
       {
         codex: {
           source: "npm",
-          spec: "@openclaw/codex@2026.5.16-beta.1",
+          spec: "@nova/codex@2026.5.16-beta.1",
           installPath: codexDir,
           version: "2026.5.16-beta.1",
-          resolvedName: "@openclaw/codex",
+          resolvedName: "@nova/codex",
           resolvedVersion: "2026.5.16-beta.1",
-          resolvedSpec: "@openclaw/codex@2026.5.16-beta.1",
+          resolvedSpec: "@nova/codex@2026.5.16-beta.1",
           integrity: "sha512-stale",
           shasum: "stale",
           installedAt: "2026-05-16T01:42:54.609Z",
@@ -686,12 +686,12 @@ describe("plugin index install records store", () => {
     const loaded = await loadInstalledPluginIndexInstallRecords({ stateDir });
     const record = expectRecordFields(loaded.codex, {
       source: "npm",
-      spec: "@openclaw/codex@2026.5.18-beta.1",
+      spec: "@nova/codex@2026.5.18-beta.1",
       installPath: codexDir,
       version: "2026.5.18-beta.1",
-      resolvedName: "@openclaw/codex",
+      resolvedName: "@nova/codex",
       resolvedVersion: "2026.5.18-beta.1",
-      resolvedSpec: "@openclaw/codex@2026.5.18-beta.1",
+      resolvedSpec: "@nova/codex@2026.5.18-beta.1",
     });
     expect(record.integrity).toBeUndefined();
     expect(record.shasum).toBeUndefined();
@@ -709,13 +709,13 @@ describe("plugin index install records store", () => {
     const stateDir = makeStateDir();
     const codexDir = writeManagedNpmPlugin({
       stateDir,
-      packageName: "@openclaw/codex",
+      packageName: "@nova/codex",
       pluginId: "codex",
       version: "2026.5.18-beta.1",
     });
     expectRecordFields(loadInstalledPluginIndexInstallRecordsSync({ stateDir }).codex, {
       source: "npm",
-      spec: "@openclaw/codex@2026.5.18-beta.1",
+      spec: "@nova/codex@2026.5.18-beta.1",
       installPath: codexDir,
       version: "2026.5.18-beta.1",
     });
@@ -736,22 +736,22 @@ describe("plugin index install records store", () => {
 
     expectRecordFields(loadInstalledPluginIndexInstallRecordsSync({ stateDir }).codex, {
       source: "npm",
-      spec: "@openclaw/codex@2026.5.18-beta.1",
+      spec: "@nova/codex@2026.5.18-beta.1",
       installPath: codexDir,
       version: "2026.5.18-beta.1",
       resolvedVersion: "2026.5.18-beta.1",
-      resolvedSpec: "@openclaw/codex@2026.5.18-beta.1",
+      resolvedSpec: "@nova/codex@2026.5.18-beta.1",
     });
 
     clearLoadInstalledPluginIndexInstallRecordsCache();
 
     expectRecordFields(loadInstalledPluginIndexInstallRecordsSync({ stateDir }).codex, {
       source: "npm",
-      spec: "@openclaw/codex@2026.5.18-beta.1",
+      spec: "@nova/codex@2026.5.18-beta.1",
       installPath: codexDir,
       version: "2026.5.19-beta.1",
       resolvedVersion: "2026.5.19-beta.1",
-      resolvedSpec: "@openclaw/codex@2026.5.19-beta.1",
+      resolvedSpec: "@nova/codex@2026.5.19-beta.1",
     });
   });
 

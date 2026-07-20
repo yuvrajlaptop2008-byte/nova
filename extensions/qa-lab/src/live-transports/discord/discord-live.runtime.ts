@@ -3,11 +3,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import {
-  DiscordApiError,
-  handleDiscordMessageAction,
-  requestDiscord,
-} from "@openclaw/discord/api.js";
+import { DiscordApiError, handleDiscordMessageAction, requestDiscord } from "@nova/discord/api.js";
 import { DEFAULT_EMOJIS } from "openclaw/plugin-sdk/channel-feedback";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";

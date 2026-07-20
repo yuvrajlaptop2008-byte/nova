@@ -33,7 +33,7 @@ describe("generate-npm-shrinkwrap", () => {
   it("omits workspace packages that are published beside the package", () => {
     const normalized = packageJsonForShrinkwrap(
       {
-        dependencies: { "@openclaw/ai": "workspace:2026.6.11", chalk: "5.6.2" },
+        dependencies: { "@nova/ai": "workspace:2026.6.11", chalk: "5.6.2" },
         devDependencies: { local: "workspace:*" },
         peerDependencies: { host: "workspace:^1.2.3" },
       },
@@ -150,18 +150,18 @@ describe("generate-npm-shrinkwrap", () => {
   });
 
   it("parses nested scoped package paths", () => {
-    expect(
-      parseLockPackagePath("node_modules/@openclaw/codex/node_modules/@anthropic-ai/sdk"),
-    ).toEqual([
-      {
-        name: "@openclaw/codex",
-        path: "node_modules/@openclaw/codex",
-      },
-      {
-        name: "@anthropic-ai/sdk",
-        path: "node_modules/@openclaw/codex/node_modules/@anthropic-ai/sdk",
-      },
-    ]);
+    expect(parseLockPackagePath("node_modules/@nova/codex/node_modules/@anthropic-ai/sdk")).toEqual(
+      [
+        {
+          name: "@nova/codex",
+          path: "node_modules/@nova/codex",
+        },
+        {
+          name: "@anthropic-ai/sdk",
+          path: "node_modules/@nova/codex/node_modules/@anthropic-ai/sdk",
+        },
+      ],
+    );
   });
 
   it("parses pnpm lock package keys", () => {
@@ -184,17 +184,17 @@ describe("generate-npm-shrinkwrap", () => {
             "lru-cache": "^11.5.0",
           },
         },
-        "node_modules/@openclaw/codex": {
+        "node_modules/@nova/codex": {
           version: "0.75.4",
           hasShrinkwrap: true,
         },
-        "node_modules/@openclaw/codex/node_modules/protobufjs": {
+        "node_modules/@nova/codex/node_modules/protobufjs": {
           version: "7.5.9",
         },
-        "node_modules/@openclaw/codex/node_modules/fetch-blob": {
+        "node_modules/@nova/codex/node_modules/fetch-blob": {
           version: "4.0.0",
         },
-        "node_modules/@openclaw/codex/node_modules/fetch-blob/node_modules/node-domexception": {
+        "node_modules/@nova/codex/node_modules/fetch-blob/node_modules/node-domexception": {
           version: "1.0.0",
         },
       },
@@ -206,12 +206,10 @@ describe("generate-npm-shrinkwrap", () => {
 
     expect(collectOverrideViolations(lockfile, overrideRules)).toHaveLength(2);
     expect(disableShrinkwrappedOverrideConflictSources(lockfile, overrideRules)).toEqual([
-      "node_modules/@openclaw/codex",
+      "node_modules/@nova/codex",
     ]);
-    expect(lockfile.packages["node_modules/@openclaw/codex"]).not.toHaveProperty("hasShrinkwrap");
-    expect(
-      lockfile.packages["node_modules/@openclaw/codex/node_modules/protobufjs"],
-    ).toBeUndefined();
+    expect(lockfile.packages["node_modules/@nova/codex"]).not.toHaveProperty("hasShrinkwrap");
+    expect(lockfile.packages["node_modules/@nova/codex/node_modules/protobufjs"]).toBeUndefined();
   });
 
   it("detects shrinkwrap packages that bypass the pnpm lock", () => {

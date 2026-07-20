@@ -1,6 +1,6 @@
 // Builds the canonical reviewer-safe projection for durable approvals.
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
-import { truncateUtf16Safe } from "@openclaw/normalization-core/utf16-slice";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
+import { truncateUtf16Safe } from "@nova/normalization-core/utf16-slice";
 import type {
   ApprovalDecision,
   ApprovalKind,

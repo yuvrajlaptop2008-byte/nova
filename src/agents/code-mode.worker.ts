@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { parentPort, workerData } from "node:worker_threads";
-import { isRecord } from "@openclaw/normalization-core/record-coerce";
+import { isRecord } from "@nova/normalization-core/record-coerce";
 import { EvalFlags, JSException, QuickJS, type JSValueHandle } from "quickjs-wasi";
 import type { CodeModeApiVirtualFile } from "./code-mode-namespaces.js";
 import { CODE_MODE_SWARM_CONTROLLER_SOURCE } from "./code-mode-swarm-controller-source.js";

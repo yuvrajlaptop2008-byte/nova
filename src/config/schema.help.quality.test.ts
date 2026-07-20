@@ -1,6 +1,6 @@
 // Checks config help text quality and coverage.
 
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it } from "vitest";
 import { FIELD_HELP } from "./schema.help.js";
 import {

@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 // Gateway-first agent CLI implementation with embedded fallback for local/runtime failures.
 import fs from "node:fs/promises";
 import { TextDecoder } from "node:util";
-import { resolveTimerTimeoutMs } from "@openclaw/normalization-core/number-coercion";
-import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { resolveTimerTimeoutMs } from "@nova/normalization-core/number-coercion";
+import { normalizeOptionalString } from "@nova/normalization-core/string-coerce";
 import {
   GATEWAY_CLIENT_MODES,
   GATEWAY_CLIENT_NAMES,

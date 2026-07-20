@@ -1,6 +1,6 @@
 // Signal extraction tests cover reactive/prospective patterns, grouping, and skill routing.
 
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { describe, expect, it } from "vitest";
 import { extractDurableInstructions, groupDurableInstructionProposals } from "./signals.js";
 

@@ -4,7 +4,7 @@ import * as fs from "node:fs/promises";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import * as os from "node:os";
 import * as path from "node:path";
-import { expectDefined } from "@openclaw/normalization-core";
+import { expectDefined } from "@nova/normalization-core";
 import { beforeAll, beforeEach, describe, expect, it, test, vi } from "vitest";
 import {
   GATEWAY_CLIENT_CAPS,

@@ -1,5 +1,5 @@
 /** ACP protocol helpers and Nova agent identity metadata. */
-export { normalizeAcpProvenanceMode } from "@openclaw/acp-core/types";
+export { normalizeAcpProvenanceMode } from "@nova/acp-core/types";
 import { VERSION } from "../version.js";
 
 /** ACP agent identity advertised during protocol initialization. */

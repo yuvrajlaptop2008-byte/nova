@@ -6,7 +6,7 @@
   "description": "Bundled fallback feed for official external OpenClaw plugins.",
   "entries": [
     {
-      "name": "@openclaw/acpx",
+      "name": "@nova/acpx",
       "description": "OpenClaw ACP runtime backend",
       "source": "official",
       "kind": "plugin",
@@ -16,14 +16,14 @@
           "label": "ACPX Runtime"
         },
         "install": {
-          "npmSpec": "@openclaw/acpx",
+          "npmSpec": "@nova/acpx",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.25"
         }
       }
     },
     {
-      "name": "@openclaw/brave-plugin",
+      "name": "@nova/brave-plugin",
       "description": "OpenClaw Brave plugin",
       "source": "official",
       "kind": "plugin",
@@ -48,7 +48,7 @@
           }
         ],
         "install": {
-          "npmSpec": "@openclaw/brave-plugin",
+          "npmSpec": "@nova/brave-plugin",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.10",
           "allowInvalidConfigRecovery": true
@@ -56,7 +56,7 @@
       }
     },
     {
-      "name": "@openclaw/codex",
+      "name": "@nova/codex",
       "description": "OpenClaw Codex app-server harness and native session catalog",
       "source": "official",
       "kind": "plugin",
@@ -69,14 +69,14 @@
           "migrationProviders": ["codex"]
         },
         "install": {
-          "npmSpec": "@openclaw/codex",
+          "npmSpec": "@nova/codex",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.1-beta.1"
         }
       }
     },
     {
-      "name": "@openclaw/copilot",
+      "name": "@nova/copilot",
       "description": "OpenClaw GitHub Copilot agent runtime plugin",
       "source": "official",
       "kind": "plugin",
@@ -86,15 +86,15 @@
           "label": "GitHub Copilot agent runtime"
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/copilot",
-          "npmSpec": "@openclaw/copilot",
+          "clawhubSpec": "clawhub:@nova/copilot",
+          "npmSpec": "@nova/copilot",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.28"
         }
       }
     },
     {
-      "name": "@openclaw/diagnostics-otel",
+      "name": "@nova/diagnostics-otel",
       "description": "OpenClaw diagnostics OpenTelemetry exporter",
       "source": "official",
       "kind": "plugin",
@@ -104,15 +104,15 @@
           "label": "Diagnostics OpenTelemetry"
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/diagnostics-otel",
-          "npmSpec": "@openclaw/diagnostics-otel",
+          "clawhubSpec": "clawhub:@nova/diagnostics-otel",
+          "npmSpec": "@nova/diagnostics-otel",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.25"
         }
       }
     },
     {
-      "name": "@openclaw/diagnostics-prometheus",
+      "name": "@nova/diagnostics-prometheus",
       "description": "OpenClaw diagnostics Prometheus exporter",
       "source": "official",
       "kind": "plugin",
@@ -122,15 +122,15 @@
           "label": "Diagnostics Prometheus"
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/diagnostics-prometheus",
-          "npmSpec": "@openclaw/diagnostics-prometheus",
+          "clawhubSpec": "clawhub:@nova/diagnostics-prometheus",
+          "npmSpec": "@nova/diagnostics-prometheus",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.25"
         }
       }
     },
     {
-      "name": "@openclaw/diffs",
+      "name": "@nova/diffs",
       "description": "OpenClaw diff viewer plugin",
       "source": "official",
       "kind": "plugin",
@@ -144,15 +144,15 @@
           "order": 40
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/diffs",
-          "npmSpec": "@openclaw/diffs",
+          "clawhubSpec": "clawhub:@nova/diffs",
+          "npmSpec": "@nova/diffs",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.30"
         }
       }
     },
     {
-      "name": "@openclaw/diffs-language-pack",
+      "name": "@nova/diffs-language-pack",
       "description": "OpenClaw diffs viewer syntax highlighting language pack",
       "source": "official",
       "kind": "plugin",
@@ -162,15 +162,15 @@
           "label": "Diff Viewer Language Pack"
         },
         "install": {
-          "npmSpec": "@openclaw/diffs-language-pack",
-          "clawhubSpec": "clawhub:@openclaw/diffs-language-pack",
+          "npmSpec": "@nova/diffs-language-pack",
+          "clawhubSpec": "clawhub:@nova/diffs-language-pack",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.27"
         }
       }
     },
     {
-      "name": "@openclaw/exa-plugin",
+      "name": "@nova/exa-plugin",
       "description": "OpenClaw Exa plugin.",
       "source": "official",
       "kind": "plugin",
@@ -204,15 +204,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/exa-plugin",
-          "npmSpec": "@openclaw/exa-plugin",
+          "clawhubSpec": "clawhub:@nova/exa-plugin",
+          "npmSpec": "@nova/exa-plugin",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/firecrawl-plugin",
+      "name": "@nova/firecrawl-plugin",
       "description": "OpenClaw Firecrawl plugin.",
       "source": "official",
       "kind": "plugin",
@@ -268,15 +268,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/firecrawl-plugin",
-          "npmSpec": "@openclaw/firecrawl-plugin",
+          "clawhubSpec": "clawhub:@nova/firecrawl-plugin",
+          "npmSpec": "@nova/firecrawl-plugin",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/google-meet",
+      "name": "@nova/google-meet",
       "description": "OpenClaw Google Meet participant plugin",
       "source": "official",
       "kind": "plugin",
@@ -286,14 +286,14 @@
           "label": "Google Meet"
         },
         "install": {
-          "npmSpec": "@openclaw/google-meet",
+          "npmSpec": "@nova/google-meet",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.20"
         }
       }
     },
     {
-      "name": "@openclaw/gradium-speech",
+      "name": "@nova/gradium-speech",
       "description": "OpenClaw Gradium speech plugin.",
       "source": "official",
       "kind": "plugin",
@@ -308,15 +308,15 @@
           ]
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/gradium-speech",
-          "npmSpec": "@openclaw/gradium-speech",
+          "clawhubSpec": "clawhub:@nova/gradium-speech",
+          "npmSpec": "@nova/gradium-speech",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/inworld-speech",
+      "name": "@nova/inworld-speech",
       "description": "OpenClaw Inworld speech plugin.",
       "source": "official",
       "kind": "plugin",
@@ -331,15 +331,15 @@
           ]
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/inworld-speech",
-          "npmSpec": "@openclaw/inworld-speech",
+          "clawhubSpec": "clawhub:@nova/inworld-speech",
+          "npmSpec": "@nova/inworld-speech",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/lobster",
+      "name": "@nova/lobster",
       "description": "Lobster workflow tool plugin (typed pipelines + resumable approvals)",
       "source": "official",
       "kind": "plugin",
@@ -353,15 +353,15 @@
           "order": 50
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/lobster",
-          "npmSpec": "@openclaw/lobster",
+          "clawhubSpec": "clawhub:@nova/lobster",
+          "npmSpec": "@nova/lobster",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.25"
         }
       }
     },
     {
-      "name": "@openclaw/memory-lancedb",
+      "name": "@nova/memory-lancedb",
       "description": "OpenClaw LanceDB-backed long-term memory plugin with auto-recall/capture",
       "source": "official",
       "kind": "plugin",
@@ -375,15 +375,15 @@
           "order": 70
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/memory-lancedb",
-          "npmSpec": "@openclaw/memory-lancedb",
+          "clawhubSpec": "clawhub:@nova/memory-lancedb",
+          "npmSpec": "@nova/memory-lancedb",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.31"
         }
       }
     },
     {
-      "name": "@openclaw/llama-cpp-provider",
+      "name": "@nova/llama-cpp-provider",
       "description": "OpenClaw llama.cpp embedding provider plugin",
       "source": "official",
       "kind": "plugin",
@@ -396,14 +396,14 @@
           "embeddingProviders": ["local"]
         },
         "install": {
-          "npmSpec": "@openclaw/llama-cpp-provider",
+          "npmSpec": "@nova/llama-cpp-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.2"
         }
       }
     },
     {
-      "name": "@openclaw/openshell-sandbox",
+      "name": "@nova/openshell-sandbox",
       "description": "OpenClaw OpenShell sandbox backend",
       "source": "official",
       "kind": "plugin",
@@ -413,14 +413,14 @@
           "label": "OpenShell Sandbox"
         },
         "install": {
-          "npmSpec": "@openclaw/openshell-sandbox",
+          "npmSpec": "@nova/openshell-sandbox",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.12-beta.1"
         }
       }
     },
     {
-      "name": "@openclaw/parallel-plugin",
+      "name": "@nova/parallel-plugin",
       "description": "OpenClaw Parallel web search plugin.",
       "source": "official",
       "kind": "plugin",
@@ -469,15 +469,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/parallel-plugin",
-          "npmSpec": "@openclaw/parallel-plugin",
+          "clawhubSpec": "clawhub:@nova/parallel-plugin",
+          "npmSpec": "@nova/parallel-plugin",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/perplexity-plugin",
+      "name": "@nova/perplexity-plugin",
       "description": "OpenClaw Perplexity plugin.",
       "source": "official",
       "kind": "plugin",
@@ -512,15 +512,15 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/perplexity-plugin",
-          "npmSpec": "@openclaw/perplexity-plugin",
+          "clawhubSpec": "clawhub:@nova/perplexity-plugin",
+          "npmSpec": "@nova/perplexity-plugin",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.8"
         }
       }
     },
     {
-      "name": "@openclaw/pixverse-provider",
+      "name": "@nova/pixverse-provider",
       "description": "OpenClaw PixVerse video generation provider plugin",
       "source": "official",
       "kind": "plugin",
@@ -530,15 +530,15 @@
           "label": "PixVerse"
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/pixverse-provider",
-          "npmSpec": "@openclaw/pixverse-provider",
+          "clawhubSpec": "clawhub:@nova/pixverse-provider",
+          "npmSpec": "@nova/pixverse-provider",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.26"
         }
       }
     },
     {
-      "name": "@openclaw/searxng-plugin",
+      "name": "@nova/searxng-plugin",
       "description": "OpenClaw SearXNG plugin",
       "source": "official",
       "kind": "plugin",
@@ -573,8 +573,8 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/searxng-plugin",
-          "npmSpec": "@openclaw/searxng-plugin",
+          "clawhubSpec": "clawhub:@nova/searxng-plugin",
+          "npmSpec": "@nova/searxng-plugin",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9",
           "allowInvalidConfigRecovery": true
@@ -582,7 +582,7 @@
       }
     },
     {
-      "name": "@openclaw/tavily-plugin",
+      "name": "@nova/tavily-plugin",
       "description": "OpenClaw Tavily plugin",
       "source": "official",
       "kind": "plugin",
@@ -620,8 +620,8 @@
           }
         ],
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/tavily-plugin",
-          "npmSpec": "@openclaw/tavily-plugin",
+          "clawhubSpec": "clawhub:@nova/tavily-plugin",
+          "npmSpec": "@nova/tavily-plugin",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.6.9",
           "allowInvalidConfigRecovery": true
@@ -629,7 +629,7 @@
       }
     },
     {
-      "name": "@openclaw/tokenjuice",
+      "name": "@nova/tokenjuice",
       "description": "OpenClaw tokenjuice exec output compaction plugin",
       "source": "official",
       "kind": "plugin",
@@ -643,15 +643,15 @@
           "order": 60
         },
         "install": {
-          "clawhubSpec": "clawhub:@openclaw/tokenjuice",
-          "npmSpec": "@openclaw/tokenjuice",
+          "clawhubSpec": "clawhub:@nova/tokenjuice",
+          "npmSpec": "@nova/tokenjuice",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.5.28"
         }
       }
     },
     {
-      "name": "@openclaw/voice-call",
+      "name": "@nova/voice-call",
       "description": "OpenClaw voice-call plugin",
       "source": "official",
       "kind": "plugin",
@@ -661,7 +661,7 @@
           "label": "Voice Call"
         },
         "install": {
-          "npmSpec": "@openclaw/voice-call",
+          "npmSpec": "@nova/voice-call",
           "defaultChoice": "npm",
           "minHostVersion": ">=2026.4.10"
         }

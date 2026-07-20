@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/googlechat",
+  "name": "@nova/googlechat",
   "version": "2026.7.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "@openclaw/googlechat",
+      "name": "@nova/googlechat",
       "version": "2026.7.2",
       "dependencies": {
         "google-auth-library": "10.9.0",

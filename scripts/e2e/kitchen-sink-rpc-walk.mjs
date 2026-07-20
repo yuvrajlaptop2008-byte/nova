@@ -14,7 +14,7 @@ import {
   resolveWindowsTaskkillPath,
 } from "../lib/windows-taskkill.mjs";
 
-const PLUGIN_SPEC = process.env.NOVA_KITCHEN_SINK_NPM_SPEC || "npm:@openclaw/kitchen-sink@latest";
+const PLUGIN_SPEC = process.env.NOVA_KITCHEN_SINK_NPM_SPEC || "npm:@nova/kitchen-sink@latest";
 const PLUGIN_ID = process.env.NOVA_KITCHEN_SINK_PLUGIN_ID || "openclaw-kitchen-sink-fixture";
 const CHANNEL_ID = "kitchen-sink-channel";
 const CHANNEL_ACCOUNT_ID = "local";
@@ -104,7 +104,7 @@ Runs the external Kitchen Sink plugin RPC walk against a built Nova entry.
 
 Environment:
   NOVA_ENTRY                         Built Nova entrypoint. Defaults to dist/index.mjs or dist/index.js.
-  NOVA_KITCHEN_SINK_NPM_SPEC         Plugin package spec. Default: npm:@openclaw/kitchen-sink@latest.
+  NOVA_KITCHEN_SINK_NPM_SPEC         Plugin package spec. Default: npm:@nova/kitchen-sink@latest.
   NOVA_KITCHEN_SINK_PLUGIN_ID        Plugin id. Default: openclaw-kitchen-sink-fixture.
   NOVA_KITCHEN_SINK_PERSONALITY      Plugin fixture personality. Default: conformance.
   NOVA_KITCHEN_SINK_RPC_PORT         Gateway loopback port. Default: OS-selected free port.

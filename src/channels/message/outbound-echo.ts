@@ -1,8 +1,8 @@
 import {
   isFutureDateTimestampMs,
   resolveExpiresAtMsFromDurationMs,
-} from "@openclaw/normalization-core/number-coercion";
-import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+} from "@nova/normalization-core/number-coercion";
+import { normalizeLowercaseStringOrEmpty } from "@nova/normalization-core/string-coerce";
 import { normalizeAccountId } from "../../routing/account-id.js";
 import { outboundMessageIdentities } from "./outbound-echo-state.js";
 

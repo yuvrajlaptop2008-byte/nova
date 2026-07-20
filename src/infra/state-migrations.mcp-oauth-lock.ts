@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { Root } from "@openclaw/fs-safe";
+import type { Root } from "@nova/fs-safe";
 import { getFileLockProcessStartTime } from "../shared/pid-alive.js";
 import { isDefinitelyStaleLegacyMcpOAuthLock } from "./state-migrations.mcp-oauth-lock-stale.js";
 

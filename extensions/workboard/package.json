@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/workboard",
+  "name": "@nova/workboard",
   "version": "2026.7.2",
   "private": true,
   "description": "OpenClaw dashboard workboard plugin",
@@ -8,8 +8,8 @@
     "typebox": "1.3.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "@openclaw/workboard-contract": "workspace:*",
+    "@nova/plugin-sdk": "workspace:*",
+    "@nova/workboard-contract": "workspace:*",
     "openclaw": "workspace:*"
   },
   "peerDependencies": {
