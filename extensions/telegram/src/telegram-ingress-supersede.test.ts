@@ -18,9 +18,9 @@ afterEach(() => {
     return;
   }
   if (previousStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = previousStateDir;
+    process.env.NOVA_STATE_DIR = previousStateDir;
   }
   previousStateDir = undefined;
   stateDirTouched = false;
@@ -355,9 +355,9 @@ describe("telegram ingress supersede policy", () => {
     const pairedId = "424242";
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-supersede-store-"));
     // The shared pairing-store loader reads process.env; scoped set + afterEach restore.
-    previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    previousStateDir = process.env.NOVA_STATE_DIR;
     stateDirTouched = true;
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.NOVA_STATE_DIR = stateDir;
     await addChannelAllowFromStoreEntry({
       channel: "telegram",
       entry: pairedId,

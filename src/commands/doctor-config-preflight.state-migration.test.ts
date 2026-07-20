@@ -295,15 +295,15 @@ describe("runDoctorConfigPreflight state migration", () => {
 
   it("releases the startup lease when the fresh config guard rejects", async () => {
     needsStartupMigrationCheckpoint.mockReturnValue(true);
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = "/tmp/openclaw-original-state";
+    const previousStateDir = process.env.NOVA_STATE_DIR;
+    process.env.NOVA_STATE_DIR = "/tmp/openclaw-original-state";
     let leaseEnv: NodeJS.ProcessEnv | undefined;
     acquireStartupMigrationLease.mockImplementationOnce(({ env }) => {
       leaseEnv = env;
       return {
         ...startupMigrationLease,
         release: vi.fn(() => {
-          expect(env.OPENCLAW_STATE_DIR).toBe("/tmp/openclaw-original-state");
+          expect(env.NOVA_STATE_DIR).toBe("/tmp/openclaw-original-state");
           startupMigrationLeaseRelease();
         }),
       };
@@ -312,7 +312,7 @@ describe("runDoctorConfigPreflight state migration", () => {
       .fn<(_snapshot?: Record<string, unknown>) => Promise<boolean>>()
       .mockResolvedValueOnce(true)
       .mockImplementationOnce(async () => {
-        process.env.OPENCLAW_STATE_DIR = "/tmp/openclaw-drifted-state";
+        process.env.NOVA_STATE_DIR = "/tmp/openclaw-drifted-state";
         return false;
       });
 
@@ -327,9 +327,9 @@ describe("runDoctorConfigPreflight state migration", () => {
       ).rejects.toThrow("selected config changed during startup");
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.NOVA_STATE_DIR = previousStateDir;
       }
     }
 

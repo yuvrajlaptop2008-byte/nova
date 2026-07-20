@@ -26,7 +26,7 @@ import type { InstalledPluginInstallRecordInfo } from "../plugins/installed-plug
 import {
   closeOpenClawStateDatabaseForTest,
   openOpenClawStateDatabase,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
 } from "../state/openclaw-state-db.js";
 import { loadTaskFlowRegistryStateFromSqlite } from "../tasks/task-flow-registry.store.sqlite.js";
 import { loadTaskRegistryStateFromSqlite } from "../tasks/task-registry.store.sqlite.js";
@@ -168,7 +168,7 @@ function writeLegacyTelegramAllowFromStore(oauthDir: string) {
 async function runTelegramAllowFromMigration(params: { root: string; cfg: OpenClawConfig }) {
   const oauthDir = ensureCredentialsDir(params.root);
   writeLegacyTelegramAllowFromStore(oauthDir);
-  const env = { OPENCLAW_STATE_DIR: params.root } as NodeJS.ProcessEnv;
+  const env = { NOVA_STATE_DIR: params.root } as NodeJS.ProcessEnv;
   const detected = await detectLegacyStateMigrations({
     cfg: params.cfg,
     env,
@@ -425,7 +425,7 @@ function writeLegacyPluginInstallIndex(
 async function runLegacyStateMigrationsForRoot(root: string) {
   const detected = await detectLegacyStateMigrations({
     cfg: {},
-    env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+    env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
   });
   return await runLegacyStateMigrations({ detected });
 }
@@ -652,21 +652,21 @@ async function detectAndRunMigrations(params: {
 }) {
   const detected = await detectLegacyStateMigrations({
     cfg: params.cfg,
-    env: { OPENCLAW_STATE_DIR: params.root } as NodeJS.ProcessEnv,
+    env: { NOVA_STATE_DIR: params.root } as NodeJS.ProcessEnv,
   });
   await runLegacyStateMigrations({ detected, now: params.now });
 }
 
 async function withStateDir<T>(root: string, run: () => Promise<T>): Promise<T> {
-  const previous = process.env.OPENCLAW_STATE_DIR;
-  process.env.OPENCLAW_STATE_DIR = root;
+  const previous = process.env.NOVA_STATE_DIR;
+  process.env.NOVA_STATE_DIR = root;
   try {
     return await run();
   } finally {
     if (previous === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previous;
+      process.env.NOVA_STATE_DIR = previous;
     }
   }
 }
@@ -730,7 +730,7 @@ async function runAutoMigrateLegacyStateWithLog(params: {
   const log = { info: vi.fn(), warn: vi.fn() };
   const result = await autoMigrateLegacyState({
     cfg: params.cfg,
-    env: { OPENCLAW_STATE_DIR: params.root } as NodeJS.ProcessEnv,
+    env: { NOVA_STATE_DIR: params.root } as NodeJS.ProcessEnv,
     log,
     now: params.now,
   });
@@ -796,7 +796,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg,
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({
       detected,
@@ -849,7 +849,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(detected.preview).toContain(
       `- Sessions: repair migrated transcript paths in ${path.join(targetDir, "sessions.json")}`,
@@ -889,7 +889,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(detected.sessions.hasLegacy).toBe(false);
     expect(detected.preview).not.toContain(
@@ -906,7 +906,7 @@ describe("doctor legacy state migrations", () => {
     await expect(
       detectLegacyStateMigrations({
         cfg: {},
-        env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+        env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
       }),
     ).resolves.toBeDefined();
   });
@@ -927,7 +927,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(detected.sessions.hasLegacy).toBe(true);
   });
@@ -987,7 +987,7 @@ describe("doctor legacy state migrations", () => {
     const stateDatabasePath = createLegacyAgentDatabaseRegistry(stateDir);
     const { DatabaseSync } = requireNodeSqlite();
     const seededDb = new DatabaseSync(stateDatabasePath);
-    seededDb.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION + 1};`);
+    seededDb.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION + 1};`);
     seededDb.close();
 
     const detected = await detectLegacyStateMigrations({
@@ -999,7 +999,7 @@ describe("doctor legacy state migrations", () => {
     expect(result.changes).toStrictEqual([]);
     expect(result.warnings).toHaveLength(1);
     expect(result.warnings[0]).toContain(
-      `uses newer schema version ${OPENCLAW_STATE_SCHEMA_VERSION + 1}`,
+      `uses newer schema version ${NOVA_STATE_SCHEMA_VERSION + 1}`,
     );
 
     const db = new DatabaseSync(stateDatabasePath);
@@ -1035,7 +1035,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg,
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({
       detected,
@@ -1111,7 +1111,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg,
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({
       detected,
@@ -1179,7 +1179,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1223,7 +1223,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg,
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected, config: cfg });
 
@@ -1348,7 +1348,7 @@ describe("doctor legacy state migrations", () => {
     const oauthDir = ensureCredentialsDir(root);
     const sourcePath = path.join(oauthDir, "whatsapp-allowFrom.json");
     fs.writeFileSync(sourcePath, '["123456"]\n', "utf8");
-    const env = { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv;
+    const env = { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv;
 
     const detected = await detectLegacyStateMigrations({ cfg, env });
     const result = await runLegacyStateMigrations({ detected, config: cfg, env, now: () => 123 });
@@ -1424,7 +1424,7 @@ describe("doctor legacy state migrations", () => {
     const cfg: OpenClawConfig = {};
     const detected = await detectLegacyStateMigrations({
       cfg,
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
     expect(result.changes).toStrictEqual([]);
@@ -1479,7 +1479,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1561,7 +1561,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1598,7 +1598,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1642,7 +1642,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1689,7 +1689,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1728,7 +1728,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1773,7 +1773,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -1830,7 +1830,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
     expect(result.changes).toStrictEqual(["Migrated 1 Test recency cache entry → plugin state"]);
@@ -1885,7 +1885,7 @@ describe("doctor legacy state migrations", () => {
 
     const firstDetected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const firstResult = await runLegacyStateMigrations({ detected: firstDetected });
     expect(firstResult.changes).toContain("Migrated 1 Test deferred cache entry → plugin state");
@@ -1902,7 +1902,7 @@ describe("doctor legacy state migrations", () => {
 
     const secondDetected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const secondResult = await runLegacyStateMigrations({ detected: secondDetected });
 
@@ -1954,7 +1954,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -2005,7 +2005,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -2055,7 +2055,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -2121,7 +2121,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -2155,7 +2155,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(detected.pluginStateSidecar).toEqual({ sourcePath, hasLegacy: true });
     expect(detected.preview).toContain(
@@ -2190,7 +2190,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(detected.debugProxyCaptureSidecar).toEqual({
       sourcePath,
@@ -2214,7 +2214,7 @@ describe("doctor legacy state migrations", () => {
     expect(fs.readFileSync(path.join(certDir, "ca.pem"), "utf8")).toBe("keep");
 
     const state = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(
       state.db.prepare("SELECT id, mode FROM capture_sessions WHERE id = ?").get("legacy-session"),
@@ -2242,7 +2242,7 @@ describe("doctor legacy state migrations", () => {
     expect(fs.existsSync(`${sourcePath}.migrated`)).toBe(true);
     expect(fs.existsSync(blobDir)).toBe(true);
     const state = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(
       state.db.prepare("SELECT blob_id FROM capture_blobs WHERE blob_id = ?").get(blobId),
@@ -2291,7 +2291,7 @@ describe("doctor legacy state migrations", () => {
 
     expect(retryResult.warnings).toStrictEqual([]);
     const state = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(state.db.prepare("SELECT COUNT(*) AS count FROM capture_events").get()).toEqual({
       count: 2,
@@ -2302,7 +2302,7 @@ describe("doctor legacy state migrations", () => {
     const root = await makeTempRoot();
     const { sourcePath, blobDir } = writeLegacyDebugProxyCaptureSidecar(root);
     const state = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     state.db
       .prepare(
@@ -2344,7 +2344,7 @@ describe("doctor legacy state migrations", () => {
 
     const retryDetected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(retryDetected.debugProxyCaptureSidecar.hasLegacy).toBe(true);
     const retryResult = await runLegacyStateMigrations({ detected: retryDetected });
@@ -2354,7 +2354,7 @@ describe("doctor legacy state migrations", () => {
       `Archived debug proxy capture blobs → ${blobDir}.migrated`,
     ]);
     const state = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(state.db.prepare("SELECT COUNT(*) AS count FROM capture_events").get()).toEqual({
       count: 1,
@@ -2410,7 +2410,7 @@ describe("doctor legacy state migrations", () => {
 
     const retryDetected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(retryDetected.pluginStateSidecar).toEqual({ sourcePath, hasLegacy: true });
     expect(retryDetected.preview).toContain(
@@ -2456,7 +2456,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(detected.pluginInstallIndex).toEqual({ sourcePath, hasLegacy: true });
     expect(detected.preview).toContain(
@@ -2499,7 +2499,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -2532,7 +2532,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -2691,7 +2691,7 @@ describe("doctor legacy state migrations", () => {
 
   it("converges the reported plugin, update-check, and config-health conflicts", async () => {
     const root = await makeTempRoot();
-    const env = { ...process.env, OPENCLAW_STATE_DIR: root };
+    const env = { ...process.env, NOVA_STATE_DIR: root };
     const configPath = path.join(root, "openclaw.json");
     const pluginSourcePath = writeLegacyPluginInstallIndex(root, {
       demo: {
@@ -2952,7 +2952,7 @@ describe("doctor legacy state migrations", () => {
 
     const result = await autoMigrateLegacyState({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
       log: { info: vi.fn(), warn: vi.fn() },
     });
 
@@ -2977,8 +2977,8 @@ describe("doctor legacy state migrations", () => {
     const result = await autoMigrateLegacyState({
       cfg: {},
       env: {
-        OPENCLAW_STATE_DIR: root,
-        OPENCLAW_AGENT_DIR: path.join(root, "custom-agent"),
+        NOVA_STATE_DIR: root,
+        NOVA_AGENT_DIR: path.join(root, "custom-agent"),
       } as NodeJS.ProcessEnv,
       log: { info: vi.fn(), warn: vi.fn() },
     });
@@ -3018,7 +3018,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
       homedir: () => root,
     });
     expect(detected.preview.some((entry) => entry.includes("Exec approvals"))).toBe(false);
@@ -3050,7 +3050,7 @@ describe("doctor legacy state migrations", () => {
 
     const result = await autoMigrateLegacyState({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
       homedir: () => root,
       log: { info: vi.fn(), warn: vi.fn() },
     });
@@ -3076,7 +3076,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3144,7 +3144,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3221,7 +3221,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3273,7 +3273,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3327,7 +3327,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3357,7 +3357,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3384,7 +3384,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3407,7 +3407,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(detected.taskStateSidecars).toEqual({
@@ -3469,7 +3469,7 @@ describe("doctor legacy state migrations", () => {
     fs.writeFileSync(flowJournalPath, "");
 
     const result = await autoMigrateLegacyTaskStateSidecars({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(result.warnings).toStrictEqual([]);
@@ -3493,7 +3493,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(detected.taskStateSidecars.hasLegacy).toBe(true);
@@ -3520,7 +3520,7 @@ describe("doctor legacy state migrations", () => {
     const firstResult = await (async () => {
       try {
         return await autoMigrateLegacyTaskStateSidecars({
-          env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+          env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
         });
       } finally {
         rename.mockRestore();
@@ -3540,7 +3540,7 @@ describe("doctor legacy state migrations", () => {
 
     resetAutoMigrateLegacyTaskStateSidecarsForTest();
     const retryResult = await autoMigrateLegacyTaskStateSidecars({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(retryResult.warnings).toStrictEqual([]);
@@ -3575,7 +3575,7 @@ describe("doctor legacy state migrations", () => {
     }
 
     const result = await autoMigrateLegacyTaskStateSidecars({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(result.changes).toContain("Migrated 1 task registry sidecar row → shared SQLite state");
@@ -3598,7 +3598,7 @@ describe("doctor legacy state migrations", () => {
     const { taskRunsPath, flowRunsPath } = writeLegacyTaskStateSidecars(root);
 
     const result = await autoMigrateLegacyTaskStateSidecars({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(result.warnings).toStrictEqual([]);
@@ -3619,7 +3619,7 @@ describe("doctor legacy state migrations", () => {
     appendLegacyTaskWithObsoleteDeliveryStatus(taskRunsPath);
 
     const result = await autoMigrateLegacyTaskStateSidecars({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(result.warnings).toStrictEqual([]);
@@ -3628,7 +3628,7 @@ describe("doctor legacy state migrations", () => {
     expect(fs.existsSync(`${taskRunsPath}.migrated`)).toBe(true);
 
     const shared = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     expect(
       shared.db
@@ -3649,7 +3649,7 @@ describe("doctor legacy state migrations", () => {
     appendLegacyCrossAgentTask(taskRunsPath);
 
     const result = await autoMigrateLegacyTaskStateSidecars({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(result.warnings).toStrictEqual([]);
@@ -3718,7 +3718,7 @@ describe("doctor legacy state migrations", () => {
     });
 
     const result = await autoMigrateLegacyTaskStateSidecars({
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
 
     expect(result.warnings).toContain(
@@ -3791,7 +3791,7 @@ describe("doctor legacy state migrations", () => {
 
     const detected = await detectLegacyStateMigrations({
       cfg: {},
-      env: { OPENCLAW_STATE_DIR: root } as NodeJS.ProcessEnv,
+      env: { NOVA_STATE_DIR: root } as NodeJS.ProcessEnv,
     });
     const result = await runLegacyStateMigrations({ detected });
 
@@ -3977,7 +3977,7 @@ describe("doctor legacy state migrations", () => {
     fs.mkdirSync(legacyDir, { recursive: true });
 
     const result = await runStateDirMigration(root, {
-      OPENCLAW_STATE_DIR: "/custom/state",
+      NOVA_STATE_DIR: "/custom/state",
     } as NodeJS.ProcessEnv);
 
     expect(result.skipped).toBe(true);

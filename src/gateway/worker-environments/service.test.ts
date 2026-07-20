@@ -86,7 +86,7 @@ describe("worker environment service", () => {
 
   beforeEach(async () => {
     root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-worker-service-"));
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     nowMs = 1_000;
     providersEnabled = true;
     store = createWorkerEnvironmentStore({ database, now: () => nowMs });
@@ -1109,7 +1109,7 @@ describe("worker environment service", () => {
     `);
 
     closeOpenClawStateDatabaseForTest();
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerEnvironmentStore({ database, now: () => nowMs });
     const liveEvents = createLiveEvents();
     const workerService = createService(createProvider(), { liveEvents });

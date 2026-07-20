@@ -7,7 +7,7 @@ const GATEWAY_SYSTEMD_SERVICE_NAME = "openclaw-gateway";
 const GATEWAY_WINDOWS_TASK_NAME = "Nova Gateway";
 export const GATEWAY_SERVICE_MARKER = "openclaw";
 export const GATEWAY_SERVICE_KIND = "gateway";
-export const GATEWAY_SERVICE_RUNTIME_PID_ENV = "OPENCLAW_GATEWAY_SERVICE_PID";
+export const GATEWAY_SERVICE_RUNTIME_PID_ENV = "NOVA_GATEWAY_SERVICE_PID";
 const NODE_LAUNCH_AGENT_LABEL = "ai.openclaw.node";
 const NODE_SYSTEMD_SERVICE_NAME = "openclaw-node";
 const NODE_WINDOWS_TASK_NAME = "Nova Node";
@@ -83,8 +83,8 @@ export function resolveGatewayServiceDescription(params: {
   return (
     params.description ??
     formatGatewayServiceDescription({
-      profile: params.env.OPENCLAW_PROFILE,
-      version: params.environment?.OPENCLAW_SERVICE_VERSION ?? params.env.OPENCLAW_SERVICE_VERSION,
+      profile: params.env.NOVA_PROFILE,
+      version: params.environment?.NOVA_SERVICE_VERSION ?? params.env.NOVA_SERVICE_VERSION,
     })
   );
 }

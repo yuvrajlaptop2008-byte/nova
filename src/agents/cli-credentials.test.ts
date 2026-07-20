@@ -87,7 +87,7 @@ describe("cli credentials", () => {
     const expires = Date.parse("2036-04-25T12:00:00Z");
     const codexExpiry = Math.floor(expires / 1000);
     vi.stubEnv("HOME", osHome);
-    vi.stubEnv("OPENCLAW_HOME", openClawHome);
+    vi.stubEnv("NOVA_HOME", openClawHome);
     delete process.env.CODEX_HOME;
     try {
       const files = [

@@ -4,25 +4,25 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-BASE_IMAGE="$(docker_e2e_resolve_image "openclaw-browser-cdp-base-e2e" OPENCLAW_BROWSER_CDP_BASE_E2E_IMAGE)"
-if [ -n "${OPENCLAW_BROWSER_CDP_SNAPSHOT_E2E_IMAGE:-}" ]; then
-  IMAGE_NAME="$OPENCLAW_BROWSER_CDP_SNAPSHOT_E2E_IMAGE"
+BASE_IMAGE="$(docker_e2e_resolve_image "openclaw-browser-cdp-base-e2e" NOVA_BROWSER_CDP_BASE_E2E_IMAGE)"
+if [ -n "${NOVA_BROWSER_CDP_SNAPSHOT_E2E_IMAGE:-}" ]; then
+  IMAGE_NAME="$NOVA_BROWSER_CDP_SNAPSHOT_E2E_IMAGE"
   DERIVED_SHARED_IMAGE="0"
-elif [ -n "${OPENCLAW_DOCKER_E2E_IMAGE:-}" ]; then
-  IMAGE_NAME="openclaw-browser-cdp-snapshot-e2e:${OPENCLAW_DOCKER_ALL_LANE_NAME:-shared}"
+elif [ -n "${NOVA_DOCKER_E2E_IMAGE:-}" ]; then
+  IMAGE_NAME="openclaw-browser-cdp-snapshot-e2e:${NOVA_DOCKER_ALL_LANE_NAME:-shared}"
   DERIVED_SHARED_IMAGE="1"
 else
   IMAGE_NAME="openclaw-browser-cdp-snapshot-e2e"
   DERIVED_SHARED_IMAGE="0"
 fi
-SKIP_BUILD="${OPENCLAW_BROWSER_CDP_SNAPSHOT_E2E_SKIP_BUILD:-0}"
+SKIP_BUILD="${NOVA_BROWSER_CDP_SNAPSHOT_E2E_SKIP_BUILD:-0}"
 PORT="18789"
 CDP_PORT="19222"
 FIXTURE_PORT="18080"
 TOKEN="browser-cdp-e2e-token"
 CONTAINER_NAME="openclaw-browser-cdp-e2e-$$"
-DOCKER_COMMAND_TIMEOUT="${OPENCLAW_BROWSER_CDP_SNAPSHOT_DOCKER_COMMAND_TIMEOUT:-900s}"
-SNAPSHOT_MAX_BYTES="$(docker_e2e_read_positive_int_env OPENCLAW_BROWSER_CDP_SNAPSHOT_MAX_BYTES 524288)"
+DOCKER_COMMAND_TIMEOUT="${NOVA_BROWSER_CDP_SNAPSHOT_DOCKER_COMMAND_TIMEOUT:-900s}"
+SNAPSHOT_MAX_BYTES="$(docker_e2e_read_positive_int_env NOVA_BROWSER_CDP_SNAPSHOT_MAX_BYTES 524288)"
 
 cleanup() {
   docker_e2e_docker_cmd rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -31,7 +31,7 @@ trap cleanup EXIT
 
 # Targeted Docker runs reuse the shared functional image as the base, but this
 # lane still needs a derived image with Chromium installed.
-if [ "$SKIP_BUILD" = "1" ] || { [ "$DERIVED_SHARED_IMAGE" = "0" ] && [ "${OPENCLAW_SKIP_DOCKER_BUILD:-0}" = "1" ]; }; then
+if [ "$SKIP_BUILD" = "1" ] || { [ "$DERIVED_SHARED_IMAGE" = "0" ] && [ "${NOVA_SKIP_DOCKER_BUILD:-0}" = "1" ]; }; then
   echo "Reusing Docker image: $IMAGE_NAME"
   docker_e2e_docker_cmd image inspect "$IMAGE_NAME" >/dev/null
 else
@@ -50,7 +50,7 @@ EOF
   echo "Building Docker image: $IMAGE_NAME"
   docker_build_run browser-cdp-snapshot-build -t "$IMAGE_NAME" -f "$build_dir/Dockerfile" "$build_dir"
 fi
-OPENCLAW_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 browser-cdp-snapshot empty)"
+NOVA_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 browser-cdp-snapshot empty)"
 
 echo "Starting browser CDP snapshot container..."
 docker_e2e_harness_mount_args
@@ -58,19 +58,19 @@ docker_e2e_docker_cmd run -d \
   "${DOCKER_E2E_HARNESS_ARGS[@]}" \
   --name "$CONTAINER_NAME" \
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
-  -e OPENCLAW_GATEWAY_TOKEN="$TOKEN" \
-  -e OPENCLAW_DISABLE_BONJOUR=1 \
-  -e OPENCLAW_SKIP_CHANNELS=1 \
-  -e OPENCLAW_SKIP_PROVIDERS=1 \
-  -e OPENCLAW_SKIP_GMAIL_WATCHER=1 \
-  -e OPENCLAW_SKIP_CRON=1 \
-  -e OPENCLAW_SKIP_CANVAS_HOST=1 \
-  -e "OPENCLAW_BROWSER_CDP_SNAPSHOT_MAX_BYTES=$SNAPSHOT_MAX_BYTES" \
-  -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$OPENCLAW_TEST_STATE_SCRIPT_B64" \
+  -e NOVA_GATEWAY_TOKEN="$TOKEN" \
+  -e NOVA_DISABLE_BONJOUR=1 \
+  -e NOVA_SKIP_CHANNELS=1 \
+  -e NOVA_SKIP_PROVIDERS=1 \
+  -e NOVA_SKIP_GMAIL_WATCHER=1 \
+  -e NOVA_SKIP_CRON=1 \
+  -e NOVA_SKIP_CANVAS_HOST=1 \
+  -e "NOVA_BROWSER_CDP_SNAPSHOT_MAX_BYTES=$SNAPSHOT_MAX_BYTES" \
+  -e "NOVA_TEST_STATE_SCRIPT_B64=$NOVA_TEST_STATE_SCRIPT_B64" \
   "$IMAGE_NAME" \
   bash -lc "set -euo pipefail
 source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 \"\${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}\"
+openclaw_e2e_eval_test_state_from_b64 \"\${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}\"
 openclaw_e2e_write_state_env
 entry=\"\$(openclaw_e2e_resolve_entrypoint)\"
 mkdir -p /tmp/openclaw-browser-cdp

@@ -8,8 +8,8 @@ set -euo pipefail
 #
 # Parameters:
 #   --container: run the in-container scenario. Host mode is the default.
-#   OPENCLAW_CHANNEL_PLUGIN_TRUST_E2E_IMAGE: override the Docker image name.
-#   OPENCLAW_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD=1: reuse/pull the image.
+#   NOVA_CHANNEL_PLUGIN_TRUST_E2E_IMAGE: override the Docker image name.
+#   NOVA_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD=1: reuse/pull the image.
 #
 # Outputs:
 #   stdout logs each case and prints "Channel plugin trust Docker E2E passed."
@@ -30,9 +30,9 @@ Options:
   -h, --help    Show this help.
 
 Environment:
-  OPENCLAW_CHANNEL_PLUGIN_TRUST_E2E_IMAGE       Override Docker image name.
-  OPENCLAW_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD  Reuse/pull image instead of building.
-  OPENCLAW_TEST_STATE_SCRIPT_B64                Required in --container mode.
+  NOVA_CHANNEL_PLUGIN_TRUST_E2E_IMAGE       Override Docker image name.
+  NOVA_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD  Reuse/pull image instead of building.
+  NOVA_TEST_STATE_SCRIPT_B64                Required in --container mode.
 
 Outputs:
   Prints case progress and PASS lines to stdout. Exits non-zero on assertion
@@ -40,7 +40,7 @@ Outputs:
 
 Examples:
   bash scripts/e2e/channel-plugin-trust-docker.sh
-  OPENCLAW_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD=1 bash scripts/e2e/channel-plugin-trust-docker.sh
+  NOVA_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD=1 bash scripts/e2e/channel-plugin-trust-docker.sh
 EOF
 }
 
@@ -185,9 +185,9 @@ write_case_config() {
   local plugin_dir="${1:?missing plugin dir}"
   local trusted="${2:?missing trusted flag}"
   local plugin_id="e2e-load-paths-shadow"
-  mkdir -p "$(dirname "$OPENCLAW_CONFIG_PATH")"
+  mkdir -p "$(dirname "$NOVA_CONFIG_PATH")"
   if [ "$trusted" = "1" ]; then
-    cat >"$OPENCLAW_CONFIG_PATH" <<EOF
+    cat >"$NOVA_CONFIG_PATH" <<EOF
 {
   "plugins": {
     "enabled": true,
@@ -199,7 +199,7 @@ write_case_config() {
 }
 EOF
   else
-    cat >"$OPENCLAW_CONFIG_PATH" <<EOF
+    cat >"$NOVA_CONFIG_PATH" <<EOF
 {
   "plugins": {
     "enabled": true,
@@ -274,8 +274,8 @@ run_case() {
 
 run_container() {
   source scripts/lib/openclaw-e2e-instance.sh
-  openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
-  export OPENCLAW_WORKSPACE_DIR="$HOME/.openclaw/workspace"
+  openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+  export NOVA_WORKSPACE_DIR="$HOME/.openclaw/workspace"
 
   run_openclaw --version
   run_case untrusted-load-paths 0
@@ -289,9 +289,9 @@ run_host() {
   image_name="$(
     docker_e2e_resolve_image \
       "openclaw-channel-plugin-trust-e2e:local" \
-      OPENCLAW_CHANNEL_PLUGIN_TRUST_E2E_IMAGE
+      NOVA_CHANNEL_PLUGIN_TRUST_E2E_IMAGE
   )"
-  local skip_build="${OPENCLAW_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD:-0}"
+  local skip_build="${NOVA_CHANNEL_PLUGIN_TRUST_E2E_SKIP_BUILD:-0}"
   docker_e2e_build_or_reuse "$image_name" channel-plugin-trust "$ROOT_DIR/scripts/e2e/Dockerfile" "$ROOT_DIR" "" "$skip_build"
 
   local state_script_b64
@@ -300,7 +300,7 @@ run_host() {
   docker_e2e_run_logged_print_with_harness \
     channel-plugin-trust \
     -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
-    -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$state_script_b64" \
+    -e "NOVA_TEST_STATE_SCRIPT_B64=$state_script_b64" \
     "$image_name" \
     bash scripts/e2e/channel-plugin-trust-docker.sh --container
 }

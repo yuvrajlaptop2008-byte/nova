@@ -155,8 +155,8 @@ async function runCliEntry(params: {
     timeoutMs,
     input: params.content,
     env: {
-      OPENCLAW_LINK_FINAL_URL: params.finalUrl,
-      OPENCLAW_LINK_URL: params.url,
+      NOVA_LINK_FINAL_URL: params.finalUrl,
+      NOVA_LINK_URL: params.url,
     },
   });
   if (result.code !== 0) {

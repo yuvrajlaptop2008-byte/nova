@@ -615,7 +615,7 @@ describe("openclaw live updater", () => {
     writeFileSync(configPath, "{}\n");
     writeFileSync(
       capture,
-      'import fs from "node:fs"; console.log(JSON.stringify({ argv: process.argv.slice(2), config: JSON.parse(fs.readFileSync(process.env.OPENCLAW_CONFIG_PATH, "utf8")), hasToken: Boolean(process.env.OPENCLAW_GATEWAY_TOKEN), url: process.env.OPENCLAW_GATEWAY_URL ?? null }));\n',
+      'import fs from "node:fs"; console.log(JSON.stringify({ argv: process.argv.slice(2), config: JSON.parse(fs.readFileSync(process.env.NOVA_CONFIG_PATH, "utf8")), hasToken: Boolean(process.env.NOVA_GATEWAY_TOKEN), url: process.env.NOVA_GATEWAY_URL ?? null }));\n',
     );
 
     const result = JSON.parse(
@@ -629,7 +629,7 @@ describe("openclaw live updater", () => {
           executable: process.execPath,
           invocationPrefix: [capture],
           port: 19001,
-          serviceEnvironment: { OPENCLAW_GATEWAY_TOKEN: ["fixture", "value"].join("-") },
+          serviceEnvironment: { NOVA_GATEWAY_TOKEN: ["fixture", "value"].join("-") },
           wrapperPath: null,
         },
       ),

@@ -16,7 +16,7 @@ function hasDebugArg(argv: string[] | undefined): boolean {
 }
 
 function shouldShowStack(argv: string[] | undefined, env: NodeJS.ProcessEnv): boolean {
-  return hasDebugArg(argv) || isTruthyEnvValue(env.OPENCLAW_DEBUG);
+  return hasDebugArg(argv) || isTruthyEnvValue(env.NOVA_DEBUG);
 }
 
 function pushPrefixed(out: string[], value: string): void {
@@ -39,7 +39,7 @@ export function formatCliFailureLines(options: FormatCliFailureOptions): string[
     lines.push("[openclaw] Stack:");
     pushPrefixed(lines, formatUncaughtError(options.error));
   } else {
-    lines.push("[openclaw] Debug: set OPENCLAW_DEBUG=1 to include the stack trace.");
+    lines.push("[openclaw] Debug: set NOVA_DEBUG=1 to include the stack trace.");
   }
 
   if (options.includeDoctorHint !== false) {

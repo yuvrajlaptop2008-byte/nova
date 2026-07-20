@@ -44,7 +44,7 @@ vi.mock("../daemon/runtime-paths.js", () => ({
 }));
 
 vi.mock("../daemon/program-args.js", () => ({
-  OPENCLAW_WRAPPER_ENV_KEY: "OPENCLAW_WRAPPER",
+  NOVA_WRAPPER_ENV_KEY: "NOVA_WRAPPER",
   resolveGatewayProgramArguments: mocks.resolveGatewayProgramArguments,
   resolveOpenClawWrapperPath: mocks.resolveOpenClawWrapperPath,
 }));
@@ -124,7 +124,7 @@ function mockNodeGatewayPlanFixture(
     version = "22.0.0",
     supported = true,
     warning,
-    serviceEnvironment = { OPENCLAW_PORT: "3000" },
+    serviceEnvironment = { NOVA_PORT: "3000" },
   } = params;
   const workingDirectory = Object.hasOwn(params, "workingDirectory")
     ? params.workingDirectory
@@ -156,7 +156,7 @@ function mockNodeGatewayPlanFixture(
 }
 
 async function buildPluginConfigExecSecretRefPlan(home: string) {
-  mockNodeGatewayPlanFixture({ serviceEnvironment: { OPENCLAW_PORT: "3000" } });
+  mockNodeGatewayPlanFixture({ serviceEnvironment: { NOVA_PORT: "3000" } });
   const pluginRoot = path.join(home, "acme-secrets");
   createSecurePluginRoot(pluginRoot);
   writeSecurePluginEntrypoint(path.join(pluginRoot, "secret-ref-resolver.js"));
@@ -267,7 +267,7 @@ describe("buildGatewayInstallPlan", () => {
 
     expect(plan.programArguments).toEqual(["node", "gateway"]);
     expect(plan.workingDirectory).toBe("/Users/me");
-    expect(plan.environment).toEqual({ OPENCLAW_PORT: "3000" });
+    expect(plan.environment).toEqual({ NOVA_PORT: "3000" });
     expect(mocks.resolvePreferredNodePath).not.toHaveBeenCalled();
     expect(mocks.buildServiceEnvironment).toHaveBeenCalledOnce();
     const serviceEnvRequest = firstMockArg(
@@ -396,18 +396,18 @@ describe("buildGatewayInstallPlan", () => {
     expect(plan.workingDirectory).toBeUndefined();
   });
 
-  it("passes OPENCLAW_WRAPPER through program args and managed service env", async () => {
+  it("passes NOVA_WRAPPER through program args and managed service env", async () => {
     const wrapperPath = path.resolve("/usr/local/bin/openclaw-doppler");
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
-        OPENCLAW_WRAPPER: wrapperPath,
+        NOVA_PORT: "3000",
+        NOVA_WRAPPER: wrapperPath,
       },
     });
 
     const plan = await buildGatewayInstallPlan({
       env: isolatedPlanEnv({
-        OPENCLAW_WRAPPER: wrapperPath,
+        NOVA_WRAPPER: wrapperPath,
       }),
       port: 3000,
       runtime: "node",
@@ -420,9 +420,9 @@ describe("buildGatewayInstallPlan", () => {
     ).toBe(wrapperPath);
     expect(mocks.buildServiceEnvironment).toHaveBeenCalledOnce();
     expect(
-      firstMockArg(mocks.buildServiceEnvironment, "buildServiceEnvironment").env?.OPENCLAW_WRAPPER,
+      firstMockArg(mocks.buildServiceEnvironment, "buildServiceEnvironment").env?.NOVA_WRAPPER,
     ).toBe(wrapperPath);
-    expect(plan.environment.OPENCLAW_WRAPPER).toBe(wrapperPath);
+    expect(plan.environment.NOVA_WRAPPER).toBe(wrapperPath);
   });
 
   it("clears a Windows wrapper env that points at the generated gateway.cmd script", async () => {
@@ -430,13 +430,13 @@ describe("buildGatewayInstallPlan", () => {
     const warn = vi.fn();
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
     const plan = await buildGatewayInstallPlan({
       env: isolatedPlanEnv({
-        OPENCLAW_WRAPPER: selfWrapperPath,
+        NOVA_WRAPPER: selfWrapperPath,
       }),
       port: 3000,
       runtime: "node",
@@ -451,13 +451,11 @@ describe("buildGatewayInstallPlan", () => {
     ).toBeUndefined();
     expect(mocks.buildServiceEnvironment).toHaveBeenCalledOnce();
     expect(
-      firstMockArg(mocks.buildServiceEnvironment, "buildServiceEnvironment").env?.OPENCLAW_WRAPPER,
+      firstMockArg(mocks.buildServiceEnvironment, "buildServiceEnvironment").env?.NOVA_WRAPPER,
     ).toBeUndefined();
-    expect(plan.environment.OPENCLAW_WRAPPER).toBeUndefined();
+    expect(plan.environment.NOVA_WRAPPER).toBeUndefined();
     expect(warn).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "Ignoring OPENCLAW_WRAPPER because it points to the Windows task script",
-      ),
+      expect.stringContaining("Ignoring NOVA_WRAPPER because it points to the Windows task script"),
     );
   });
 
@@ -465,7 +463,7 @@ describe("buildGatewayInstallPlan", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/Users/service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -481,7 +479,7 @@ describe("buildGatewayInstallPlan", () => {
           TRIMMED_KEY: "  ",
           vars: {
             GOOGLE_API_KEY: "test-key", // pragma: allowlist secret
-            OPENCLAW_PORT: "9999",
+            NOVA_PORT: "9999",
             NODE_OPTIONS: "--require /tmp/evil.js",
             SAFE_KEY: "safe-value",
           },
@@ -496,8 +494,8 @@ describe("buildGatewayInstallPlan", () => {
     expect(plan.environment.EMPTY_KEY).toBeUndefined();
     expect(plan.environment.TRIMMED_KEY).toBeUndefined();
     expect(plan.environment.HOME).toBe("/Users/service");
-    expect(plan.environment.OPENCLAW_PORT).toBe("3000");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe(
+    expect(plan.environment.NOVA_PORT).toBe("3000");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe(
       "CUSTOM_VAR,GOOGLE_API_KEY,SAFE_KEY",
     );
     expect(mocks.loadPluginManifestRegistryForPluginRegistry).not.toHaveBeenCalled();
@@ -506,7 +504,7 @@ describe("buildGatewayInstallPlan", () => {
   it("renders config env SecretRefs as file-backed managed values on Linux", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -528,13 +526,13 @@ describe("buildGatewayInstallPlan", () => {
 
     expect(plan.environment.DISCORD_BOT_TOKEN).toBe("discord-test-token");
     expect(plan.environmentValueSources?.DISCORD_BOT_TOKEN).toBe("file");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("DISCORD_BOT_TOKEN");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("DISCORD_BOT_TOKEN");
   });
 
   it("retains config env SecretRefs for Windows task scripts", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -556,13 +554,13 @@ describe("buildGatewayInstallPlan", () => {
 
     expect(plan.environment.DISCORD_BOT_TOKEN).toBe("discord-test-token");
     expect(plan.environmentValueSources?.DISCORD_BOT_TOKEN).toBe("inline");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("DISCORD_BOT_TOKEN");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("DISCORD_BOT_TOKEN");
   });
 
   it("keeps config env SecretRefs managed when auth profiles reuse the key", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -598,13 +596,13 @@ describe("buildGatewayInstallPlan", () => {
 
     expect(plan.environment.OPENAI_API_KEY).toBe("sk-openai-test");
     expect(plan.environmentValueSources?.OPENAI_API_KEY).toBe("file");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("OPENAI_API_KEY");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("OPENAI_API_KEY");
   });
 
   it("includes passEnv values for configured exec SecretRef providers", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -635,13 +633,13 @@ describe("buildGatewayInstallPlan", () => {
     });
 
     expect(plan.environment.OP_CONNECT_TOKEN).toBe("op-connect-token");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("includes passEnv values for plugin-managed exec SecretRef providers", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
     const pluginRoot = path.join(isolatedHome, "acme-secrets");
@@ -695,20 +693,20 @@ describe("buildGatewayInstallPlan", () => {
 
     expect(plan.environment.ACME_SECRETS_ADDR).toBe("http://secrets.example.test");
     expect(plan.environment.ACME_SECRETS_TOKEN).toBe("secret-token");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("includes passEnv values for plugin config exec SecretRefs", async () => {
     const plan = await buildPluginConfigExecSecretRefPlan(isolatedHome);
 
     expect(plan.environment.ACME_SECRETS_TOKEN).toBe("secret-token");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("includes passEnv values for auth-profile exec SecretRef providers", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -748,13 +746,13 @@ describe("buildGatewayInstallPlan", () => {
     });
 
     expect(plan.environment.OP_CONNECT_TOKEN).toBe("op-connect-token");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("includes passEnv values for auth-profile plugin-managed exec SecretRef providers", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
     const pluginRoot = path.join(isolatedHome, "acme-secrets");
@@ -817,13 +815,13 @@ describe("buildGatewayInstallPlan", () => {
 
     expect(plan.environment.ACME_SECRETS_ADDR).toBe("http://secrets.example.test");
     expect(plan.environment.ACME_SECRETS_TOKEN).toBe("secret-token");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("allows safe inherited passEnv names while blocking dangerous exec SecretRef env", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -900,7 +898,7 @@ describe("buildGatewayInstallPlan", () => {
   it("blocks dangerous passEnv values for auth-profile exec SecretRef providers", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -956,7 +954,7 @@ describe("buildGatewayInstallPlan", () => {
   it("does not include passEnv values for unused exec SecretRef providers", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -981,33 +979,33 @@ describe("buildGatewayInstallPlan", () => {
     });
 
     expect(plan.environment.OP_CONNECT_TOKEN).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("does not embed gateway auth SecretRef values into the service environment", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
     const plan = await buildGatewayInstallPlan({
       env: isolatedPlanEnv({
-        OPENCLAW_GATEWAY_TOKEN: "gateway-test-token",
+        NOVA_GATEWAY_TOKEN: "gateway-test-token",
       }),
       port: 3000,
       runtime: "node",
       config: {
         gateway: {
           auth: {
-            token: { source: "env", provider: "default", id: "OPENCLAW_GATEWAY_TOKEN" },
+            token: { source: "env", provider: "default", id: "NOVA_GATEWAY_TOKEN" },
           },
         },
       },
     });
 
-    expect(plan.environment.OPENCLAW_GATEWAY_TOKEN).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_GATEWAY_TOKEN).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("does not inline config env SecretRef values already backed by state-dir dotenv", async () => {
@@ -1016,7 +1014,7 @@ describe("buildGatewayInstallPlan", () => {
     });
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1036,13 +1034,13 @@ describe("buildGatewayInstallPlan", () => {
     });
 
     expect(plan.environment.DISCORD_BOT_TOKEN).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("DISCORD_BOT_TOKEN");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("DISCORD_BOT_TOKEN");
   });
 
   it("skips auth-profile store load when no auth-profile source exists", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
     mocks.hasAnyAuthProfileStoreSource.mockReturnValue(false);
@@ -1054,13 +1052,13 @@ describe("buildGatewayInstallPlan", () => {
     });
 
     expect(mocks.loadAuthProfileStoreForSecretsRuntime).not.toHaveBeenCalled();
-    expect(plan.environment.OPENCLAW_PORT).toBe("3000");
+    expect(plan.environment.NOVA_PORT).toBe("3000");
   });
 
   it("uses the provided authStore without probing auth-profile runtime", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1083,7 +1081,7 @@ describe("buildGatewayInstallPlan", () => {
     });
 
     expect(plan.environment.OPENAI_API_KEY).toBe("sk-openai-test");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
     expect(mocks.hasAnyAuthProfileStoreSource).not.toHaveBeenCalled();
     expect(mocks.loadAuthProfileStoreForSecretsRuntime).not.toHaveBeenCalled();
   });
@@ -1091,7 +1089,7 @@ describe("buildGatewayInstallPlan", () => {
   it("merges only portable auth-profile env refs into the service environment", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
     mocks.loadAuthProfileStoreForSecretsRuntime.mockReturnValue({
@@ -1149,7 +1147,7 @@ describe("buildGatewayInstallPlan", () => {
     expect(plan.environment.MISSING_TOKEN).toBeUndefined();
     expect(plan.environment.OPENAI_API_KEY).toBe("sk-openai-test");
     expect(plan.environment.ANTHROPIC_TOKEN).toBe("ant-test-token");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
     expect(warn).toHaveBeenCalledWith(
       'Auth profile env ref "NODE_OPTIONS" blocked by host-env security policy',
       "Auth profile",
@@ -1182,7 +1180,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1203,8 +1201,8 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     expect(plan.environment.OPENROUTER_API_KEY).toBeUndefined();
     expect(plan.environment.MY_KEY).toBeUndefined();
     expect(plan.environment.HOME).toBe("/from-service");
-    expect(plan.environment.OPENCLAW_PORT).toBe("3000");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe(
+    expect(plan.environment.NOVA_PORT).toBe("3000");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe(
       "BRAVE_API_KEY,MY_KEY,OPENROUTER_API_KEY",
     );
   });
@@ -1216,8 +1214,8 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
-        OPENCLAW_PORT: "3000",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1230,7 +1228,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
 
     expect(plan.environment.TAVILY_API_KEY).toBe("dotenv-tavily");
     expect(plan.environment.OPENROUTER_API_KEY).toBe("or-key");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe(
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe(
       "OPENROUTER_API_KEY,TAVILY_API_KEY",
     );
   });
@@ -1242,8 +1240,8 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
-        OPENCLAW_PORT: "3000",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1266,15 +1264,15 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     });
 
     expect(plan.environment.MINIMAX_API_KEY).toBe("minimax-dotenv-key");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("MINIMAX_API_KEY");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("MINIMAX_API_KEY");
   });
 
   it("retains config SecretRef env values for macOS LaunchAgent env files", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
-        OPENCLAW_PORT: "3000",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1309,15 +1307,15 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     });
 
     expect(plan.environment.TELEGRAM_DEFAULT_BOTTOKEN).toBe("telegram-shell-token");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("TELEGRAM_DEFAULT_BOTTOKEN");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("TELEGRAM_DEFAULT_BOTTOKEN");
   });
 
   it("retains existing generated env-file SecretRef values for macOS LaunchAgent regeneration", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
-        OPENCLAW_PORT: "3000",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1330,14 +1328,14 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
         TELEGRAM_DEFAULT_BOTTOKEN: "telegram-existing-env-file-token",
         TELEGRAM_HERMES_BOTTOKEN: "telegram-existing-hermes-env-file-token",
         RETIRED_BOTTOKEN: "retired-env-file-token",
-        OPENCLAW_SERVICE_MANAGED_ENV_KEYS:
+        NOVA_SERVICE_MANAGED_ENV_KEYS:
           "RETIRED_BOTTOKEN,TELEGRAM_DEFAULT_BOTTOKEN,TELEGRAM_HERMES_BOTTOKEN",
       },
       existingEnvironmentValueSources: {
         TELEGRAM_DEFAULT_BOTTOKEN: "file",
         TELEGRAM_HERMES_BOTTOKEN: "file",
         RETIRED_BOTTOKEN: "file",
-        OPENCLAW_SERVICE_MANAGED_ENV_KEYS: "inline",
+        NOVA_SERVICE_MANAGED_ENV_KEYS: "inline",
       },
       config: {
         env: {
@@ -1379,7 +1377,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     expect(plan.environment.RETIRED_BOTTOKEN).toBeUndefined();
     expect(plan.environmentValueSources?.RETIRED_BOTTOKEN).toBeUndefined();
     expect(plan.environment.OPENROUTER_API_KEY).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe(
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe(
       "OPENROUTER_API_KEY,TELEGRAM_DEFAULT_BOTTOKEN,TELEGRAM_HERMES_BOTTOKEN",
     );
   });
@@ -1391,8 +1389,8 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
-        OPENCLAW_PORT: "3000",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1420,7 +1418,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     });
 
     expect(plan.environment.MINIMAX_API_KEY).toBe("minimax-dotenv-key");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("MINIMAX_API_KEY");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("MINIMAX_API_KEY");
   });
 
   it("does not retain config env values for macOS LaunchAgent env files", async () => {
@@ -1430,8 +1428,8 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
-        OPENCLAW_PORT: "3000",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1442,11 +1440,11 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
       platform: "darwin",
       existingEnvironment: {
         BRAVE_API_KEY: "stale-generated-value",
-        OPENCLAW_SERVICE_MANAGED_ENV_KEYS: "BRAVE_API_KEY",
+        NOVA_SERVICE_MANAGED_ENV_KEYS: "BRAVE_API_KEY",
       },
       existingEnvironmentValueSources: {
         BRAVE_API_KEY: "file",
-        OPENCLAW_SERVICE_MANAGED_ENV_KEYS: "inline",
+        NOVA_SERVICE_MANAGED_ENV_KEYS: "inline",
       },
       config: {
         env: {
@@ -1461,13 +1459,13 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     expect(plan.environment.BRAVE_API_KEY).toBeUndefined();
     expect(plan.environment.OPENROUTER_API_KEY).toBeUndefined();
     expect(plan.environment.TAVILY_API_KEY).toBe("dotenv-tavily");
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe(
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe(
       "BRAVE_API_KEY,OPENROUTER_API_KEY,TAVILY_API_KEY",
     );
   });
 
   it("works when .env file does not exist", async () => {
-    mockNodeGatewayPlanFixture({ serviceEnvironment: { OPENCLAW_PORT: "3000" } });
+    mockNodeGatewayPlanFixture({ serviceEnvironment: { NOVA_PORT: "3000" } });
 
     const plan = await buildGatewayInstallPlan({
       env: { HOME: tmpDir },
@@ -1475,14 +1473,14 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
       runtime: "node",
     });
 
-    expect(plan.environment.OPENCLAW_PORT).toBe("3000");
+    expect(plan.environment.NOVA_PORT).toBe("3000");
   });
 
   it("preserves safe custom vars from an existing service env and merges PATH", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
         PATH: "/managed/bin:/usr/bin",
         TMPDIR: "/tmp",
       },
@@ -1509,7 +1507,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
         BLOGWATCHER_HOME: "/Users/test/.blogwatcher",
         NODE_OPTIONS: "--require /tmp/evil.js",
         GOPATH: "/Users/test/.local/gopath",
-        OPENCLAW_SERVICE_MARKER: "openclaw",
+        NOVA_SERVICE_MARKER: "openclaw",
       },
     });
 
@@ -1518,14 +1516,14 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     expect(plan.environment.BLOGWATCHER_HOME).toBe("/Users/test/.blogwatcher");
     expect(plan.environment.NODE_OPTIONS).toBeUndefined();
     expect(plan.environment.GOPATH).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MARKER).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MARKER).toBeUndefined();
   });
 
   it("drops stale non-minimal PATH entries from an existing service env", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
         PATH: "/usr/local/bin:/usr/bin:/bin",
         TMPDIR: "/tmp",
       },
@@ -1562,7 +1560,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
         PATH: "/managed/bin:/usr/bin",
         TMPDIR: "/tmp",
       },
@@ -1603,7 +1601,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: cwd,
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
         PATH: "/managed/bin:/usr/bin",
         TMPDIR: "/tmp",
       },
@@ -1626,7 +1624,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
         PATH: "/managed/bin:/usr/bin",
       },
     });
@@ -1641,7 +1639,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
         GOBIN: "/Users/test/.local/gopath/bin",
         BLOGWATCHER_HOME: "/Users/test/.blogwatcher",
         GOPATH: "/Users/test/.local/gopath",
-        OPENCLAW_SERVICE_MANAGED_ENV_KEYS: "GOBIN,GOPATH",
+        NOVA_SERVICE_MANAGED_ENV_KEYS: "GOBIN,GOPATH",
       },
     });
 
@@ -1649,14 +1647,14 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     expect(plan.environment.GOBIN).toBeUndefined();
     expect(plan.environment.BLOGWATCHER_HOME).toBe("/Users/test/.blogwatcher");
     expect(plan.environment.GOPATH).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBeUndefined();
   });
 
   it("does not preserve existing PATH entries for macOS LaunchAgents", async () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
         PATH: "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
         TMPDIR: "/tmp",
       },
@@ -1691,7 +1689,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1706,7 +1704,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     });
 
     expect(plan.environment.TAVILY_API_KEY).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("TAVILY_API_KEY");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("TAVILY_API_KEY");
     expect(plan.environment.CUSTOM_TOOL_HOME).toBe("/Users/test/.custom-tool");
   });
 
@@ -1714,7 +1712,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1725,12 +1723,12 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
       existingEnvironment: {
         OPENROUTER_API_KEY: "or-operator-key",
         CUSTOM_TOOL_HOME: "/Users/test/.custom-tool",
-        OPENCLAW_GATEWAY_TOKEN: "old-token",
+        NOVA_GATEWAY_TOKEN: "old-token",
       },
       existingEnvironmentValueSources: {
         OPENROUTER_API_KEY: "file",
         CUSTOM_TOOL_HOME: "inline",
-        OPENCLAW_GATEWAY_TOKEN: "file",
+        NOVA_GATEWAY_TOKEN: "file",
       },
     });
 
@@ -1738,8 +1736,8 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     expect(plan.environmentValueSources?.OPENROUTER_API_KEY).toBe("file");
     expect(plan.environment.CUSTOM_TOOL_HOME).toBe("/Users/test/.custom-tool");
     expect(plan.environmentValueSources?.CUSTOM_TOOL_HOME).toBe("inline");
-    expect(plan.environment.OPENCLAW_GATEWAY_TOKEN).toBeUndefined();
-    expect(plan.environmentValueSources?.OPENCLAW_GATEWAY_TOKEN).toBeUndefined();
+    expect(plan.environment.NOVA_GATEWAY_TOKEN).toBeUndefined();
+    expect(plan.environmentValueSources?.NOVA_GATEWAY_TOKEN).toBeUndefined();
   });
 
   it("does not embed auth-profile env refs when the key is already durable", async () => {
@@ -1749,7 +1747,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     mockNodeGatewayPlanFixture({
       serviceEnvironment: {
         HOME: "/from-service",
-        OPENCLAW_PORT: "3000",
+        NOVA_PORT: "3000",
       },
     });
 
@@ -1773,7 +1771,7 @@ describe("buildGatewayInstallPlan — dotenv merge", () => {
     });
 
     expect(plan.environment.OPENAI_API_KEY).toBeUndefined();
-    expect(plan.environment.OPENCLAW_SERVICE_MANAGED_ENV_KEYS).toBe("OPENAI_API_KEY");
+    expect(plan.environment.NOVA_SERVICE_MANAGED_ENV_KEYS).toBe("OPENAI_API_KEY");
   });
 });
 
@@ -1800,34 +1798,34 @@ describe("collectPreservedExistingServiceEnvVars — operator opt-in allowlist",
     ).environment;
   }
 
-  it("continues to drop stale OPENCLAW_ALLOW_ROOT", async () => {
-    const result = await buildEnvironment({ OPENCLAW_ALLOW_ROOT: "1" });
-    expect(result.OPENCLAW_ALLOW_ROOT).toBeUndefined();
+  it("continues to drop stale NOVA_ALLOW_ROOT", async () => {
+    const result = await buildEnvironment({ NOVA_ALLOW_ROOT: "1" });
+    expect(result.NOVA_ALLOW_ROOT).toBeUndefined();
   });
 
-  it("preserves OPENCLAW_CLI_CONTAINER_BYPASS and OPENCLAW_CONTAINER_HINT", async () => {
+  it("preserves NOVA_CLI_CONTAINER_BYPASS and NOVA_CONTAINER_HINT", async () => {
     const result = await buildEnvironment({
-      OPENCLAW_CLI_CONTAINER_BYPASS: "1",
-      OPENCLAW_CONTAINER_HINT: "ci",
+      NOVA_CLI_CONTAINER_BYPASS: "1",
+      NOVA_CONTAINER_HINT: "ci",
     });
-    expect(result.OPENCLAW_CLI_CONTAINER_BYPASS).toBe("1");
-    expect(result.OPENCLAW_CONTAINER_HINT).toBe("ci");
+    expect(result.NOVA_CLI_CONTAINER_BYPASS).toBe("1");
+    expect(result.NOVA_CONTAINER_HINT).toBe("ci");
   });
 
-  it("still drops arbitrary OPENCLAW_FOO", async () => {
-    const result = await buildEnvironment({ OPENCLAW_FOO: "bar" });
-    expect(result.OPENCLAW_FOO).toBeUndefined();
+  it("still drops arbitrary NOVA_FOO", async () => {
+    const result = await buildEnvironment({ NOVA_FOO: "bar" });
+    expect(result.NOVA_FOO).toBeUndefined();
   });
 
-  it("preserves container opt-ins while dropping unrelated OPENCLAW_* keys", async () => {
+  it("preserves container opt-ins while dropping unrelated NOVA_* keys", async () => {
     const result = await buildEnvironment({
-      OPENCLAW_CLI_CONTAINER_BYPASS: "1",
-      OPENCLAW_CONTAINER_HINT: "ci",
-      OPENCLAW_BAZ: "qux",
+      NOVA_CLI_CONTAINER_BYPASS: "1",
+      NOVA_CONTAINER_HINT: "ci",
+      NOVA_BAZ: "qux",
     });
-    expect(result.OPENCLAW_CLI_CONTAINER_BYPASS).toBe("1");
-    expect(result.OPENCLAW_CONTAINER_HINT).toBe("ci");
-    expect(result.OPENCLAW_BAZ).toBeUndefined();
+    expect(result.NOVA_CLI_CONTAINER_BYPASS).toBe("1");
+    expect(result.NOVA_CONTAINER_HINT).toBe("ci");
+    expect(result.NOVA_BAZ).toBeUndefined();
   });
 });
 /* oxlint-disable max-lines -- TODO: split this grandfathered oversized file. */

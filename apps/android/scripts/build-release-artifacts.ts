@@ -63,16 +63,16 @@ function normalizeFullGitCommit(raw: string): string {
 function normalizeIsoUtcTimestamp(raw: string): string {
   const timestamp = raw.trim();
   if (!isoUtcTimestampPattern.test(timestamp)) {
-    throw new Error("OPENCLAW_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp");
+    throw new Error("NOVA_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp");
   }
 
   const parsed = new Date(timestamp);
   if (Number.isNaN(parsed.getTime())) {
-    throw new Error("OPENCLAW_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp");
+    throw new Error("NOVA_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp");
   }
   const normalized = parsed.toISOString();
   if (normalized.slice(0, 19) !== timestamp.slice(0, 19)) {
-    throw new Error("OPENCLAW_BUILD_TIMESTAMP must be a valid ISO-8601 UTC timestamp");
+    throw new Error("NOVA_BUILD_TIMESTAMP must be a valid ISO-8601 UTC timestamp");
   }
   return normalized;
 }
@@ -108,7 +108,7 @@ export function resolveAndroidBuildMetadata(
   }
   const commit = normalizeFullGitCommit(commitSource);
 
-  const configuredTimestamp = env.OPENCLAW_BUILD_TIMESTAMP?.trim();
+  const configuredTimestamp = env.NOVA_BUILD_TIMESTAMP?.trim();
   const timestamp = configuredTimestamp
     ? normalizeIsoUtcTimestamp(configuredTimestamp)
     : (options.now ?? (() => new Date()))().toISOString();

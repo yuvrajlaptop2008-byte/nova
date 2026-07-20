@@ -16,7 +16,7 @@ function normalizeHostPath(value: string): string {
 
 describe("local media roots", () => {
   function withStateDir<T>(stateDir: string, run: () => T): T {
-    return withEnv({ OPENCLAW_STATE_DIR: stateDir }, run);
+    return withEnv({ NOVA_STATE_DIR: stateDir }, run);
   }
 
   function expectNormalizedRootsContain(

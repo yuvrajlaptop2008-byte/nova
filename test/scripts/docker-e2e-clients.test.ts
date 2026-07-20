@@ -30,7 +30,7 @@ describe("Docker E2E client scripts", () => {
     );
     expect(source).toContain("verifyRuntimeContextTranscriptShape(root)");
     expect(source).toContain("verifyDoctorRepair(root)");
-    expect(source).toContain("<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>");
+    expect(source).toContain("<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>");
     expect(source).toContain("openclaw.runtime-context");
     expect(source).toContain("doctor repair left runtime context in active transcript");
   });

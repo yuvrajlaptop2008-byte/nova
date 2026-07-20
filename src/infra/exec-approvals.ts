@@ -380,7 +380,7 @@ function resolveExecApprovalsStateDir(env: NodeJS.ProcessEnv = process.env): {
   path: string;
   displayPath: string;
 } {
-  const override = env.OPENCLAW_STATE_DIR?.trim();
+  const override = env.NOVA_STATE_DIR?.trim();
   if (override) {
     const resolved = resolveHomeRelativePath(override, { env });
     return {
@@ -410,8 +410,8 @@ export function resolveExecApprovalsDisplayPath(): string {
 }
 
 export function resolveExecApprovalsTranscriptPath(): string {
-  return process.env.OPENCLAW_STATE_DIR?.trim()
-    ? `$OPENCLAW_STATE_DIR/${EXEC_APPROVALS_FILE}`
+  return process.env.NOVA_STATE_DIR?.trim()
+    ? `$NOVA_STATE_DIR/${EXEC_APPROVALS_FILE}`
     : `${DEFAULT_EXEC_APPROVALS_STATE_DIR}/${EXEC_APPROVALS_FILE}`;
 }
 

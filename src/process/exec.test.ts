@@ -14,7 +14,7 @@ import {
   shouldSpawnWithShell,
 } from "./exec.js";
 
-const OPENCLAW_CLI_ENV_VALUE = "1";
+const NOVA_CLI_ENV_VALUE = "1";
 
 describe("runCommandWithTimeout", () => {
   it("never enables shell execution (Windows cmd.exe injection hardening)", () => {
@@ -30,21 +30,21 @@ describe("runCommandWithTimeout", () => {
     const resolved = resolveCommandEnv({
       argv: ["node", "script.js"],
       baseEnv: {
-        OPENCLAW_BASE_ENV: "base",
-        OPENCLAW_CHILD_ENV_REMOVE: "base",
-        OPENCLAW_TO_REMOVE: undefined,
+        NOVA_BASE_ENV: "base",
+        NOVA_CHILD_ENV_REMOVE: "base",
+        NOVA_TO_REMOVE: undefined,
       },
       env: {
-        OPENCLAW_CHILD_ENV_REMOVE: undefined,
-        OPENCLAW_TEST_ENV: "ok",
+        NOVA_CHILD_ENV_REMOVE: undefined,
+        NOVA_TEST_ENV: "ok",
       },
     });
 
-    expect(resolved.OPENCLAW_BASE_ENV).toBe("base");
-    expect(resolved.OPENCLAW_CHILD_ENV_REMOVE).toBeUndefined();
-    expect(resolved.OPENCLAW_TEST_ENV).toBe("ok");
-    expect(resolved.OPENCLAW_TO_REMOVE).toBeUndefined();
-    expect(resolved.OPENCLAW_CLI).toBe(OPENCLAW_CLI_ENV_VALUE);
+    expect(resolved.NOVA_BASE_ENV).toBe("base");
+    expect(resolved.NOVA_CHILD_ENV_REMOVE).toBeUndefined();
+    expect(resolved.NOVA_TEST_ENV).toBe("ok");
+    expect(resolved.NOVA_TO_REMOVE).toBeUndefined();
+    expect(resolved.NOVA_CLI).toBe(NOVA_CLI_ENV_VALUE);
   });
 
   it("collapses case-insensitive duplicate env keys on Windows", () => {
@@ -53,18 +53,18 @@ describe("runCommandWithTimeout", () => {
       platform: "win32",
       baseEnv: {
         Path: "C:\\base\\bin",
-        OPENCLAW_BASE_ENV: "base",
+        NOVA_BASE_ENV: "base",
       },
       env: {
         PATH: "C:\\override\\bin",
-        OPENCLAW_TEST_ENV: "ok",
+        NOVA_TEST_ENV: "ok",
       },
     });
 
     expect(resolved.Path).toBeUndefined();
     expect(resolved.PATH).toBe("C:\\override\\bin");
-    expect(resolved.OPENCLAW_BASE_ENV).toBe("base");
-    expect(resolved.OPENCLAW_TEST_ENV).toBe("ok");
+    expect(resolved.NOVA_BASE_ENV).toBe("base");
+    expect(resolved.NOVA_TEST_ENV).toBe("ok");
   });
 
   it("removes case-insensitive inherited env keys on Windows", () => {
@@ -96,7 +96,7 @@ describe("runCommandWithTimeout", () => {
   });
 
   it("does not restore parent variables excluded from the child environment", async () => {
-    const key = "OPENCLAW_EXECA_PARENT_ONLY_TEST";
+    const key = "NOVA_EXECA_PARENT_ONLY_TEST";
     const previous = process.env[key];
     process.env[key] = "parent-value";
     try {
@@ -619,10 +619,10 @@ describe("runExec", () => {
       process.execPath,
       [
         "-e",
-        "process.stdin.pipe(process.stdout); process.stderr.write(process.env.OPENCLAW_RUN_EXEC_TEST ?? 'missing')",
+        "process.stdin.pipe(process.stdout); process.stderr.write(process.env.NOVA_RUN_EXEC_TEST ?? 'missing')",
       ],
       {
-        baseEnv: { OPENCLAW_RUN_EXEC_TEST: "base" },
+        baseEnv: { NOVA_RUN_EXEC_TEST: "base" },
         input: Buffer.from("input"),
         timeoutMs: 3_000,
       },

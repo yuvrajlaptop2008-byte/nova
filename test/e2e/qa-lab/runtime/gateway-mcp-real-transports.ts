@@ -262,8 +262,8 @@ function resolveChannelMcpInvocation(params: {
         [
           `import(${JSON.stringify(channelServerUrl)})`,
           `.then((module) => module.serveOpenClawChannelMcp({`,
-          `gatewayUrl: process.env.OPENCLAW_QA_GATEWAY_URL,`,
-          `gatewayToken: process.env.OPENCLAW_QA_GATEWAY_TOKEN,`,
+          `gatewayUrl: process.env.NOVA_QA_GATEWAY_URL,`,
+          `gatewayToken: process.env.NOVA_QA_GATEWAY_TOKEN,`,
           `claudeChannelMode: "off",`,
           `verbose: true`,
           `}))`,
@@ -272,8 +272,8 @@ function resolveChannelMcpInvocation(params: {
       command: process.execPath,
       cwd: params.repoRoot,
       envPatch: {
-        OPENCLAW_QA_GATEWAY_TOKEN: params.gatewayToken,
-        OPENCLAW_QA_GATEWAY_URL: params.gatewayUrl,
+        NOVA_QA_GATEWAY_TOKEN: params.gatewayToken,
+        NOVA_QA_GATEWAY_URL: params.gatewayUrl,
       },
     };
   }
@@ -299,10 +299,10 @@ function resolvePluginToolsMcpInvocation(params: {
     cwd: params.repoRoot,
     env: {
       HOME: params.homeDir,
-      OPENCLAW_CONFIG_PATH: params.configPath,
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-      OPENCLAW_HOME: params.homeDir,
-      OPENCLAW_STATE_DIR: params.stateDir,
+      NOVA_CONFIG_PATH: params.configPath,
+      NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+      NOVA_HOME: params.homeDir,
+      NOVA_STATE_DIR: params.stateDir,
     },
   };
 }
@@ -499,9 +499,9 @@ async function connectChannelMcpClient(params: {
     env: {
       ...process.env,
       ...mcpInvocation.envPatch,
-      OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: "1",
-      OPENCLAW_LOG_LEVEL: "debug",
-      OPENCLAW_STATE_DIR: tempState.stateDir,
+      NOVA_ALLOW_INSECURE_PRIVATE_WS: "1",
+      NOVA_LOG_LEVEL: "debug",
+      NOVA_STATE_DIR: tempState.stateDir,
     },
     stderr: "pipe",
   });
@@ -570,7 +570,7 @@ async function runGatewaySmokeProof(options: ProducerOptions): Promise<string> {
     controlUiEnabled: false,
   });
   const tempRoot = gateway.tempRoot;
-  const keepTemp = process.env.OPENCLAW_QA_KEEP_TEMP === "1";
+  const keepTemp = process.env.NOVA_QA_KEEP_TEMP === "1";
   let details = "";
   try {
     const stdout: string[] = [];
@@ -605,7 +605,7 @@ async function runMcpGatewayStartupRetryProof(options: ProducerOptions): Promise
   let mcp: McpClientHandle | undefined;
   let gateway: Awaited<ReturnType<typeof startQaGatewayChild>> | undefined;
   let beforeSpawnAt = 0;
-  const keepTemp = process.env.OPENCLAW_QA_KEEP_TEMP === "1";
+  const keepTemp = process.env.NOVA_QA_KEEP_TEMP === "1";
   let details = "";
   let proofError: Error | undefined;
   try {

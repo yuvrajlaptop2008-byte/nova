@@ -10,7 +10,7 @@ import {
 import { getSessionEntry, upsertSessionEntry } from "openclaw/plugin-sdk/session-store-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { installMatrixMonitorTestRuntime } from "../../test-runtime.js";
-import { MATRIX_OPENCLAW_FINALIZED_PREVIEW_KEY } from "../send/types.js";
+import { MATRIX_NOVA_FINALIZED_PREVIEW_KEY } from "../send/types.js";
 import {
   createMatrixHandlerTestHarness,
   createMatrixReactionEvent,
@@ -241,7 +241,7 @@ function expectFinalizedPreviewEdit(eventId: string, text: string) {
       room === "!room:example.org" && editedEventId === eventId && body === text,
   );
   const options = requireRecord(call[3], "edit options");
-  expect(options.extraContent).toEqual({ [MATRIX_OPENCLAW_FINALIZED_PREVIEW_KEY]: true });
+  expect(options.extraContent).toEqual({ [MATRIX_NOVA_FINALIZED_PREVIEW_KEY]: true });
 }
 
 function expectEditLiveFlag(eventId: string, text: string, expected: boolean | undefined) {

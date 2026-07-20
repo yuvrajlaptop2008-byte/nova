@@ -205,7 +205,7 @@ export type QaSuiteRunParams = {
 };
 
 function shouldLogQaSuiteProgress(env: NodeJS.ProcessEnv = process.env) {
-  const override = parseQaSuiteBooleanEnv(env.OPENCLAW_QA_SUITE_PROGRESS);
+  const override = parseQaSuiteBooleanEnv(env.NOVA_QA_SUITE_PROGRESS);
   if (override !== undefined) {
     return override;
   }
@@ -223,7 +223,7 @@ function resolveQaSuiteTransportReadyTimeoutMs(
   ) {
     return Math.floor(explicitTimeoutMs);
   }
-  const raw = env.OPENCLAW_QA_TRANSPORT_READY_TIMEOUT_MS;
+  const raw = env.NOVA_QA_TRANSPORT_READY_TIMEOUT_MS;
   if (!raw) {
     return 120_000;
   }
@@ -614,8 +614,8 @@ function buildQaRuntimeEnvPatch(params: {
 }): NodeJS.ProcessEnv | undefined {
   const patch: NodeJS.ProcessEnv = {};
   if (params.forcedRuntime) {
-    patch.OPENCLAW_BUILD_PRIVATE_QA = "1";
-    patch.OPENCLAW_QA_FORCE_RUNTIME = params.forcedRuntime;
+    patch.NOVA_BUILD_PRIVATE_QA = "1";
+    patch.NOVA_QA_FORCE_RUNTIME = params.forcedRuntime;
   }
   if (params.forcedRuntime !== "codex" || params.providerMode !== "mock-openai") {
     return Object.keys(patch).length > 0 ? patch : undefined;
@@ -627,7 +627,7 @@ function buildQaRuntimeEnvPatch(params: {
   // The forced codex lane uses the Codex app-server's native OpenAI provider
   // path, so pin the managed app-server to the QA mock endpoint instead of
   // leaking to the maintainer's real OpenAI config.
-  patch.OPENCLAW_CODEX_APP_SERVER_ARGS = `app-server -c openai_base_url=${mockBaseUrl}/v1 --listen stdio://`;
+  patch.NOVA_CODEX_APP_SERVER_ARGS = `app-server -c openai_base_url=${mockBaseUrl}/v1 --listen stdio://`;
   patch.OPENAI_API_KEY = "qa-mock-openai-key";
   patch.CODEX_API_KEY = "qa-mock-openai-key";
   return patch;
@@ -639,7 +639,7 @@ function appendNodeOption(raw: string | undefined, option: string) {
 }
 
 function shouldCaptureGatewayHeapCheckpoints(env: NodeJS.ProcessEnv = process.env) {
-  return parseQaSuiteBooleanEnv(env.OPENCLAW_QA_GATEWAY_HEAP_CHECKPOINTS) === true;
+  return parseQaSuiteBooleanEnv(env.NOVA_QA_GATEWAY_HEAP_CHECKPOINTS) === true;
 }
 
 function buildQaGatewayHeapCheckpointRuntimeEnvPatch(
@@ -2038,7 +2038,7 @@ export async function runQaFlowSuite(params?: QaSuiteRunParams): Promise<QaSuite
     throw error;
   } finally {
     const activeEnv = env;
-    const keepTemp = process.env.OPENCLAW_QA_KEEP_TEMP === "1" || false;
+    const keepTemp = process.env.NOVA_QA_KEEP_TEMP === "1" || false;
     const activeGateway = gateway;
     const activeMock = mock;
     const cleanupErrors = await runQaFlowSuiteCleanupPlan({

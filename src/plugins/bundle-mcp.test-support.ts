@@ -98,8 +98,8 @@ export async function withBundleHomeEnv<T>(
     {
       HOME: homeDir,
       USERPROFILE: homeDir,
-      OPENCLAW_HOME: undefined,
-      OPENCLAW_STATE_DIR: undefined,
+      NOVA_HOME: undefined,
+      NOVA_STATE_DIR: undefined,
     },
     () => run({ homeDir, workspaceDir }),
   );

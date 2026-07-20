@@ -59,7 +59,7 @@ function withLegacyCronWebhook(
 }
 
 async function measureStartupPreflightStep<T>(name: string, run: () => T | Promise<T>): Promise<T> {
-  if (!isTruthyEnvValue(process.env.OPENCLAW_GATEWAY_STARTUP_TRACE)) {
+  if (!isTruthyEnvValue(process.env.NOVA_GATEWAY_STARTUP_TRACE)) {
     return await run();
   }
   const startedAt = performance.now();
@@ -148,7 +148,7 @@ function addDoctorLegacyIssues(
 export function shouldSkipPluginValidationForDoctorConfigPreflight(
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  return isTruthyEnvValue(env.OPENCLAW_UPDATE_IN_PROGRESS);
+  return isTruthyEnvValue(env.NOVA_UPDATE_IN_PROGRESS);
 }
 
 function noteStateMigrationResult(result: {

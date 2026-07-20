@@ -2646,7 +2646,7 @@ describe("resolveGatewayStartupPluginIds", () => {
     expectStartupPluginIdsCase({
       config: {} as OpenClawConfig,
       env: createPluginPlanningTestEnv({
-        OPENCLAW_STATE_DIR: "/tmp/openclaw-with-persisted-demo-channel",
+        NOVA_STATE_DIR: "/tmp/openclaw-with-persisted-demo-channel",
       }),
       expected: ["browser", "memory-core"],
     });
@@ -2670,7 +2670,7 @@ describe("resolveGatewayStartupPluginIds", () => {
           },
         } as OpenClawConfig,
         env: createPluginPlanningTestEnv({
-          OPENCLAW_STATE_DIR: "/tmp/openclaw-with-persisted-demo-channel",
+          NOVA_STATE_DIR: "/tmp/openclaw-with-persisted-demo-channel",
         }),
       }),
     ).toStrictEqual([]);
@@ -2980,7 +2980,7 @@ describe("resolveGatewayStartupPluginIds", () => {
       config: createStartupConfig({
         enabledPluginIds: ["codex"],
       }),
-      env: { OPENCLAW_AGENT_RUNTIME: "codex" },
+      env: { NOVA_AGENT_RUNTIME: "codex" },
       expected: ["demo-channel", "browser", "memory-core"],
     });
   });

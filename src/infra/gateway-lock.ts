@@ -374,7 +374,7 @@ export async function acquireGatewayLock(
     ownerId,
   });
   const shouldAcquireConfigLock =
-    role === "sqlite-maintenance" || env.OPENCLAW_ALLOW_MULTI_GATEWAY !== "1";
+    role === "sqlite-maintenance" || env.NOVA_ALLOW_MULTI_GATEWAY !== "1";
   if (!shouldAcquireConfigLock) {
     return {
       ...stateLock,

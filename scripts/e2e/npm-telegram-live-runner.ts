@@ -36,11 +36,11 @@ function parsePositiveIntegerEnv(env: NodeJS.ProcessEnv, name: string) {
 }
 
 function resolveCredentialSource(env: NodeJS.ProcessEnv) {
-  return env.OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE ?? env.OPENCLAW_QA_CREDENTIAL_SOURCE;
+  return env.NOVA_NPM_TELEGRAM_CREDENTIAL_SOURCE ?? env.NOVA_QA_CREDENTIAL_SOURCE;
 }
 
 function resolveCredentialRole(env: NodeJS.ProcessEnv) {
-  return env.OPENCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE ?? env.OPENCLAW_QA_CREDENTIAL_ROLE;
+  return env.NOVA_NPM_TELEGRAM_CREDENTIAL_ROLE ?? env.NOVA_QA_CREDENTIAL_ROLE;
 }
 
 function createRunId() {
@@ -49,7 +49,7 @@ function createRunId() {
 
 function resolvePackageTelegramOutputDir(env: NodeJS.ProcessEnv, repoRoot: string) {
   return (
-    env.OPENCLAW_NPM_TELEGRAM_OUTPUT_DIR?.trim() ||
+    env.NOVA_NPM_TELEGRAM_OUTPUT_DIR?.trim() ||
     path.join(repoRoot, ".artifacts", "qa-e2e", `npm-telegram-live-${createRunId()}`)
   );
 }
@@ -57,7 +57,7 @@ function resolvePackageTelegramOutputDir(env: NodeJS.ProcessEnv, repoRoot: strin
 const DEFAULT_RTT_CHECK_ID = "channel-canary";
 
 function resolveRttOptions(env: NodeJS.ProcessEnv, selectedScenarioIds: readonly string[] = []) {
-  const explicitCheckIds = splitCsv(env.OPENCLAW_NPM_TELEGRAM_RTT_CHECKS);
+  const explicitCheckIds = splitCsv(env.NOVA_NPM_TELEGRAM_RTT_CHECKS);
   const checkIds = explicitCheckIds.length > 0 ? explicitCheckIds : [DEFAULT_RTT_CHECK_ID];
   const unknownCheckIds = checkIds.filter((checkId) => checkId !== DEFAULT_RTT_CHECK_ID);
   if (unknownCheckIds.length > 0) {
@@ -70,12 +70,12 @@ function resolveRttOptions(env: NodeJS.ProcessEnv, selectedScenarioIds: readonly
   ) {
     return undefined;
   }
-  const count = parsePositiveIntegerEnv(env, "OPENCLAW_NPM_TELEGRAM_RTT_SAMPLES") ?? 20;
+  const count = parsePositiveIntegerEnv(env, "NOVA_NPM_TELEGRAM_RTT_SAMPLES") ?? 20;
   return {
     scenarioId: DEFAULT_RTT_CHECK_ID,
     count,
-    timeoutMs: parsePositiveIntegerEnv(env, "OPENCLAW_NPM_TELEGRAM_RTT_TIMEOUT_MS") ?? 30_000,
-    maxFailures: parsePositiveIntegerEnv(env, "OPENCLAW_NPM_TELEGRAM_RTT_MAX_FAILURES") ?? count,
+    timeoutMs: parsePositiveIntegerEnv(env, "NOVA_NPM_TELEGRAM_RTT_TIMEOUT_MS") ?? 30_000,
+    maxFailures: parsePositiveIntegerEnv(env, "NOVA_NPM_TELEGRAM_RTT_MAX_FAILURES") ?? count,
   };
 }
 
@@ -102,7 +102,7 @@ async function shouldFailPackageTelegramRun(
   result: { summaryPath: string },
   env: NodeJS.ProcessEnv = process.env,
 ) {
-  if (parseBoolean(env.OPENCLAW_NPM_TELEGRAM_ALLOW_FAILURES)) {
+  if (parseBoolean(env.NOVA_NPM_TELEGRAM_ALLOW_FAILURES)) {
     return false;
   }
   const { readQaSuiteFailedScenarioCountFromFile } =
@@ -115,13 +115,11 @@ async function resolveTrustedOpenClawCommand(
   env: NodeJS.ProcessEnv = process.env,
 ) {
   if (!path.isAbsolute(rawCommand)) {
-    throw new Error("OPENCLAW_NPM_TELEGRAM_SUT_COMMAND must be an absolute path.");
+    throw new Error("NOVA_NPM_TELEGRAM_SUT_COMMAND must be an absolute path.");
   }
   const commandName = path.basename(rawCommand);
   if (commandName !== "openclaw" && commandName !== "openclaw.cmd") {
-    throw new Error(
-      `OPENCLAW_NPM_TELEGRAM_SUT_COMMAND must point to openclaw; got: ${commandName}`,
-    );
+    throw new Error(`NOVA_NPM_TELEGRAM_SUT_COMMAND must point to openclaw; got: ${commandName}`);
   }
   const npmPrefix = env.NPM_CONFIG_PREFIX?.trim();
   if (!npmPrefix) {
@@ -132,7 +130,7 @@ async function resolveTrustedOpenClawCommand(
     fs.realpath(npmPrefix),
   ]);
   if (realCommand !== realPrefix && !realCommand.startsWith(`${realPrefix}${path.sep}`)) {
-    throw new Error("OPENCLAW_NPM_TELEGRAM_SUT_COMMAND must resolve inside NPM_CONFIG_PREFIX.");
+    throw new Error("NOVA_NPM_TELEGRAM_SUT_COMMAND must resolve inside NPM_CONFIG_PREFIX.");
   }
   return {
     executablePath: rawCommand,
@@ -143,28 +141,28 @@ async function resolveTrustedOpenClawCommand(
 async function main() {
   const { runQaTelegramSuite } =
     await import("../../extensions/qa-lab/src/live-transports/telegram/cli.runtime.ts");
-  const rawSutOpenClawCommand = process.env.OPENCLAW_NPM_TELEGRAM_SUT_COMMAND?.trim();
+  const rawSutOpenClawCommand = process.env.NOVA_NPM_TELEGRAM_SUT_COMMAND?.trim();
   if (!rawSutOpenClawCommand) {
-    throw new Error("Missing OPENCLAW_NPM_TELEGRAM_SUT_COMMAND.");
+    throw new Error("Missing NOVA_NPM_TELEGRAM_SUT_COMMAND.");
   }
   const sutOpenClawCommand = await resolveTrustedOpenClawCommand(rawSutOpenClawCommand);
 
-  const repoRoot = path.resolve(process.env.OPENCLAW_NPM_TELEGRAM_REPO_ROOT ?? process.cwd());
+  const repoRoot = path.resolve(process.env.NOVA_NPM_TELEGRAM_REPO_ROOT ?? process.cwd());
   const outputDir = resolvePackageTelegramOutputDir(process.env, repoRoot);
-  const scenarioIds = splitCsv(process.env.OPENCLAW_NPM_TELEGRAM_SCENARIOS);
+  const scenarioIds = splitCsv(process.env.NOVA_NPM_TELEGRAM_SCENARIOS);
   const result = await runQaTelegramSuite({
     allowFailures: true,
     failFast: true,
     repoRoot,
     outputDir,
     sutOpenClawCommand,
-    providerMode: process.env.OPENCLAW_NPM_TELEGRAM_PROVIDER_MODE as QaProviderMode | undefined,
-    primaryModel: process.env.OPENCLAW_NPM_TELEGRAM_MODEL,
-    alternateModel: process.env.OPENCLAW_NPM_TELEGRAM_ALT_MODEL,
-    fastMode: parseBoolean(process.env.OPENCLAW_NPM_TELEGRAM_FAST),
+    providerMode: process.env.NOVA_NPM_TELEGRAM_PROVIDER_MODE as QaProviderMode | undefined,
+    primaryModel: process.env.NOVA_NPM_TELEGRAM_MODEL,
+    alternateModel: process.env.NOVA_NPM_TELEGRAM_ALT_MODEL,
+    fastMode: parseBoolean(process.env.NOVA_NPM_TELEGRAM_FAST),
     scenarioIds,
     roundTripProbe: createRoundTripProbe(resolveRttOptions(process.env, scenarioIds)),
-    sutAccountId: process.env.OPENCLAW_NPM_TELEGRAM_SUT_ACCOUNT,
+    sutAccountId: process.env.NOVA_NPM_TELEGRAM_SUT_ACCOUNT,
     credentialSource: resolveCredentialSource(process.env),
     credentialRole: resolveCredentialRole(process.env),
   });

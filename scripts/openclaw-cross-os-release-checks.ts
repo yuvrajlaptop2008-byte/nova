@@ -123,8 +123,8 @@ async function main(argv: string[]) {
 
   const summary = {
     platform: process.platform,
-    runnerOs: process.env.OPENCLAW_RELEASE_CHECK_OS ?? "",
-    runnerLabel: process.env.OPENCLAW_RELEASE_CHECK_RUNNER ?? "",
+    runnerOs: process.env.NOVA_RELEASE_CHECK_OS ?? "",
+    runnerLabel: process.env.NOVA_RELEASE_CHECK_RUNNER ?? "",
     provider,
     mode,
     suite,

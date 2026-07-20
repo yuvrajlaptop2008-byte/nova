@@ -9,8 +9,8 @@ import {
   resolveOpenClawStateSqlitePath,
 } from "./openclaw-state-db.paths.js";
 
-const OPENCLAW_STATE_DIR_MODE = 0o700;
-const OPENCLAW_STATE_FILE_MODE = 0o600;
+const NOVA_STATE_DIR_MODE = 0o700;
+const NOVA_STATE_FILE_MODE = 0o600;
 
 const stateDbLog = createSubsystemLogger("state/db");
 
@@ -41,14 +41,14 @@ export function ensureOpenClawStatePermissions(pathname: string, env: NodeJS.Pro
     throw new Error(`Nova state database path resolved outside its state dir: ${pathname}`);
   }
   const dirExisted = existsSync(dir);
-  mkdirSync(dir, { recursive: true, mode: OPENCLAW_STATE_DIR_MODE });
+  mkdirSync(dir, { recursive: true, mode: NOVA_STATE_DIR_MODE });
   // Default state contains credentials-adjacent metadata; custom existing dirs keep caller modes.
   if (isDefaultStateDatabase || !dirExisted) {
-    bestEffortChmodSync(dir, OPENCLAW_STATE_DIR_MODE);
+    bestEffortChmodSync(dir, NOVA_STATE_DIR_MODE);
   }
   for (const candidate of resolveSqliteDatabaseFilePaths(pathname)) {
     if (existsSync(candidate)) {
-      bestEffortChmodSync(candidate, OPENCLAW_STATE_FILE_MODE);
+      bestEffortChmodSync(candidate, NOVA_STATE_FILE_MODE);
     }
   }
 }

@@ -47,7 +47,7 @@ describe("engine/ref/store", () => {
     vi.resetModules();
     const stateDir = createTempDir("qqbot-state-");
     const homeDir = createTempDir("qqbot-home-");
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("NOVA_STATE_DIR", stateDir);
     vi.stubEnv("HOME", homeDir);
     await useMockHome(homeDir);
     installQQBotRuntimeForStateTests(stateDir);

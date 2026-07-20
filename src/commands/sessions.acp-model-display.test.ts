@@ -72,7 +72,7 @@ let tempStateDirs: string[] = [];
 function useTempStateDir(): string {
   const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-acp-sessions-state-"));
   tempStateDirs.push(stateDir);
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  process.env.NOVA_STATE_DIR = stateDir;
   return stateDir;
 }
 
@@ -147,7 +147,7 @@ function buildNonAcpSessionEntry(): SessionEntry {
 
 describe("sessionsCommand model/modelProvider display for ACP sessions (catalog #20)", () => {
   beforeEach(() => {
-    originalStateDir = process.env.OPENCLAW_STATE_DIR;
+    originalStateDir = process.env.NOVA_STATE_DIR;
     mockAgentConfigWithCopilotModel();
   });
 
@@ -158,9 +158,9 @@ describe("sessionsCommand model/modelProvider display for ACP sessions (catalog 
     }
     tempStateDirs = [];
     if (originalStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalStateDir;
+      process.env.NOVA_STATE_DIR = originalStateDir;
     }
     resetMockSessionsConfig();
   });

@@ -341,9 +341,9 @@ function providerCallProviders() {
 }
 
 beforeEach(() => {
-  delete process.env.OPENCLAW_LOCALE;
+  delete process.env.NOVA_LOCALE;
   // Route hints exercise source policy even when a prior local build left stale dist artifacts.
-  vi.stubEnv("OPENCLAW_BUNDLED_PLUGINS_DIR", path.resolve("extensions"));
+  vi.stubEnv("NOVA_BUNDLED_PLUGINS_DIR", path.resolve("extensions"));
   vi.clearAllMocks();
   modelCatalogRouteVariants.value = undefined;
   providerAuthRoute.value = undefined;
@@ -1339,7 +1339,7 @@ describe("promptDefaultModel", () => {
     const prompter = makePrompter({ select });
     const env = {
       ...process.env,
-      OPENCLAW_STATE_DIR: "/tmp/openclaw-picker-state",
+      NOVA_STATE_DIR: "/tmp/openclaw-picker-state",
     };
     const config = {
       agents: {
@@ -1612,7 +1612,7 @@ describe("promptModelAllowlist", () => {
   });
 
   it("localizes the model allowlist picker", async () => {
-    process.env.OPENCLAW_LOCALE = "zh-CN";
+    process.env.NOVA_LOCALE = "zh-CN";
     loadModelCatalog.mockResolvedValue([
       {
         provider: "openai",

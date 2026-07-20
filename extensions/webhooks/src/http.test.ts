@@ -143,7 +143,7 @@ describe("createTaskFlowWebhookRequestHandler", () => {
       secretInput: {
         source: "env",
         provider: "default",
-        id: "OPENCLAW_WEBHOOK_SECRET",
+        id: "NOVA_WEBHOOK_SECRET",
       },
       defaultControllerId: "webhooks/cached",
       taskFlow: runtime.bindSession({

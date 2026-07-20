@@ -36,7 +36,7 @@ async function makeTestState(): Promise<OpenClawTestState> {
     layout: "state-only",
     prefix: "openclaw-doctor-canonical-api-key-",
     env: {
-      OPENCLAW_AGENT_DIR: undefined,
+      NOVA_AGENT_DIR: undefined,
     },
   });
   states.push(state);
@@ -149,7 +149,7 @@ describe("maybeRepairCanonicalApiKeyFieldAlias", () => {
     );
   });
 
-  it("repairs auth profiles from OPENCLAW_AGENT_DIR", async () => {
+  it("repairs auth profiles from NOVA_AGENT_DIR", async () => {
     const state = await makeTestState();
     const agentDir = state.path("external-agent");
     const authPath = path.join(agentDir, "auth-profiles.json");
@@ -172,7 +172,7 @@ describe("maybeRepairCanonicalApiKeyFieldAlias", () => {
       now: () => 123,
       env: {
         ...state.env,
-        OPENCLAW_AGENT_DIR: agentDir,
+        NOVA_AGENT_DIR: agentDir,
       },
     });
 
@@ -216,7 +216,7 @@ describe("maybeRepairCanonicalApiKeyFieldAlias", () => {
       now: () => 123,
       env: {
         ...state.env,
-        OPENCLAW_AGENT_DIR: undefined,
+        NOVA_AGENT_DIR: undefined,
         PI_CODING_AGENT_DIR: agentDir,
       },
     });

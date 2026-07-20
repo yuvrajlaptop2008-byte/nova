@@ -12,8 +12,7 @@ export function createGatewayStartupTrace(
   measure<T>(name: string, run: () => T | PromiseLike<T>): Promise<T>;
 } {
   const enabled =
-    isTruthyEnvValue(process.env.OPENCLAW_GATEWAY_STARTUP_TRACE) &&
-    argv.slice(2).includes("gateway");
+    isTruthyEnvValue(process.env.NOVA_GATEWAY_STARTUP_TRACE) && argv.slice(2).includes("gateway");
   const started = performance.now();
   let last = started;
   const emit = (name: string, durationMs: number, totalMs: number) => {

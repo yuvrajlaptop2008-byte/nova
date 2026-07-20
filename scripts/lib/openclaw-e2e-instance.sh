@@ -125,7 +125,7 @@ const signalExitCodes = new Map([
   ["SIGTERM", 143],
 ]);
 const killGraceMs = Number.parseInt(
-  process.env.OPENCLAW_E2E_TIMEOUT_KILL_GRACE_MS || "30000",
+  process.env.NOVA_E2E_TIMEOUT_KILL_GRACE_MS || "30000",
   10,
 );
 const killTarget = process.platform === "win32" ? child.pid : -child.pid;
@@ -203,8 +203,8 @@ NODE
 openclaw_e2e_print_log() {
   local path="$1"
   local max_bytes max_lines
-  max_bytes="$(openclaw_e2e_read_nonnegative_int_env OPENCLAW_E2E_LOG_TAIL_BYTES 262144)" || return $?
-  max_lines="$(openclaw_e2e_read_nonnegative_int_env OPENCLAW_E2E_LOG_TAIL_LINES 120)" || return $?
+  max_bytes="$(openclaw_e2e_read_nonnegative_int_env NOVA_E2E_LOG_TAIL_BYTES 262144)" || return $?
+  max_lines="$(openclaw_e2e_read_nonnegative_int_env NOVA_E2E_LOG_TAIL_LINES 120)" || return $?
   [ -f "$path" ] || return 0
   echo "--- $path ---"
   tail -c "$max_bytes" "$path" 2>/dev/null | tail -n "$max_lines" || tail -n "$max_lines" "$path" || true
@@ -213,8 +213,8 @@ openclaw_e2e_install_package() {
   local log_file="$1"
   local label="${2:-mounted OpenClaw package}"
   local prefix="${3:-}"
-  local package_tgz="${OPENCLAW_CURRENT_PACKAGE_TGZ:?missing OPENCLAW_CURRENT_PACKAGE_TGZ}"
-  local timeout_value="${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}"
+  local package_tgz="${NOVA_CURRENT_PACKAGE_TGZ:?missing NOVA_CURRENT_PACKAGE_TGZ}"
+  local timeout_value="${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}"
   local args=(-g)
   if [ -n "$prefix" ]; then
     args+=("--prefix" "$prefix")
@@ -271,22 +271,22 @@ openclaw_e2e_write_state_env() {
   local target="${1:-/tmp/openclaw-test-state-env}"
   {
     printf 'export HOME=%q\n' "$HOME"
-    printf 'export OPENCLAW_HOME=%q\n' "$OPENCLAW_HOME"
-    printf 'export OPENCLAW_STATE_DIR=%q\n' "$OPENCLAW_STATE_DIR"
-    printf 'export OPENCLAW_CONFIG_PATH=%q\n' "$OPENCLAW_CONFIG_PATH"
-    printf 'export OPENCLAW_AGENT_DIR=%q\n' "${OPENCLAW_AGENT_DIR-}"
+    printf 'export NOVA_HOME=%q\n' "$NOVA_HOME"
+    printf 'export NOVA_STATE_DIR=%q\n' "$NOVA_STATE_DIR"
+    printf 'export NOVA_CONFIG_PATH=%q\n' "$NOVA_CONFIG_PATH"
+    printf 'export NOVA_AGENT_DIR=%q\n' "${NOVA_AGENT_DIR-}"
   } >"$target"
 }
 openclaw_e2e_install_trash_shim() {
-  local shim_dir="${OPENCLAW_E2E_BIN_DIR:-}"
+  local shim_dir="${NOVA_E2E_BIN_DIR:-}"
   if [ -z "$shim_dir" ]; then
-    if [ -n "${OPENCLAW_STATE_DIR:-}" ]; then
-      shim_dir="$OPENCLAW_STATE_DIR/e2e-bin"
+    if [ -n "${NOVA_STATE_DIR:-}" ]; then
+      shim_dir="$NOVA_STATE_DIR/e2e-bin"
     else
       shim_dir="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-bin.XXXXXX")"
     fi
-    OPENCLAW_E2E_BIN_DIR="$shim_dir"
-    export OPENCLAW_E2E_BIN_DIR
+    NOVA_E2E_BIN_DIR="$shim_dir"
+    export NOVA_E2E_BIN_DIR
   fi
   case ":$PATH:" in
     *":$shim_dir:"*) ;;
@@ -311,7 +311,7 @@ TRASH
 openclaw_e2e_run_script_with_pty() {
   local command="$1"
   local log_path="$2"
-  local timeout_value="${OPENCLAW_E2E_COMMAND_TIMEOUT:-300s}"
+  local timeout_value="${NOVA_E2E_COMMAND_TIMEOUT:-300s}"
   if script --version >/dev/null 2>&1; then
     openclaw_e2e_maybe_timeout "$timeout_value" script -q -f -c "$command" "$log_path"
   elif node -e 'import("@lydell/node-pty")' >/dev/null 2>&1; then
@@ -432,7 +432,7 @@ openclaw_e2e_wait_gateway_ready() {
     fi
     if [ "$saw_ready_log" = "true" ]; then
       [ "$readiness_mode" = "legacy-ready-log-ok" ] && return 0
-      [ -n "$ready_port" ] || ready_port="${OPENCLAW_E2E_GATEWAY_READY_PORT:-18789}"
+      [ -n "$ready_port" ] || ready_port="${NOVA_E2E_GATEWAY_READY_PORT:-18789}"
       openclaw_e2e_probe_http "http://127.0.0.1:${ready_port}/readyz" ok 400 && return 0
     fi
     sleep 0.25
@@ -484,29 +484,29 @@ openclaw_e2e_assert_log_not_contains() {
   ! grep -q "$2" "$1" || { echo "Unexpected log output: $2"; exit 1; }
 }
 openclaw_e2e_run_logged() {
-  local label="$1" log_root="${OPENCLAW_E2E_LOG_DIR:-${TMPDIR:-/tmp}}" log_path safe_label
+  local label="$1" log_root="${NOVA_E2E_LOG_DIR:-${TMPDIR:-/tmp}}" log_path safe_label
   shift
   safe_label="${label//[^A-Za-z0-9_.-]/-}"
   [ -n "$safe_label" ] || safe_label="command"
   mkdir -p "$log_root"
   log_path="$(mktemp "$log_root/openclaw-${safe_label}.XXXXXX.log")"
-  OPENCLAW_E2E_LAST_LOG_PATH="$log_path"
-  export OPENCLAW_E2E_LAST_LOG_PATH
+  NOVA_E2E_LAST_LOG_PATH="$log_path"
+  export NOVA_E2E_LAST_LOG_PATH
   openclaw_e2e_run_command "$@" >"$log_path" 2>&1 || { openclaw_e2e_print_log "$log_path"; exit 1; }
 }
 openclaw_e2e_run_command() {
-  local timeout_value="${OPENCLAW_E2E_COMMAND_TIMEOUT:-300s}"
+  local timeout_value="${NOVA_E2E_COMMAND_TIMEOUT:-300s}"
   openclaw_e2e_maybe_timeout "$timeout_value" "$@"
 }
 openclaw_e2e_enable_openclaw_cli_timeout() {
-  OPENCLAW_E2E_CLI_BIN="$(type -P openclaw)"
-  if [ -z "$OPENCLAW_E2E_CLI_BIN" ]; then
+  NOVA_E2E_CLI_BIN="$(type -P openclaw)"
+  if [ -z "$NOVA_E2E_CLI_BIN" ]; then
     echo "OpenClaw CLI binary not found on PATH" >&2
     return 1
   fi
-  export OPENCLAW_E2E_CLI_BIN
+  export NOVA_E2E_CLI_BIN
   openclaw() {
-    openclaw_e2e_run_command "$OPENCLAW_E2E_CLI_BIN" "$@"
+    openclaw_e2e_run_command "$NOVA_E2E_CLI_BIN" "$@"
   }
 }
 openclaw_e2e_dump_logs() {

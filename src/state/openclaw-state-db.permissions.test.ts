@@ -64,7 +64,7 @@ describe("state database permission hardening without chmod support", () => {
     stateDir = fs.mkdtempSync(join(tmpdir(), "openclaw-state-chmod-"));
     chmodFailHook.error = enotsupError();
 
-    const database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
 
     expect(database.db.isOpen).toBe(true);
     // Hardening ran and failed; the failure must stay non-fatal.
@@ -77,29 +77,27 @@ describe("state database permission hardening without chmod support", () => {
     chmodFailHook.error = chmodError("EPERM");
     chmodFailHook.failProbe = false;
 
-    expect(() => openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } })).toThrow(
-      /EPERM/,
-    );
+    expect(() => openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } })).toThrow(/EPERM/);
   });
 
   it("opens when EPERM leaves existing permissions restrictive", () => {
     stateDir = fs.mkdtempSync(join(tmpdir(), "openclaw-state-chmod-"));
-    openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
     closeOpenClawStateDatabaseForTest();
     chmodFailHook.error = chmodError("EPERM");
 
-    const database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
 
     expect(database.db.isOpen).toBe(true);
   });
 
   it("opens when EROFS leaves existing permissions restrictive", () => {
     stateDir = fs.mkdtempSync(join(tmpdir(), "openclaw-state-chmod-"));
-    openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
     closeOpenClawStateDatabaseForTest();
     chmodFailHook.error = chmodError("EROFS");
 
-    const database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
 
     expect(database.db.isOpen).toBe(true);
   });
@@ -109,9 +107,7 @@ describe("state database permission hardening without chmod support", () => {
     fs.chmodSync(stateDir, 0o755);
     chmodFailHook.error = chmodError("EROFS");
 
-    expect(() => openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } })).toThrow(
-      /EROFS/,
-    );
+    expect(() => openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } })).toThrow(/EROFS/);
   });
 
   it("opens when the filesystem probe also rejects chmod with EPERM", () => {
@@ -119,7 +115,7 @@ describe("state database permission hardening without chmod support", () => {
     fs.chmodSync(stateDir, 0o755);
     chmodFailHook.error = chmodError("EPERM");
 
-    const database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
 
     expect(database.db.isOpen).toBe(true);
   });
@@ -130,27 +126,27 @@ describe("state database permission hardening without chmod support", () => {
     stateDir = fs.mkdtempSync(join(tmpdir(), "openclaw-state-chmod-"));
     chmodFailHook.error = chmodError("EACCES");
 
-    expect(() => openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } })).toThrow(
+    expect(() => openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } })).toThrow(
       /EACCES/,
     );
   });
 
   it("repairs the schema when chmodSync throws ENOTSUP", () => {
     stateDir = fs.mkdtempSync(join(tmpdir(), "openclaw-state-chmod-"));
-    openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
     closeOpenClawStateDatabaseForTest();
 
     chmodFailHook.error = enotsupError();
 
     expect(() =>
-      repairOpenClawStateDatabaseSchema({ env: { OPENCLAW_STATE_DIR: stateDir } }),
+      repairOpenClawStateDatabaseSchema({ env: { NOVA_STATE_DIR: stateDir } }),
     ).not.toThrow();
   });
 
   it("commits write transactions when chmodSync throws ENOTSUP", () => {
     stateDir = fs.mkdtempSync(join(tmpdir(), "openclaw-state-chmod-"));
     chmodFailHook.error = enotsupError();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
 
     const result = runOpenClawStateWriteTransaction((database) => {
       expect(database.db.isOpen).toBe(true);

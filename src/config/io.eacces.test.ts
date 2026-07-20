@@ -186,17 +186,14 @@ describe("config write guard after unreadable config", () => {
       const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
       try {
         fsNode.chmodSync(configPath, 0o000);
-        await withEnvAsync(
-          { OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_TEST_FAST: "1" },
-          async () => {
-            await expect(
-              writeConfigFile({ channels: { telegram: { enabled: true } } }),
-            ).rejects.toMatchObject({
-              code: "CONFIG_WRITE_REJECTED",
-              reasons: expect.arrayContaining(["unreadable-config-before-write"]),
-            });
-          },
-        );
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath, NOVA_TEST_FAST: "1" }, async () => {
+          await expect(
+            writeConfigFile({ channels: { telegram: { enabled: true } } }),
+          ).rejects.toMatchObject({
+            code: "CONFIG_WRITE_REJECTED",
+            reasons: expect.arrayContaining(["unreadable-config-before-write"]),
+          });
+        });
       } finally {
         resetConfigRuntimeState();
         errorSpy.mockRestore();

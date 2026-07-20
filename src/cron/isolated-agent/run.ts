@@ -1698,7 +1698,7 @@ export async function runCronIsolatedAgentTurn(params: {
   const isAborted = () => abortSignal?.aborted ?? false;
   const abortReason = () =>
     resolveCronAbortReasonText(abortSignal?.reason) ?? "cron: job execution timed out";
-  const isFastTestEnv = process.env.OPENCLAW_TEST_FAST === "1";
+  const isFastTestEnv = process.env.NOVA_TEST_FAST === "1";
   const prepared = await prepareCronRunContext({
     input: { ...params, abortSignal },
     isFastTestEnv,

@@ -195,8 +195,8 @@ describe("qa multipass runtime", () => {
   });
 
   it("forwards supported live credential shapes only in redacted form", async () => {
-    vi.stubEnv("OPENCLAW_LIVE_ANTHROPIC_KEYS", TEST_ENV_VALUE);
-    vi.stubEnv("OPENCLAW_LIVE_CODEX_API_KEY", TEST_ENV_VALUE);
+    vi.stubEnv("NOVA_LIVE_ANTHROPIC_KEYS", TEST_ENV_VALUE);
+    vi.stubEnv("NOVA_LIVE_CODEX_API_KEY", TEST_ENV_VALUE);
     vi.stubEnv("CODEX_API_KEY", TEST_ENV_VALUE);
     vi.stubEnv("OPENAI_API_KEY_1", TEST_ENV_VALUE);
     vi.stubEnv("GEMINI_API_KEY_2", TEST_ENV_VALUE);
@@ -206,8 +206,8 @@ describe("qa multipass runtime", () => {
     });
 
     for (const key of [
-      "OPENCLAW_LIVE_ANTHROPIC_KEYS",
-      "OPENCLAW_LIVE_CODEX_API_KEY",
+      "NOVA_LIVE_ANTHROPIC_KEYS",
+      "NOVA_LIVE_CODEX_API_KEY",
       "CODEX_API_KEY",
       "OPENAI_API_KEY_1",
       "GEMINI_API_KEY_2",

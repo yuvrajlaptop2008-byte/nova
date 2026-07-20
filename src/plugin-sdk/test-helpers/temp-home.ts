@@ -30,8 +30,8 @@ function snapshotEnv(): EnvSnapshot {
     userProfile: process.env.USERPROFILE,
     homeDrive: process.env.HOMEDRIVE,
     homePath: process.env.HOMEPATH,
-    openclawHome: process.env.OPENCLAW_HOME,
-    stateDir: process.env.OPENCLAW_STATE_DIR,
+    openclawHome: process.env.NOVA_HOME,
+    stateDir: process.env.NOVA_STATE_DIR,
   };
 }
 
@@ -47,8 +47,8 @@ function restoreEnv(snapshot: EnvSnapshot) {
   restoreKey("USERPROFILE", snapshot.userProfile);
   restoreKey("HOMEDRIVE", snapshot.homeDrive);
   restoreKey("HOMEPATH", snapshot.homePath);
-  restoreKey("OPENCLAW_HOME", snapshot.openclawHome);
-  restoreKey("OPENCLAW_STATE_DIR", snapshot.stateDir);
+  restoreKey("NOVA_HOME", snapshot.openclawHome);
+  restoreKey("NOVA_STATE_DIR", snapshot.stateDir);
 }
 
 function snapshotExtraEnv(keys: string[]): Record<string, string | undefined> {
@@ -72,9 +72,9 @@ function restoreExtraEnv(snapshot: Record<string, string | undefined>) {
 function setTempHome(base: string) {
   setTestEnvValue("HOME", base);
   setTestEnvValue("USERPROFILE", base);
-  // Ensure tests using HOME isolation aren't affected by leaked OPENCLAW_HOME.
-  deleteTestEnvValue("OPENCLAW_HOME");
-  setTestEnvValue("OPENCLAW_STATE_DIR", path.join(base, ".openclaw"));
+  // Ensure tests using HOME isolation aren't affected by leaked NOVA_HOME.
+  deleteTestEnvValue("NOVA_HOME");
+  setTestEnvValue("NOVA_STATE_DIR", path.join(base, ".openclaw"));
 
   if (process.platform !== "win32") {
     return;

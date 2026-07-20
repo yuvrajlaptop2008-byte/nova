@@ -55,11 +55,11 @@ describe("check-memory-fd-repro", () => {
     expect(
       withEnv(
         {
-          OPENCLAW_MEMORY_FD_REPRO_FILES: "17",
-          OPENCLAW_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS: "0",
-          OPENCLAW_MEMORY_FD_REPRO_SAMPLE_DELAY_MS: "0",
-          OPENCLAW_MEMORY_FD_REPRO_SETTLE_DELAY_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
-          OPENCLAW_MEMORY_FD_REPRO_TIMEOUT_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
+          NOVA_MEMORY_FD_REPRO_FILES: "17",
+          NOVA_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS: "0",
+          NOVA_MEMORY_FD_REPRO_SAMPLE_DELAY_MS: "0",
+          NOVA_MEMORY_FD_REPRO_SETTLE_DELAY_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
+          NOVA_MEMORY_FD_REPRO_TIMEOUT_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
         },
         () => parseArgs([]),
       ),
@@ -71,23 +71,23 @@ describe("check-memory-fd-repro", () => {
       settleDelayMs: MAX_TIMER_TIMEOUT_MS,
     });
 
-    expect(() =>
-      withEnv({ OPENCLAW_MEMORY_FD_REPRO_FILES: "17files" }, () => parseArgs([])),
-    ).toThrow("OPENCLAW_MEMORY_FD_REPRO_FILES must be a non-negative integer");
-    expect(() =>
-      withEnv({ OPENCLAW_MEMORY_FD_REPRO_TIMEOUT_MS: "1e3" }, () => parseArgs([])),
-    ).toThrow("OPENCLAW_MEMORY_FD_REPRO_TIMEOUT_MS must be a non-negative integer");
+    expect(() => withEnv({ NOVA_MEMORY_FD_REPRO_FILES: "17files" }, () => parseArgs([]))).toThrow(
+      "NOVA_MEMORY_FD_REPRO_FILES must be a non-negative integer",
+    );
+    expect(() => withEnv({ NOVA_MEMORY_FD_REPRO_TIMEOUT_MS: "1e3" }, () => parseArgs([]))).toThrow(
+      "NOVA_MEMORY_FD_REPRO_TIMEOUT_MS must be a non-negative integer",
+    );
   });
 
   it("lets explicit CLI numeric flags override malformed inherited env defaults", () => {
     expect(
       withEnv(
         {
-          OPENCLAW_MEMORY_FD_REPRO_FILES: "17files",
-          OPENCLAW_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS: "4fds",
-          OPENCLAW_MEMORY_FD_REPRO_TIMEOUT_MS: "1e3",
-          OPENCLAW_MEMORY_FD_REPRO_SAMPLE_DELAY_MS: "soon",
-          OPENCLAW_MEMORY_FD_REPRO_SETTLE_DELAY_MS: "later",
+          NOVA_MEMORY_FD_REPRO_FILES: "17files",
+          NOVA_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS: "4fds",
+          NOVA_MEMORY_FD_REPRO_TIMEOUT_MS: "1e3",
+          NOVA_MEMORY_FD_REPRO_SAMPLE_DELAY_MS: "soon",
+          NOVA_MEMORY_FD_REPRO_SETTLE_DELAY_MS: "later",
         },
         () =>
           parseArgs([
@@ -135,7 +135,7 @@ describe("check-memory-fd-repro", () => {
     });
 
     expect(
-      withEnv({ OPENCLAW_MEMORY_FD_REPRO_FILES: "17" }, () => parseArgs(["--", "--unknown"])),
+      withEnv({ NOVA_MEMORY_FD_REPRO_FILES: "17" }, () => parseArgs(["--", "--unknown"])),
     ).toMatchObject({
       fileCount: 17,
     });

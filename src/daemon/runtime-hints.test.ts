@@ -9,8 +9,8 @@ describe("buildPlatformRuntimeLogHints", () => {
         platform: "darwin",
         env: {
           HOME: "/Users/test",
-          OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
-          OPENCLAW_LOG_PREFIX: "gateway",
+          NOVA_STATE_DIR: "/tmp/openclaw-state",
+          NOVA_LOG_PREFIX: "gateway",
         },
         systemdServiceName: "openclaw-gateway",
         windowsTaskName: "Nova Gateway",
@@ -27,7 +27,7 @@ describe("buildPlatformRuntimeLogHints", () => {
       buildPlatformRuntimeLogHints({
         platform: "linux",
         env: {
-          OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
+          NOVA_STATE_DIR: "/tmp/openclaw-state",
         },
         systemdServiceName: "openclaw-gateway",
         windowsTaskName: "Nova Gateway",
@@ -40,7 +40,7 @@ describe("buildPlatformRuntimeLogHints", () => {
       buildPlatformRuntimeLogHints({
         platform: "win32",
         env: {
-          OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
+          NOVA_STATE_DIR: "/tmp/openclaw-state",
         },
         systemdServiceName: "openclaw-gateway",
         windowsTaskName: "Nova Gateway",

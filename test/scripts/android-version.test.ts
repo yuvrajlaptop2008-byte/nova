@@ -214,11 +214,9 @@ describe("renderAndroidVersionProperties", () => {
     });
     const version = resolveAndroidVersion(rootDir);
 
+    expect(renderAndroidVersionProperties(version)).toContain("NOVA_ANDROID_VERSION_NAME=2026.6.2");
     expect(renderAndroidVersionProperties(version)).toContain(
-      "OPENCLAW_ANDROID_VERSION_NAME=2026.6.2",
-    );
-    expect(renderAndroidVersionProperties(version)).toContain(
-      "OPENCLAW_ANDROID_VERSION_CODE=2026060201",
+      "NOVA_ANDROID_VERSION_CODE=2026060201",
     );
   });
 });

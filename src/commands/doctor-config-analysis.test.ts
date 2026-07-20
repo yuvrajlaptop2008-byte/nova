@@ -92,30 +92,30 @@ describe("doctor config analysis helpers", () => {
   });
 
   describe("stripUnknownConfigKeys during update", () => {
-    const originalEnv = process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+    const originalEnv = process.env.NOVA_UPDATE_IN_PROGRESS;
 
     beforeEach(() => {
-      delete process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+      delete process.env.NOVA_UPDATE_IN_PROGRESS;
     });
 
     afterEach(() => {
       if (originalEnv !== undefined) {
-        process.env.OPENCLAW_UPDATE_IN_PROGRESS = originalEnv;
+        process.env.NOVA_UPDATE_IN_PROGRESS = originalEnv;
       } else {
-        delete process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+        delete process.env.NOVA_UPDATE_IN_PROGRESS;
       }
     });
 
-    it("returns input unchanged when OPENCLAW_UPDATE_IN_PROGRESS=1", () => {
-      process.env.OPENCLAW_UPDATE_IN_PROGRESS = "1";
+    it("returns input unchanged when NOVA_UPDATE_IN_PROGRESS=1", () => {
+      process.env.NOVA_UPDATE_IN_PROGRESS = "1";
       const input = { hooks: {}, unexpected: true } as never;
       const result = stripUnknownConfigKeys(input);
       expect(result.config).toBe(input);
       expect(result.removed).toEqual([]);
     });
 
-    it("returns input unchanged when OPENCLAW_UPDATE_IN_PROGRESS=true", () => {
-      process.env.OPENCLAW_UPDATE_IN_PROGRESS = "true";
+    it("returns input unchanged when NOVA_UPDATE_IN_PROGRESS=true", () => {
+      process.env.NOVA_UPDATE_IN_PROGRESS = "true";
       const input = { hooks: {}, unexpected: true } as never;
       const result = stripUnknownConfigKeys(input);
       expect(result.config).toBe(input);
@@ -132,17 +132,17 @@ describe("doctor config analysis helpers", () => {
   });
 
   describe("plugins.installs whitelist", () => {
-    const originalEnv = process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+    const originalEnv = process.env.NOVA_UPDATE_IN_PROGRESS;
 
     beforeEach(() => {
-      delete process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+      delete process.env.NOVA_UPDATE_IN_PROGRESS;
     });
 
     afterEach(() => {
       if (originalEnv !== undefined) {
-        process.env.OPENCLAW_UPDATE_IN_PROGRESS = originalEnv;
+        process.env.NOVA_UPDATE_IN_PROGRESS = originalEnv;
       } else {
-        delete process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+        delete process.env.NOVA_UPDATE_IN_PROGRESS;
       }
     });
 

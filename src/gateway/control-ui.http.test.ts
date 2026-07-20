@@ -359,7 +359,7 @@ describe("handleControlUiHttpRequest", () => {
   }) {
     const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-ui-device-token-"));
     try {
-      return await withEnvAsync({ OPENCLAW_HOME: tempHome }, async () => {
+      return await withEnvAsync({ NOVA_HOME: tempHome }, async () => {
         const deviceId = "control-ui-device";
         const requested = await requestDevicePairing({
           deviceId,
@@ -404,7 +404,7 @@ describe("handleControlUiHttpRequest", () => {
     fn: (bearer: string) => Promise<T>;
   }) {
     const tempHome = testTempDirs.make("openclaw-ui-scoped-device-");
-    return await withEnvAsync({ OPENCLAW_HOME: tempHome }, async () => {
+    return await withEnvAsync({ NOVA_HOME: tempHome }, async () => {
       const deviceId = `control-ui-device-${randomUUID()}`;
       const requested = await requestDevicePairing({
         deviceId,

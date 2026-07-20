@@ -123,8 +123,8 @@ test("sessions.delete snapshots and removes session worktrees", async () => {
     path.join(await fs.realpath(os.tmpdir()), "openclaw-delete-worktree-"),
   );
   const workspace = await initializeRemoteBackedGitWorkspace(root);
-  const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-  process.env.OPENCLAW_STATE_DIR = path.join(root, "state");
+  const previousStateDir = process.env.NOVA_STATE_DIR;
+  process.env.NOVA_STATE_DIR = path.join(root, "state");
   closeOpenClawStateDatabaseForTest();
   testState.agentConfig = { workspace };
   await createSessionStoreDir();
@@ -195,9 +195,9 @@ test("sessions.delete snapshots and removes session worktrees", async () => {
     }
     closeOpenClawStateDatabaseForTest();
     if (previousStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previousStateDir;
+      process.env.NOVA_STATE_DIR = previousStateDir;
     }
     testState.agentConfig = undefined;
     await fs.rm(root, { recursive: true, force: true });

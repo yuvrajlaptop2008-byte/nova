@@ -29,11 +29,11 @@ const ROOMY_HOST = {
 function makeEnv(overrides: Record<string, string | undefined> = {}) {
   const env: NodeJS.ProcessEnv = {
     ...process.env,
-    OPENCLAW_LOCAL_CHECK: "1",
+    NOVA_LOCAL_CHECK: "1",
     ...overrides,
   };
-  if (!Object.hasOwn(overrides, "OPENCLAW_LOCAL_CHECK_MODE")) {
-    delete env.OPENCLAW_LOCAL_CHECK_MODE;
+  if (!Object.hasOwn(overrides, "NOVA_LOCAL_CHECK_MODE")) {
+    delete env.NOVA_LOCAL_CHECK_MODE;
   }
   if (!Object.hasOwn(overrides, "GITHUB_ACTIONS")) {
     delete env.GITHUB_ACTIONS;
@@ -111,12 +111,12 @@ describe("local-heavy-check-runtime", () => {
   });
 
   it("reenables local heavy-check policy for local wrapper entrypoints", () => {
-    expect(resolveLocalHeavyCheckEnv({ OPENCLAW_LOCAL_CHECK: "0", PATH: "/usr/bin" })).toEqual({
-      OPENCLAW_LOCAL_CHECK: "1",
+    expect(resolveLocalHeavyCheckEnv({ NOVA_LOCAL_CHECK: "0", PATH: "/usr/bin" })).toEqual({
+      NOVA_LOCAL_CHECK: "1",
       PATH: "/usr/bin",
     });
-    expect(resolveLocalHeavyCheckEnv({ OPENCLAW_LOCAL_CHECK: "false", PATH: "/usr/bin" })).toEqual({
-      OPENCLAW_LOCAL_CHECK: "1",
+    expect(resolveLocalHeavyCheckEnv({ NOVA_LOCAL_CHECK: "false", PATH: "/usr/bin" })).toEqual({
+      NOVA_LOCAL_CHECK: "1",
       PATH: "/usr/bin",
     });
   });
@@ -125,12 +125,12 @@ describe("local-heavy-check-runtime", () => {
     expect(
       resolveLocalHeavyCheckEnv({
         CI: "true",
-        OPENCLAW_LOCAL_CHECK: "0",
+        NOVA_LOCAL_CHECK: "0",
         PATH: "/usr/bin",
       }),
     ).toEqual({
       CI: "true",
-      OPENCLAW_LOCAL_CHECK: "0",
+      NOVA_LOCAL_CHECK: "0",
       PATH: "/usr/bin",
     });
   });
@@ -153,7 +153,7 @@ describe("local-heavy-check-runtime", () => {
   });
 
   it("skips declaration transforms for no-emit tsgo checks", () => {
-    const { args } = applyLocalTsgoPolicy([], makeEnv({ OPENCLAW_LOCAL_CHECK: "0" }), ROOMY_HOST);
+    const { args } = applyLocalTsgoPolicy([], makeEnv({ NOVA_LOCAL_CHECK: "0" }), ROOMY_HOST);
 
     expect(args).toEqual(["--declaration", "false"]);
   });
@@ -164,7 +164,7 @@ describe("local-heavy-check-runtime", () => {
       makeEnv({
         GOGC: "80",
         GOMEMLIMIT: "5GiB",
-        OPENCLAW_TSGO_PPROF_DIR: "/tmp/profile",
+        NOVA_TSGO_PPROF_DIR: "/tmp/profile",
       }),
       CONSTRAINED_HOST,
     );
@@ -183,7 +183,7 @@ describe("local-heavy-check-runtime", () => {
   });
 
   it("keeps explicit tsgo declaration flags intact", () => {
-    const env = makeEnv({ OPENCLAW_LOCAL_CHECK_MODE: "full" });
+    const env = makeEnv({ NOVA_LOCAL_CHECK_MODE: "full" });
     const longFlag = applyLocalTsgoPolicy(["--declaration"], env, ROOMY_HOST);
     const shortFlag = applyLocalTsgoPolicy(["-d"], env, ROOMY_HOST);
 
@@ -209,8 +209,8 @@ describe("local-heavy-check-runtime", () => {
     const { args } = applyLocalTsgoPolicy(
       [],
       makeEnv({
-        OPENCLAW_LOCAL_CHECK_MODE: "full",
-        OPENCLAW_TSGO_BUILD_INFO_FILE: ".artifacts/custom/tsgo.tsbuildinfo",
+        NOVA_LOCAL_CHECK_MODE: "full",
+        NOVA_TSGO_BUILD_INFO_FILE: ".artifacts/custom/tsgo.tsbuildinfo",
       }),
       ROOMY_HOST,
     );
@@ -227,7 +227,7 @@ describe("local-heavy-check-runtime", () => {
   it("avoids incremental cache reuse for ad hoc tsgo runs", () => {
     const { args } = applyLocalTsgoPolicy(
       ["--extendedDiagnostics"],
-      makeEnv({ OPENCLAW_LOCAL_CHECK_MODE: "full" }),
+      makeEnv({ NOVA_LOCAL_CHECK_MODE: "full" }),
       ROOMY_HOST,
     );
 
@@ -238,7 +238,7 @@ describe("local-heavy-check-runtime", () => {
     const { args, env } = applyLocalTsgoPolicy(
       [],
       makeEnv({
-        OPENCLAW_LOCAL_CHECK_MODE: "throttled",
+        NOVA_LOCAL_CHECK_MODE: "throttled",
       }),
       ROOMY_HOST,
     );
@@ -261,7 +261,7 @@ describe("local-heavy-check-runtime", () => {
     const { args, env } = applyLocalTsgoPolicy(
       [],
       makeEnv({
-        OPENCLAW_LOCAL_CHECK_MODE: "full",
+        NOVA_LOCAL_CHECK_MODE: "full",
       }),
       ROOMY_HOST,
     );
@@ -293,10 +293,7 @@ describe("local-heavy-check-runtime", () => {
 
   it("allows forcing the tsgo lock back on", () => {
     expect(
-      shouldAcquireLocalHeavyCheckLockForTsgo(
-        ["--help"],
-        makeEnv({ OPENCLAW_TSGO_FORCE_LOCK: "1" }),
-      ),
+      shouldAcquireLocalHeavyCheckLockForTsgo(["--help"], makeEnv({ NOVA_TSGO_FORCE_LOCK: "1" })),
     ).toBe(true);
   });
 
@@ -353,7 +350,7 @@ describe("local-heavy-check-runtime", () => {
     const { args, env } = applyLocalOxlintPolicy(
       [],
       makeEnv({
-        OPENCLAW_LOCAL_CHECK_MODE: "full",
+        NOVA_LOCAL_CHECK_MODE: "full",
       }),
       ROOMY_HOST,
     );
@@ -374,7 +371,7 @@ describe("local-heavy-check-runtime", () => {
       ["--", "src/example.ts"],
       makeEnv({
         GITHUB_ACTIONS: "true",
-        OPENCLAW_LOCAL_CHECK_MODE: "full",
+        NOVA_LOCAL_CHECK_MODE: "full",
       }),
       ROOMY_HOST,
     );
@@ -389,7 +386,7 @@ describe("local-heavy-check-runtime", () => {
         [formatArg],
         makeEnv({
           GITHUB_ACTIONS: "true",
-          OPENCLAW_LOCAL_CHECK_MODE: "full",
+          NOVA_LOCAL_CHECK_MODE: "full",
         }),
         ROOMY_HOST,
       );
@@ -436,7 +433,7 @@ describe("local-heavy-check-runtime", () => {
     expect(
       shouldAcquireLocalHeavyCheckLockForOxlint(["--type-aware", "--", "sample.ts"], {
         cwd,
-        env: makeEnv({ OPENCLAW_OXLINT_FORCE_LOCK: "1" }),
+        env: makeEnv({ NOVA_OXLINT_FORCE_LOCK: "1" }),
       }),
     ).toBe(true);
   });
@@ -486,7 +483,7 @@ describe("local-heavy-check-runtime", () => {
 
     const release = acquireLocalHeavyCheckLockSync({
       cwd,
-      env: makeEnv({ OPENCLAW_HEAVY_CHECK_LOCK_SCOPE: "worktree" }),
+      env: makeEnv({ NOVA_HEAVY_CHECK_LOCK_SCOPE: "worktree" }),
       toolName: "check:changed",
     });
 
@@ -506,17 +503,17 @@ describe("local-heavy-check-runtime", () => {
     expect(() =>
       acquireLocalHeavyCheckLockSync({
         cwd,
-        env: makeEnv({ OPENCLAW_HEAVY_CHECK_LOCK_TIMEOUT_MS: "10ms" }),
+        env: makeEnv({ NOVA_HEAVY_CHECK_LOCK_TIMEOUT_MS: "10ms" }),
         toolName: "oxlint",
       }),
-    ).toThrow("OPENCLAW_HEAVY_CHECK_LOCK_TIMEOUT_MS must be a positive integer; got: 10ms");
+    ).toThrow("NOVA_HEAVY_CHECK_LOCK_TIMEOUT_MS must be a positive integer; got: 10ms");
     expect(() =>
       acquireLocalHeavyCheckLockSync({
         cwd,
-        env: makeEnv({ OPENCLAW_HEAVY_CHECK_LOCK_POLL_MS: "0" }),
+        env: makeEnv({ NOVA_HEAVY_CHECK_LOCK_POLL_MS: "0" }),
         toolName: "oxlint",
       }),
-    ).toThrow("OPENCLAW_HEAVY_CHECK_LOCK_POLL_MS must be a positive integer; got: 0");
+    ).toThrow("NOVA_HEAVY_CHECK_LOCK_POLL_MS must be a positive integer; got: 0");
   });
 
   it("cleans up stale legacy test locks when acquiring the shared heavy-check lock", () => {

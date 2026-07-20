@@ -247,16 +247,13 @@ function stripLeadingPackageManagerSeparator(argv: string[]): string[] {
 
 class WindowsSmoke extends SmokeRunController<WindowsOptions> {
   private auth: ProviderAuth;
-  private agentTimeoutSeconds = readPositiveIntEnv(
-    "OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S",
-    2700,
-  );
+  private agentTimeoutSeconds = readPositiveIntEnv("NOVA_PARALLELS_WINDOWS_AGENT_TIMEOUT_S", 2700);
   private updateTimeoutSeconds = readPositiveIntEnv(
-    "OPENCLAW_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S",
+    "NOVA_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S",
     1200,
   );
   private gatewayRecoveryAfterMs =
-    readPositiveIntEnv("OPENCLAW_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S", 180) * 1000;
+    readPositiveIntEnv("NOVA_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S", 180) * 1000;
   private artifact: PackageArtifact | null = null;
   private minGitZipPath = "";
   private latestVersion = "";
@@ -672,7 +669,7 @@ $config.update | Add-Member -Force -MemberType NoteProperty -Name channel -Value
 $config | ConvertTo-Json -Depth 100 | Set-Content -Path $configPath -Encoding utf8
 ${windowsScopedEnvFunction}
 $script:OpenClawUpdateExit = 0
-Invoke-WithScopedEnv @{ OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = '1'; OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1' } {
+Invoke-WithScopedEnv @{ NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = '1'; NOVA_DISABLE_BUNDLED_PLUGINS = '1' } {
   Invoke-Nova update --channel dev --yes --json
   $script:OpenClawUpdateExit = $LASTEXITCODE
 }

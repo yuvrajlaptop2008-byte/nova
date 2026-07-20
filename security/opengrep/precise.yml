@@ -1514,19 +1514,19 @@ rules:
       - typescript
       - javascript
     severity: WARNING
-    message: Workspace .env runtime-control blocklist looks incomplete. Guard helpers should block OPENCLAW_GATEWAY_URL/PORT, OPENCLAW_UPDATE_*, OPENCLAW_SKIP_*, and ClawHub/browser-control variables, not just auth keys and _BASE_URL redirects.
+    message: Workspace .env runtime-control blocklist looks incomplete. Guard helpers should block NOVA_GATEWAY_URL/PORT, NOVA_UPDATE_*, NOVA_SKIP_*, and ClawHub/browser-control variables, not just auth keys and _BASE_URL redirects.
     patterns:
       - pattern-either:
           - pattern: |
               const BLOCKED_WORKSPACE_DOTENV_KEYS = new Set([...]);
           - pattern: |
               const BLOCKED_WORKSPACE_DOTENV_KEYS = new Set([...,]);
-      - pattern-not-regex: OPENCLAW_GATEWAY_URL
-      - pattern-not-regex: OPENCLAW_GATEWAY_PORT
-      - pattern-not-regex: OPENCLAW_BROWSER_EXECUTABLE_PATH
-      - pattern-not-regex: OPENCLAW_SKIP_
-      - pattern-not-regex: OPENCLAW_UPDATE_
-      - pattern-not-regex: OPENCLAW_CLAWHUB_
+      - pattern-not-regex: NOVA_GATEWAY_URL
+      - pattern-not-regex: NOVA_GATEWAY_PORT
+      - pattern-not-regex: NOVA_BROWSER_EXECUTABLE_PATH
+      - pattern-not-regex: NOVA_SKIP_
+      - pattern-not-regex: NOVA_UPDATE_
+      - pattern-not-regex: NOVA_CLAWHUB_
       - pattern-not-regex: CLAWHUB_
     metadata:
       ghsa: GHSA-7WV4-CC7P-JHXC
@@ -3581,19 +3581,19 @@ rules:
           - pattern: |
               loadWorkspaceDotEnvFile(...)
               ...
-              process.env.OPENCLAW_BUNDLED_PLUGINS_DIR
+              process.env.NOVA_BUNDLED_PLUGINS_DIR
           - pattern: |
               loadWorkspaceDotEnvFile(...)
               ...
-              process.env.OPENCLAW_BUNDLED_HOOKS_DIR
+              process.env.NOVA_BUNDLED_HOOKS_DIR
           - pattern: |
               loadWorkspaceDotEnvFile(...)
               ...
-              process.env.OPENCLAW_BUNDLED_SKILLS_DIR
+              process.env.NOVA_BUNDLED_SKILLS_DIR
           - pattern: |
               loadWorkspaceDotEnvFile(...)
               ...
-              process.env.OPENCLAW_BROWSER_CONTROL_MODULE
+              process.env.NOVA_BROWSER_CONTROL_MODULE
     metadata:
       ghsa: GHSA-QCJ9-WWGW-6GM8
       advisory-url: https://github.com/openclaw/openclaw/security/advisories/GHSA-QCJ9-WWGW-6GM8

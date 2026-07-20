@@ -18,7 +18,7 @@ describe("ACP parent stream SQLite store", () => {
     await withTempDir({ prefix: "openclaw-acp-parent-stream-" }, async (stateDir) => {
       const options = {
         agentId: "codex",
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       };
       runOpenClawAgentWriteTransaction((database) => {
         const db = getNodeSqliteKysely<Pick<OpenClawAgentKyselyDatabase, "sessions">>(database.db);
@@ -68,7 +68,7 @@ describe("ACP parent stream SQLite store", () => {
     await withTempDir({ prefix: "openclaw-acp-parent-stream-invalid-" }, async (stateDir) => {
       const options = {
         agentId: "codex",
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       };
       runOpenClawAgentWriteTransaction((database) => {
         const db = getNodeSqliteKysely<Pick<OpenClawAgentKyselyDatabase, "sessions">>(database.db);

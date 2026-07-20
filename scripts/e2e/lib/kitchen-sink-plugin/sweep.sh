@@ -4,10 +4,10 @@ set -euo pipefail
 source scripts/lib/openclaw-e2e-instance.sh
 
 KITCHEN_SINK_SWEEP_SOURCE_ONLY="${KITCHEN_SINK_SWEEP_SOURCE_ONLY:-0}"
-if [[ -z "${OPENCLAW_ENTRY:-}" && "$KITCHEN_SINK_SWEEP_SOURCE_ONLY" != "1" ]]; then
-  OPENCLAW_ENTRY="$(openclaw_e2e_resolve_entrypoint)"
+if [[ -z "${NOVA_ENTRY:-}" && "$KITCHEN_SINK_SWEEP_SOURCE_ONLY" != "1" ]]; then
+  NOVA_ENTRY="$(openclaw_e2e_resolve_entrypoint)"
 fi
-export OPENCLAW_ENTRY
+export NOVA_ENTRY
 KITCHEN_SINK_CREATED_TMP_DIR=0
 if [[ -z "${KITCHEN_SINK_TMP_DIR:-}" ]]; then
   KITCHEN_SINK_TMP_DIR="$(mktemp -d "/tmp/openclaw-kitchen-sink.XXXXXX")"
@@ -34,13 +34,13 @@ cleanup_kitchen_sink_sweep() {
 
 if [[ "$KITCHEN_SINK_SWEEP_SOURCE_ONLY" != "1" ]]; then
   trap cleanup_kitchen_sink_sweep EXIT
-  openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+  openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 fi
 
 print_kitchen_sink_log() {
   local log_file="$1"
   local max_bytes
-  max_bytes="$(openclaw_e2e_read_positive_int_env OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES 65536)" || return $?
+  max_bytes="$(openclaw_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536)" || return $?
   if [ ! -f "$log_file" ]; then
     return 0
   fi
@@ -58,14 +58,14 @@ print_kitchen_sink_log() {
   tail -c "$max_bytes" "$log_file"
 }
 
-openclaw_e2e_read_positive_int_env OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES 65536 >/dev/null
+openclaw_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536 >/dev/null
 
 run_kitchen_sink_openclaw_logged() {
   local label="$1"
   shift
   local safe_label="${label//[^[:alnum:]._-]/_}"
   local log_file="${KITCHEN_SINK_TMP_DIR}/${safe_label}.log"
-  if ! openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$OPENCLAW_ENTRY" "$@" >"$log_file" 2>&1; then
+  if ! openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" "$@" >"$log_file" 2>&1; then
     print_kitchen_sink_log "$log_file"
     return 1
   fi
@@ -75,7 +75,7 @@ run_kitchen_sink_openclaw_logged() {
 run_kitchen_sink_openclaw_capture() {
   local output_file="$1"
   shift
-  openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$OPENCLAW_ENTRY" "$@" >"$output_file"
+  openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" "$@" >"$output_file"
 }
 
 run_expect_failure() {
@@ -108,10 +108,10 @@ start_kitchen_sink_clawhub_fixture_server() {
   KITCHEN_SINK_CLAWHUB_PID_FILE="$server_pid_file"
 
   local wait_attempts
-  wait_attempts="$(openclaw_e2e_read_positive_int_env OPENCLAW_CLAWHUB_FIXTURE_WAIT_ATTEMPTS 600)" || return $?
+  wait_attempts="$(openclaw_e2e_read_positive_int_env NOVA_CLAWHUB_FIXTURE_WAIT_ATTEMPTS 600)" || return $?
   for _ in $(seq 1 "$wait_attempts"); do
     if [[ -s "$server_port_file" ]]; then
-      export OPENCLAW_CLAWHUB_URL="http://127.0.0.1:$(cat "$server_port_file")"
+      export NOVA_CLAWHUB_URL="http://127.0.0.1:$(cat "$server_port_file")"
       return 0
     fi
     if ! kill -0 "$server_pid" 2>/dev/null; then
@@ -178,7 +178,7 @@ run_success_scenario() {
 
 run_failure_scenario() {
   echo "Testing expected ${KITCHEN_SINK_LABEL} install failure from ${KITCHEN_SINK_SPEC}..."
-  run_expect_failure "install-${KITCHEN_SINK_LABEL}" openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$OPENCLAW_ENTRY" plugins install "$KITCHEN_SINK_SPEC" --force
+  run_expect_failure "install-${KITCHEN_SINK_LABEL}" openclaw_e2e_maybe_timeout "$KITCHEN_SINK_CLI_TIMEOUT" node "$NOVA_ENTRY" plugins install "$KITCHEN_SINK_SPEC" --force
   remove_kitchen_sink_channel_config
   run_kitchen_sink_openclaw_capture "${KITCHEN_SINK_TMP_DIR}/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json" plugins list --json
   assert_kitchen_sink_removed
@@ -186,13 +186,13 @@ run_failure_scenario() {
 
 run_kitchen_sink_sweep_main() {
   if [[ "$KITCHEN_SINK_SCENARIOS" == *"clawhub:"* ]]; then
-    if [[ "${OPENCLAW_KITCHEN_SINK_LIVE_CLAWHUB:-0}" = "1" ]]; then
-      export OPENCLAW_CLAWHUB_URL="${OPENCLAW_CLAWHUB_URL:-${CLAWHUB_URL:-https://clawhub.ai}}"
+    if [[ "${NOVA_KITCHEN_SINK_LIVE_CLAWHUB:-0}" = "1" ]]; then
+      export NOVA_CLAWHUB_URL="${NOVA_CLAWHUB_URL:-${CLAWHUB_URL:-https://clawhub.ai}}"
     else
-      if [[ -n "${OPENCLAW_CLAWHUB_URL:-}" || -n "${CLAWHUB_URL:-}" ]]; then
-        echo "Ignoring ambient ClawHub URL for fixture-mode kitchen-sink E2E; set OPENCLAW_KITCHEN_SINK_LIVE_CLAWHUB=1 for live ClawHub."
+      if [[ -n "${NOVA_CLAWHUB_URL:-}" || -n "${CLAWHUB_URL:-}" ]]; then
+        echo "Ignoring ambient ClawHub URL for fixture-mode kitchen-sink E2E; set NOVA_KITCHEN_SINK_LIVE_CLAWHUB=1 for live ClawHub."
       fi
-      unset OPENCLAW_CLAWHUB_URL CLAWHUB_URL
+      unset NOVA_CLAWHUB_URL CLAWHUB_URL
       clawhub_fixture_dir="$(mktemp -d "${KITCHEN_SINK_TMP_DIR}/clawhub.XXXXXX")"
       start_kitchen_sink_clawhub_fixture_server "$clawhub_fixture_dir"
     fi
@@ -210,7 +210,7 @@ run_kitchen_sink_sweep_main() {
     export KITCHEN_SINK_SOURCE="$source"
     export KITCHEN_SINK_SURFACE_MODE="$surface_mode"
     export KITCHEN_SINK_PERSONALITY="${personality:-}"
-    export OPENCLAW_KITCHEN_SINK_PERSONALITY="${personality:-}"
+    export NOVA_KITCHEN_SINK_PERSONALITY="${personality:-}"
     export KITCHEN_SINK_PREINSTALL_SPEC="${preinstall_spec:-}"
     case "$expectation" in
     success)

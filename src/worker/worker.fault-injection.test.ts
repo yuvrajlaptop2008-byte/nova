@@ -272,7 +272,7 @@ class ComposedGatewayHarness {
         profiles: { development: { provider: "fake", settings: { region: "test" } } },
       },
     };
-    this.database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: this.stateDir } });
+    this.database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: this.stateDir } });
     this.store = createWorkerEnvironmentStore({ database: this.database });
     this.seedAttachedEnvironment();
     this.liveEventsValue = this.createLiveEvents(true);

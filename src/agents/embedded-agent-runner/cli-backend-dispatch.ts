@@ -14,7 +14,7 @@
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import { onAgentEvent } from "../../infra/agent-events.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
-import { OPENCLAW_MCP_TOOL_PREFIX, stripOpenClawMcpToolPrefix } from "../cli-runner/tool-policy.js";
+import { NOVA_MCP_TOOL_PREFIX, stripOpenClawMcpToolPrefix } from "../cli-runner/tool-policy.js";
 import { normalizeToolName } from "../tool-policy.js";
 import { isToolResultError } from "../tool-result-error.js";
 import { resolveEmbeddedCliBackendDispatchEligibility } from "./cli-backend-dispatch-eligibility.js";
@@ -99,7 +99,7 @@ async function runEmbeddedAgentViaCliBackend(
   // unreachable, matching disableMessageTool intent.
   const cliToolAvailability = {
     native: [] as [],
-    mcp: dispatch.toolsAllow.map((name) => `${OPENCLAW_MCP_TOOL_PREFIX}${name}`),
+    mcp: dispatch.toolsAllow.map((name) => `${NOVA_MCP_TOOL_PREFIX}${name}`),
   };
   const onAgentToolResult = params.onAgentToolResult;
   // The CLI backend writes no Nova session records; mirror the run into

@@ -25,14 +25,14 @@ describe("OCM npm workspace dependency adapter", () => {
     expect(resolveNpmEnvironment(["pack", "--silent"], env)).toEqual({
       KEEP: "value",
       OCM_INTERNAL_NPM_BIN: adapterPath,
-      OPENCLAW_PREPACK_ALLOW_UNRELEASED_CHANGELOG: "1",
+      NOVA_PREPACK_ALLOW_UNRELEASED_CHANGELOG: "1",
     });
   });
 
   it("uses a prepared runtime-only pack for the diagnostic build profile", () => {
     expect(
       resolveRuntimePackPlan(["pack", "--pack-destination", "/tmp/out"], {
-        OPENCLAW_OCM_RUNTIME_BUILD_PROFILE: "sourcePerformance",
+        NOVA_OCM_RUNTIME_BUILD_PROFILE: "sourcePerformance",
       }),
     ).toEqual({
       profile: "sourcePerformance",
@@ -44,7 +44,7 @@ describe("OCM npm workspace dependency adapter", () => {
     expect(resolveRuntimePackPlan(["pack"], {})).toBeNull();
     expect(
       resolveRuntimePackPlan(["install"], {
-        OPENCLAW_OCM_RUNTIME_BUILD_PROFILE: "sourcePerformance",
+        NOVA_OCM_RUNTIME_BUILD_PROFILE: "sourcePerformance",
       }),
     ).toBeNull();
   });
@@ -52,9 +52,9 @@ describe("OCM npm workspace dependency adapter", () => {
   it("rejects unsupported runtime build profiles", () => {
     expect(() =>
       resolveRuntimePackPlan(["pack"], {
-        OPENCLAW_OCM_RUNTIME_BUILD_PROFILE: "qaRuntime",
+        NOVA_OCM_RUNTIME_BUILD_PROFILE: "qaRuntime",
       }),
-    ).toThrow("invalid OPENCLAW_OCM_RUNTIME_BUILD_PROFILE: qaRuntime");
+    ).toThrow("invalid NOVA_OCM_RUNTIME_BUILD_PROFILE: qaRuntime");
   });
 
   it("pins one timestamp and commit across the prepared runtime pack", () => {
@@ -67,7 +67,7 @@ describe("OCM npm workspace dependency adapter", () => {
     expect(env).toMatchObject({
       KEEP: "value",
       GIT_COMMIT: "abcdef0123456789abcdef0123456789abcdef01",
-      OPENCLAW_BUILD_TIMESTAMP: "2026-07-11T12:34:56.000Z",
+      NOVA_BUILD_TIMESTAMP: "2026-07-11T12:34:56.000Z",
     });
   });
 
@@ -202,8 +202,8 @@ describe("OCM npm workspace dependency adapter", () => {
         {
           env: {
             ...process.env,
-            OPENCLAW_OCM_REAL_NPM_BIN: process.platform === "win32" ? "npm.cmd" : "npm",
-            OPENCLAW_OCM_WORKSPACE_DEPENDENCY_DIRS: workspaceDir,
+            NOVA_OCM_REAL_NPM_BIN: process.platform === "win32" ? "npm.cmd" : "npm",
+            NOVA_OCM_WORKSPACE_DEPENDENCY_DIRS: workspaceDir,
             npm_config_audit: "false",
             npm_config_cache: join(root, "npm-cache"),
             npm_config_fund: "false",

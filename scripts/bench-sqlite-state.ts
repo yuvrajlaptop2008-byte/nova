@@ -509,7 +509,7 @@ function main(): void {
   const config = applyScale(PROFILES[options.profile]);
   const stateDir =
     options.stateDir ?? fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-sqlite-perf-"));
-  const env = { OPENCLAW_STATE_DIR: stateDir };
+  const env = { NOVA_STATE_DIR: stateDir };
   const started = nowMs();
   try {
     const stateDatabase = openOpenClawStateDatabase({ env });

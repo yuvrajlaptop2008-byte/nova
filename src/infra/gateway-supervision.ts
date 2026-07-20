@@ -1,5 +1,5 @@
 // Defines gateway lifecycle ownership shared by service, restart, and update paths.
-const GATEWAY_SUPERVISOR_MODE_ENV = "OPENCLAW_SUPERVISOR_MODE";
+const GATEWAY_SUPERVISOR_MODE_ENV = "NOVA_SUPERVISOR_MODE";
 export const EXTERNAL_SUPERVISOR_UPDATE_REQUIRED_REASON = "external-supervisor-update-required";
 
 type GatewaySupervisorMode = "auto" | "external";

@@ -20,7 +20,7 @@ installReplyRuntimeMocks(agentMocks);
 describe("getReplyFromConfig fast-path runtime", () => {
   beforeAll(async () => {
     ({ getReplyFromConfig } = await loadGetReplyModuleForTest({ cacheKey: import.meta.url }));
-    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    vi.stubEnv("NOVA_TEST_FAST", "1");
     resetReplyRuntimeMocks(agentMocks);
     agentMocks.runEmbeddedAgent.mockResolvedValue(makeEmbeddedTextResult("warm runtime"));
     await withTempHome(async (home) => {
@@ -45,7 +45,7 @@ describe("getReplyFromConfig fast-path runtime", () => {
   });
 
   beforeEach(async () => {
-    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    vi.stubEnv("NOVA_TEST_FAST", "1");
     resetReplyRuntimeMocks(agentMocks);
   });
 

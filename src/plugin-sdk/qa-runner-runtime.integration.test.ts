@@ -14,11 +14,11 @@ import {
 import { listQaRunnerCliContributions } from "./qa-runner-runtime.js";
 
 const ORIGINAL_ENV = {
-  OPENCLAW_ENABLE_PRIVATE_QA_CLI: process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI,
-  OPENCLAW_DISABLE_BUNDLED_PLUGINS: process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS,
-  OPENCLAW_CONFIG_PATH: process.env.OPENCLAW_CONFIG_PATH,
-  OPENCLAW_STATE_DIR: process.env.OPENCLAW_STATE_DIR,
-  OPENCLAW_TEST_FAST: process.env.OPENCLAW_TEST_FAST,
+  NOVA_ENABLE_PRIVATE_QA_CLI: process.env.NOVA_ENABLE_PRIVATE_QA_CLI,
+  NOVA_DISABLE_BUNDLED_PLUGINS: process.env.NOVA_DISABLE_BUNDLED_PLUGINS,
+  NOVA_CONFIG_PATH: process.env.NOVA_CONFIG_PATH,
+  NOVA_STATE_DIR: process.env.NOVA_STATE_DIR,
+  NOVA_TEST_FAST: process.env.NOVA_TEST_FAST,
 } as const;
 
 const tempDirs: string[] = [];
@@ -37,8 +37,8 @@ function resetQaRunnerRuntimeState() {
 describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
   beforeEach(() => {
     resetQaRunnerRuntimeState();
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";
-    process.env.OPENCLAW_TEST_FAST = "1";
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "1";
+    process.env.NOVA_TEST_FAST = "1";
   });
 
   afterEach(() => {
@@ -67,8 +67,8 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
       }),
       "utf8",
     );
-    process.env.OPENCLAW_CONFIG_PATH = configPath;
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.NOVA_CONFIG_PATH = configPath;
+    process.env.NOVA_STATE_DIR = stateDir;
 
     fs.mkdirSync(pluginDir, { recursive: true });
     fs.writeFileSync(
@@ -175,10 +175,10 @@ describe("plugin-sdk qa-runner-runtime linked plugin smoke", () => {
     );
     fs.writeFileSync(path.join(pluginDir, "index.js"), "export default {};\n", "utf8");
 
-    process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI = "1";
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "0";
-    process.env.OPENCLAW_STATE_DIR = stateDir;
-    process.env.OPENCLAW_CONFIG_PATH = path.join(stateDir, "openclaw.json");
+    process.env.NOVA_ENABLE_PRIVATE_QA_CLI = "1";
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "0";
+    process.env.NOVA_STATE_DIR = stateDir;
+    process.env.NOVA_CONFIG_PATH = path.join(stateDir, "openclaw.json");
 
     const contributions = listQaRunnerCliContributions();
 

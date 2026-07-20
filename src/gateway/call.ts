@@ -102,10 +102,10 @@ type CallGatewayBaseOptions = {
   configPath?: string;
   /**
    * Explicit local gateway port for command-line overrides such as `gateway health --port`.
-   * Bypasses OPENCLAW_GATEWAY_URL and OPENCLAW_GATEWAY_PORT for this call only.
+   * Bypasses NOVA_GATEWAY_URL and NOVA_GATEWAY_PORT for this call only.
    */
   localPortOverride?: number;
-  /** Keep a caller-supplied config target authoritative over OPENCLAW_GATEWAY_URL. */
+  /** Keep a caller-supplied config target authoritative over NOVA_GATEWAY_URL. */
   ignoreEnvUrlOverride?: boolean;
 };
 
@@ -620,7 +620,7 @@ export function ensureExplicitGatewayAuth(params: {
   }
   const sourceHint =
     params.urlOverrideSource === "env"
-      ? "Set OPENCLAW_GATEWAY_TOKEN or OPENCLAW_GATEWAY_PASSWORD alongside OPENCLAW_GATEWAY_URL; config credentials are intentionally not reused."
+      ? "Set NOVA_GATEWAY_TOKEN or NOVA_GATEWAY_PASSWORD alongside NOVA_GATEWAY_URL; config credentials are intentionally not reused."
       : params.urlOverrideSource === "cli"
         ? "For the default local or SSH-tunneled Gateway, remove --url to use the configured target."
         : undefined;
@@ -666,8 +666,8 @@ function resolveGatewayCallTimeout(timeoutValue: unknown): {
   safeTimerTimeoutMs: number;
 } {
   const hasEnvHandshakeTimeout =
-    Boolean(process.env.OPENCLAW_HANDSHAKE_TIMEOUT_MS) ||
-    Boolean(process.env.VITEST && process.env.OPENCLAW_TEST_HANDSHAKE_TIMEOUT_MS);
+    Boolean(process.env.NOVA_HANDSHAKE_TIMEOUT_MS) ||
+    Boolean(process.env.VITEST && process.env.NOVA_TEST_HANDSHAKE_TIMEOUT_MS);
   const resolvedHandshakeTimeoutMs = hasEnvHandshakeTimeout
     ? resolvePreauthHandshakeTimeoutMs()
     : undefined;
@@ -691,7 +691,7 @@ async function resolveGatewayCallContext(
   const envUrlOverride =
     cliUrlOverride || opts.localPortOverride !== undefined || opts.ignoreEnvUrlOverride === true
       ? undefined
-      : trimToUndefined(process.env.OPENCLAW_GATEWAY_URL);
+      : trimToUndefined(process.env.NOVA_GATEWAY_URL);
   const urlOverride = cliUrlOverride ?? envUrlOverride;
   const urlOverrideSource = cliUrlOverride ? "cli" : envUrlOverride ? "env" : undefined;
   const canSkipConfigLoad = canSkipGatewayConfigLoad({

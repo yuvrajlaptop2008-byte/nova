@@ -461,7 +461,7 @@ describe("resolveGoogleChatAccount", () => {
   it("resolves user-relative service-account files before checking availability", () => {
     const homeDir = makeTempDir("openclaw-googlechat-home-");
     fs.writeFileSync(path.join(homeDir, "service-account.json"), "{}", { mode: 0o600 });
-    vi.stubEnv("OPENCLAW_HOME", homeDir);
+    vi.stubEnv("NOVA_HOME", homeDir);
     try {
       const resolved = resolveGoogleChatAccount({
         cfg: {

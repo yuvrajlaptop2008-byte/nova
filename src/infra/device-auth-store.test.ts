@@ -11,8 +11,8 @@ import {
 
 function createEnv(stateDir: string): NodeJS.ProcessEnv {
   return {
-    OPENCLAW_STATE_DIR: stateDir,
-    OPENCLAW_TEST_FAST: "1",
+    NOVA_STATE_DIR: stateDir,
+    NOVA_TEST_FAST: "1",
   };
 }
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 VM_NAME="Windows 11"
-OPENCLAW_PARALLELS_WINDOWS_API=1
+NOVA_PARALLELS_WINDOWS_API=1
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TODAY="$(date +%F)"
 CLEAN_SNAPSHOT="windows-11-clean-os-${TODAY}"
@@ -16,7 +16,7 @@ WINDOWS_REBOOT_STARTED=0
 SNAPSHOT=""
 SECURE_STAGE_DIR="C:/ProgramData/OpenClawPrerequisiteInstallers"
 COMMAND="help"
-if [[ "${OPENCLAW_PARALLELS_WINDOWS_LIBRARY_ONLY:-0}" != "1" ]]; then
+if [[ "${NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY:-0}" != "1" ]]; then
   COMMAND="${1:-help}"
   if [[ $# -gt 0 ]]; then
     shift
@@ -56,7 +56,7 @@ tray state, or WSL distro.
 EOF
 }
 
-if [[ "${OPENCLAW_PARALLELS_WINDOWS_LIBRARY_ONLY:-0}" != "1" ]]; then
+if [[ "${NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY:-0}" != "1" ]]; then
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --vm)
@@ -637,7 +637,7 @@ prepare() {
   say "Baseline ready: $BASELINE_SNAPSHOT"
 }
 
-if [[ "${OPENCLAW_PARALLELS_WINDOWS_LIBRARY_ONLY:-0}" == "1" ]]; then
+if [[ "${NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY:-0}" == "1" ]]; then
   return 0 2>/dev/null || exit 0
 fi
 

@@ -7,7 +7,7 @@ import { GPT5_BEHAVIOR_CONTRACT as CODEX_GPT5_BEHAVIOR_CONTRACT } from "openclaw
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CodexAppServerRpcError } from "./client.js";
 import { buildCodexAppServerConnectionFingerprint } from "./plugin-app-cache-key.js";
-import { CODEX_OPENCLAW_DIRECT_DYNAMIC_TOOL_NAMESPACE } from "./protocol.js";
+import { CODEX_NOVA_DIRECT_DYNAMIC_TOOL_NAMESPACE } from "./protocol.js";
 import {
   sessionBindingIdentity,
   type CodexAppServerBindingStore,
@@ -932,7 +932,7 @@ describe("Codex app-server native code mode config", () => {
       const dynamicTools = [
         {
           type: "namespace" as const,
-          name: CODEX_OPENCLAW_DIRECT_DYNAMIC_TOOL_NAMESPACE,
+          name: CODEX_NOVA_DIRECT_DYNAMIC_TOOL_NAMESPACE,
           description: "",
           tools: [],
         },
@@ -960,7 +960,7 @@ describe("Codex app-server native code mode config", () => {
       for (const request of [startRequest, resumeRequest]) {
         expect(request.config?.["code_mode.direct_only_tool_namespaces"]).toEqual([
           "vendor_direct",
-          CODEX_OPENCLAW_DIRECT_DYNAMIC_TOOL_NAMESPACE,
+          CODEX_NOVA_DIRECT_DYNAMIC_TOOL_NAMESPACE,
         ]);
         expect(request.config?.["features.code_mode_only"]).toBe(nativeCodeModeOnlyEnabled);
       }

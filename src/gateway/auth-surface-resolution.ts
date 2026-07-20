@@ -82,8 +82,8 @@ export async function resolveGatewayProbeSurfaceAuth(params: {
           path: "gateway.remote.password",
           value: params.config.gateway?.remote?.password,
         });
-    const envToken = trimToUndefined(env.OPENCLAW_GATEWAY_TOKEN);
-    const envPassword = trimToUndefined(env.OPENCLAW_GATEWAY_PASSWORD);
+    const envToken = trimToUndefined(env.NOVA_GATEWAY_TOKEN);
+    const envPassword = trimToUndefined(env.NOVA_GATEWAY_PASSWORD);
     const hasConfiguredAuth = Boolean(remoteToken.value || remotePassword.value);
     return withDiagnostics({
       diagnostics,
@@ -101,8 +101,8 @@ export async function resolveGatewayProbeSurfaceAuth(params: {
     return {};
   }
 
-  const envToken = trimToUndefined(env.OPENCLAW_GATEWAY_TOKEN);
-  const envPassword = trimToUndefined(env.OPENCLAW_GATEWAY_PASSWORD);
+  const envToken = trimToUndefined(env.NOVA_GATEWAY_TOKEN);
+  const envPassword = trimToUndefined(env.NOVA_GATEWAY_PASSWORD);
 
   if (authMode === "token") {
     const token = await resolveGatewayCredential({
@@ -199,10 +199,10 @@ export async function resolveGatewayInteractiveSurfaceAuth(params: {
   const explicitPassword = trimToUndefined(params.explicitAuth?.password);
   const envToken = params.suppressEnvAuthFallback
     ? undefined
-    : trimToUndefined(env.OPENCLAW_GATEWAY_TOKEN);
+    : trimToUndefined(env.NOVA_GATEWAY_TOKEN);
   const envPassword = params.suppressEnvAuthFallback
     ? undefined
-    : trimToUndefined(env.OPENCLAW_GATEWAY_PASSWORD);
+    : trimToUndefined(env.NOVA_GATEWAY_PASSWORD);
 
   if (params.surface === "remote") {
     // Interactive remote clients allow explicit/env password fallback because

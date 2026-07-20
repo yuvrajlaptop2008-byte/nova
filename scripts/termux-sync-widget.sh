@@ -6,7 +6,7 @@
 termux-toast "Syncing OpenClaw auth..."
 
 # Run sync on the configured OpenClaw host.
-SERVER="${OPENCLAW_SERVER:-openclaw-host}"
+SERVER="${NOVA_SERVER:-openclaw-host}"
 RESULT=$(ssh "$SERVER" '$HOME/openclaw/scripts/sync-claude-code-auth.sh' 2>&1)
 EXIT_CODE=$?
 

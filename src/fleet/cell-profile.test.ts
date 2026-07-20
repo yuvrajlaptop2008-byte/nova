@@ -166,11 +166,11 @@ describe("fleet cell environment", () => {
 
   it.each([
     "HOME",
-    "OPENCLAW_HOME",
-    "OPENCLAW_STATE_DIR",
-    "OPENCLAW_CONFIG_PATH",
-    "OPENCLAW_WORKSPACE_DIR",
-    "OPENCLAW_GATEWAY_TOKEN",
+    "NOVA_HOME",
+    "NOVA_STATE_DIR",
+    "NOVA_CONFIG_PATH",
+    "NOVA_WORKSPACE_DIR",
+    "NOVA_GATEWAY_TOKEN",
   ])("rejects reserved variable %s", (key) => {
     expect(() => parseEnvAssignments([`${key}=override`])).toThrow(/fleet-managed/i);
   });
@@ -178,11 +178,11 @@ describe("fleet cell environment", () => {
   it("pins the documented container paths and token", () => {
     expect(buildCellEnvironment("secret", { REGION: "west" })).toEqual({
       HOME: "/home/node",
-      OPENCLAW_HOME: "/home/node",
-      OPENCLAW_STATE_DIR: FLEET_CONTAINER_STATE_DIR,
-      OPENCLAW_CONFIG_PATH: `${FLEET_CONTAINER_STATE_DIR}/openclaw.json`,
-      OPENCLAW_WORKSPACE_DIR: `${FLEET_CONTAINER_STATE_DIR}/workspace`,
-      OPENCLAW_GATEWAY_TOKEN: "secret",
+      NOVA_HOME: "/home/node",
+      NOVA_STATE_DIR: FLEET_CONTAINER_STATE_DIR,
+      NOVA_CONFIG_PATH: `${FLEET_CONTAINER_STATE_DIR}/openclaw.json`,
+      NOVA_WORKSPACE_DIR: `${FLEET_CONTAINER_STATE_DIR}/workspace`,
+      NOVA_GATEWAY_TOKEN: "secret",
       REGION: "west",
     });
   });

@@ -18,9 +18,7 @@ import type { SessionScope } from "./tui-types.js";
 type TuiLastSessionDatabase = Pick<OpenClawStateKyselyDatabase, "tui_last_sessions">;
 
 function stateDatabaseOptions(stateDir?: string) {
-  return stateDir
-    ? { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } }
-    : { env: process.env };
+  return stateDir ? { env: { ...process.env, NOVA_STATE_DIR: stateDir } } : { env: process.env };
 }
 
 /** Builds a stable private-store key for the current TUI connection, agent, and session scope. */

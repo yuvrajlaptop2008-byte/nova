@@ -45,9 +45,9 @@ describe("linux-node node-host integration", () => {
       return originalAccessSync(candidate, mode);
     });
     vi.stubEnv("PATH", `${fakeBinDir}${path.delimiter}${process.env.PATH ?? ""}`);
-    vi.stubEnv("OPENCLAW_BUNDLED_PLUGINS_DIR", path.resolve("extensions"));
-    vi.stubEnv("OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR", "1");
-    vi.stubEnv("OPENCLAW_DISABLE_BUNDLED_PLUGINS", undefined);
+    vi.stubEnv("NOVA_BUNDLED_PLUGINS_DIR", path.resolve("extensions"));
+    vi.stubEnv("NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR", "1");
+    vi.stubEnv("NOVA_DISABLE_BUNDLED_PLUGINS", undefined);
 
     const config: OpenClawConfig = {
       gateway: {

@@ -40,7 +40,7 @@ function runStartupMemoryCheckWithHelpSamples(helpSamplesMb: number[]) {
         return {
           signal: null,
           status: 0,
-          stderr: `__OPENCLAW_MAX_RSS_KB__=${rssMb * 1024}\n`,
+          stderr: `__NOVA_MAX_RSS_KB__=${rssMb * 1024}\n`,
           stdout: "",
         };
       },
@@ -125,51 +125,51 @@ describe("check-cli-startup-memory", () => {
 
   it("keeps invalid startup memory env values from bypassing budgets", () => {
     expect(() =>
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "abc",
+      testing.readPositiveNumberEnv("NOVA_STARTUP_MEMORY_HELP_MB", 100, {
+        NOVA_STARTUP_MEMORY_HELP_MB: "abc",
       }),
-    ).toThrow("OPENCLAW_STARTUP_MEMORY_HELP_MB must be a positive number");
+    ).toThrow("NOVA_STARTUP_MEMORY_HELP_MB must be a positive number");
     expect(() =>
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "1e3",
+      testing.readPositiveNumberEnv("NOVA_STARTUP_MEMORY_HELP_MB", 100, {
+        NOVA_STARTUP_MEMORY_HELP_MB: "1e3",
       }),
-    ).toThrow("OPENCLAW_STARTUP_MEMORY_HELP_MB must be a positive number");
+    ).toThrow("NOVA_STARTUP_MEMORY_HELP_MB must be a positive number");
     expect(() =>
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "0x10",
+      testing.readPositiveNumberEnv("NOVA_STARTUP_MEMORY_HELP_MB", 100, {
+        NOVA_STARTUP_MEMORY_HELP_MB: "0x10",
       }),
-    ).toThrow("OPENCLAW_STARTUP_MEMORY_HELP_MB must be a positive number");
+    ).toThrow("NOVA_STARTUP_MEMORY_HELP_MB must be a positive number");
     expect(() =>
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "0",
+      testing.readPositiveNumberEnv("NOVA_STARTUP_MEMORY_HELP_MB", 100, {
+        NOVA_STARTUP_MEMORY_HELP_MB: "0",
       }),
-    ).toThrow("OPENCLAW_STARTUP_MEMORY_HELP_MB must be a positive number");
+    ).toThrow("NOVA_STARTUP_MEMORY_HELP_MB must be a positive number");
     expect(
-      testing.readPositiveNumberEnv("OPENCLAW_STARTUP_MEMORY_HELP_MB", 100, {
-        OPENCLAW_STARTUP_MEMORY_HELP_MB: "125.5",
+      testing.readPositiveNumberEnv("NOVA_STARTUP_MEMORY_HELP_MB", 100, {
+        NOVA_STARTUP_MEMORY_HELP_MB: "125.5",
       }),
     ).toBe(125.5);
   });
 
   it("keeps invalid startup memory timeout env values from parsing loosely", () => {
     expect(() =>
-      testing.readPositiveIntEnv("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
-        OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS: "1e3",
+      testing.readPositiveIntEnv("NOVA_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
+        NOVA_STARTUP_MEMORY_TIMEOUT_MS: "1e3",
       }),
-    ).toThrow("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS must be a positive number");
+    ).toThrow("NOVA_STARTUP_MEMORY_TIMEOUT_MS must be a positive number");
     expect(() =>
-      testing.readPositiveIntEnv("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
-        OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS: "1000.5",
+      testing.readPositiveIntEnv("NOVA_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
+        NOVA_STARTUP_MEMORY_TIMEOUT_MS: "1000.5",
       }),
-    ).toThrow("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS must be a positive integer");
+    ).toThrow("NOVA_STARTUP_MEMORY_TIMEOUT_MS must be a positive integer");
     expect(() =>
-      testing.readPositiveIntEnv("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
-        OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS: String(Number.MAX_SAFE_INTEGER + 1),
+      testing.readPositiveIntEnv("NOVA_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
+        NOVA_STARTUP_MEMORY_TIMEOUT_MS: String(Number.MAX_SAFE_INTEGER + 1),
       }),
-    ).toThrow("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS must be a positive integer");
+    ).toThrow("NOVA_STARTUP_MEMORY_TIMEOUT_MS must be a positive integer");
     expect(
-      testing.readPositiveIntEnv("OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
-        OPENCLAW_STARTUP_MEMORY_TIMEOUT_MS: "1000",
+      testing.readPositiveIntEnv("NOVA_STARTUP_MEMORY_TIMEOUT_MS", 60_000, {
+        NOVA_STARTUP_MEMORY_TIMEOUT_MS: "1000",
       }),
     ).toBe(1000);
   });
@@ -282,7 +282,7 @@ describe("check-cli-startup-memory", () => {
           spawnSync: () => ({
             signal: null,
             status: 0,
-            stderr: "__OPENCLAW_MAX_RSS_KB__=0\n",
+            stderr: "__NOVA_MAX_RSS_KB__=0\n",
             stdout: "",
           }),
         },
@@ -319,7 +319,7 @@ describe("check-cli-startup-memory", () => {
             error: null,
             signal: null,
             status: 0,
-            stderr: "__OPENCLAW_MAX_RSS_KB__=1024\n",
+            stderr: "__NOVA_MAX_RSS_KB__=1024\n",
             stdout: "",
           };
         },

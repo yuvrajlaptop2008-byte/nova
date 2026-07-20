@@ -16,7 +16,7 @@ if (!parentPort || !stateDir) {
   throw new Error("audit event writer requires a parent port and state directory");
 }
 const port = parentPort;
-const database = { env: { OPENCLAW_STATE_DIR: stateDir } };
+const database = { env: { NOVA_STATE_DIR: stateDir } };
 
 function reportMaintenance(): void {
   try {

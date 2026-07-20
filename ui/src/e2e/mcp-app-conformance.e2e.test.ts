@@ -40,7 +40,7 @@ import {
 const require = createRequire(import.meta.url);
 const chromiumExecutablePath = resolvePlaywrightChromiumExecutablePath(chromium.executablePath());
 const chromiumAvailable = canRunPlaywrightChromium(chromiumExecutablePath);
-const allowMissingChromium = process.env.OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
+const allowMissingChromium = process.env.NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
 const describeConformance = chromiumAvailable || !allowMissingChromium ? describe : describe.skip;
 const authValue = "test";
 const sessionKey = "agent:main:mcp-app-conformance";
@@ -351,13 +351,13 @@ describeConformance("MCP App Control UI and standalone host conformance", () => 
     }
     envSnapshot = captureEnv([
       "HOME",
-      "OPENCLAW_STATE_DIR",
-      "OPENCLAW_CONFIG_PATH",
-      "OPENCLAW_GATEWAY_TOKEN",
-      "OPENCLAW_SKIP_CHANNELS",
-      "OPENCLAW_SKIP_CRON",
-      "OPENCLAW_SKIP_PROVIDERS",
-      "OPENCLAW_BUNDLED_PLUGINS_DIR",
+      "NOVA_STATE_DIR",
+      "NOVA_CONFIG_PATH",
+      "NOVA_GATEWAY_TOKEN",
+      "NOVA_SKIP_CHANNELS",
+      "NOVA_SKIP_CRON",
+      "NOVA_SKIP_PROVIDERS",
+      "NOVA_BUNDLED_PLUGINS_DIR",
     ]);
     tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mcp-app-conformance-"));
     const stateDir = path.join(tempRoot, "state");
@@ -406,13 +406,13 @@ describeConformance("MCP App Control UI and standalone host conformance", () => 
     await fs.mkdir(stateDir, { recursive: true });
     await fs.writeFile(configPath, `${JSON.stringify(cfg, null, 2)}\n`);
     setTestEnvValue("HOME", tempRoot);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
-    setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
-    setTestEnvValue("OPENCLAW_GATEWAY_TOKEN", authValue);
-    setTestEnvValue("OPENCLAW_SKIP_CHANNELS", "1");
-    setTestEnvValue("OPENCLAW_SKIP_CRON", "1");
-    setTestEnvValue("OPENCLAW_SKIP_PROVIDERS", "1");
-    setTestEnvValue("OPENCLAW_BUNDLED_PLUGINS_DIR", path.join(tempRoot, "empty-plugins"));
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_CONFIG_PATH", configPath);
+    setTestEnvValue("NOVA_GATEWAY_TOKEN", authValue);
+    setTestEnvValue("NOVA_SKIP_CHANNELS", "1");
+    setTestEnvValue("NOVA_SKIP_CRON", "1");
+    setTestEnvValue("NOVA_SKIP_PROVIDERS", "1");
+    setTestEnvValue("NOVA_BUNDLED_PLUGINS_DIR", path.join(tempRoot, "empty-plugins"));
     clearConfigCache();
     clearRuntimeConfigSnapshot();
     runtime = await getOrCreateSessionMcpRuntime({

@@ -42,7 +42,7 @@ async function cancelUnreadResponseBody(response: Response): Promise<void> {
 }
 
 function isOfflineModeEnabled(): boolean {
-  const value = process.env.OPENCLAW_OFFLINE;
+  const value = process.env.NOVA_OFFLINE;
   if (!value) {
     return false;
   }

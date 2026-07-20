@@ -84,7 +84,7 @@ describe("resolveRunWorkspaceDir", () => {
       workspaceDir: null,
       sessionKey: "agent:main:subagent:test",
       config: undefined,
-      env: { ...process.env, OPENCLAW_WORKSPACE_DIR: workspaceDir },
+      env: { ...process.env, NOVA_WORKSPACE_DIR: workspaceDir },
     });
 
     expect(result.usedFallback).toBe(true);
@@ -107,8 +107,8 @@ describe("resolveRunWorkspaceDir", () => {
     const env = {
       ...process.env,
       HOME: "/home/runner",
-      OPENCLAW_HOME: undefined,
-      OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
+      NOVA_HOME: undefined,
+      NOVA_STATE_DIR: "/tmp/openclaw-state",
     } satisfies NodeJS.ProcessEnv;
     const result = resolveRunWorkspaceDir({
       workspaceDir: undefined,

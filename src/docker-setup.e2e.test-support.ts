@@ -179,11 +179,11 @@ export async function createDockerSetupSandbox(): Promise<DockerSetupSandbox> {
 
 export const prestartContainerEnvFlags = [
   "-e HOME=/home/node",
-  "-e OPENCLAW_HOME=/home/node",
-  "-e OPENCLAW_STATE_DIR=/home/node/.openclaw",
-  "-e OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json",
-  "-e OPENCLAW_CONFIG_DIR=/home/node/.openclaw",
-  "-e OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace",
+  "-e NOVA_HOME=/home/node",
+  "-e NOVA_STATE_DIR=/home/node/.openclaw",
+  "-e NOVA_CONFIG_PATH=/home/node/.openclaw/openclaw.json",
+  "-e NOVA_CONFIG_DIR=/home/node/.openclaw",
+  "-e NOVA_WORKSPACE_DIR=/home/node/.openclaw/workspace",
 ].join(" ");
 
 export const noFollowOwnershipRepair = (root: string) =>

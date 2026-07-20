@@ -39,9 +39,9 @@ function main(argv = process.argv.slice(2)): number {
   if (options.format === "shell") {
     process.stdout.write(
       [
-        `OPENCLAW_IOS_VERSION=${version.canonicalVersion}`,
-        `OPENCLAW_MARKETING_VERSION=${version.marketingVersion}`,
-        `OPENCLAW_BUILD_VERSION=${version.buildVersion}`,
+        `NOVA_IOS_VERSION=${version.canonicalVersion}`,
+        `NOVA_MARKETING_VERSION=${version.marketingVersion}`,
+        `NOVA_BUILD_VERSION=${version.buildVersion}`,
       ].join("\n") + "\n",
     );
   } else {

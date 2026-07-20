@@ -11,11 +11,7 @@ export function mergeGatewayServiceEnv(
     ...baseEnv,
     ...command.environment,
   };
-  for (const key of [
-    "OPENCLAW_LAUNCHD_LABEL",
-    "OPENCLAW_SYSTEMD_UNIT",
-    "OPENCLAW_WINDOWS_TASK_NAME",
-  ]) {
+  for (const key of ["NOVA_LAUNCHD_LABEL", "NOVA_SYSTEMD_UNIT", "NOVA_WINDOWS_TASK_NAME"]) {
     // Explicit caller env selects the target service identity; installed command
     // env may come from a different profile or stale service file.
     const value = baseEnv[key]?.trim();

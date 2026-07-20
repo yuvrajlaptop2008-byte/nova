@@ -14,7 +14,7 @@ import type { UpdateRunResult } from "./update-runner.js";
 
 // Control-plane update sentinel helpers preserve update metadata while a
 // managed service handoff waits for restart health to complete.
-export const CONTROL_PLANE_UPDATE_SENTINEL_META_ENV = "OPENCLAW_CONTROL_PLANE_UPDATE_SENTINEL_META";
+export const CONTROL_PLANE_UPDATE_SENTINEL_META_ENV = "NOVA_CONTROL_PLANE_UPDATE_SENTINEL_META";
 export const CONTROL_PLANE_UPDATE_HANDOFF_STARTED_REASON = "managed-service-handoff-started";
 export const CONTROL_PLANE_UPDATE_RESTART_HEALTH_PENDING_REASON = "restart-health-pending";
 

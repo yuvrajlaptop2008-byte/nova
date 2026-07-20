@@ -759,8 +759,8 @@ describe("listSessionsFromStore subagent metadata", () => {
 
       const row = withEnv(
         {
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_READ_SUBAGENT_RUNS_FROM_SQLITE: "1",
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_READ_SUBAGENT_RUNS_FROM_SQLITE: "1",
         },
         () => {
           saveSubagentRegistryToSqlite(persistedRuns);
@@ -850,8 +850,8 @@ describe("listSessionsFromStore subagent metadata", () => {
     try {
       const result = withEnv(
         {
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_READ_SUBAGENT_RUNS_FROM_SQLITE: "1",
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_READ_SUBAGENT_RUNS_FROM_SQLITE: "1",
         },
         () => {
           saveSubagentRegistryToSqlite(persistedRuns);
@@ -887,8 +887,8 @@ describe("listSessionsFromStore subagent metadata", () => {
     try {
       const result = withEnv(
         {
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_READ_SUBAGENT_RUNS_FROM_SQLITE: "1",
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_READ_SUBAGENT_RUNS_FROM_SQLITE: "1",
         },
         () =>
           listSessionsFromStore({

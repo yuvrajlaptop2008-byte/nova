@@ -66,9 +66,9 @@ describe("runDoctorConfigPreflight", () => {
 
       await withEnvOverride(
         {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_PROFILE: undefined,
-          OPENCLAW_STATE_DIR: stateDir,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_PROFILE: undefined,
+          NOVA_STATE_DIR: stateDir,
         },
         async () => {
           const preflight = await runDoctorConfigPreflight({
@@ -92,9 +92,9 @@ describe("runDoctorConfigPreflight", () => {
 
       await withEnvOverride(
         {
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_PROFILE: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_PROFILE: undefined,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           const preflight = await runDoctorConfigPreflight({
@@ -117,9 +117,9 @@ describe("runDoctorConfigPreflight", () => {
 
       await withEnvOverride(
         {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_PROFILE: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_PROFILE: undefined,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           applyCliProfileEnv({ profile: "work", homedir: () => home });
@@ -138,17 +138,17 @@ describe("runDoctorConfigPreflight", () => {
   it("skips plugin schema validation while doctor is running inside update", () => {
     expect(
       shouldSkipPluginValidationForDoctorConfigPreflight({
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
+        NOVA_UPDATE_IN_PROGRESS: "1",
       } as NodeJS.ProcessEnv),
     ).toBe(true);
     expect(
       shouldSkipPluginValidationForDoctorConfigPreflight({
-        OPENCLAW_UPDATE_IN_PROGRESS: "true",
+        NOVA_UPDATE_IN_PROGRESS: "true",
       } as NodeJS.ProcessEnv),
     ).toBe(true);
     expect(
       shouldSkipPluginValidationForDoctorConfigPreflight({
-        OPENCLAW_UPDATE_IN_PROGRESS: "0",
+        NOVA_UPDATE_IN_PROGRESS: "0",
       } as NodeJS.ProcessEnv),
     ).toBe(false);
   });

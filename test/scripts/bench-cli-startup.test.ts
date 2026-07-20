@@ -152,7 +152,7 @@ describe("bench-cli-startup", () => {
             encoding: "utf8",
             env: {
               ...process.env,
-              OPENCLAW_TEST_CLI_STARTUP_TIMEOUT_KILL_GRACE_MS: "50",
+              NOVA_TEST_CLI_STARTUP_TIMEOUT_KILL_GRACE_MS: "50",
               VITEST: "1",
             },
             timeout: 8_000,
@@ -471,9 +471,7 @@ describe("bench-cli-startup", () => {
       },
     ]) {
       expect(
-        withEnv({ OPENCLAW_GATEWAY_PORT: undefined }, () =>
-          testing.buildConfigFixture(commandCase),
-        ),
+        withEnv({ NOVA_GATEWAY_PORT: undefined }, () => testing.buildConfigFixture(commandCase)),
       ).toEqual(expectedFixture);
     }
   });
@@ -486,7 +484,7 @@ describe("bench-cli-startup", () => {
     expect(testing.parseGatewayPortEnv("[::1]")).toBe(32123);
 
     expect(
-      withEnv({ OPENCLAW_GATEWAY_PORT: "45678" }, () =>
+      withEnv({ NOVA_GATEWAY_PORT: "45678" }, () =>
         testing.buildConfigFixture({
           id: "gatewayHealthJson",
           name: "gateway health --json",
@@ -498,7 +496,7 @@ describe("bench-cli-startup", () => {
 
     for (const invalid of ["45678abc", "127.0.0.1:45678abc"]) {
       expect(() =>
-        withEnv({ OPENCLAW_GATEWAY_PORT: invalid }, () =>
+        withEnv({ NOVA_GATEWAY_PORT: invalid }, () =>
           testing.buildConfigFixture({
             id: "gatewayHealthJson",
             name: "gateway health --json",
@@ -506,7 +504,7 @@ describe("bench-cli-startup", () => {
             presets: ["real"],
           }),
         ),
-      ).toThrow("OPENCLAW_GATEWAY_PORT must be an integer >= 1");
+      ).toThrow("NOVA_GATEWAY_PORT must be an integer >= 1");
     }
   });
 });

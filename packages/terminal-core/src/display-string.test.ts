@@ -6,7 +6,7 @@ import { displayString } from "./display-string.js";
 function stubHome(home: string, openclawHome = ""): void {
   vi.stubEnv("HOME", home);
   vi.stubEnv("USERPROFILE", "");
-  vi.stubEnv("OPENCLAW_HOME", openclawHome);
+  vi.stubEnv("NOVA_HOME", openclawHome);
 }
 
 describe("displayString", () => {
@@ -35,13 +35,13 @@ describe("displayString", () => {
     expect(displayString(`/tmp${home}/project`)).toBe(`/tmp${home}/project`);
   });
 
-  it("uses OPENCLAW_HOME as the display prefix", () => {
+  it("uses NOVA_HOME as the display prefix", () => {
     const home = path.resolve("test-home", "alice");
     const openclawHome = path.resolve("test-openclaw-home");
     stubHome(home, openclawHome);
 
-    expect(displayString(openclawHome)).toBe("$OPENCLAW_HOME");
-    expect(displayString(`${openclawHome}/state`)).toBe("$OPENCLAW_HOME/state");
+    expect(displayString(openclawHome)).toBe("$NOVA_HOME");
+    expect(displayString(`${openclawHome}/state`)).toBe("$NOVA_HOME/state");
     expect(displayString(`${openclawHome}2/state`)).toBe(`${openclawHome}2/state`);
   });
 });

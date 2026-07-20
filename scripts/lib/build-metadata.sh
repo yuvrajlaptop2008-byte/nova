@@ -90,7 +90,7 @@ openclaw_resolve_git_commit() {
     fi
   fi
   if [[ -z "${candidate}" ]]; then
-    if [[ "${OPENCLAW_REQUIRE_BUILD_METADATA:-0}" == "1" ]]; then
+    if [[ "${NOVA_REQUIRE_BUILD_METADATA:-0}" == "1" ]]; then
       echo "ERROR: Unable to resolve a full Git commit for the release build." >&2
       return 1
     fi
@@ -102,10 +102,10 @@ openclaw_resolve_git_commit() {
 
 openclaw_resolve_build_timestamp() {
   local candidate
-  candidate="$(openclaw_trim_build_metadata_value "${OPENCLAW_BUILD_TIMESTAMP:-}")"
+  candidate="$(openclaw_trim_build_metadata_value "${NOVA_BUILD_TIMESTAMP:-}")"
   if [[ -n "${candidate}" ]]; then
     if ! candidate="$(openclaw_normalize_utc_build_timestamp "${candidate}")"; then
-      echo "ERROR: OPENCLAW_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp." >&2
+      echo "ERROR: NOVA_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp." >&2
       return 1
     fi
   else

@@ -60,13 +60,13 @@ describe("Session Store Cache", () => {
     clearSessionStoreCacheForTest();
 
     // Reset environment variable
-    delete process.env.OPENCLAW_SESSION_CACHE_TTL_MS;
+    delete process.env.NOVA_SESSION_CACHE_TTL_MS;
   });
 
   afterEach(() => {
     clearSessionStoreCacheForTest();
-    delete process.env.OPENCLAW_SESSION_CACHE_TTL_MS;
-    delete process.env.OPENCLAW_SESSION_SERIALIZED_CACHE_MAX_BYTES;
+    delete process.env.NOVA_SESSION_CACHE_TTL_MS;
+    delete process.env.NOVA_SESSION_SERIALIZED_CACHE_MAX_BYTES;
   });
 
   it("keeps serialized prompt refs on the serialized cache entry lifecycle", () => {
@@ -690,8 +690,8 @@ describe("Session Store Cache", () => {
     ).toBe("Updated Session 1");
   });
 
-  it("should respect OPENCLAW_SESSION_CACHE_TTL_MS=0 to disable cache", async () => {
-    process.env.OPENCLAW_SESSION_CACHE_TTL_MS = "0";
+  it("should respect NOVA_SESSION_CACHE_TTL_MS=0 to disable cache", async () => {
+    process.env.NOVA_SESSION_CACHE_TTL_MS = "0";
     clearSessionStoreCacheForTest();
 
     const testStore = createSingleSessionStore();

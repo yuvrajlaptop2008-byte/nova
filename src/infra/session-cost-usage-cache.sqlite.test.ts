@@ -39,7 +39,7 @@ describe("session cost usage SQLite cache", () => {
   it("returns empty values without creating a missing agent database", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-usage-cache-missing-");
 
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const databasePath = resolveOpenClawAgentSqlitePath({ agentId: "worker-1" });
 
       expect(readSessionCostUsageRollupRows("worker-1", databasePath)).toEqual([]);
@@ -52,7 +52,7 @@ describe("session cost usage SQLite cache", () => {
   it("does not register readonly cache reads while writes still register", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-usage-cache-registry-");
 
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const agentId = "worker-1";
       const database = openOpenClawAgentDatabase({ agentId });
       const databasePath = database.path;

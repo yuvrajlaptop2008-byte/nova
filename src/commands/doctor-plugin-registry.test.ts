@@ -48,8 +48,8 @@ async function readRequiredPersistedInstalledPluginIndex(
 
 function hermeticEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   return {
-    OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-    OPENCLAW_VERSION: "2026.4.25",
+    NOVA_BUNDLED_PLUGINS_DIR: undefined,
+    NOVA_VERSION: "2026.4.25",
     VITEST: "true",
     ...overrides,
   };

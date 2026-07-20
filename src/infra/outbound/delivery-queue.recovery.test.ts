@@ -67,7 +67,7 @@ function expectMockMessageContaining(mock: { mock: { calls: unknown[][] } }, exp
 
 function readOutboundQueueStatus(tmpDir: string, id: string): string | undefined {
   const { db } = openOpenClawStateDatabase({
-    env: { ...process.env, OPENCLAW_STATE_DIR: tmpDir },
+    env: { ...process.env, NOVA_STATE_DIR: tmpDir },
   });
   const row = db
     .prepare("SELECT status FROM delivery_queue_entries WHERE queue_name = 'outbound' AND id = ?")

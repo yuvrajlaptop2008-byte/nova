@@ -194,7 +194,7 @@ async function withUsageState(
   };
 
   try {
-    await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+    await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
       fs.mkdirSync(agentSessionsDir, { recursive: true });
       await run(writeSessionFile);
     });

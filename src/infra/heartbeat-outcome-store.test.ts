@@ -18,7 +18,7 @@ const tempDirs: string[] = [];
 function createEnv(): NodeJS.ProcessEnv {
   const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-heartbeat-outcome-"));
   tempDirs.push(stateDir);
-  return { OPENCLAW_STATE_DIR: stateDir };
+  return { NOVA_STATE_DIR: stateDir };
 }
 
 afterEach(() => {

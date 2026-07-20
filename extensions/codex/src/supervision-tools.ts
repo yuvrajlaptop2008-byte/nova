@@ -27,12 +27,11 @@ import {
 import { requestCodexAppServerJson } from "./app-server/request.js";
 
 /** Legacy endpoint env retained for the shipped Supervisor tool contract. */
-const LEGACY_CODEX_SUPERVISOR_ENDPOINTS_ENV = "OPENCLAW_CODEX_SUPERVISOR_ENDPOINTS";
+const LEGACY_CODEX_SUPERVISOR_ENDPOINTS_ENV = "NOVA_CODEX_SUPERVISOR_ENDPOINTS";
 /** Legacy standalone-MCP transcript gate. Agent tools use canonical config. */
-const LEGACY_CODEX_SUPERVISOR_RAW_TRANSCRIPTS_ENV =
-  "OPENCLAW_CODEX_SUPERVISOR_ALLOW_RAW_TRANSCRIPTS";
+const LEGACY_CODEX_SUPERVISOR_RAW_TRANSCRIPTS_ENV = "NOVA_CODEX_SUPERVISOR_ALLOW_RAW_TRANSCRIPTS";
 /** Legacy standalone-MCP write gate. Agent tools use canonical config. */
-const LEGACY_CODEX_SUPERVISOR_WRITE_CONTROLS_ENV = "OPENCLAW_CODEX_SUPERVISOR_ALLOW_WRITE_CONTROLS";
+const LEGACY_CODEX_SUPERVISOR_WRITE_CONTROLS_ENV = "NOVA_CODEX_SUPERVISOR_ALLOW_WRITE_CONTROLS";
 
 export const CODEX_SUPERVISION_COMPAT_TOOL_NAMES = [
   "codex_endpoint_probe",

@@ -22,7 +22,7 @@ import { debugLog, debugWarn } from "./log.js";
  * 3. PlatformAdapter.getTempDir() as a last resort
  *
  * This is the *operating-system* home and intentionally ignores
- * `OPENCLAW_HOME`. QQ Bot still checks this tree for legacy state imports and
+ * `NOVA_HOME`. QQ Bot still checks this tree for legacy state imports and
  * media-path remaps from older releases.
  */
 export function getHomeDir(): string {
@@ -52,7 +52,7 @@ export function getHomeDir(): string {
  * package with `openclaw` as a peer dependency), so this re-implements the
  * minimal contract:
  *
- * 1. `OPENCLAW_HOME` when set (with `~` / `~/...` expanded against the OS home).
+ * 1. `NOVA_HOME` when set (with `~` / `~/...` expanded against the OS home).
  * 2. Otherwise fall back to {@link getHomeDir} so existing single-home
  *    deployments are unaffected.
  *
@@ -60,7 +60,7 @@ export function getHomeDir(): string {
  * core normalizes the variable.
  */
 function resolveOpenClawHome(): string {
-  const raw = process.env.OPENCLAW_HOME?.trim();
+  const raw = process.env.NOVA_HOME?.trim();
   if (!raw || raw === "undefined" || raw === "null") {
     return getHomeDir();
   }
@@ -100,9 +100,9 @@ export function getQQBotDataDir(...subPaths: string[]): string {
  *
  * Unlike `getQQBotDataPath`, this lives under Nova's core media allowlist
  * so downloaded images and audio can be accessed by framework media tooling.
- * The base honors `OPENCLAW_HOME` (when set) so files written by agents into
+ * The base honors `NOVA_HOME` (when set) so files written by agents into
  * the Nova-managed media tree are reachable by this plugin even when
- * `HOME` and `OPENCLAW_HOME` differ (Docker, multi-user hosts). Fixes #83562.
+ * `HOME` and `NOVA_HOME` differ (Docker, multi-user hosts). Fixes #83562.
  */
 export function getQQBotMediaPath(...subPaths: string[]): string {
   return path.join(resolveOpenClawHome(), ".openclaw", "media", "qqbot", ...subPaths);
@@ -126,7 +126,7 @@ export function getQQBotMediaDir(...subPaths: string[]): string {
  * in sibling subdirectories such as `outbound/` (written by
  * `saveMediaBuffer(..., "outbound", ...)`) or `inbound/`, while still keeping
  * the check anchored to a single, well-known directory. Like
- * {@link getQQBotMediaPath}, the base honors `OPENCLAW_HOME`.
+ * {@link getQQBotMediaPath}, the base honors `NOVA_HOME`.
  */
 function getOpenClawMediaDir(): string {
   return path.join(resolveOpenClawHome(), ".openclaw", "media");
@@ -241,7 +241,7 @@ function resolveQQBotLocalMediaPath(p: string): string {
   const openclawHomeDir = resolveOpenClawHome();
   const mediaRoot = getQQBotMediaPath();
   const dataRoot = getQQBotDataPath();
-  // When OPENCLAW_HOME differs from HOME we have to consider workspace roots
+  // When NOVA_HOME differs from HOME we have to consider workspace roots
   // under both trees: agents may be configured with `~`-relative paths (HOME)
   // or with the Nova-managed home tree. Deduplicate when they match.
   const workspaceRoots = Array.from(

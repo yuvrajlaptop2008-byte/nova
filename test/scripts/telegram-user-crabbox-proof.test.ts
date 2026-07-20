@@ -99,7 +99,7 @@ describe("telegram user Crabbox proof log polling", () => {
     fs.writeFileSync(fakePnpm, "#!/usr/bin/env node\n", { mode: 0o755 });
 
     const spec = createOpenClawGatewaySpawnSpec({
-      env: { ...process.env, OPENCLAW_TELEGRAM_PROOF_SENTINEL: "1" },
+      env: { ...process.env, NOVA_TELEGRAM_PROOF_SENTINEL: "1" },
       gatewayPort: 19042,
       nodeExecPath: "/opt/node/bin/node",
       npmExecPath: fakePnpm,
@@ -109,7 +109,7 @@ describe("telegram user Crabbox proof log polling", () => {
     expect(spec.command).toBe("/opt/node/bin/node");
     expect(spec.args).toEqual([fakePnpm, "openclaw", "gateway", "--port", "19042"]);
     expect(spec.options.cwd).toBe(root);
-    expect(spec.options.env?.OPENCLAW_TELEGRAM_PROOF_SENTINEL).toBe("1");
+    expect(spec.options.env?.NOVA_TELEGRAM_PROOF_SENTINEL).toBe("1");
     expect(spec.options.shell).toBe(false);
   });
 
@@ -121,17 +121,17 @@ describe("telegram user Crabbox proof log polling", () => {
   it("rejects loose numeric log tail limits instead of parsing prefixes", () => {
     expect(() =>
       readTelegramUserProofLogTailBytes({
-        OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1e3",
+        NOVA_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1e3",
       }),
-    ).toThrow("invalid OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1e3");
+    ).toThrow("invalid NOVA_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1e3");
     expect(() =>
       readTelegramUserProofLogTailBytes({
-        OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1000bytes",
+        NOVA_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "1000bytes",
       }),
-    ).toThrow("invalid OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1000bytes");
+    ).toThrow("invalid NOVA_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: 1000bytes");
     expect(
       readTelegramUserProofLogTailBytes({
-        OPENCLAW_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "4096",
+        NOVA_TELEGRAM_USER_PROOF_LOG_TAIL_BYTES: "4096",
       }),
     ).toBe(4096);
   });
@@ -226,7 +226,7 @@ describe("telegram user Crabbox proof log polling", () => {
     expect(config.gateway).toMatchObject({
       auth: {
         mode: "password",
-        password: { id: "OPENCLAW_GATEWAY_PASSWORD", source: "env" },
+        password: { id: "NOVA_GATEWAY_PASSWORD", source: "env" },
       },
       tailscale: { mode: "funnel", resetOnExit: true },
     });
@@ -464,7 +464,7 @@ describe("telegram user Crabbox proof log polling", () => {
       fakePython,
       `#!/usr/bin/env node
 import fs from "node:fs";
-fs.writeFileSync(process.env.OPENCLAW_TEST_ARGV_PATH, JSON.stringify(process.argv.slice(1)));
+fs.writeFileSync(process.env.NOVA_TEST_ARGV_PATH, JSON.stringify(process.argv.slice(1)));
 `,
     );
     writeExecutable(
@@ -482,7 +482,7 @@ fs.writeFileSync(process.env.OPENCLAW_TEST_ARGV_PATH, JSON.stringify(process.arg
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_TEST_ARGV_PATH: argvPath,
+        NOVA_TEST_ARGV_PATH: argvPath,
         PATH: `${root}${path.delimiter}${process.env.PATH ?? ""}`,
       },
     });

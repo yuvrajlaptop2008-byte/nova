@@ -479,7 +479,7 @@ describe("google transport stream", () => {
   });
 
   it("rotates Gemini LLM API keys when a pre-stream request is rate limited", async () => {
-    vi.stubEnv("OPENCLAW_LIVE_GEMINI_KEY", "");
+    vi.stubEnv("NOVA_LIVE_GEMINI_KEY", "");
     vi.stubEnv("GEMINI_API_KEYS", "gemini-key-2");
     guardedFetchMock.mockResolvedValueOnce(buildRateLimitResponse()).mockResolvedValueOnce(
       buildSseResponse([
@@ -515,7 +515,7 @@ describe("google transport stream", () => {
   });
 
   it("does not rotate OAuth JSON credentials through configured Gemini API keys", async () => {
-    vi.stubEnv("OPENCLAW_LIVE_GEMINI_KEY", "");
+    vi.stubEnv("NOVA_LIVE_GEMINI_KEY", "");
     vi.stubEnv("GEMINI_API_KEYS", "gemini-env-key");
     guardedFetchMock.mockResolvedValueOnce(buildRateLimitResponse());
 
@@ -547,7 +547,7 @@ describe("google transport stream", () => {
   });
 
   it("does not rotate when request headers override Gemini authentication", async () => {
-    vi.stubEnv("OPENCLAW_LIVE_GEMINI_KEY", "");
+    vi.stubEnv("NOVA_LIVE_GEMINI_KEY", "");
     vi.stubEnv("GEMINI_API_KEYS", "gemini-env-key");
     guardedFetchMock.mockResolvedValueOnce(buildRateLimitResponse());
 
@@ -575,7 +575,7 @@ describe("google transport stream", () => {
   });
 
   it("does not rotate global Gemini API keys into custom Gemini endpoints", async () => {
-    vi.stubEnv("OPENCLAW_LIVE_GEMINI_KEY", "");
+    vi.stubEnv("NOVA_LIVE_GEMINI_KEY", "");
     vi.stubEnv("GEMINI_API_KEYS", "gemini-env-key");
     guardedFetchMock.mockResolvedValueOnce(buildRateLimitResponse());
 
@@ -606,7 +606,7 @@ describe("google transport stream", () => {
   });
 
   it("does not rotate global Gemini API keys into non-TLS Gemini endpoints", async () => {
-    vi.stubEnv("OPENCLAW_LIVE_GEMINI_KEY", "");
+    vi.stubEnv("NOVA_LIVE_GEMINI_KEY", "");
     vi.stubEnv("GEMINI_API_KEYS", "gemini-env-key");
     guardedFetchMock.mockResolvedValueOnce(buildRateLimitResponse());
 
@@ -906,7 +906,7 @@ describe("google transport stream", () => {
   });
 
   it("retries Gemini 3 requests with lean thinking when the first attempt has no first response", async () => {
-    vi.stubEnv("OPENCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
+    vi.stubEnv("NOVA_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
     guardedFetchMock
       .mockImplementationOnce(
         (_url: string, init?: RequestInit) =>
@@ -976,7 +976,7 @@ describe("google transport stream", () => {
   });
 
   it("keeps streaming after the first Gemini 3 chunk arrives before the retry deadline", async () => {
-    vi.stubEnv("OPENCLAW_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
+    vi.stubEnv("NOVA_GOOGLE_GEMINI_FIRST_RESPONSE_RETRY_MS", "10");
     guardedFetchMock.mockResolvedValueOnce(
       buildDelayedSecondSseResponse({
         first: {

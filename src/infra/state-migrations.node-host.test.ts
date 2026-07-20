@@ -34,7 +34,7 @@ describe("legacy node-host Doctor migration", () => {
 
   function useStateDir(): { env: NodeJS.ProcessEnv; stateDir: string } {
     const stateDir = tempDirs.make("openclaw-node-host-migration-");
-    return { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir }, stateDir };
+    return { env: { ...process.env, NOVA_STATE_DIR: stateDir }, stateDir };
   }
 
   function legacyConfig(overrides: Record<string, unknown> = {}): Record<string, unknown> {

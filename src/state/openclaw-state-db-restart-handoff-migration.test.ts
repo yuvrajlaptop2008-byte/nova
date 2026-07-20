@@ -6,7 +6,7 @@ import {
   closeOpenClawStateDatabaseForTest,
   detectOpenClawStateDatabaseSchemaMigrations,
   openOpenClawStateDatabase,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
   repairOpenClawStateDatabaseSchema,
 } from "./openclaw-state-db.js";
 
@@ -19,7 +19,7 @@ afterEach(() => {
 describe("gateway restart handoff state migration", () => {
   it("repairs fractional trace timestamps while doctor migrates version 2 to STRICT", () => {
     const stateDir = tempDirs.make("openclaw-state-restart-handoff-");
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const databasePath = openOpenClawStateDatabase(options).path;
     closeOpenClawStateDatabaseForTest();
 
@@ -99,13 +99,13 @@ describe("gateway restart handoff state migration", () => {
 
     const migrated = openOpenClawStateDatabase(options);
     expect(migrated.db.prepare("PRAGMA user_version").get()).toEqual({
-      user_version: OPENCLAW_STATE_SCHEMA_VERSION,
+      user_version: NOVA_STATE_SCHEMA_VERSION,
     });
     expect(
       migrated.db
         .prepare("SELECT schema_version FROM schema_meta WHERE meta_key = 'primary'")
         .get(),
-    ).toEqual({ schema_version: OPENCLAW_STATE_SCHEMA_VERSION });
+    ).toEqual({ schema_version: NOVA_STATE_SCHEMA_VERSION });
     expect(
       migrated.db
         .prepare("SELECT strict FROM pragma_table_list WHERE name = 'gateway_restart_handoff'")

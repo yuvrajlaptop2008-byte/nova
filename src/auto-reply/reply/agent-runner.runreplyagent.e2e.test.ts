@@ -248,7 +248,7 @@ beforeEach(() => {
   vi.mocked(enqueueFollowupRun).mockReset().mockReturnValue(true);
   vi.mocked(refreshQueuedFollowupSession).mockReset();
   vi.mocked(scheduleFollowupDrain).mockReset();
-  vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+  vi.stubEnv("NOVA_TEST_FAST", "1");
 });
 
 function createMinimalRun(params?: {
@@ -320,7 +320,7 @@ function createMinimalRun(params?: {
       },
       timeoutMs: 1_000,
       blockReplyBreak: "message_end",
-      skipProviderRuntimeHints: process.env.OPENCLAW_TEST_FAST === "1",
+      skipProviderRuntimeHints: process.env.NOVA_TEST_FAST === "1",
       ...params?.runOverrides,
     },
   } as unknown as FollowupRun;

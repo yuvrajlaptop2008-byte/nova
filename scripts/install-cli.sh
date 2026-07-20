@@ -42,7 +42,7 @@ cleanup_tmpfiles() {
 trap cleanup_tmpfiles EXIT
 
 resolve_openclaw_effective_home() {
-  local openclaw_home="${OPENCLAW_HOME:-}"
+  local openclaw_home="${NOVA_HOME:-}"
   if [[ -z "$openclaw_home" ]]; then
     echo "$HOME"
     return 0
@@ -61,14 +61,14 @@ resolve_openclaw_effective_home() {
   esac
 }
 
-OPENCLAW_EFFECTIVE_HOME="$(resolve_openclaw_effective_home)"
-PREFIX="${OPENCLAW_PREFIX:-${HOME}/.openclaw}"
-OPENCLAW_VERSION="${OPENCLAW_VERSION:-latest}"
+NOVA_EFFECTIVE_HOME="$(resolve_openclaw_effective_home)"
+PREFIX="${NOVA_PREFIX:-${HOME}/.openclaw}"
+NOVA_VERSION="${NOVA_VERSION:-latest}"
 DEFAULT_NODE_VERSION="24.15.0"
 ARMV7_DEFAULT_NODE_VERSION="22.22.3"
-NODE_VERSION="${OPENCLAW_NODE_VERSION:-${DEFAULT_NODE_VERSION}}"
+NODE_VERSION="${NOVA_NODE_VERSION:-${DEFAULT_NODE_VERSION}}"
 NODE_VERSION_REQUESTED=0
-if [[ -n "${OPENCLAW_NODE_VERSION:-}" ]]; then
+if [[ -n "${NOVA_NODE_VERSION:-}" ]]; then
   NODE_VERSION_REQUESTED=1
 fi
 MIN_NODE_22_VERSION="22.22.3"
@@ -76,10 +76,10 @@ MIN_NODE_24_VERSION="24.15.0"
 MIN_NODE_25_VERSION="25.9.0"
 SUPPORTED_NODE_VERSION_LABEL="Node 22.22.3+, Node 24.15.0+, or Node 25.9.0+"
 APK_NODE_BIN_DIR="/usr/bin"
-NPM_LOGLEVEL="${OPENCLAW_NPM_LOGLEVEL:-error}"
-INSTALL_METHOD="${OPENCLAW_INSTALL_METHOD:-npm}"
-GIT_DIR="${OPENCLAW_GIT_DIR:-${OPENCLAW_EFFECTIVE_HOME}/openclaw}"
-GIT_UPDATE="${OPENCLAW_GIT_UPDATE:-1}"
+NPM_LOGLEVEL="${NOVA_NPM_LOGLEVEL:-error}"
+INSTALL_METHOD="${NOVA_INSTALL_METHOD:-npm}"
+GIT_DIR="${NOVA_GIT_DIR:-${NOVA_EFFECTIVE_HOME}/openclaw}"
+GIT_UPDATE="${NOVA_GIT_UPDATE:-1}"
 JSON=0
 RUN_ONBOARD=0
 SET_NPM_PREFIX=0
@@ -89,11 +89,11 @@ print_usage() {
   cat <<EOF
 Usage: install-cli.sh [options]
   --json                              Emit NDJSON events (no human output)
-  --prefix <path>                     Install prefix (default: ~/.openclaw; use \$OPENCLAW_PREFIX to override)
+  --prefix <path>                     Install prefix (default: ~/.openclaw; use \$NOVA_PREFIX to override)
   --install-method, --method npm|git  Install via npm (default) or from a git checkout
   --npm                               Shortcut for --install-method npm
   --git, --github                     Shortcut for --install-method git
-  --git-dir, --dir <path>             Checkout directory (default: ~/openclaw, or \$OPENCLAW_HOME/openclaw)
+  --git-dir, --dir <path>             Checkout directory (default: ~/openclaw, or \$NOVA_HOME/openclaw)
   --version <ver>                     OpenClaw version (default: latest)
   --node-version <ver>                Node version (default: 24.15.0; 22.22.3 on Linux ARMv7)
   --onboard                           Run "openclaw onboard" after install
@@ -101,13 +101,13 @@ Usage: install-cli.sh [options]
   --set-npm-prefix                    Force npm prefix to ~/.npm-global if current prefix is not writable (Linux)
 
 Environment variables:
-  OPENCLAW_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
-  OPENCLAW_INSTALL_METHOD=git|npm
-  OPENCLAW_HOME=...
-  OPENCLAW_PREFIX=...
-  OPENCLAW_VERSION=latest|next|<semver>
-  OPENCLAW_GIT_DIR=...
-  OPENCLAW_GIT_UPDATE=0|1
+  NOVA_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
+  NOVA_INSTALL_METHOD=git|npm
+  NOVA_HOME=...
+  NOVA_PREFIX=...
+  NOVA_VERSION=latest|next|<semver>
+  NOVA_GIT_DIR=...
+  NOVA_GIT_UPDATE=0|1
 EOF
 }
 
@@ -148,7 +148,7 @@ download_file() {
 }
 
 cleanup_legacy_submodules() {
-  local repo_dir="${1:-${OPENCLAW_GIT_DIR:-${OPENCLAW_EFFECTIVE_HOME}/openclaw}}"
+  local repo_dir="${1:-${NOVA_GIT_DIR:-${NOVA_EFFECTIVE_HOME}/openclaw}}"
   local legacy_dir="${repo_dir}/Peekaboo"
   if [[ -d "$legacy_dir" ]]; then
     emit_json "{\"event\":\"step\",\"name\":\"legacy-submodule\",\"status\":\"start\",\"path\":\"${legacy_dir//\"/\\\"}\"}"
@@ -286,7 +286,7 @@ parse_args() {
         if [[ $# -lt 2 || "${2:-}" == --* ]]; then
           fail "Missing value for $1"
         fi
-        OPENCLAW_VERSION="$2"
+        NOVA_VERSION="$2"
         shift 2
         ;;
       --node-version)
@@ -726,7 +726,7 @@ is_openclaw_source_package_install_spec() {
 }
 
 resolve_git_openclaw_ref() {
-  local requested="${OPENCLAW_VERSION:-latest}"
+  local requested="${NOVA_VERSION:-latest}"
   local resolved_version=""
 
   case "$requested" in
@@ -1080,7 +1080,7 @@ npm_config_has_raw_key() {
 }
 
 install_openclaw() {
-  local requested="${OPENCLAW_VERSION:-latest}"
+  local requested="${NOVA_VERSION:-latest}"
   if is_openclaw_source_package_install_spec "$requested"; then
     fail "npm installs do not support OpenClaw GitHub source targets like '${requested}'. Use --install-method git --version main, latest, beta, an exact version, or a built .tgz package."
   fi
@@ -1292,7 +1292,7 @@ refresh_gateway_service_if_loaded() {
 main() {
   parse_args "$@"
 
-  if [[ "${OPENCLAW_NO_ONBOARD:-0}" == "1" ]]; then
+  if [[ "${NOVA_NO_ONBOARD:-0}" == "1" ]]; then
     RUN_ONBOARD=0
   fi
 
@@ -1330,6 +1330,6 @@ main() {
   fi
 }
 
-if [[ "${OPENCLAW_INSTALL_CLI_SH_NO_RUN:-0}" != "1" ]]; then
+if [[ "${NOVA_INSTALL_CLI_SH_NO_RUN:-0}" != "1" ]]; then
   main "$@"
 fi

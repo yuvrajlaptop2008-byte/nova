@@ -162,7 +162,7 @@ describe("OpenAI Codex OAuth flow", () => {
   });
 
   it("rejects non-loopback callback bind hosts", () => {
-    expect(() => resolveOpenAICallbackHost({ OPENCLAW_OAUTH_CALLBACK_HOST: "0.0.0.0" })).toThrow(
+    expect(() => resolveOpenAICallbackHost({ NOVA_OAUTH_CALLBACK_HOST: "0.0.0.0" })).toThrow(
       "callback host must be localhost, 127.0.0.1, or ::1",
     );
   });

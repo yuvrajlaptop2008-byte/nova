@@ -65,11 +65,11 @@ const ENV_KEYS = [
   "USERPROFILE",
   "HOMEDRIVE",
   "HOMEPATH",
-  "OPENCLAW_HOME",
-  "OPENCLAW_STATE_DIR",
-  "OPENCLAW_CONFIG_PATH",
-  "OPENCLAW_AGENT_DIR",
-  "OPENCLAW_SERVICE_REPAIR_POLICY",
+  "NOVA_HOME",
+  "NOVA_STATE_DIR",
+  "NOVA_CONFIG_PATH",
+  "NOVA_AGENT_DIR",
+  "NOVA_SERVICE_REPAIR_POLICY",
 ] as const;
 
 function resetConfigRuntimeStateForTest(): void {
@@ -204,7 +204,7 @@ function scenarioConfig(options: OpenClawTestStateOptions): Record<string, unkno
 function scenarioEnv(options: OpenClawTestStateOptions): Record<string, string | undefined> {
   if ((options.scenario ?? "empty") === "external-service") {
     return {
-      OPENCLAW_SERVICE_REPAIR_POLICY: "external",
+      NOVA_SERVICE_REPAIR_POLICY: "external",
     };
   }
   return {};
@@ -223,14 +223,14 @@ function buildEnvVars(params: {
   const agentDirEnv =
     params.agentEnv === "main"
       ? {
-          OPENCLAW_AGENT_DIR: params.agentDir,
+          NOVA_AGENT_DIR: params.agentDir,
         }
       : {
-          OPENCLAW_AGENT_DIR: undefined,
+          NOVA_AGENT_DIR: undefined,
         };
   const envVars: Record<string, string | undefined> = {
-    OPENCLAW_STATE_DIR: params.stateDir,
-    OPENCLAW_CONFIG_PATH: params.configPath,
+    NOVA_STATE_DIR: params.stateDir,
+    NOVA_CONFIG_PATH: params.configPath,
     ...agentDirEnv,
     ...params.scenarioEnv,
     ...params.extraEnv,
@@ -239,7 +239,7 @@ function buildEnvVars(params: {
     Object.assign(envVars, {
       HOME: params.home,
       USERPROFILE: params.home,
-      OPENCLAW_HOME: params.home,
+      NOVA_HOME: params.home,
       ...resolveWindowsHomeEnv(params.home),
     });
   }

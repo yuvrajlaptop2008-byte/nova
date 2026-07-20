@@ -15,8 +15,8 @@ import { recordOpenClawDatabaseQuarantine } from "./openclaw-quarantine-store.js
 import { recordOpenClawStateDatabaseOpenFailure } from "./openclaw-state-db.js";
 import { resolveOpenClawStateSqlitePath } from "./openclaw-state-db.paths.js";
 
-export const OPENCLAW_DATABASE_VERIFY_INITIAL_DELAY_MS = 5 * 60_000;
-export const OPENCLAW_DATABASE_VERIFY_INTERVAL_MS = 24 * 60 * 60_000;
+export const NOVA_DATABASE_VERIFY_INITIAL_DELAY_MS = 5 * 60_000;
+export const NOVA_DATABASE_VERIFY_INTERVAL_MS = 24 * 60 * 60_000;
 
 const log = createSubsystemLogger("state/database-verify");
 

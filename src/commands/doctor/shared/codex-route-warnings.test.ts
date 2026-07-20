@@ -164,7 +164,7 @@ describe("collectCodexRouteWarnings", () => {
     ]);
   });
 
-  it("ignores OPENCLAW_AGENT_RUNTIME when reporting legacy model refs", () => {
+  it("ignores NOVA_AGENT_RUNTIME when reporting legacy model refs", () => {
     const warnings = collectCodexRouteWarnings({
       cfg: {
         agents: {
@@ -174,7 +174,7 @@ describe("collectCodexRouteWarnings", () => {
         },
       } as unknown as OpenClawConfig,
       env: {
-        OPENCLAW_AGENT_RUNTIME: "codex",
+        NOVA_AGENT_RUNTIME: "codex",
       },
     });
 

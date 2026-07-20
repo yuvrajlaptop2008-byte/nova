@@ -100,15 +100,15 @@ function validateOptions(pluginId: string, options: PluginStateLeaseOptions) {
 
 function mapErrorCode(code: OpenClawStateLeaseErrorCode): PluginStateLeaseErrorCode {
   switch (code) {
-    case "OPENCLAW_STATE_LEASE_INVALID_INPUT":
+    case "NOVA_STATE_LEASE_INVALID_INPUT":
       return "PLUGIN_STATE_LEASE_INVALID_INPUT";
-    case "OPENCLAW_STATE_LEASE_TIMEOUT":
+    case "NOVA_STATE_LEASE_TIMEOUT":
       return "PLUGIN_STATE_LEASE_TIMEOUT";
-    case "OPENCLAW_STATE_LEASE_ABORTED":
+    case "NOVA_STATE_LEASE_ABORTED":
       return "PLUGIN_STATE_LEASE_ABORTED";
-    case "OPENCLAW_STATE_LEASE_LOST":
+    case "NOVA_STATE_LEASE_LOST":
       return "PLUGIN_STATE_LEASE_LOST";
-    case "OPENCLAW_STATE_LEASE_STORAGE_FAILED":
+    case "NOVA_STATE_LEASE_STORAGE_FAILED":
       return "PLUGIN_STATE_LEASE_STORAGE_FAILED";
     default:
       throw new Error(`unsupported Nova state lease error code: ${String(code)}`);

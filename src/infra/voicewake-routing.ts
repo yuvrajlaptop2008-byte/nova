@@ -54,7 +54,7 @@ type VoiceWakeRoutingDatabase = Pick<
 
 function openStateDatabase(stateDir?: string) {
   return openOpenClawStateDatabase({
-    env: stateDir ? { ...process.env, OPENCLAW_STATE_DIR: stateDir } : process.env,
+    env: stateDir ? { ...process.env, NOVA_STATE_DIR: stateDir } : process.env,
   });
 }
 
@@ -399,7 +399,7 @@ export async function setVoiceWakeRoutingConfig(
         );
       }
     },
-    baseDir ? { env: { ...process.env, OPENCLAW_STATE_DIR: baseDir } } : {},
+    baseDir ? { env: { ...process.env, NOVA_STATE_DIR: baseDir } } : {},
   );
   return next;
 }

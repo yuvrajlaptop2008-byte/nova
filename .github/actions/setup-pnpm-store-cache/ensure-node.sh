@@ -82,7 +82,7 @@ openclaw_find_toolcache_node() {
     "${RUNNER_TOOL_CACHE:-}" \
     "${AGENT_TOOLSDIRECTORY:-}" \
     "${ACTIONS_RUNNER_TOOL_CACHE:-}" \
-    "${OPENCLAW_CONTAINER_TOOL_CACHE:-/__t}" \
+    "${NOVA_CONTAINER_TOOL_CACHE:-/__t}" \
     "/opt/hostedtoolcache" \
     "/home/runner/_work/_tool" \
     "/Users/runner/hostedtoolcache" \
@@ -124,8 +124,8 @@ openclaw_resolve_node_download_version() {
   [[ "$prefix" == *. ]] || prefix="${prefix}."
   curl -fsSL --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 \
     https://nodejs.org/dist/index.json |
-    OPENCLAW_NODE_PREFIX="$prefix" python3 -c 'import json, os, sys
-prefix = os.environ["OPENCLAW_NODE_PREFIX"]
+    NOVA_NODE_PREFIX="$prefix" python3 -c 'import json, os, sys
+prefix = os.environ["NOVA_NODE_PREFIX"]
 for item in json.load(sys.stdin):
     version = item.get("version", "")
     if version.startswith(prefix):

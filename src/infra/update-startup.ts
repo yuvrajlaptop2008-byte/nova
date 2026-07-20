@@ -532,7 +532,7 @@ export async function runGatewayUpdateCheck(params: {
   const configuredChannel =
     normalizeUpdateChannel(params.cfg.update?.channel) ?? DEFAULT_PACKAGE_CHANNEL;
   const auto = resolveAutoUpdatePolicy(params.cfg);
-  const autoDisabledByEnv = isTruthyEnvValue(process.env.OPENCLAW_NO_AUTO_UPDATE);
+  const autoDisabledByEnv = isTruthyEnvValue(process.env.NOVA_NO_AUTO_UPDATE);
   const autoDisabledByExternalSupervisor = isGatewayExternallySupervised();
   const isAutoUpdateChannel = configuredChannel === "stable" || configuredChannel === "beta";
   const shouldRunAutoUpdate =
@@ -659,7 +659,7 @@ export async function runGatewayUpdateCheck(params: {
     }
 
     if (channel !== "extended-stable" && auto.enabled && autoDisabledByEnv) {
-      params.log.info("auto-update disabled by OPENCLAW_NO_AUTO_UPDATE", {
+      params.log.info("auto-update disabled by NOVA_NO_AUTO_UPDATE", {
         version: resolved.version,
         tag,
       });

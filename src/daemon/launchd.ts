@@ -54,13 +54,13 @@ const LAUNCH_AGENT_ENV_FILE_MODE = 0o600;
 const LAUNCH_AGENT_ENV_WRAPPER_MODE = 0o700;
 const LAUNCH_AGENT_ENV_DIR_NAME = "service-env";
 const LAUNCH_AGENT_STDERR_PATH = "/dev/null";
-const OPENCLAW_UPDATE_LAUNCHD_LABEL_PREFIX = "ai.openclaw.update.";
-const OPENCLAW_MANUAL_UPDATE_LAUNCHD_LABEL_PATTERN = /^ai\.openclaw\.manual-update\.\d+$/;
-const OPENCLAW_PROFILE_UPDATE_LAUNCHD_LABEL_PATTERN =
+const NOVA_UPDATE_LAUNCHD_LABEL_PREFIX = "ai.openclaw.update.";
+const NOVA_MANUAL_UPDATE_LAUNCHD_LABEL_PATTERN = /^ai\.openclaw\.manual-update\.\d+$/;
+const NOVA_PROFILE_UPDATE_LAUNCHD_LABEL_PATTERN =
   /^ai\.openclaw\.[A-Za-z0-9._-]+\.update\.[A-Za-z0-9._-]+$/;
-const OPENCLAW_DIRECT_CLI_NAMES = new Set(["openclaw", "openclaw.mjs"]);
-const OPENCLAW_NODE_RUNTIME_NAMES = new Set(["bun", "bun.exe", "node", "node.exe"]);
-const OPENCLAW_SCRIPT_NAMES = new Set(["openclaw.mjs"]);
+const NOVA_DIRECT_CLI_NAMES = new Set(["openclaw", "openclaw.mjs"]);
+const NOVA_NODE_RUNTIME_NAMES = new Set(["bun", "bun.exe", "node", "node.exe"]);
+const NOVA_SCRIPT_NAMES = new Set(["openclaw.mjs"]);
 const LAUNCH_AGENT_STOP_PORT_RELEASE_TIMEOUT_MS = LAUNCH_AGENT_EXIT_TIMEOUT_SECONDS * 1_000;
 const LAUNCH_AGENT_STOP_PORT_RELEASE_POLL_MS = 100;
 
@@ -80,12 +80,12 @@ function normalizeOpenClawUpdateLaunchdLabel(label: unknown): string | null {
     return null;
   }
   const trimmed = label.trim();
-  if (trimmed.startsWith(OPENCLAW_UPDATE_LAUNCHD_LABEL_PREFIX)) {
+  if (trimmed.startsWith(NOVA_UPDATE_LAUNCHD_LABEL_PREFIX)) {
     return trimmed;
   }
   // Manual update jobs include a timestamp-like suffix and should be cleaned up
   // without matching arbitrary ai.openclaw labels.
-  return OPENCLAW_MANUAL_UPDATE_LAUNCHD_LABEL_PATTERN.test(trimmed) ? trimmed : null;
+  return NOVA_MANUAL_UPDATE_LAUNCHD_LABEL_PATTERN.test(trimmed) ? trimmed : null;
 }
 
 function normalizeOpenClawUpdateLaunchdLabelCandidate(
@@ -99,23 +99,23 @@ function normalizeOpenClawUpdateLaunchdLabelCandidate(
     return null;
   }
   const trimmed = label.trim();
-  return OPENCLAW_PROFILE_UPDATE_LAUNCHD_LABEL_PATTERN.test(trimmed)
+  return NOVA_PROFILE_UPDATE_LAUNCHD_LABEL_PATTERN.test(trimmed)
     ? { label: trimmed, requiresMetadata: true }
     : null;
 }
 
 function isCurrentGatewayLaunchdLabel(label: string, env: NodeJS.ProcessEnv): boolean {
-  const gatewayProfileLabel = resolveGatewayLaunchAgentLabel(env.OPENCLAW_PROFILE);
+  const gatewayProfileLabel = resolveGatewayLaunchAgentLabel(env.NOVA_PROFILE);
   if (label === gatewayProfileLabel) {
     return true;
   }
   if (
-    env.OPENCLAW_SERVICE_MARKER?.trim() !== GATEWAY_SERVICE_MARKER ||
-    env.OPENCLAW_SERVICE_KIND?.trim() !== GATEWAY_SERVICE_KIND
+    env.NOVA_SERVICE_MARKER?.trim() !== GATEWAY_SERVICE_MARKER ||
+    env.NOVA_SERVICE_KIND?.trim() !== GATEWAY_SERVICE_KIND
   ) {
     return false;
   }
-  const configuredLabel = env.OPENCLAW_LAUNCHD_LABEL?.trim();
+  const configuredLabel = env.NOVA_LAUNCHD_LABEL?.trim();
   return Boolean(configuredLabel && label === configuredLabel);
 }
 
@@ -126,7 +126,7 @@ function resolveCurrentOpenClawUpdateLaunchdJobLabel(
     env.LAUNCH_JOB_LABEL,
     env.LAUNCH_JOB_NAME,
     env.XPC_SERVICE_NAME,
-    env.OPENCLAW_LAUNCHD_LABEL,
+    env.NOVA_LAUNCHD_LABEL,
   ]) {
     const candidate = normalizeOpenClawUpdateLaunchdLabelCandidate(label);
     if (candidate) {
@@ -148,11 +148,11 @@ function assertValidLaunchAgentLabel(label: string): string {
 }
 
 function resolveLaunchAgentLabel(args?: { env?: Record<string, string | undefined> }): string {
-  const envLabel = args?.env?.OPENCLAW_LAUNCHD_LABEL?.trim();
+  const envLabel = args?.env?.NOVA_LAUNCHD_LABEL?.trim();
   if (envLabel) {
     return assertValidLaunchAgentLabel(envLabel);
   }
-  return assertValidLaunchAgentLabel(resolveGatewayLaunchAgentLabel(args?.env?.OPENCLAW_PROFILE));
+  return assertValidLaunchAgentLabel(resolveGatewayLaunchAgentLabel(args?.env?.NOVA_PROFILE));
 }
 
 function resolveLaunchAgentPlistPathForLabel(
@@ -223,7 +223,7 @@ async function resolveLaunchAgentEnvironmentWrapperOverwriteWarnings(params: {
     return [];
   }
   return [
-    `Existing generated LaunchAgent env wrapper at ${params.wrapperPath} contains custom behavior and will be overwritten; move custom behavior to openclaw gateway install --wrapper <path> or OPENCLAW_WRAPPER.`,
+    `Existing generated LaunchAgent env wrapper at ${params.wrapperPath} contains custom behavior and will be overwritten; move custom behavior to openclaw gateway install --wrapper <path> or NOVA_WRAPPER.`,
   ];
 }
 
@@ -414,20 +414,20 @@ function parseLaunchctlListOpenClawUpdateJobCandidates(
 }
 
 function hasOpenClawUpdateLaunchdMarker(env: Record<string, string | undefined> | undefined) {
-  return env?.OPENCLAW_UPDATE_RUN_HANDOFF?.trim() === "1";
+  return env?.NOVA_UPDATE_RUN_HANDOFF?.trim() === "1";
 }
 
 function isOpenClawUpdateCommandPrefix(programArguments: string[], updateIndex: number): boolean {
   if (updateIndex === 1) {
     const cliName = path.basename(programArguments[0] ?? "").toLowerCase();
-    return OPENCLAW_DIRECT_CLI_NAMES.has(cliName);
+    return NOVA_DIRECT_CLI_NAMES.has(cliName);
   }
   if (updateIndex !== 2) {
     return false;
   }
   const runtimeName = path.basename(programArguments[0] ?? "").toLowerCase();
   const entryName = path.basename(programArguments[1] ?? "").toLowerCase();
-  return OPENCLAW_NODE_RUNTIME_NAMES.has(runtimeName) && OPENCLAW_SCRIPT_NAMES.has(entryName);
+  return NOVA_NODE_RUNTIME_NAMES.has(runtimeName) && NOVA_SCRIPT_NAMES.has(entryName);
 }
 
 function isOpenClawUpdateProgramArguments(programArguments: string[] | undefined): boolean {
@@ -552,11 +552,11 @@ async function resolveLaunchAgentGatewayPort(env: GatewayServiceEnv): Promise<nu
   if (fromArgs !== null) {
     return fromArgs;
   }
-  const fromServiceEnv = parseTcpPort(command?.environment?.OPENCLAW_GATEWAY_PORT ?? "");
+  const fromServiceEnv = parseTcpPort(command?.environment?.NOVA_GATEWAY_PORT ?? "");
   if (fromServiceEnv !== null) {
     return fromServiceEnv;
   }
-  return parseTcpPort(env.OPENCLAW_GATEWAY_PORT ?? "");
+  return parseTcpPort(env.NOVA_GATEWAY_PORT ?? "");
 }
 
 function resolveGuiDomain(): string {
@@ -1087,7 +1087,7 @@ async function writeLaunchAgentPlist({
 
   const domain = resolveGuiDomain();
   const label = resolveLaunchAgentLabel({ env });
-  for (const legacyLabel of resolveLegacyGatewayLaunchAgentLabels(env.OPENCLAW_PROFILE)) {
+  for (const legacyLabel of resolveLegacyGatewayLaunchAgentLabels(env.NOVA_PROFILE)) {
     const legacyPlistPath = resolveLaunchAgentPlistPathForLabel(env, legacyLabel);
     await execLaunchctl(["bootout", domain, legacyPlistPath]);
     await execLaunchctl(["unload", legacyPlistPath]);

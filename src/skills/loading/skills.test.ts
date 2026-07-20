@@ -35,7 +35,7 @@ vi.mock("./plugin-skills.js", () => ({
 const fixtureSuite = createFixtureSuite("openclaw-skills-suite-");
 let tempHome: TempHomeEnv | null = null;
 let skillsHomeEnv: SkillsHomeEnvSnapshot | null = null;
-const pluginEnvSnapshot = captureEnv(["OPENCLAW_DISABLE_BUNDLED_PLUGINS"]);
+const pluginEnvSnapshot = captureEnv(["NOVA_DISABLE_BUNDLED_PLUGINS"]);
 
 const resolveTestSkillDirs = (workspaceDir: string) => ({
   managedSkillsDir: path.join(workspaceDir, ".managed"),
@@ -152,7 +152,7 @@ function resolvedSkillApiKeyConfig(skillName: string, apiKey: string): OpenClawC
 
 beforeAll(async () => {
   await fixtureSuite.setup();
-  process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";
+  process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "1";
   tempHome = await createTempHomeEnv("openclaw-skills-home-");
   skillsHomeEnv = setMockSkillsHomeEnv(tempHome.home);
   await fs.mkdir(path.join(tempHome.home, ".openclaw", "agents", "main", "sessions"), {
@@ -506,7 +506,7 @@ describe("buildWorkspaceSkillsPrompt", () => {
 });
 
 describe("shouldIncludeSkill", () => {
-  const envName = "OPENCLAW_TEST_SKILL_REQUIREMENT";
+  const envName = "NOVA_TEST_SKILL_REQUIREMENT";
   const entry = makeSkillEntry("env-skill", {
     primaryEnv: envName,
     requires: { env: [envName] },

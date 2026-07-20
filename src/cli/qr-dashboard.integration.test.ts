@@ -118,8 +118,8 @@ describe("cli integration: qr + dashboard token SecretRef", () => {
   beforeAll(() => {
     envSnapshot = captureEnv([
       "SHARED_GATEWAY_TOKEN",
-      "OPENCLAW_GATEWAY_TOKEN",
-      "OPENCLAW_GATEWAY_PASSWORD",
+      "NOVA_GATEWAY_TOKEN",
+      "NOVA_GATEWAY_PASSWORD",
     ]);
   });
 
@@ -132,8 +132,8 @@ describe("cli integration: qr + dashboard token SecretRef", () => {
       recovered: false,
     });
     runtimeExit.mockImplementation(() => {});
-    delete process.env.OPENCLAW_GATEWAY_TOKEN;
-    delete process.env.OPENCLAW_GATEWAY_PASSWORD;
+    delete process.env.NOVA_GATEWAY_TOKEN;
+    delete process.env.NOVA_GATEWAY_PASSWORD;
     delete process.env.SHARED_GATEWAY_TOKEN;
   });
 
@@ -194,7 +194,7 @@ describe("cli integration: qr + dashboard token SecretRef", () => {
     expect(joined).toContain("Dashboard URL: http://127.0.0.1:18789/");
     expect(joined).not.toContain("#token=");
     expect(joined).toContain("Token auto-auth unavailable");
-    expect(joined).toContain("Set OPENCLAW_GATEWAY_TOKEN");
+    expect(joined).toContain("Set NOVA_GATEWAY_TOKEN");
   });
 
   afterAll(() => {

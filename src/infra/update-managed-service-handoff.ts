@@ -24,13 +24,13 @@ import type { UpdateRestartSentinelMeta } from "./update-restart-sentinel-payloa
 // bounded shutdown phase. Keep the helper alive through both phases. (#99666)
 const PARENT_EXIT_SHUTDOWN_RESERVE_MS = 30_000;
 const HANDOFF_READY_TIMEOUT_MS = 30_000;
-const HANDOFF_READY_MARKER = "OPENCLAW_UPDATE_HANDOFF_READY\n";
+const HANDOFF_READY_MARKER = "NOVA_UPDATE_HANDOFF_READY\n";
 const HANDOFF_STATE_DATABASE_BUSY_TIMEOUT_MS = 5_000;
 const SYSTEMD_RUN_CANDIDATE_PATHS = ["/usr/bin/systemd-run", "/bin/systemd-run"] as const;
 const SERVICE_IDENTITY_ENV_VARS = new Set<string>([
-  "OPENCLAW_LAUNCHD_LABEL",
-  "OPENCLAW_SYSTEMD_UNIT",
-  "OPENCLAW_WINDOWS_TASK_NAME",
+  "NOVA_LAUNCHD_LABEL",
+  "NOVA_SYSTEMD_UNIT",
+  "NOVA_WINDOWS_TASK_NAME",
 ] as const);
 type HandoffChild = ChildProcess & { stdout: NonNullable<ChildProcess["stdout"]> };
 
@@ -662,17 +662,17 @@ function resolveGatewayServiceRecovery(
   env: NodeJS.ProcessEnv,
 ): GatewayServiceRecovery | undefined {
   if (supervisor === "systemd") {
-    const override = env.OPENCLAW_SYSTEMD_UNIT?.trim();
+    const override = env.NOVA_SYSTEMD_UNIT?.trim();
     const unit = override
       ? override.endsWith(".service")
         ? override
         : `${override}.service`
-      : `${resolveGatewaySystemdServiceName(env.OPENCLAW_PROFILE)}.service`;
+      : `${resolveGatewaySystemdServiceName(env.NOVA_PROFILE)}.service`;
     return { kind: "systemd", unit };
   }
   if (supervisor === "launchd") {
     const label =
-      env.OPENCLAW_LAUNCHD_LABEL?.trim() || resolveGatewayLaunchAgentLabel(env.OPENCLAW_PROFILE);
+      env.NOVA_LAUNCHD_LABEL?.trim() || resolveGatewayLaunchAgentLabel(env.NOVA_PROFILE);
     const uid = typeof process.getuid === "function" ? process.getuid() : 501;
     const home = env.HOME?.trim() || os.homedir();
     return {
@@ -684,7 +684,7 @@ function resolveGatewayServiceRecovery(
   }
   if (supervisor === "schtasks") {
     const taskName =
-      env.OPENCLAW_WINDOWS_TASK_NAME?.trim() || resolveGatewayWindowsTaskName(env.OPENCLAW_PROFILE);
+      env.NOVA_WINDOWS_TASK_NAME?.trim() || resolveGatewayWindowsTaskName(env.NOVA_PROFILE);
     return { kind: "schtasks", taskName };
   }
   return undefined;
@@ -917,7 +917,7 @@ async function spawnManagedServiceUpdateHandoff(
     const env = {
       ...stripSupervisorHintEnv(params.env ?? process.env),
       [CONTROL_PLANE_UPDATE_SENTINEL_META_ENV]: metaPath,
-      OPENCLAW_UPDATE_RUN_HANDOFF: "1",
+      NOVA_UPDATE_RUN_HANDOFF: "1",
     };
     const spawnTarget = await resolveHandoffSpawn({
       supervisor: params.supervisor,

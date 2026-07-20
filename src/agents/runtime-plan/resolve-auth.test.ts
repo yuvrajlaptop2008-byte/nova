@@ -43,8 +43,8 @@ function authStore(profiles: AuthProfileStore["profiles"]): AuthProfileStore {
 
 describe("resolvePreparedRuntimeModelAuth", () => {
   beforeEach(() => {
-    vi.stubEnv("OPENCLAW_TEST_MISSING_PREPARED_AUTH", "");
-    vi.stubEnv("OPENCLAW_TEST_MISSING_BOUND_AUTH", "");
+    vi.stubEnv("NOVA_TEST_MISSING_PREPARED_AUTH", "");
+    vi.stubEnv("NOVA_TEST_MISSING_BOUND_AUTH", "");
   });
 
   afterEach(() => {
@@ -109,7 +109,7 @@ describe("resolvePreparedRuntimeModelAuth", () => {
         keyRef: {
           source: "env",
           provider: "default",
-          id: "OPENCLAW_TEST_MISSING_PREPARED_AUTH",
+          id: "NOVA_TEST_MISSING_PREPARED_AUTH",
         },
       },
       "openai:backup": {
@@ -658,7 +658,7 @@ describe("resolvePreparedRuntimeModelAuth", () => {
         keyRef: {
           source: "env",
           provider: "default",
-          id: "OPENCLAW_TEST_MISSING_BOUND_AUTH",
+          id: "NOVA_TEST_MISSING_BOUND_AUTH",
         },
       },
       "openai:unbound": {

@@ -17,7 +17,7 @@ import {
   CODEX_ACP_BIN,
   CODEX_ACP_PACKAGE,
   LEGACY_CODEX_ACP_PACKAGE,
-  OPENCLAW_CODEX_CONFIG_ARG,
+  NOVA_CODEX_CONFIG_ARG,
 } from "./codex-adapter.js";
 import {
   extractTrustedCodexProjectPaths,
@@ -27,9 +27,9 @@ import { quoteCommandPart, splitCommandParts } from "./command-line.js";
 import { resolveAcpxPluginRoot } from "./config.js";
 import type { ResolvedAcpxPluginConfig } from "./config.js";
 import {
-  OPENCLAW_ACPX_LEASE_ID_ARG,
-  OPENCLAW_ACPX_LEASE_ID_ENV,
-  OPENCLAW_GATEWAY_INSTANCE_ID_ARG,
+  NOVA_ACPX_LEASE_ID_ARG,
+  NOVA_ACPX_LEASE_ID_ENV,
+  NOVA_GATEWAY_INSTANCE_ID_ARG,
 } from "./process-lease.js";
 
 const CLAUDE_ACP_PACKAGE = "@agentclientprotocol/claude-agent-acp";
@@ -254,8 +254,8 @@ const stderrLogFileNamePrefix = ${params.stderrLogFileNamePrefix ? JSON.stringif
 const stderrLogMaxChars = 256 * 1024;
 
 const openClawWrapperArgs = new Set([
-  ${quoteCommandPart(OPENCLAW_ACPX_LEASE_ID_ARG)},
-  ${quoteCommandPart(OPENCLAW_GATEWAY_INSTANCE_ID_ARG)},
+  ${quoteCommandPart(NOVA_ACPX_LEASE_ID_ARG)},
+  ${quoteCommandPart(NOVA_GATEWAY_INSTANCE_ID_ARG)},
   ${(params.openClawWrapperArgs ?? []).map(quoteCommandPart).join(",\n  ")}
 ]);
 
@@ -293,8 +293,8 @@ function resolveStderrLogPath(args) {
     return undefined;
   }
   const leaseId =
-    process.env[${JSON.stringify(OPENCLAW_ACPX_LEASE_ID_ENV)}] ||
-    readOpenClawWrapperArg(args, ${quoteCommandPart(OPENCLAW_ACPX_LEASE_ID_ARG)}) ||
+    process.env[${JSON.stringify(NOVA_ACPX_LEASE_ID_ENV)}] ||
+    readOpenClawWrapperArg(args, ${quoteCommandPart(NOVA_ACPX_LEASE_ID_ARG)}) ||
     "pid-" + process.pid;
   const fileName = stderrLogFileNamePrefix + "." + safeDiagnosticFilePart(leaseId) + ".log";
   return fileURLToPath(new URL("./" + fileName, import.meta.url));
@@ -584,7 +584,7 @@ function buildCodexAcpWrapperScript(installedBinPath?: string): string {
     binName: CODEX_ACP_BIN,
     installedBinPath,
     stderrLogFileNamePrefix: "codex-acp-wrapper.stderr",
-    openClawWrapperArgs: [OPENCLAW_CODEX_CONFIG_ARG],
+    openClawWrapperArgs: [NOVA_CODEX_CONFIG_ARG],
     envSetup: `const codexHome = fileURLToPath(new URL("./codex-home/", import.meta.url));
 const codexAuthPath = fileURLToPath(new URL("./codex-home/auth.json", import.meta.url));
 const codexApiKey = (process.env.CODEX_API_KEY || process.env.OPENAI_API_KEY || "").trim();
@@ -637,7 +637,7 @@ function mergeCodexConfig(base, override) {
 
 const openClawCodexConfigs = readOpenClawWrapperArgs(
   rawConfiguredArgs,
-  ${quoteCommandPart(OPENCLAW_CODEX_CONFIG_ARG)},
+  ${quoteCommandPart(NOVA_CODEX_CONFIG_ARG)},
 );
 if (openClawCodexConfigs.length > 0) {
   let existingCodexConfig = {};
@@ -898,7 +898,7 @@ function resolveCodexAdapterLaunch(configuredCommand?: string): CodexAdapterLaun
     return {
       args: [
         ...(migration.hadOverrides
-          ? [OPENCLAW_CODEX_CONFIG_ARG, JSON.stringify(migration.config)]
+          ? [NOVA_CODEX_CONFIG_ARG, JSON.stringify(migration.config)]
           : []),
         ...migration.forwardedArgs,
       ],

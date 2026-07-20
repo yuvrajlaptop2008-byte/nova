@@ -71,22 +71,22 @@ describe("npm verifier command execution", () => {
   it("rejects malformed command limit environment values", () => {
     const root = makeTempRoot();
 
-    withEnv({ OPENCLAW_NPM_VERIFY_COMMAND_TIMEOUT_MS: "5m" }, () => {
+    withEnv({ NOVA_NPM_VERIFY_COMMAND_TIMEOUT_MS: "5m" }, () => {
       expect(() =>
         runNpmVerifyCommand(
           { command: process.execPath, args: ["-e", "process.stdout.write('ok')"] },
           root,
         ),
-      ).toThrow("invalid OPENCLAW_NPM_VERIFY_COMMAND_TIMEOUT_MS: 5m");
+      ).toThrow("invalid NOVA_NPM_VERIFY_COMMAND_TIMEOUT_MS: 5m");
     });
 
-    withEnv({ OPENCLAW_NPM_VERIFY_COMMAND_MAX_BUFFER_BYTES: "16mb" }, () => {
+    withEnv({ NOVA_NPM_VERIFY_COMMAND_MAX_BUFFER_BYTES: "16mb" }, () => {
       expect(() =>
         runNpmVerifyCommand(
           { command: process.execPath, args: ["-e", "process.stdout.write('ok')"] },
           root,
         ),
-      ).toThrow("invalid OPENCLAW_NPM_VERIFY_COMMAND_MAX_BUFFER_BYTES: 16mb");
+      ).toThrow("invalid NOVA_NPM_VERIFY_COMMAND_MAX_BUFFER_BYTES: 16mb");
     });
   });
 });

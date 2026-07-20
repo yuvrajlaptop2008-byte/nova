@@ -138,7 +138,7 @@ async function writeProofPlugin(rootDir, nodeLabel, options = {}) {
   const source = `
 import os from "node:os";
 
-const nodeLabel = process.env.OPENCLAW_POND_NODE_LABEL || ${JSON.stringify(nodeLabel)};
+const nodeLabel = process.env.NOVA_POND_NODE_LABEL || ${JSON.stringify(nodeLabel)};
 
 function readParams(paramsJSON) {
   if (!paramsJSON) return {};
@@ -413,13 +413,13 @@ function childEnv(state, token, nodeLabel) {
     ...process.env,
     ...(process.env.OPENAI_API_KEY
       ? {}
-      : process.env.OPENCLAW_LIVE_OPENAI_KEY
-        ? { OPENAI_API_KEY: process.env.OPENCLAW_LIVE_OPENAI_KEY }
+      : process.env.NOVA_LIVE_OPENAI_KEY
+        ? { OPENAI_API_KEY: process.env.NOVA_LIVE_OPENAI_KEY }
         : {}),
-    OPENCLAW_CONFIG_PATH: state.configPath,
-    OPENCLAW_STATE_DIR: state.stateDir,
-    OPENCLAW_GATEWAY_TOKEN: token,
-    OPENCLAW_POND_NODE_LABEL: nodeLabel,
+    NOVA_CONFIG_PATH: state.configPath,
+    NOVA_STATE_DIR: state.stateDir,
+    NOVA_GATEWAY_TOKEN: token,
+    NOVA_POND_NODE_LABEL: nodeLabel,
   };
 }
 
@@ -892,7 +892,7 @@ async function runHotPlugLocal(args) {
     throw new Error("--hot-plug requires --live");
   }
   const liveModel = String(
-    args.model || process.env.OPENCLAW_POND_LIVE_MODEL || DEFAULT_HOT_PLUG_LIVE_MODEL,
+    args.model || process.env.NOVA_POND_LIVE_MODEL || DEFAULT_HOT_PLUG_LIVE_MODEL,
   );
   const token = String(args.token || proofToken());
   const mcpProofToken = proofToken();
@@ -1249,9 +1249,9 @@ async function runVerify({ url, token, expectedNodes }) {
 }
 
 async function runGateway(args) {
-  const token = String(args.token || process.env.OPENCLAW_GATEWAY_TOKEN || "");
+  const token = String(args.token || process.env.NOVA_GATEWAY_TOKEN || "");
   if (!token) {
-    throw new Error("--token or OPENCLAW_GATEWAY_TOKEN required");
+    throw new Error("--token or NOVA_GATEWAY_TOKEN required");
   }
   const port = Number(args.port || DEFAULT_PORT);
   const baseDir = String(
@@ -1279,9 +1279,9 @@ async function runGateway(args) {
 }
 
 async function runNode(args) {
-  const token = String(args.token || process.env.OPENCLAW_GATEWAY_TOKEN || "");
+  const token = String(args.token || process.env.NOVA_GATEWAY_TOKEN || "");
   if (!token) {
-    throw new Error("--token or OPENCLAW_GATEWAY_TOKEN required");
+    throw new Error("--token or NOVA_GATEWAY_TOKEN required");
   }
   const host = String(args.host || "127.0.0.1");
   const port = Number(args.port || DEFAULT_PORT);
@@ -1320,9 +1320,7 @@ async function runNode(args) {
 
 async function runLocal(args) {
   const live = args.live === true;
-  const liveModel = String(
-    args.model || process.env.OPENCLAW_POND_LIVE_MODEL || DEFAULT_LIVE_MODEL,
-  );
+  const liveModel = String(args.model || process.env.NOVA_POND_LIVE_MODEL || DEFAULT_LIVE_MODEL);
   const token = String(args.token || proofToken());
   const mcpProofToken = proofToken();
   const skillProofToken = proofToken();
@@ -1557,11 +1555,11 @@ async function main() {
   const mode = args._[0] ?? "local";
   const defaultLiveModel =
     args["hot-plug"] === true ? DEFAULT_HOT_PLUG_LIVE_MODEL : DEFAULT_LIVE_MODEL;
-  const liveModel = String(args.model || process.env.OPENCLAW_POND_LIVE_MODEL || defaultLiveModel);
+  const liveModel = String(args.model || process.env.NOVA_POND_LIVE_MODEL || defaultLiveModel);
   const liveProvider = liveModel.split("/", 1)[0];
   const liveKeyPresent =
     liveProvider === "openai"
-      ? Boolean(process.env.OPENAI_API_KEY?.trim() || process.env.OPENCLAW_LIVE_OPENAI_KEY?.trim())
+      ? Boolean(process.env.OPENAI_API_KEY?.trim() || process.env.NOVA_LIVE_OPENAI_KEY?.trim())
       : liveProvider === "anthropic"
         ? Boolean(process.env.ANTHROPIC_API_KEY?.trim())
         : true;
@@ -1579,9 +1577,9 @@ async function main() {
     return;
   }
   if (mode === "verify") {
-    const token = String(args.token || process.env.OPENCLAW_GATEWAY_TOKEN || "");
+    const token = String(args.token || process.env.NOVA_GATEWAY_TOKEN || "");
     if (!token) {
-      throw new Error("--token or OPENCLAW_GATEWAY_TOKEN required");
+      throw new Error("--token or NOVA_GATEWAY_TOKEN required");
     }
     await runVerify({
       url: String(args.url || `ws://127.0.0.1:${args.port || DEFAULT_PORT}`),

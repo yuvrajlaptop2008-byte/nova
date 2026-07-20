@@ -30,29 +30,27 @@ describe("Dockerfile", () => {
   it("uses full bookworm for build stages and slim bookworm for runtime", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain(
-      'ARG OPENCLAW_NODE_BOOKWORM_IMAGE="docker.io/library/node:24-bookworm@sha256:8530f76a96d88820d288761f022e318970dda93d01536919fbc16076b7983e63"',
+      'ARG NOVA_NODE_BOOKWORM_IMAGE="docker.io/library/node:24-bookworm@sha256:8530f76a96d88820d288761f022e318970dda93d01536919fbc16076b7983e63"',
     );
     expect(dockerfile).toContain(
-      'ARG OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE="docker.io/library/node:24-bookworm-slim@sha256:242549cd46785b480c832479a730f4f2a20865d61ea2e404fdb2a5c3d3b73ecf"',
+      'ARG NOVA_NODE_BOOKWORM_SLIM_IMAGE="docker.io/library/node:24-bookworm-slim@sha256:242549cd46785b480c832479a730f4f2a20865d61ea2e404fdb2a5c3d3b73ecf"',
     );
     expect(dockerfile).toContain(
-      'ARG OPENCLAW_BUN_IMAGE="docker.io/oven/bun:1.3.13@sha256:87416c977a612a204eb54ab9f3927023c2a3c971f4f345a01da08ea6262ae30e"',
+      'ARG NOVA_BUN_IMAGE="docker.io/oven/bun:1.3.13@sha256:87416c977a612a204eb54ab9f3927023c2a3c971f4f345a01da08ea6262ae30e"',
     );
-    expect(dockerfile).toContain("FROM ${OPENCLAW_NODE_BOOKWORM_IMAGE} AS workspace-deps");
-    expect(dockerfile).toContain("FROM ${OPENCLAW_NODE_BOOKWORM_IMAGE} AS build");
-    expect(dockerfile).toContain("FROM ${OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime");
+    expect(dockerfile).toContain("FROM ${NOVA_NODE_BOOKWORM_IMAGE} AS workspace-deps");
+    expect(dockerfile).toContain("FROM ${NOVA_NODE_BOOKWORM_IMAGE} AS build");
+    expect(dockerfile).toContain("FROM ${NOVA_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime");
     expect(dockerfile).toContain("FROM base-runtime");
     expect(dockerfile).toContain("current multi-arch manifest list entries");
     expect(dockerfile).not.toContain("current amd64 entry");
-    expect(dockerfile).not.toContain("OPENCLAW_VARIANT");
+    expect(dockerfile).not.toContain("NOVA_VARIANT");
   });
 
   it("installs CA certificates in the slim runtime stage", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     const collapsed = collapseDockerContinuations(dockerfile);
-    const runtimeIndex = collapsed.indexOf(
-      "FROM ${OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime",
-    );
+    const runtimeIndex = collapsed.indexOf("FROM ${NOVA_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime");
     const caInstallIndex = collapsed.indexOf(
       "ca-certificates curl git hostname lsof openssl procps python3",
     );
@@ -67,7 +65,7 @@ describe("Dockerfile", () => {
   it("installs python3 and tini in the slim runtime stage", async () => {
     const dockerfile = collapseDockerContinuations(await readFile(dockerfilePath, "utf8"));
     const runtimeIndex = dockerfile.indexOf(
-      "FROM ${OPENCLAW_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime",
+      "FROM ${NOVA_NODE_BOOKWORM_SLIM_IMAGE} AS base-runtime",
     );
     const pythonInstallIndex = dockerfile.indexOf(
       "ca-certificates curl git hostname lsof openssl procps python3",
@@ -85,7 +83,7 @@ describe("Dockerfile", () => {
   it("installs optional browser dependencies after pnpm install", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     const installIndex = dockerfile.indexOf("pnpm install --frozen-lockfile");
-    const browserArgIndex = dockerfile.indexOf("ARG OPENCLAW_INSTALL_BROWSER");
+    const browserArgIndex = dockerfile.indexOf("ARG NOVA_INSTALL_BROWSER");
 
     expect(installIndex).toBeGreaterThan(-1);
     expect(browserArgIndex).toBeGreaterThan(-1);
@@ -133,21 +131,21 @@ describe("Dockerfile", () => {
   it("uses portable copies for workspace dependency inputs", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     const workspaceDepsStart = dockerfile.indexOf(
-      "FROM ${OPENCLAW_NODE_BOOKWORM_IMAGE} AS workspace-deps",
+      "FROM ${NOVA_NODE_BOOKWORM_IMAGE} AS workspace-deps",
     );
-    const workspaceDepsEnd = dockerfile.indexOf("FROM ${OPENCLAW_BUN_IMAGE} AS bun-binary");
+    const workspaceDepsEnd = dockerfile.indexOf("FROM ${NOVA_BUN_IMAGE} AS bun-binary");
 
     expect(workspaceDepsStart).toBeGreaterThan(-1);
     expect(workspaceDepsEnd).toBeGreaterThan(workspaceDepsStart);
 
     const workspaceDeps = dockerfile.slice(workspaceDepsStart, workspaceDepsEnd);
     const extractionIndex = workspaceDeps.indexOf(
-      'RUN mkdir -p /out/packages "/out/${OPENCLAW_BUNDLED_PLUGIN_DIR}"',
+      'RUN mkdir -p /out/packages "/out/${NOVA_BUNDLED_PLUGIN_DIR}"',
     );
     const inputCopies = [
       "COPY scripts/lib/docker-plugin-selection.mjs /tmp/docker-plugin-selection.mjs",
       "COPY packages /tmp/packages",
-      "COPY ${OPENCLAW_BUNDLED_PLUGIN_DIR} /tmp/${OPENCLAW_BUNDLED_PLUGIN_DIR}",
+      "COPY ${NOVA_BUNDLED_PLUGIN_DIR} /tmp/${NOVA_BUNDLED_PLUGIN_DIR}",
     ];
 
     expect(extractionIndex).toBeGreaterThan(-1);
@@ -171,7 +169,7 @@ describe("Dockerfile", () => {
       "COPY --from=workspace-deps /out/packages/ ./packages/",
     );
     const extensionManifestIndex = dockerfile.indexOf(
-      "COPY --from=workspace-deps /out/${OPENCLAW_BUNDLED_PLUGIN_DIR}/ ./${OPENCLAW_BUNDLED_PLUGIN_DIR}/",
+      "COPY --from=workspace-deps /out/${NOVA_BUNDLED_PLUGIN_DIR}/ ./${NOVA_BUNDLED_PLUGIN_DIR}/",
     );
 
     expect(postinstallIndex).toBeGreaterThan(-1);
@@ -181,7 +179,7 @@ describe("Dockerfile", () => {
     expect(extensionManifestIndex).toBeGreaterThan(-1);
     expect(dockerfile).toContain("for manifest in /tmp/packages/*/package.json");
     expect(dockerfile).toContain(
-      'node /tmp/docker-plugin-selection.mjs "/tmp/${OPENCLAW_BUNDLED_PLUGIN_DIR}" "$OPENCLAW_EXTENSIONS"',
+      'node /tmp/docker-plugin-selection.mjs "/tmp/${NOVA_BUNDLED_PLUGIN_DIR}" "$NOVA_EXTENSIONS"',
     );
     expect(dockerfile).toContain("done < /out/openclaw-selected-plugin-dirs");
     expect(dockerfile).toContain(`if [ -f "$ext_dir/package.json" ]; then`);
@@ -210,7 +208,7 @@ describe("Dockerfile", () => {
     expect(dockerfile).toContain(
       'selected_plugin_dirs="$(cat /tmp/openclaw-selected-plugin-dirs)"',
     );
-    expect(dockerfile).toContain('OPENCLAW_EXTENSIONS="$(cat /tmp/openclaw-selected-plugin-dirs)"');
+    expect(dockerfile).toContain('NOVA_EXTENSIONS="$(cat /tmp/openclaw-selected-plugin-dirs)"');
   });
 
   it("copies root package lifecycle scripts before pnpm install", async () => {
@@ -248,10 +246,10 @@ describe("Dockerfile", () => {
     const collapsed = collapseDockerContinuations(dockerfile);
     const qaLabExtensionCheckIndex = collapsed.indexOf("grep -qx 'qa-lab'");
     const privateQaExportIndex = collapsed.indexOf(
-      "export OPENCLAW_BUILD_PRIVATE_QA=1 OPENCLAW_ENABLE_PRIVATE_QA_CLI=1",
+      "export NOVA_BUILD_PRIVATE_QA=1 NOVA_ENABLE_PRIVATE_QA_CLI=1",
     );
     const buildDockerIndex = collapsed.indexOf(
-      'OPENCLAW_INTERNAL_DOCKER_BUILD_PLUGIN_IDS="$selected_plugin_dirs" OPENCLAW_RUN_NODE_SKIP_DTS_BUILD="$OPENCLAW_DOCKER_BUILD_SKIP_DTS" OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB="$OPENCLAW_DOCKER_BUILD_TSDOWN_MAX_OLD_SPACE_MB" NODE_OPTIONS="$OPENCLAW_DOCKER_BUILD_NODE_OPTIONS" pnpm_config_verify_deps_before_run=false pnpm build:docker',
+      'NOVA_INTERNAL_DOCKER_BUILD_PLUGIN_IDS="$selected_plugin_dirs" NOVA_RUN_NODE_SKIP_DTS_BUILD="$NOVA_DOCKER_BUILD_SKIP_DTS" NOVA_TSDOWN_MAX_OLD_SPACE_MB="$NOVA_DOCKER_BUILD_TSDOWN_MAX_OLD_SPACE_MB" NODE_OPTIONS="$NOVA_DOCKER_BUILD_NODE_OPTIONS" pnpm_config_verify_deps_before_run=false pnpm build:docker',
     );
     const qaLabBuildIndex = collapsed.indexOf(
       "pnpm_config_verify_deps_before_run=false pnpm qa:lab:build",
@@ -264,7 +262,7 @@ describe("Dockerfile", () => {
     expect(qaLabExtensionCheckIndex).toBeGreaterThan(-1);
     expect(buildDockerIndex).toBeGreaterThan(-1);
     expect(collapsed).not.toContain(
-      'OPENCLAW_DOCKER_BUILD_EXTENSIONS="$OPENCLAW_EXTENSIONS" OPENCLAW_RUN_NODE_SKIP_DTS_BUILD=',
+      'NOVA_DOCKER_BUILD_EXTENSIONS="$NOVA_EXTENSIONS" NOVA_RUN_NODE_SKIP_DTS_BUILD=',
     );
     expect(qaLabBuildIndex).toBeGreaterThan(-1);
     expect(qaLabDistCopyIndex).toBeGreaterThan(-1);
@@ -285,7 +283,7 @@ describe("Dockerfile", () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     const installIndex = dockerfile.indexOf("pnpm install --frozen-lockfile");
     const commitArgIndex = dockerfile.indexOf('ARG GIT_COMMIT=""');
-    const timestampArgIndex = dockerfile.indexOf('ARG OPENCLAW_BUILD_TIMESTAMP=""');
+    const timestampArgIndex = dockerfile.indexOf('ARG NOVA_BUILD_TIMESTAMP=""');
     const provenanceEnvIndex = dockerfile.indexOf("ENV GIT_COMMIT=${GIT_COMMIT}");
     const backendBuildIndex = dockerfile.indexOf("pnpm build:docker");
     const uiBuildIndex = dockerfile.indexOf("pnpm ui:build");
@@ -293,8 +291,8 @@ describe("Dockerfile", () => {
     expect(commitArgIndex).toBeGreaterThan(installIndex);
     expect(timestampArgIndex).toBeGreaterThan(commitArgIndex);
     expect(provenanceEnvIndex).toBeGreaterThan(timestampArgIndex);
-    expect(dockerfile).toContain("OPENCLAW_BUILD_TIMESTAMP=${OPENCLAW_BUILD_TIMESTAMP}");
-    expect(dockerfile).toContain('OPENCLAW_BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"');
+    expect(dockerfile).toContain("NOVA_BUILD_TIMESTAMP=${NOVA_BUILD_TIMESTAMP}");
+    expect(dockerfile).toContain('NOVA_BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"');
     expect(backendBuildIndex).toBeGreaterThan(provenanceEnvIndex);
     expect(uiBuildIndex).toBeGreaterThan(backendBuildIndex);
   });
@@ -308,50 +306,46 @@ describe("Dockerfile", () => {
     expect(docs).toContain('BUILD_GIT_COMMIT="$(git rev-parse HEAD)"');
     expect(docs).toContain('BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"');
     expect(docs).toContain('--build-arg "GIT_COMMIT=${BUILD_GIT_COMMIT}"');
-    expect(docs).toContain('--build-arg "OPENCLAW_BUILD_TIMESTAMP=${BUILD_TIMESTAMP}"');
+    expect(docs).toContain('--build-arg "NOVA_BUILD_TIMESTAMP=${BUILD_TIMESTAMP}"');
     expect(docs).toContain("The Docker context excludes `.git`.");
     expect(selectedPluginStart).toBeGreaterThan(-1);
     expect(selectedPluginEnd).toBeGreaterThan(selectedPluginStart);
     expect(selectedPluginDocs).toContain('SOURCE_SHA="$(git rev-parse HEAD)"');
     expect(selectedPluginDocs).toContain('BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"');
     expect(selectedPluginDocs).toContain('--build-arg "GIT_COMMIT=${SOURCE_SHA}"');
-    expect(selectedPluginDocs).toContain(
-      '--build-arg "OPENCLAW_BUILD_TIMESTAMP=${BUILD_TIMESTAMP}"',
-    );
+    expect(selectedPluginDocs).toContain('--build-arg "NOVA_BUILD_TIMESTAMP=${BUILD_TIMESTAMP}"');
   });
 
   it("prunes runtime dependencies and omitted plugin packages after the build stage", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain("FROM build AS runtime-assets");
-    expect(dockerfile).toContain("ARG OPENCLAW_EXTENSIONS");
-    expect(dockerfile).toContain(
-      'ARG OPENCLAW_DOCKER_BUILD_NODE_OPTIONS="--max-old-space-size=8192"',
-    );
-    expect(dockerfile).toContain('ARG OPENCLAW_DOCKER_BUILD_TSDOWN_MAX_OLD_SPACE_MB=""');
-    expect(dockerfile).toContain("ARG OPENCLAW_DOCKER_BUILD_SKIP_DTS=1");
-    expect(dockerfile).toContain("ARG OPENCLAW_BUNDLED_PLUGIN_DIR");
+    expect(dockerfile).toContain("ARG NOVA_EXTENSIONS");
+    expect(dockerfile).toContain('ARG NOVA_DOCKER_BUILD_NODE_OPTIONS="--max-old-space-size=8192"');
+    expect(dockerfile).toContain('ARG NOVA_DOCKER_BUILD_TSDOWN_MAX_OLD_SPACE_MB=""');
+    expect(dockerfile).toContain("ARG NOVA_DOCKER_BUILD_SKIP_DTS=1");
+    expect(dockerfile).toContain("ARG NOVA_BUNDLED_PLUGIN_DIR");
     expect(dockerfile).toContain(
       "Opt-in plugin dependencies and supported runtime builds (space- or comma-separated ids).",
     );
     expect(dockerfile).toContain(
-      'Example: docker build --build-arg OPENCLAW_EXTENSIONS="diagnostics-otel,matrix" .',
+      'Example: docker build --build-arg NOVA_EXTENSIONS="diagnostics-otel,matrix" .',
     );
     expect(dockerfile).toContain(
       "RUN --mount=type=cache,id=openclaw-pnpm-store,target=/root/.local/share/pnpm/store,sharing=locked \\",
     );
     expect(dockerfile).toContain("COPY --from=workspace-deps /out/packages/ ./packages/");
     expect(dockerfile).toContain(
-      "COPY --from=workspace-deps /out/${OPENCLAW_BUNDLED_PLUGIN_DIR}/ ./${OPENCLAW_BUNDLED_PLUGIN_DIR}/",
+      "COPY --from=workspace-deps /out/${NOVA_BUNDLED_PLUGIN_DIR}/ ./${NOVA_BUNDLED_PLUGIN_DIR}/",
     );
     expect(dockerfile).toContain(
-      'OPENCLAW_EXTENSIONS="$(cat /tmp/openclaw-selected-plugin-dirs)" OPENCLAW_BUNDLED_PLUGIN_DIR="$OPENCLAW_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
+      'NOVA_EXTENSIONS="$(cat /tmp/openclaw-selected-plugin-dirs)" NOVA_BUNDLED_PLUGIN_DIR="$NOVA_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
     );
     expect(dockerfile).toContain("readlink -f /app/node_modules/@openclaw/ai");
     expect(dockerfile).toContain('mv "$ai_runtime_tmp/ai" /app/node_modules/@openclaw/ai');
     expect(dockerfile).toContain("CI=true pnpm prune --prod \\");
     expect(dockerfile.indexOf("CI=true pnpm prune --prod \\")).toBeLessThan(
       dockerfile.indexOf(
-        'OPENCLAW_EXTENSIONS="$(cat /tmp/openclaw-selected-plugin-dirs)" OPENCLAW_BUNDLED_PLUGIN_DIR="$OPENCLAW_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
+        'NOVA_EXTENSIONS="$(cat /tmp/openclaw-selected-plugin-dirs)" NOVA_BUNDLED_PLUGIN_DIR="$NOVA_BUNDLED_PLUGIN_DIR" node scripts/prune-docker-plugin-dist.mjs',
       ),
     );
     expect(dockerfile).toContain("--config.offline=true");
@@ -411,10 +405,10 @@ describe("Dockerfile", () => {
 
   it("keeps the Codex plugin in official Docker release images", async () => {
     const workflow = await readFile(dockerReleaseWorkflowPath, "utf8");
-    const releaseKeepList = "OPENCLAW_EXTENSIONS=diagnostics-otel,codex";
+    const releaseKeepList = "NOVA_EXTENSIONS=diagnostics-otel,codex";
 
     expect(workflow.match(new RegExp(releaseKeepList, "g"))).toHaveLength(4);
-    expect(workflow).not.toContain("OPENCLAW_EXTENSIONS=diagnostics-otel\n");
+    expect(workflow).not.toContain("NOVA_EXTENSIONS=diagnostics-otel\n");
   });
 
   it("uses one source commit and timestamp for every official Docker artifact", async () => {
@@ -436,9 +430,8 @@ describe("Dockerfile", () => {
         1,
     ).toBe(4);
     expect(
-      workflow.split(
-        "OPENCLAW_BUILD_TIMESTAMP=${{ needs.resolve_build_provenance.outputs.built_at }}",
-      ).length - 1,
+      workflow.split("NOVA_BUILD_TIMESTAMP=${{ needs.resolve_build_provenance.outputs.built_at }}")
+        .length - 1,
     ).toBe(4);
   });
 
@@ -447,7 +440,7 @@ describe("Dockerfile", () => {
 
     expect(workflow).toContain("Build and push amd64 browser image");
     expect(workflow).toContain("Build and push arm64 browser image");
-    expect(workflow).toContain("OPENCLAW_INSTALL_BROWSER=1");
+    expect(workflow).toContain("NOVA_INSTALL_BROWSER=1");
     expect(workflow).toContain('${GHCR_IMAGE}:${version}-browser"');
     expect(workflow).toContain('${DOCKERHUB_IMAGE}:${version}-browser"');
     expect(workflow).toContain('${GHCR_IMAGE}:latest-browser"');
@@ -459,7 +452,7 @@ describe("Dockerfile", () => {
     expect(workflow).toContain("Smoke test amd64 browser image");
     expect(workflow).toContain("Smoke test arm64 browser image");
     expect(workflow).toContain("chrome-headless-shell");
-    expect(workflow).toContain("grep -q '^ARG OPENCLAW_INSTALL_BROWSER' Dockerfile");
+    expect(workflow).toContain("grep -q '^ARG NOVA_INSTALL_BROWSER' Dockerfile");
     expect(workflow).toContain("if: steps.tags.outputs.browser != ''");
     expect(workflow).not.toContain('git show "${SOURCE_REF}:Dockerfile"');
     expect(workflow).toContain('if [[ -n "${BROWSER_TAGS}" ]]; then');
@@ -519,20 +512,20 @@ describe("Dockerfile", () => {
 
   it("does not override bundled plugin discovery in runtime images", async () => {
     const dockerfile = collapseDockerContinuations(await readFile(dockerfilePath, "utf8"));
-    expect(dockerfile).toContain(`ARG OPENCLAW_BUNDLED_PLUGIN_DIR=${BUNDLED_PLUGIN_ROOT_DIR}`);
-    expect(dockerfile).not.toMatch(/^\s*ENV\b[^\n]*\bOPENCLAW_BUNDLED_PLUGINS_DIR\b/m);
+    expect(dockerfile).toContain(`ARG NOVA_BUNDLED_PLUGIN_DIR=${BUNDLED_PLUGIN_ROOT_DIR}`);
+    expect(dockerfile).not.toMatch(/^\s*ENV\b[^\n]*\bNOVA_BUNDLED_PLUGINS_DIR\b/m);
   });
 
   it("normalizes plugin and agent paths permissions in image layers", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain(
-      "RUN for dir in /app/${OPENCLAW_BUNDLED_PLUGIN_DIR} /app/.agent /app/.agents; do \\",
+      "RUN for dir in /app/${NOVA_BUNDLED_PLUGIN_DIR} /app/.agent /app/.agents; do \\",
     );
     expect(dockerfile).toContain('find "$dir" -type d -exec chmod 755 {} +');
     expect(dockerfile).toContain('find "$dir" -type f -exec chmod 644 {} +');
   });
 
-  it("Docker GPG fingerprint awk uses correct quoting for OPENCLAW_SANDBOX=1 build", async () => {
+  it("Docker GPG fingerprint awk uses correct quoting for NOVA_SANDBOX=1 build", async () => {
     const dockerfile = await readFile(dockerfilePath, "utf8");
     expect(dockerfile).toContain('== "fpr" {');
     expect(dockerfile).not.toContain('\\"fpr\\"');

@@ -814,7 +814,7 @@ describe("board gateway methods", () => {
   it("keeps board state across the real sessions.reset handler", async () => {
     const sessionKey = "agent:main:board-reset-proof";
     const stateDir = tempDirs.make("openclaw-board-reset-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const database = openOpenClawAgentDatabase({ agentId: "main", env });
     replaceSessionEntrySync(
       { agentId: "main", sessionKey, storePath: database.path },

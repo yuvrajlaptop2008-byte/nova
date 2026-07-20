@@ -236,7 +236,7 @@ describe("createSessionVisibilityGuard", () => {
     const tempDirs: string[] = [];
     const stateDir = makeTempDir(tempDirs, "openclaw-session-visibility-");
     closeOpenClawStateDatabaseForTest();
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("NOVA_STATE_DIR", stateDir);
     try {
       const requesterSessionKey = "agent:main:main";
       const watchedSessionKey = "agent:main:telegram:group:watched";

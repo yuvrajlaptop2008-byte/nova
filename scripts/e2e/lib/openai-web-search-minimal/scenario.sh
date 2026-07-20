@@ -2,19 +2,19 @@
 set -euo pipefail
 
 source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
-export OPENCLAW_SKIP_CHANNELS=1
-export OPENCLAW_SKIP_GMAIL_WATCHER=1
-export OPENCLAW_SKIP_CRON=1
-export OPENCLAW_SKIP_CANVAS_HOST=1
-export OPENCLAW_SKIP_BROWSER_CONTROL_SERVER=1
-export OPENCLAW_SKIP_ACPX_RUNTIME=1
-export OPENCLAW_SKIP_ACPX_RUNTIME_PROBE=1
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
+export NOVA_SKIP_CHANNELS=1
+export NOVA_SKIP_GMAIL_WATCHER=1
+export NOVA_SKIP_CRON=1
+export NOVA_SKIP_CANVAS_HOST=1
+export NOVA_SKIP_BROWSER_CONTROL_SERVER=1
+export NOVA_SKIP_ACPX_RUNTIME=1
+export NOVA_SKIP_ACPX_RUNTIME_PROBE=1
 
 PORT="${PORT:?missing PORT}"
 MOCK_PORT="${MOCK_PORT:?missing MOCK_PORT}"
-TOKEN="${OPENCLAW_GATEWAY_TOKEN:?missing OPENCLAW_GATEWAY_TOKEN}"
-SUCCESS_MARKER="OPENCLAW_SCHEMA_E2E_OK"
+TOKEN="${NOVA_GATEWAY_TOKEN:?missing NOVA_GATEWAY_TOKEN}"
+SUCCESS_MARKER="NOVA_SCHEMA_E2E_OK"
 RAW_SCHEMA_ERROR="400 The following tools cannot be used with reasoning.effort 'minimal': web_search."
 scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-openai-web-search-minimal.XXXXXX")"
 MOCK_REQUEST_LOG="$scenario_tmp/requests.jsonl"
@@ -48,7 +48,7 @@ dump_debug_logs() {
     "$CLIENT_SUCCESS_LOG" \
     "$CLIENT_REJECT_LOG" \
     "$MOCK_REQUEST_LOG" \
-    "$OPENCLAW_STATE_DIR/openclaw.json"; do
+    "$NOVA_STATE_DIR/openclaw.json"; do
     if [ -f "$file" ]; then
       echo "--- $file ---" >&2
       openclaw_e2e_print_log "$file" >&2
@@ -58,7 +58,7 @@ dump_debug_logs() {
 trap 'status=$?; dump_debug_logs "$status"; exit "$status"' ERR
 
 entry="$(openclaw_e2e_resolve_entrypoint)"
-mkdir -p "$OPENCLAW_STATE_DIR" "$TLS_DIR"
+mkdir -p "$NOVA_STATE_DIR" "$TLS_DIR"
 
 node scripts/e2e/lib/fixture.mjs openai-web-search-minimal-config
 
@@ -108,11 +108,11 @@ node "$entry" gateway health \
   --timeout 120000 \
   --json >/dev/null
 
-PORT="$PORT" OPENCLAW_GATEWAY_TOKEN="$TOKEN" node scripts/e2e/lib/openai-web-search-minimal/client.mjs success >"$CLIENT_SUCCESS_LOG" 2>&1
+PORT="$PORT" NOVA_GATEWAY_TOKEN="$TOKEN" node scripts/e2e/lib/openai-web-search-minimal/client.mjs success >"$CLIENT_SUCCESS_LOG" 2>&1
 
 node scripts/e2e/lib/openai-web-search-minimal/assertions.mjs assert-success-request "$MOCK_REQUEST_LOG"
 
-PORT="$PORT" OPENCLAW_GATEWAY_TOKEN="$TOKEN" node scripts/e2e/lib/openai-web-search-minimal/client.mjs reject >"$CLIENT_REJECT_LOG" 2>&1
+PORT="$PORT" NOVA_GATEWAY_TOKEN="$TOKEN" node scripts/e2e/lib/openai-web-search-minimal/client.mjs reject >"$CLIENT_REJECT_LOG" 2>&1
 
 for _ in $(seq 1 80); do
   if grep -Fq "$RAW_SCHEMA_ERROR" "$GATEWAY_LOG"; then

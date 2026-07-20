@@ -1,7 +1,7 @@
 /**
  * Runs post-stream context-engine, transcript, cache, and lifecycle work.
  */
-import { OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../../context-engine/host-compat.js";
+import { NOVA_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../../context-engine/host-compat.js";
 import type { ContextEngine } from "../../../context-engine/types.js";
 import { freezeDiagnosticTraceContext } from "../../../infra/diagnostic-trace-context.js";
 import { formatErrorMessage } from "../../../infra/errors.js";
@@ -115,7 +115,7 @@ export async function completeEmbeddedAttemptAfterTurn(
       prePromptMessageCount: state.contextEngineAfterTurnCheckpoint ?? state.prePromptMessageCount,
       tokenBudget: attempt.contextTokenBudget,
       runtimeContext: afterTurnRuntimeContext,
-      contextEngineHostSupport: OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST,
+      contextEngineHostSupport: NOVA_EMBEDDED_CONTEXT_ENGINE_HOST,
       providerId: attempt.provider,
       requestedModelId: attempt.requestedModelId,
       modelId: attempt.modelId,

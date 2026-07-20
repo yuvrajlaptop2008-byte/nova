@@ -25,8 +25,8 @@ docker_e2e_resolve_image() {
     fi
   done
 
-  if [ -n "${OPENCLAW_DOCKER_E2E_IMAGE:-}" ]; then
-    printf '%s\n' "$OPENCLAW_DOCKER_E2E_IMAGE"
+  if [ -n "${NOVA_DOCKER_E2E_IMAGE:-}" ]; then
+    printf '%s\n' "$NOVA_DOCKER_E2E_IMAGE"
     return 0
   fi
 
@@ -90,10 +90,10 @@ docker_e2e_build_or_reuse() {
     target="functional"
   fi
 
-  if [ "${OPENCLAW_SKIP_DOCKER_BUILD:-0}" = "1" ] || [ "$skip_build" = "1" ]; then
+  if [ "${NOVA_SKIP_DOCKER_BUILD:-0}" = "1" ] || [ "$skip_build" = "1" ]; then
     echo "Reusing Docker image: $image_name"
     if ! docker_e2e_docker_cmd image inspect "$image_name" >/dev/null 2>&1; then
-      if [ "${OPENCLAW_DOCKER_E2E_REQUIRE_LOCAL_IMAGE:-0}" = "1" ]; then
+      if [ "${NOVA_DOCKER_E2E_REQUIRE_LOCAL_IMAGE:-0}" = "1" ]; then
         echo "Required local Docker E2E image not found: $image_name" >&2
         return 1
       fi
@@ -102,10 +102,10 @@ docker_e2e_build_or_reuse() {
         return 0
       fi
       if docker_build_on_missing_enabled; then
-        echo "Docker image not available; building because OPENCLAW_DOCKER_BUILD_ON_MISSING/OPENCLAW_TESTBOX allows fallback."
+        echo "Docker image not available; building because NOVA_DOCKER_BUILD_ON_MISSING/NOVA_TESTBOX allows fallback."
       else
         echo "Docker image not found: $image_name" >&2
-        echo "Build it first or unset OPENCLAW_SKIP_DOCKER_BUILD." >&2
+        echo "Build it first or unset NOVA_SKIP_DOCKER_BUILD." >&2
         return 1
       fi
     else
@@ -123,7 +123,7 @@ docker_e2e_build_or_reuse() {
   fi
   if [ "$target" = "functional" ]; then
     package_tgz="$(docker_e2e_prepare_package_tgz "$label")"
-    if [ -z "${OPENCLAW_CURRENT_PACKAGE_TGZ:-}" ]; then
+    if [ -z "${NOVA_CURRENT_PACKAGE_TGZ:-}" ]; then
       package_pack_dir="$(dirname "$package_tgz")"
     fi
     local context_status=0

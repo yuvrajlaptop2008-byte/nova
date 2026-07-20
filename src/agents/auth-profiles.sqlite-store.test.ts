@@ -11,7 +11,7 @@ import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   closeOpenClawAgentDatabasesForTest,
-  OPENCLAW_AGENT_SCHEMA_VERSION,
+  NOVA_AGENT_SCHEMA_VERSION,
   openOpenClawAgentDatabase,
 } from "../state/openclaw-agent-db.js";
 import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
@@ -70,8 +70,8 @@ async function withAgentDirEnv(prefix: string, run: (agentDir: string) => void |
     fs.mkdirSync(agentDir, { recursive: true });
     await withEnvAsync(
       {
-        OPENCLAW_STATE_DIR: root,
-        OPENCLAW_AGENT_DIR: agentDir,
+        NOVA_STATE_DIR: root,
+        NOVA_AGENT_DIR: agentDir,
       },
       async () => await run(agentDir),
     );
@@ -154,7 +154,7 @@ describe("auth profile sqlite store", () => {
   it("rejects a newer agent database that has no current auth table", async () => {
     await withAgentDirEnv("openclaw-auth-sqlite-newer-schema-", (agentDir) => {
       const database = new DatabaseSync(resolveAuthProfileDatabasePath(agentDir));
-      database.exec(`PRAGMA user_version = ${OPENCLAW_AGENT_SCHEMA_VERSION + 1};`);
+      database.exec(`PRAGMA user_version = ${NOVA_AGENT_SCHEMA_VERSION + 1};`);
       database.close();
 
       expect(inspectPersistedAuthProfileStoreRaw(agentDir)).toEqual({ status: "unreadable" });

@@ -57,7 +57,7 @@ function createApi(params: {
           ((options: OpenKeyedStoreOptions) =>
             createPluginStateKeyedStoreForTests("phone-control", {
               ...options,
-              env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir },
+              env: { ...process.env, NOVA_STATE_DIR: params.stateDir },
             })),
       },
       config: {

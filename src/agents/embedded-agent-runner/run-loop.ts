@@ -1,5 +1,5 @@
 /** Prepared embedded-agent loop and cleanup. */
-import { OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
+import { NOVA_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
 import { ensureContextEnginesInitialized } from "../../context-engine/init.js";
 import {
   resolveContextEngine,
@@ -138,7 +138,7 @@ export async function runPreparedEmbeddedLoop(
   }) => {
     const fallbackReason = resolveRuntimeFallbackReason();
     return buildContextEngineRuntimeSettings({
-      contextEngineHost: OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST,
+      contextEngineHost: NOVA_EMBEDDED_CONTEXT_ENGINE_HOST,
       provider,
       requestedModel: requestedModelId,
       resolvedModel: modelId,

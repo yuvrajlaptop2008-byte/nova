@@ -12,7 +12,7 @@ function resolveGatewayUrlOverrideSource(urlSource: string): "cli" | "env" | und
   if (urlSource === "cli --url") {
     return "cli";
   }
-  if (urlSource === "env OPENCLAW_GATEWAY_URL") {
+  if (urlSource === "env NOVA_GATEWAY_URL") {
     return "env";
   }
   return undefined;

@@ -10,13 +10,10 @@ import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { readSqliteUserVersion } from "../infra/sqlite-user-version.js";
 import type { OpenClawSchemaVersions } from "./openclaw-schema-versions.js";
 import type { DB as OpenClawStateKyselyDatabase } from "./openclaw-state-db.generated.js";
-import {
-  OPENCLAW_DATABASE_SCHEMA_DOCS_URL,
-  OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
-} from "./openclaw-state-db.js";
+import { NOVA_DATABASE_SCHEMA_DOCS_URL, NOVA_SQLITE_BUSY_TIMEOUT_MS } from "./openclaw-state-db.js";
 import { resolveOpenClawStateSqlitePath } from "./openclaw-state-db.paths.js";
 
-export { OPENCLAW_DATABASE_SCHEMA_DOCS_URL } from "./openclaw-state-db.js";
+export { NOVA_DATABASE_SCHEMA_DOCS_URL } from "./openclaw-state-db.js";
 
 export type IncompatibleOpenClawDatabase = {
   kind: "agent" | "state";
@@ -44,7 +41,7 @@ type AgentRegistryDatabase = Pick<OpenClawStateKyselyDatabase, "agent_databases"
 export class OpenClawDatabaseSchemaPreflightError extends Error {
   constructor(readonly incompatibleDatabases: readonly IncompatibleOpenClawDatabase[]) {
     super(
-      `Gateway refused startup because ${incompatibleDatabases.length} Nova database schema(s) are newer than this build. See ${OPENCLAW_DATABASE_SCHEMA_DOCS_URL}.`,
+      `Gateway refused startup because ${incompatibleDatabases.length} Nova database schema(s) are newer than this build. See ${NOVA_DATABASE_SCHEMA_DOCS_URL}.`,
     );
     this.name = "OpenClawDatabaseSchemaPreflightError";
   }
@@ -103,7 +100,7 @@ export function preflightOpenClawDatabaseSchemas(options: {
   let stateDatabase: DatabaseSync | undefined;
   try {
     stateDatabase = new sqlite.DatabaseSync(statePath, { readOnly: true });
-    stateDatabase.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+    stateDatabase.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
     const stateVersion = readSqliteUserVersion(stateDatabase);
     if (stateVersion > options.supportedVersions.state) {
       const writerAppVersion = readWriterAppVersion(stateDatabase);
@@ -136,7 +133,7 @@ export function preflightOpenClawDatabaseSchemas(options: {
       let agentDatabase: DatabaseSync | undefined;
       try {
         agentDatabase = new sqlite.DatabaseSync(agentPath, { readOnly: true });
-        agentDatabase.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+        agentDatabase.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
         const agentVersion = readSqliteUserVersion(agentDatabase);
         if (agentVersion <= options.supportedVersions.agent) {
           continue;

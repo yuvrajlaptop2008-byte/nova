@@ -6,14 +6,13 @@ import { applyDockerOpenAiProviderConfig, type OpenClawConfig } from "./docker-o
 import { writeProbeMcpServer } from "./lib/mcp-code-mode-probe-server.ts";
 
 async function main() {
-  const stateDir = process.env.OPENCLAW_STATE_DIR?.trim() || path.join(os.homedir(), ".openclaw");
-  const configPath =
-    process.env.OPENCLAW_CONFIG_PATH?.trim() || path.join(stateDir, "openclaw.json");
+  const stateDir = process.env.NOVA_STATE_DIR?.trim() || path.join(os.homedir(), ".openclaw");
+  const configPath = process.env.NOVA_CONFIG_PATH?.trim() || path.join(stateDir, "openclaw.json");
   const workspaceDir = path.join(stateDir, "workspace");
   const serverPath = path.join(stateDir, "mcp-code-mode-fixture", "fixture-server.mjs");
   const apiKey =
     process.env.OPENAI_API_KEY?.trim() ||
-    process.env.OPENCLAW_MCP_CODE_MODE_OPENAI_API_KEY?.trim() ||
+    process.env.NOVA_MCP_CODE_MODE_OPENAI_API_KEY?.trim() ||
     "sk-docker-smoke-test";
 
   const cfg = applyDockerOpenAiProviderConfig(

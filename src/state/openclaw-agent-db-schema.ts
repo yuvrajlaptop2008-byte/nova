@@ -13,9 +13,9 @@ import { configureSqlitePreSchemaPragmas } from "../infra/sqlite-wal.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { VERSION } from "../version.js";
-import { OPENCLAW_AGENT_SCHEMA_WITHOUT_BOARD_SQL } from "./openclaw-agent-board-schema.js";
+import { NOVA_AGENT_SCHEMA_WITHOUT_BOARD_SQL } from "./openclaw-agent-board-schema.js";
 import {
-  OPENCLAW_AGENT_SCHEMA_VERSION,
+  NOVA_AGENT_SCHEMA_VERSION,
   type OpenClawAgentDatabaseOptions,
 } from "./openclaw-agent-db-contract.js";
 import { ensureOpenClawAgentDatabasePermissions } from "./openclaw-agent-db-permissions.js";
@@ -38,10 +38,10 @@ import {
 } from "./openclaw-agent-db-session-provenance.js";
 import type { DB as OpenClawAgentKyselyDatabase } from "./openclaw-agent-db.generated.js";
 import { resolveOpenClawAgentSqlitePath } from "./openclaw-agent-db.paths.js";
-import { OPENCLAW_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
-import { OPENCLAW_SQLITE_BUSY_TIMEOUT_MS } from "./openclaw-state-db.js";
+import { NOVA_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
+import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "./openclaw-state-db.js";
 
-const OPENCLAW_AGENT_CANONICAL_UNIQUE_INDEXES = [
+const NOVA_AGENT_CANONICAL_UNIQUE_INDEXES = [
   {
     name: "idx_agent_conversations_identity",
     definition: `
@@ -118,7 +118,7 @@ function dropLegacyMemoryIndexSchema(db: DatabaseSync): void {
 
 function migrateOpenClawAgentSchema(db: DatabaseSync): void {
   const userVersion = readSqliteUserVersion(db);
-  if (userVersion >= OPENCLAW_AGENT_SCHEMA_VERSION) {
+  if (userVersion >= NOVA_AGENT_SCHEMA_VERSION) {
     return;
   }
   if (userVersion < 7) {
@@ -462,21 +462,21 @@ export function assertAgentDatabaseIntegrityBeforeMutation(
   database: DatabaseSync,
   pathname: string,
 ): void {
-  database.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+  database.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
   const userVersion = readSqliteUserVersion(database);
   const hasApplicationSchema = database
     .prepare("SELECT 1 FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1")
     .get();
   if (
     (userVersion === 0 && hasApplicationSchema) ||
-    (userVersion > 0 && userVersion < OPENCLAW_AGENT_SCHEMA_VERSION)
+    (userVersion > 0 && userVersion < NOVA_AGENT_SCHEMA_VERSION)
   ) {
     // Migration rewrites the schema; prove the whole file before that mutation.
     // Only a truly empty v0 file may skip; legacy v0 files need the same proof.
     agentDbLog.info("agent database schema migration pending; verifying integrity first", {
       fromVersion: userVersion,
       path: pathname,
-      toVersion: OPENCLAW_AGENT_SCHEMA_VERSION,
+      toVersion: NOVA_AGENT_SCHEMA_VERSION,
     });
     assertSqliteIntegrity(database, pathname);
     return;
@@ -514,26 +514,26 @@ function ensureAgentSchema(db: DatabaseSync, agentId: string, pathname: string):
       migrateMemoryIndexSourcesIdentity(db);
       migrateOpenClawAgentSchema(db);
       db.exec(
-        previousVersion === OPENCLAW_AGENT_SCHEMA_VERSION
-          ? OPENCLAW_AGENT_SCHEMA_WITHOUT_BOARD_SQL
-          : OPENCLAW_AGENT_SCHEMA_SQL,
+        previousVersion === NOVA_AGENT_SCHEMA_VERSION
+          ? NOVA_AGENT_SCHEMA_WITHOUT_BOARD_SQL
+          : NOVA_AGENT_SCHEMA_SQL,
       );
       migrateSessionTranscriptGenerations(db, previousVersion);
       migrateConversationDeliveryTargetColumn(db);
       migrateSessionTranscriptActiveProjection(db, previousVersion);
       if (previousVersion < 11) {
-        migrateSqliteSchemaToStrictInTransaction(db, OPENCLAW_AGENT_SCHEMA_SQL, {
+        migrateSqliteSchemaToStrictInTransaction(db, NOVA_AGENT_SCHEMA_SQL, {
           databaseLabel: pathname,
         });
       }
-      repairCanonicalSqliteUniqueIndexes(db, pathname, OPENCLAW_AGENT_CANONICAL_UNIQUE_INDEXES);
+      repairCanonicalSqliteUniqueIndexes(db, pathname, NOVA_AGENT_CANONICAL_UNIQUE_INDEXES);
       backfillOpenClawAgentSchema(db, previousVersion);
       if (previousVersion < 11) {
         backfillSessionConversations(db);
       }
       backfillSessionEntryProvenance(db, previousVersion);
       const kysely = getNodeSqliteKysely<OpenClawAgentMetadataDatabase>(db);
-      db.exec(`PRAGMA user_version = ${OPENCLAW_AGENT_SCHEMA_VERSION};`);
+      db.exec(`PRAGMA user_version = ${NOVA_AGENT_SCHEMA_VERSION};`);
       const now = Date.now();
       executeSqliteQuerySync(
         db,
@@ -542,7 +542,7 @@ function ensureAgentSchema(db: DatabaseSync, agentId: string, pathname: string):
           .values({
             meta_key: "primary",
             role: "agent",
-            schema_version: OPENCLAW_AGENT_SCHEMA_VERSION,
+            schema_version: NOVA_AGENT_SCHEMA_VERSION,
             agent_id: agentId,
             app_version: VERSION,
             created_at: now,
@@ -551,7 +551,7 @@ function ensureAgentSchema(db: DatabaseSync, agentId: string, pathname: string):
           .onConflict((conflict) =>
             conflict.column("meta_key").doUpdateSet({
               role: "agent",
-              schema_version: OPENCLAW_AGENT_SCHEMA_VERSION,
+              schema_version: NOVA_AGENT_SCHEMA_VERSION,
               agent_id: agentId,
               app_version: VERSION,
               updated_at: now,
@@ -573,12 +573,12 @@ export function ensureOpenClawAgentDatabaseSchema(
   const databaseOptions = { ...options, agentId };
   const pathname = resolveOpenClawAgentSqlitePath(databaseOptions);
   ensureOpenClawAgentDatabasePermissions(pathname, databaseOptions);
-  db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+  db.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
   assertSupportedAgentSchemaVersion(db, pathname);
   assertExistingAgentSchemaOwner(readExistingAgentSchemaMeta(db), agentId, pathname);
   assertAgentDatabaseIntegrityBeforeMutation(db, pathname);
   configureSqlitePreSchemaPragmas(db, {
-    busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+    busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
   });
   ensureAgentSchema(db, agentId, pathname);
   ensureOpenClawAgentDatabasePermissions(pathname, databaseOptions);

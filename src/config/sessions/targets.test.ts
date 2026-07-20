@@ -168,7 +168,7 @@ describe("resolveSessionStoreTargets", () => {
     await withTempHome(async (home) => {
       const stateDir = path.join(home, ".openclaw");
       const storePaths = await createAgentSessionStores(stateDir, ["codex-proof"]);
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
 
       expect(resolveSessionStoreTargets({}, { store: storePaths["codex-proof"] }, { env })).toEqual(
         [
@@ -403,7 +403,7 @@ describe("resolveAllAgentSessionStoreTargetsSync", () => {
 
       const targets = resolveAllAgentSessionStoreTargetsSync(
         { agents: { list: [{ id: "legacy", default: true }] } },
-        { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } },
+        { env: { ...process.env, NOVA_STATE_DIR: stateDir } },
       );
 
       expect(targets).toContainEqual({ agentId: "legacy", storePath });
@@ -453,7 +453,7 @@ describe("resolveAllAgentSessionStoreTargetsSync", () => {
 
       const env = {
         ...process.env,
-        OPENCLAW_STATE_DIR: envStateDir,
+        NOVA_STATE_DIR: envStateDir,
       };
       const cfg: OpenClawConfig = {};
       const mainStorePath = await resolveRealStorePath(mainSessionsDir);
@@ -483,7 +483,7 @@ describe("resolveAllAgentSessionStoreTargetsSync", () => {
       const cfg = createCustomRootCfg(customRoot, "main");
       const env = {
         ...process.env,
-        OPENCLAW_STATE_DIR: envStateDir,
+        NOVA_STATE_DIR: envStateDir,
       };
 
       const targets = resolveAllAgentSessionStoreTargetsSync(cfg, { env });
@@ -562,7 +562,7 @@ describe("resolveAllAgentSessionStoreCandidateTargetsSync", () => {
   it("includes configured targets before either state file exists", async () => {
     await withTempHome(async (home) => {
       const stateDir = path.join(home, ".openclaw");
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const storePath = resolveStorePath(undefined, { agentId: "main", env });
 
       expect(
@@ -579,7 +579,7 @@ describe("resolveAllAgentSessionStoreCandidateTargetsSync", () => {
       const stateDir = path.join(home, ".openclaw");
       const retiredAgentDir = path.join(stateDir, "agents", "retired");
       await fs.mkdir(retiredAgentDir, { recursive: true });
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
 
       expect(resolveAllAgentSessionStoreCandidateTargetsSync({}, { env })).toContainEqual({
         agentId: "retired",
@@ -599,7 +599,7 @@ describe("resolveAllAgentSessionStoreCandidateTargetsSync", () => {
       await fs.mkdir(agentDir, { recursive: true });
       await fs.mkdir(outsideSessionsDir, { recursive: true });
       await fs.symlink(outsideSessionsDir, path.join(agentDir, "sessions"));
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
 
       expect(resolveAllAgentSessionStoreCandidateTargetsSync({}, { env })).not.toContainEqual({
         agentId: "retired",

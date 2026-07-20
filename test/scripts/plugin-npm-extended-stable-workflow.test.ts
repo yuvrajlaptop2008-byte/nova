@@ -100,7 +100,7 @@ describe("plugin npm extended-stable workflow", () => {
           ],
           name,
         ).env,
-      ).toMatchObject({ OPENCLAW_PLUGIN_NPM_PUBLISH_TAG: expectedOverride });
+      ).toMatchObject({ NOVA_PLUGIN_NPM_PUBLISH_TAG: expectedOverride });
     }
   });
 
@@ -341,7 +341,7 @@ describe("plugin npm extended-stable workflow", () => {
     const parsed = workflow();
     const publish = step(parsed.jobs?.publish_plugins_npm, "Publish with trusted publisher");
     expect(publish.env).toMatchObject({
-      OPENCLAW_NPM_PUBLISH_AUTH_MODE: "trusted-publisher",
+      NOVA_NPM_PUBLISH_AUTH_MODE: "trusted-publisher",
     });
     expect(publish.env?.NODE_AUTH_TOKEN).toBeUndefined();
     expect(publish.env?.NPM_TOKEN).toBeUndefined();

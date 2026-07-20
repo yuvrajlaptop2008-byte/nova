@@ -109,14 +109,14 @@ describe("fleet container runtime", () => {
       }
       environmentFiles.push(environmentFile);
       await expect(fs.readFile(environmentFile, "utf8")).resolves.toBe(
-        "OPENCLAW_GATEWAY_TOKEN=fake-value\n",
+        "NOVA_GATEWAY_TOKEN=fake-value\n",
       );
       return { stdout: "", stderr: "", code: 0 };
     });
     const runtime = createFleetContainerRuntime(executor);
     const profile = {
       runtime: "podman",
-      environment: { OPENCLAW_GATEWAY_TOKEN: "fake-value" },
+      environment: { NOVA_GATEWAY_TOKEN: "fake-value" },
     } as unknown as CellContainerProfile;
 
     await runtime.run(profile, true);
@@ -157,7 +157,7 @@ describe("fleet container runtime", () => {
           Image: "sha256:old-image-id",
           State: { Status: "running", Running: true },
           Config: {
-            Env: ["OPENCLAW_GATEWAY_TOKEN=test-auth-token", "FEATURE=a=b"],
+            Env: ["NOVA_GATEWAY_TOKEN=test-auth-token", "FEATURE=a=b"],
             Image: "ghcr.io/openclaw/openclaw:latest",
             Labels: { "openclaw.fleet.tenant": "acme" },
             User: "1000:1000",
@@ -182,7 +182,7 @@ describe("fleet container runtime", () => {
       state: "running",
       running: true,
       labels: { "openclaw.fleet.tenant": "acme" },
-      environment: { OPENCLAW_GATEWAY_TOKEN: "test-auth-token", FEATURE: "a=b" },
+      environment: { NOVA_GATEWAY_TOKEN: "test-auth-token", FEATURE: "a=b" },
       imageId: "sha256:old-image-id",
       memory: "2147483648",
       cpus: "2",
@@ -343,7 +343,7 @@ describe("fleet container runtime", () => {
 
   it("treats malformed inspect JSON as unavailable without echoing its output", async () => {
     const executor = vi.fn<FleetContainerCommandExecutor>(async () => ({
-      stdout: 'not-json OPENCLAW_GATEWAY_TOKEN="secret"',
+      stdout: 'not-json NOVA_GATEWAY_TOKEN="secret"',
       stderr: "",
       code: 0,
     }));
@@ -365,7 +365,7 @@ describe("fleet container runtime", () => {
     const runtime = createFleetContainerRuntime(executor);
     const profile = {
       runtime: "docker",
-      environment: { OPENCLAW_GATEWAY_TOKEN: "fake-value" },
+      environment: { NOVA_GATEWAY_TOKEN: "fake-value" },
     } as unknown as CellContainerProfile;
 
     let failure: unknown;

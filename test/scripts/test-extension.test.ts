@@ -647,7 +647,7 @@ describe("scripts/test-extension.mjs", () => {
       });
     });
     const runPromise = runExtensionBatchPlan(createConcurrentExtensionBatchPlan(), {
-      env: { OPENCLAW_EXTENSION_BATCH_PARALLEL: "2" },
+      env: { NOVA_EXTENSION_BATCH_PARALLEL: "2" },
       runGroup: runGroup as NonNullable<
         NonNullable<Parameters<typeof runExtensionBatchPlan>[1]>["runGroup"]
       >,
@@ -672,8 +672,8 @@ describe("scripts/test-extension.mjs", () => {
       args: ["--reporter=dot"],
       config: "heavy",
       env: {
-        OPENCLAW_EXTENSION_BATCH_PARALLEL: "2",
-        OPENCLAW_VITEST_FS_MODULE_CACHE_PATH: path.join(
+        NOVA_EXTENSION_BATCH_PARALLEL: "2",
+        NOVA_VITEST_FS_MODULE_CACHE_PATH: path.join(
           process.cwd(),
           "node_modules",
           ".experimental-vitest-cache",
@@ -700,7 +700,7 @@ describe("scripts/test-extension.mjs", () => {
       });
     });
     const runPromise = runExtensionBatchPlan(createConcurrentExtensionBatchPlan(), {
-      env: { OPENCLAW_EXTENSION_BATCH_PARALLEL: "2" },
+      env: { NOVA_EXTENSION_BATCH_PARALLEL: "2" },
       runGroup: runGroup as NonNullable<
         NonNullable<Parameters<typeof runExtensionBatchPlan>[1]>["runGroup"]
       >,
@@ -720,16 +720,16 @@ describe("scripts/test-extension.mjs", () => {
   });
 
   it("keeps extension batch parallelism bounded by group count", () => {
-    expect(resolveExtensionBatchParallelism(3, { OPENCLAW_EXTENSION_BATCH_PARALLEL: "2" })).toBe(2);
-    expect(resolveExtensionBatchParallelism(1, { OPENCLAW_EXTENSION_BATCH_PARALLEL: "4" })).toBe(1);
+    expect(resolveExtensionBatchParallelism(3, { NOVA_EXTENSION_BATCH_PARALLEL: "2" })).toBe(2);
+    expect(resolveExtensionBatchParallelism(1, { NOVA_EXTENSION_BATCH_PARALLEL: "4" })).toBe(1);
     expect(resolveExtensionBatchParallelism(3, {})).toBe(1);
   });
 
   it("rejects malformed extension batch parallelism", () => {
     for (const value of ["nope", "2x", "0"]) {
       expect(() =>
-        resolveExtensionBatchParallelism(3, { OPENCLAW_EXTENSION_BATCH_PARALLEL: value }),
-      ).toThrow("OPENCLAW_EXTENSION_BATCH_PARALLEL must be a positive integer");
+        resolveExtensionBatchParallelism(3, { NOVA_EXTENSION_BATCH_PARALLEL: value }),
+      ).toThrow("NOVA_EXTENSION_BATCH_PARALLEL must be a positive integer");
     }
   });
 
@@ -819,7 +819,7 @@ describe("scripts/test-extension.mjs", () => {
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_FAKE_PNPM_ARGS_PATH: argsPath,
+            NOVA_FAKE_PNPM_ARGS_PATH: argsPath,
             npm_execpath: fakePnpmPath,
           },
         },
@@ -854,8 +854,8 @@ describe("scripts/test-extension.mjs", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_FAKE_PNPM_CALL_COUNT_PATH: countPath,
-          OPENCLAW_FAKE_PNPM_EXIT_CODES: "1,0,0",
+          NOVA_FAKE_PNPM_CALL_COUNT_PATH: countPath,
+          NOVA_FAKE_PNPM_EXIT_CODES: "1,0,0",
           npm_execpath: fakePnpmPath,
         },
       });
@@ -881,9 +881,9 @@ describe("scripts/test-extension.mjs", () => {
         cwd: process.cwd(),
         env: {
           ...process.env,
-          OPENCLAW_FAKE_PNPM_DESCENDANT_PID_PATH: descendantPidPath,
-          OPENCLAW_FAKE_PNPM_PID_PATH: childPidPath,
-          OPENCLAW_FAKE_PNPM_SIGNALED_PATH: signaledPath,
+          NOVA_FAKE_PNPM_DESCENDANT_PID_PATH: descendantPidPath,
+          NOVA_FAKE_PNPM_PID_PATH: childPidPath,
+          NOVA_FAKE_PNPM_SIGNALED_PATH: signaledPath,
           npm_execpath: fakePnpmPath,
         },
         stdio: "ignore",
@@ -1099,30 +1099,30 @@ function writeFakePnpm(filePath: string): void {
       "#!/usr/bin/env node",
       'const { spawn } = require("node:child_process");',
       'const fs = require("node:fs");',
-      "if (process.env.OPENCLAW_FAKE_PNPM_EXIT_CODES) {",
-      "  const countPath = process.env.OPENCLAW_FAKE_PNPM_CALL_COUNT_PATH;",
+      "if (process.env.NOVA_FAKE_PNPM_EXIT_CODES) {",
+      "  const countPath = process.env.NOVA_FAKE_PNPM_CALL_COUNT_PATH;",
       "  const count = fs.existsSync(countPath) ? Number(fs.readFileSync(countPath, 'utf8')) : 0;",
-      "  const exitCodes = process.env.OPENCLAW_FAKE_PNPM_EXIT_CODES.split(',').map(Number);",
+      "  const exitCodes = process.env.NOVA_FAKE_PNPM_EXIT_CODES.split(',').map(Number);",
       "  fs.writeFileSync(countPath, String(count + 1));",
       "  process.exit(exitCodes[count] || 0);",
       "}",
-      "if (process.env.OPENCLAW_FAKE_PNPM_ARGS_PATH) {",
-      "  fs.writeFileSync(process.env.OPENCLAW_FAKE_PNPM_ARGS_PATH, JSON.stringify(process.argv.slice(2)));",
+      "if (process.env.NOVA_FAKE_PNPM_ARGS_PATH) {",
+      "  fs.writeFileSync(process.env.NOVA_FAKE_PNPM_ARGS_PATH, JSON.stringify(process.argv.slice(2)));",
       "  process.exit(0);",
       "}",
       'process.on("SIGTERM", () => {',
-      '  fs.writeFileSync(process.env.OPENCLAW_FAKE_PNPM_SIGNALED_PATH, "SIGTERM");',
+      '  fs.writeFileSync(process.env.NOVA_FAKE_PNPM_SIGNALED_PATH, "SIGTERM");',
       "  process.exit(0);",
       "});",
-      "if (process.env.OPENCLAW_FAKE_PNPM_DESCENDANT_PID_PATH) {",
+      "if (process.env.NOVA_FAKE_PNPM_DESCENDANT_PID_PATH) {",
       "  const child = spawn(process.execPath, [",
       '    "-e",',
       "    \"process.on('SIGTERM', () => {}); setInterval(() => {}, 1000);\",",
       "  ], { stdio: 'ignore' });",
-      "  fs.writeFileSync(process.env.OPENCLAW_FAKE_PNPM_DESCENDANT_PID_PATH, String(child.pid));",
+      "  fs.writeFileSync(process.env.NOVA_FAKE_PNPM_DESCENDANT_PID_PATH, String(child.pid));",
       "}",
       "// Publishing the PID marks the fixture ready for SIGTERM delivery.",
-      "fs.writeFileSync(process.env.OPENCLAW_FAKE_PNPM_PID_PATH, String(process.pid));",
+      "fs.writeFileSync(process.env.NOVA_FAKE_PNPM_PID_PATH, String(process.pid));",
       "setInterval(() => {}, 1000);",
       "",
     ].join("\n"),

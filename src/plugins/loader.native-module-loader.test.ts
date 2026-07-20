@@ -83,7 +83,7 @@ function writePackagedPluginFixture(id: string) {
 afterEach(() => {
   vi.resetModules();
   vi.doUnmock("./plugin-module-loader-cache.js");
-  delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+  delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
   for (const dir of tempDirs.splice(0)) {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -122,7 +122,7 @@ describe("createPluginModuleLoader", () => {
     );
 
     const pluginRoot = writeBundledPluginFixture("demo");
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = pluginRoot;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = pluginRoot;
 
     loadOpenClawPlugins({
       cache: false,
@@ -152,7 +152,7 @@ describe("createPluginModuleLoader", () => {
     );
 
     const pluginRoot = writePackagedPluginFixture("npm-demo");
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = makeTempDir();
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = makeTempDir();
 
     const registry = loadOpenClawPlugins({
       cache: false,

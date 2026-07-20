@@ -110,7 +110,7 @@ describe("Plugin SDK API baseline", () => {
     expect(findDeclaration("createWebSearchProviderContractFields")).not.toContain(
       "createBaseWebSearchProviderContractFields",
     );
-    expect(findDeclaration("OPENCLAW_VERSION")).toContain("export const OPENCLAW_VERSION:");
+    expect(findDeclaration("NOVA_VERSION")).toContain("export const NOVA_VERSION:");
     expect(findDeclaration("SqliteTrajectoryRuntimeEventForTest")).toContain(
       "export type SqliteTrajectoryRuntimeEventForTest =",
     );

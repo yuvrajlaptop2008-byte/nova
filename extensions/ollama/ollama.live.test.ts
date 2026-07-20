@@ -11,17 +11,15 @@ import { createOllamaEmbeddingProvider } from "./src/embedding-provider.js";
 import { createOllamaStreamFn } from "./src/stream.js";
 import { createOllamaWebSearchProvider } from "./src/web-search-provider.js";
 
-const LIVE = process.env.OPENCLAW_LIVE_TEST === "1" && process.env.OPENCLAW_LIVE_OLLAMA === "1";
-const OLLAMA_BASE_URL =
-  process.env.OPENCLAW_LIVE_OLLAMA_BASE_URL?.trim() || "http://127.0.0.1:11434";
-const CHAT_MODEL = process.env.OPENCLAW_LIVE_OLLAMA_MODEL?.trim() || "llama3.2:latest";
-const EMBEDDING_MODEL =
-  process.env.OPENCLAW_LIVE_OLLAMA_EMBED_MODEL?.trim() || "embeddinggemma:latest";
-const PROVIDER_ID = process.env.OPENCLAW_LIVE_OLLAMA_PROVIDER_ID?.trim() || "ollama-live-custom";
-const RUN_WEB_SEARCH = process.env.OPENCLAW_LIVE_OLLAMA_WEB_SEARCH !== "0";
+const LIVE = process.env.NOVA_LIVE_TEST === "1" && process.env.NOVA_LIVE_OLLAMA === "1";
+const OLLAMA_BASE_URL = process.env.NOVA_LIVE_OLLAMA_BASE_URL?.trim() || "http://127.0.0.1:11434";
+const CHAT_MODEL = process.env.NOVA_LIVE_OLLAMA_MODEL?.trim() || "llama3.2:latest";
+const EMBEDDING_MODEL = process.env.NOVA_LIVE_OLLAMA_EMBED_MODEL?.trim() || "embeddinggemma:latest";
+const PROVIDER_ID = process.env.NOVA_LIVE_OLLAMA_PROVIDER_ID?.trim() || "ollama-live-custom";
+const RUN_WEB_SEARCH = process.env.NOVA_LIVE_OLLAMA_WEB_SEARCH !== "0";
 const RUN_EMBEDDINGS =
-  process.env.OPENCLAW_LIVE_OLLAMA_EMBEDDINGS === "1" ||
-  (process.env.OPENCLAW_LIVE_OLLAMA_EMBEDDINGS !== "0" && !isOllamaCloudBaseUrl(OLLAMA_BASE_URL));
+  process.env.NOVA_LIVE_OLLAMA_EMBEDDINGS === "1" ||
+  (process.env.NOVA_LIVE_OLLAMA_EMBEDDINGS !== "0" && !isOllamaCloudBaseUrl(OLLAMA_BASE_URL));
 const OLLAMA_CONFIG_API_KEY = isLocalOllamaBaseUrl(OLLAMA_BASE_URL)
   ? "ollama-local"
   : "OLLAMA_API_KEY";
@@ -42,7 +40,7 @@ function requireOllamaRuntimeApiKey(): string | undefined {
   const apiKey = process.env.OLLAMA_API_KEY?.trim();
   if (!apiKey) {
     throw new Error(
-      "OPENCLAW_LIVE_OLLAMA_BASE_URL points at a remote Ollama host; set OLLAMA_API_KEY.",
+      "NOVA_LIVE_OLLAMA_BASE_URL points at a remote Ollama host; set OLLAMA_API_KEY.",
     );
   }
   return apiKey;
@@ -146,13 +144,13 @@ function buildCliEnv(root: string): NodeJS.ProcessEnv {
     TMPDIR: process.env.TMPDIR,
     NODE_PATH: process.env.NODE_PATH,
     NODE_OPTIONS: process.env.NODE_OPTIONS,
-    OPENCLAW_LIVE_TEST: "1",
-    OPENCLAW_LIVE_OLLAMA: "1",
-    OPENCLAW_LIVE_OLLAMA_WEB_SEARCH: "0",
-    OPENCLAW_STATE_DIR: path.join(root, "state"),
-    OPENCLAW_CONFIG_PATH: path.join(root, "openclaw.json"),
-    OPENCLAW_NO_RESPAWN: "1",
-    OPENCLAW_TEST_FAST: "1",
+    NOVA_LIVE_TEST: "1",
+    NOVA_LIVE_OLLAMA: "1",
+    NOVA_LIVE_OLLAMA_WEB_SEARCH: "0",
+    NOVA_STATE_DIR: path.join(root, "state"),
+    NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+    NOVA_NO_RESPAWN: "1",
+    NOVA_TEST_FAST: "1",
     PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
     pnpm_config_verify_deps_before_run: "false",
     OLLAMA_API_KEY: apiKey ?? "ollama-local",

@@ -176,7 +176,7 @@ describe("worker transcript commit application", () => {
       })
     ).sessionFile;
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: path.join(root, "state") },
+      env: { NOVA_STATE_DIR: path.join(root, "state") },
     });
     ledgerStore = createWorkerTranscriptCommitStore({ database });
     committer = createWorkerTranscriptCommitter({

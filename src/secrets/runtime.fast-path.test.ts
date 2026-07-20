@@ -246,7 +246,7 @@ describe("secrets runtime fast path", () => {
     const root = mkdtempSync(path.join(tmpdir(), "openclaw-runtime-fast-path-"));
     const env: NodeJS.ProcessEnv = {
       HOME: root,
-      OPENCLAW_STATE_DIR: root,
+      NOVA_STATE_DIR: root,
     };
     const mainAgentDir = resolveDefaultAgentDir({}, env);
     const agentDir = path.join(root, "custom-agent");
@@ -277,7 +277,7 @@ describe("secrets runtime fast path", () => {
     const root = mkdtempSync(path.join(tmpdir(), "openclaw-runtime-fast-path-refresh-"));
     const env: NodeJS.ProcessEnv = {
       HOME: root,
-      OPENCLAW_STATE_DIR: root,
+      NOVA_STATE_DIR: root,
     };
     const agentDir = path.join(root, "custom-agent");
     mkdirSync(agentDir, { recursive: true });
@@ -460,7 +460,7 @@ describe("secrets runtime fast path", () => {
     const root = mkdtempSync(path.join(tmpdir(), "openclaw-runtime-fast-path-empty-store-"));
     const env: NodeJS.ProcessEnv = {
       HOME: root,
-      OPENCLAW_STATE_DIR: root,
+      NOVA_STATE_DIR: root,
     };
     const agentDir = path.join(root, "custom-agent");
     mkdirSync(agentDir, { recursive: true });

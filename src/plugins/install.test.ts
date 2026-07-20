@@ -315,7 +315,7 @@ process.stdin.on("data", (chunk) => {
   input += chunk;
 });
 process.stdin.on("end", () => {
-  fs.appendFileSync(process.env.OPENCLAW_POLICY_LOG, input + "\\n");
+  fs.appendFileSync(process.env.NOVA_POLICY_LOG, input + "\\n");
   process.stdout.write(JSON.stringify({ protocolVersion: 1, decision: "allow" }));
 });
 `,
@@ -348,7 +348,7 @@ process.stdin.on("end", () => {
     }));
     return;
   }
-  fs.appendFileSync(process.env.OPENCLAW_POLICY_LOG, input + "\\n");
+  fs.appendFileSync(process.env.NOVA_POLICY_LOG, input + "\\n");
   process.stdout.write(JSON.stringify({
     protocolVersion: 1,
     decision: "block",
@@ -376,7 +376,7 @@ process.stdin.on("data", (chunk) => {
   input += chunk;
 });
 process.stdin.on("end", () => {
-  fs.appendFileSync(process.env.OPENCLAW_POLICY_LOG, input + "\\n");
+  fs.appendFileSync(process.env.NOVA_POLICY_LOG, input + "\\n");
   const request = JSON.parse(input).request;
   if (request.mode === "install") {
     process.stdout.write(JSON.stringify({
@@ -404,7 +404,7 @@ function configWithInstallPolicy(scriptPath: string, logPath: string): OpenClawC
           source: "exec",
           command: process.execPath,
           args: [scriptPath],
-          env: { OPENCLAW_POLICY_LOG: logPath },
+          env: { NOVA_POLICY_LOG: logPath },
           allowInsecurePath: true,
           timeoutMs: 5000,
           maxOutputBytes: 16 * 1024,
@@ -1359,7 +1359,7 @@ describe("installPluginFromArchive", () => {
       return;
     }
     expect(result.error).toContain("openclaw.extensions");
-    expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLAW_EXTENSIONS);
+    expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_NOVA_EXTENSIONS);
   });
 
   it("rejects legacy plugin package shape when openclaw.extensions is missing", async () => {
@@ -1391,7 +1391,7 @@ describe("installPluginFromArchive", () => {
     if (!result.ok) {
       expect(result.error).toContain("package.json missing openclaw.extensions");
       expect(result.error).toContain("update the plugin package");
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.MISSING_NOVA_EXTENSIONS);
       return;
     }
     expect.unreachable("expected install to fail without openclaw.extensions");
@@ -1420,7 +1420,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("extension entry escapes plugin directory");
     }
   });
@@ -1443,7 +1443,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("extension entry not found");
     }
   });
@@ -1492,7 +1492,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("openclaw.extensions[1]");
       expect(result.error).toContain("non-empty string");
     }
@@ -1518,7 +1518,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("requires compiled runtime output");
       expect(result.error).toContain("./dist/index.js");
       expect(result.error).toContain("plugin packaging issue");
@@ -1576,7 +1576,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("runtimeExtensions length (1)");
       expect(result.error).toContain("extensions length (2)");
     }
@@ -1607,7 +1607,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("openclaw.runtimeExtensions[0]");
       expect(result.error).toContain("non-empty string");
     }
@@ -1639,7 +1639,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("runtime setup entry not found");
       expect(result.error).toContain("./dist/setup-entry.js");
     }
@@ -1673,7 +1673,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("extension entry");
     }
   });
@@ -1712,7 +1712,7 @@ describe("installPluginFromArchive", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS);
+      expect(result.code).toBe(PLUGIN_INSTALL_ERROR_CODE.INVALID_NOVA_EXTENSIONS);
       expect(result.error).toContain("boundary checks");
     }
   });

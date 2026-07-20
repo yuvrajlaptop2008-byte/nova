@@ -85,7 +85,7 @@ function updatePersistedInstallRecordsWithoutClearingCache(
         `,
       ).run(JSON.stringify(records), Date.now());
     },
-    { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } },
+    { env: { ...process.env, NOVA_STATE_DIR: stateDir } },
   );
 }
 

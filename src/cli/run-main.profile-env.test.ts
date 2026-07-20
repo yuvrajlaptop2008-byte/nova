@@ -14,8 +14,8 @@ const dotenvState = vi.hoisted(() => {
   return {
     state,
     loadDotEnv: vi.fn(() => {
-      state.profileAtDotenvLoad = process.env.OPENCLAW_PROFILE;
-      state.containerAtDotenvLoad = process.env.OPENCLAW_CONTAINER;
+      state.profileAtDotenvLoad = process.env.NOVA_PROFILE;
+      state.containerAtDotenvLoad = process.env.NOVA_CONTAINER;
     }),
   };
 });
@@ -77,25 +77,25 @@ import { runCli } from "./run-main.js";
 
 describe("runCli profile env bootstrap", () => {
   const envSnapshot = captureEnv([
-    "OPENCLAW_PROFILE",
-    "OPENCLAW_STATE_DIR",
-    "OPENCLAW_CONFIG_PATH",
-    "OPENCLAW_CONTAINER",
-    "OPENCLAW_GATEWAY_PORT",
-    "OPENCLAW_GATEWAY_URL",
-    "OPENCLAW_GATEWAY_TOKEN",
-    "OPENCLAW_GATEWAY_PASSWORD",
+    "NOVA_PROFILE",
+    "NOVA_STATE_DIR",
+    "NOVA_CONFIG_PATH",
+    "NOVA_CONTAINER",
+    "NOVA_GATEWAY_PORT",
+    "NOVA_GATEWAY_URL",
+    "NOVA_GATEWAY_TOKEN",
+    "NOVA_GATEWAY_PASSWORD",
   ]);
 
   beforeEach(() => {
-    deleteTestEnvValue("OPENCLAW_PROFILE");
-    deleteTestEnvValue("OPENCLAW_STATE_DIR");
-    deleteTestEnvValue("OPENCLAW_CONFIG_PATH");
-    deleteTestEnvValue("OPENCLAW_CONTAINER");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_PORT");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_URL");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_TOKEN");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_PASSWORD");
+    deleteTestEnvValue("NOVA_PROFILE");
+    deleteTestEnvValue("NOVA_STATE_DIR");
+    deleteTestEnvValue("NOVA_CONFIG_PATH");
+    deleteTestEnvValue("NOVA_CONTAINER");
+    deleteTestEnvValue("NOVA_GATEWAY_PORT");
+    deleteTestEnvValue("NOVA_GATEWAY_URL");
+    deleteTestEnvValue("NOVA_GATEWAY_TOKEN");
+    deleteTestEnvValue("NOVA_GATEWAY_PASSWORD");
     dotenvState.state.profileAtDotenvLoad = undefined;
     dotenvState.state.containerAtDotenvLoad = undefined;
     dotenvState.loadDotEnv.mockClear();
@@ -113,7 +113,7 @@ describe("runCli profile env bootstrap", () => {
 
     expect(dotenvState.loadDotEnv).toHaveBeenCalledOnce();
     expect(dotenvState.state.profileAtDotenvLoad).toBe("rawdog");
-    expect(process.env.OPENCLAW_PROFILE).toBe("rawdog");
+    expect(process.env.NOVA_PROFILE).toBe("rawdog");
   });
 
   it("rejects --container combined with --profile", async () => {
@@ -122,7 +122,7 @@ describe("runCli profile env bootstrap", () => {
     ).rejects.toThrow("--container cannot be combined with --profile/--dev");
 
     expect(dotenvState.loadDotEnv).not.toHaveBeenCalled();
-    expect(process.env.OPENCLAW_PROFILE).toBe("rawdog");
+    expect(process.env.NOVA_PROFILE).toBe("rawdog");
   });
 
   it("rejects --container combined with interleaved --profile", async () => {
@@ -140,15 +140,15 @@ describe("runCli profile env bootstrap", () => {
   it("does not let dotenv change container target resolution", async () => {
     fileState.hasCliDotEnv = true;
     dotenvState.loadDotEnv.mockImplementationOnce(() => {
-      process.env.OPENCLAW_CONTAINER = "demo";
-      dotenvState.state.profileAtDotenvLoad = process.env.OPENCLAW_PROFILE;
-      dotenvState.state.containerAtDotenvLoad = process.env.OPENCLAW_CONTAINER;
+      process.env.NOVA_CONTAINER = "demo";
+      dotenvState.state.profileAtDotenvLoad = process.env.NOVA_PROFILE;
+      dotenvState.state.containerAtDotenvLoad = process.env.NOVA_CONTAINER;
     });
 
     await runCli(["node", "openclaw", "status"]);
 
     expect(dotenvState.loadDotEnv).toHaveBeenCalledOnce();
-    expect(process.env.OPENCLAW_CONTAINER).toBe("demo");
+    expect(process.env.NOVA_CONTAINER).toBe("demo");
     expect(dotenvState.state.containerAtDotenvLoad).toBe("demo");
     expect(maybeRunCliInContainerMock).toHaveBeenCalledWith(["node", "openclaw", "status"]);
     expect(maybeRunCliInContainerMock).toHaveReturnedWith({
@@ -157,8 +157,8 @@ describe("runCli profile env bootstrap", () => {
     });
   });
 
-  it("allows container mode when OPENCLAW_PROFILE is already set in env", async () => {
-    setTestEnvValue("OPENCLAW_PROFILE", "work");
+  it("allows container mode when NOVA_PROFILE is already set in env", async () => {
+    setTestEnvValue("NOVA_PROFILE", "work");
 
     await expect(
       runCli(["node", "openclaw", "--container", "demo", "status"]),
@@ -166,10 +166,10 @@ describe("runCli profile env bootstrap", () => {
   });
 
   it.each([
-    ["OPENCLAW_GATEWAY_PORT", "19001"],
-    ["OPENCLAW_GATEWAY_URL", "ws://127.0.0.1:18789"],
-    ["OPENCLAW_GATEWAY_TOKEN", "demo-token"],
-    ["OPENCLAW_GATEWAY_PASSWORD", "demo-password"],
+    ["NOVA_GATEWAY_PORT", "19001"],
+    ["NOVA_GATEWAY_URL", "ws://127.0.0.1:18789"],
+    ["NOVA_GATEWAY_TOKEN", "demo-token"],
+    ["NOVA_GATEWAY_PASSWORD", "demo-password"],
   ])("allows container mode when %s is set in env", async (key, value) => {
     setTestEnvValue(key, value);
 
@@ -178,16 +178,16 @@ describe("runCli profile env bootstrap", () => {
     ).resolves.toBeUndefined();
   });
 
-  it("allows container mode when only OPENCLAW_STATE_DIR is set in env", async () => {
-    setTestEnvValue("OPENCLAW_STATE_DIR", "/tmp/openclaw-host-state");
+  it("allows container mode when only NOVA_STATE_DIR is set in env", async () => {
+    setTestEnvValue("NOVA_STATE_DIR", "/tmp/openclaw-host-state");
 
     await expect(
       runCli(["node", "openclaw", "--container", "demo", "status"]),
     ).resolves.toBeUndefined();
   });
 
-  it("allows container mode when only OPENCLAW_CONFIG_PATH is set in env", async () => {
-    setTestEnvValue("OPENCLAW_CONFIG_PATH", "/tmp/openclaw-host-state/openclaw.json");
+  it("allows container mode when only NOVA_CONFIG_PATH is set in env", async () => {
+    setTestEnvValue("NOVA_CONFIG_PATH", "/tmp/openclaw-host-state/openclaw.json");
 
     await expect(
       runCli(["node", "openclaw", "--container", "demo", "status"]),

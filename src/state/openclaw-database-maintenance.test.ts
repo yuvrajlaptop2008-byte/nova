@@ -3,14 +3,14 @@ import { describe, expect, it } from "vitest";
 import { ensureMemoryIndexSchema } from "../../packages/memory-host-sdk/src/host/memory-schema.js";
 import {
   assertOpenClawAgentDatabaseForMaintenance,
-  OPENCLAW_AGENT_SCHEMA_VERSION,
+  NOVA_AGENT_SCHEMA_VERSION,
 } from "./openclaw-agent-db.js";
-import { OPENCLAW_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
+import { NOVA_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
 import {
   assertOpenClawStateDatabaseForMaintenance,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
 } from "./openclaw-state-db.js";
-import { OPENCLAW_STATE_SCHEMA_SQL } from "./openclaw-state-schema.generated.js";
+import { NOVA_STATE_SCHEMA_SQL } from "./openclaw-state-schema.generated.js";
 
 describe("Nova database maintenance schema validation", () => {
   it("accepts the current global and agent schemas", () => {
@@ -35,7 +35,7 @@ describe("Nova database maintenance schema validation", () => {
   });
 
   it("accepts a global schema produced by an additive column migration", () => {
-    const schemaWithoutMigratedColumn = OPENCLAW_STATE_SCHEMA_SQL.replace(
+    const schemaWithoutMigratedColumn = NOVA_STATE_SCHEMA_SQL.replace(
       "  delivery_thread_id_type TEXT,\n",
       "",
     );
@@ -54,7 +54,7 @@ describe("Nova database maintenance schema validation", () => {
   });
 
   it("accepts a migrated required column with its temporary default", () => {
-    const schemaWithoutMigratedColumn = OPENCLAW_STATE_SCHEMA_SQL.replace(
+    const schemaWithoutMigratedColumn = NOVA_STATE_SCHEMA_SQL.replace(
       "  owner_session_key TEXT,\n  name TEXT NOT NULL,\n  description TEXT,\n",
       "  owner_session_key TEXT,\n  description TEXT,\n",
     );
@@ -73,7 +73,7 @@ describe("Nova database maintenance schema validation", () => {
   });
 
   it("accepts the migrated conversation kind with its temporary default", () => {
-    const schemaWithoutMigratedColumn = OPENCLAW_STATE_SCHEMA_SQL.replace(
+    const schemaWithoutMigratedColumn = NOVA_STATE_SCHEMA_SQL.replace(
       "  conversation_kind TEXT NOT NULL,\n",
       "",
     ).replace(
@@ -289,10 +289,10 @@ describe("Nova database maintenance schema validation", () => {
   });
 });
 
-function createGlobalDatabase(schemaSql = OPENCLAW_STATE_SCHEMA_SQL): DatabaseSync {
+function createGlobalDatabase(schemaSql = NOVA_STATE_SCHEMA_SQL): DatabaseSync {
   const database = new DatabaseSync(":memory:");
   database.exec(schemaSql);
-  database.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION};`);
+  database.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION};`);
   database
     .prepare(
       `
@@ -307,14 +307,14 @@ function createGlobalDatabase(schemaSql = OPENCLAW_STATE_SCHEMA_SQL): DatabaseSy
         ) VALUES ('primary', 'global', ?, NULL, NULL, 1, 1)
       `,
     )
-    .run(OPENCLAW_STATE_SCHEMA_VERSION);
+    .run(NOVA_STATE_SCHEMA_VERSION);
   return database;
 }
 
 function createAgentDatabase(): DatabaseSync {
   const database = new DatabaseSync(":memory:");
-  database.exec(OPENCLAW_AGENT_SCHEMA_SQL);
-  database.exec(`PRAGMA user_version = ${OPENCLAW_AGENT_SCHEMA_VERSION};`);
+  database.exec(NOVA_AGENT_SCHEMA_SQL);
+  database.exec(`PRAGMA user_version = ${NOVA_AGENT_SCHEMA_VERSION};`);
   database
     .prepare(
       `
@@ -329,6 +329,6 @@ function createAgentDatabase(): DatabaseSync {
         ) VALUES ('primary', 'agent', ?, 'worker-1', NULL, 1, 1)
       `,
     )
-    .run(OPENCLAW_AGENT_SCHEMA_VERSION);
+    .run(NOVA_AGENT_SCHEMA_VERSION);
   return database;
 }

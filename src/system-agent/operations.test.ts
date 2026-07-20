@@ -182,8 +182,8 @@ describe("parseSystemAgentOperation", () => {
 
   beforeEach(() => {
     mockConfig.reset();
-    stateDirSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    stateDirSnapshot = captureEnv(["NOVA_STATE_DIR"]);
+    vi.stubEnv("NOVA_TEST_FAST", "1");
   });
 
   afterEach(() => {
@@ -491,7 +491,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("rejects an explicit new-agent model before any config write or audit", async () => {
     const tempDir = opTempDirs.make("openclaw-agent-model-rejected-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const createAgent = vi.fn();
     expect(
@@ -523,7 +523,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("reserves the normalized Nova agent identity before any write or audit", async () => {
     const tempDir = opTempDirs.make("openclaw-agent-id-reserved-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const createAgent = vi.fn();
     const operation = {
@@ -582,7 +582,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("does not report or audit a gateway restart that returned false", async () => {
     const tempDir = opTempDirs.make("openclaw-restart-failed-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runGatewayRestart = vi.fn(async () => false);
 
@@ -610,7 +610,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("applies config set through typed deps and writes an audit entry", async () => {
     const tempDir = opTempDirs.make("openclaw-config-set-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runConfigSet = vi.fn(async () => {});
 
@@ -645,7 +645,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("records SQLite audit state despite a retired audit-directory symlink", async () => {
     const tempDir = opTempDirs.make("openclaw-audit-warning-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const redirectedAuditDir = path.join(tempDir, "redirected-audit");
     await fs.mkdir(redirectedAuditDir);
     await fs.symlink(redirectedAuditDir, path.join(tempDir, "audit"), "dir");
@@ -666,7 +666,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("applies SecretRef config set through typed deps and writes an audit entry", async () => {
     const tempDir = opTempDirs.make("openclaw-config-ref-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runConfigSet = vi.fn(async () => {});
 
@@ -675,7 +675,7 @@ describe("parseSystemAgentOperation", () => {
         kind: "config-set-ref",
         path: "gateway.auth.token",
         source: "env",
-        id: "OPENCLAW_GATEWAY_TOKEN",
+        id: "NOVA_GATEWAY_TOKEN",
       },
       runtime,
       {
@@ -691,7 +691,7 @@ describe("parseSystemAgentOperation", () => {
       cliOptions: {
         refProvider: "default",
         refSource: "env",
-        refId: "OPENCLAW_GATEWAY_TOKEN",
+        refId: "NOVA_GATEWAY_TOKEN",
       },
     });
     expect(lines.join("\n")).toContain("[openclaw] done: config.setRef");
@@ -789,7 +789,7 @@ describe("parseSystemAgentOperation", () => {
     },
   ])("rejects unverified inference-route write $path", async (operation) => {
     const tempDir = opTempDirs.make("openclaw-route-write-refused-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runConfigSet = vi.fn(async () => {});
 
@@ -821,7 +821,7 @@ describe("parseSystemAgentOperation", () => {
     },
   ])("allows approved operator-parity write $path", async (operation) => {
     const tempDir = opTempDirs.make("openclaw-parity-write-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime } = createSystemAgentTestRuntime();
     const runConfigSet = vi.fn(async () => {});
 
@@ -853,7 +853,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("still blocks per-agent routing writes that hit the default agent", async () => {
     const tempDir = opTempDirs.make("openclaw-default-agent-route-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     mockConfig.setConfig({
       agents: { list: [{ id: "main", default: true }, { id: "helper" }] },
     });
@@ -909,7 +909,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("installs plugins only after approval and audits the write", async () => {
     const tempDir = opTempDirs.make("openclaw-plugin-install-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runPluginInstall = vi.fn(async (spec: string, pluginRuntime: RuntimeEnv) => {
       pluginRuntime.log(`installed ${spec}`);
@@ -993,7 +993,7 @@ describe("parseSystemAgentOperation", () => {
 
   it("uninstalls a non-route plugin only after approval and audits the write", async () => {
     const tempDir = opTempDirs.make("openclaw-plugin-uninstall-");
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     const { runtime, lines } = createSystemAgentTestRuntime();
     const runPluginUninstall = vi.fn(async (pluginId: string, pluginRuntime: RuntimeEnv) => {
       pluginRuntime.log(`uninstalled ${pluginId}`);

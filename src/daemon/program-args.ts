@@ -18,7 +18,7 @@ type GatewayProgramArgs = {
 
 type GatewayRuntimePreference = "auto" | "node";
 
-export const OPENCLAW_WRAPPER_ENV_KEY = "OPENCLAW_WRAPPER";
+export const NOVA_WRAPPER_ENV_KEY = "NOVA_WRAPPER";
 const NODE_BINARY_LOOKUP_TIMEOUT_MS = 5_000;
 
 async function resolveCliEntrypointPathForService(): Promise<string> {
@@ -201,7 +201,7 @@ export async function resolveOpenClawWrapperPath(
   } catch (error) {
     const detail = error instanceof Error ? ` (${error.message})` : "";
     throw new Error(
-      `${OPENCLAW_WRAPPER_ENV_KEY} must point to an executable file: ${resolved}${detail}`,
+      `${NOVA_WRAPPER_ENV_KEY} must point to an executable file: ${resolved}${detail}`,
       { cause: error },
     );
   }

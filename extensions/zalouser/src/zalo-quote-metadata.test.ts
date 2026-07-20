@@ -66,11 +66,11 @@ async function withStoredSession<T>(params: {
       userAgent: "test-agent",
       createdAt: new Date().toISOString(),
     },
-    { OPENCLAW_STATE_DIR: stateDir },
+    { NOVA_STATE_DIR: stateDir },
   );
   createZaloMock.mockResolvedValueOnce({ login: vi.fn(async () => params.api) });
   try {
-    return await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, params.run);
+    return await withEnvAsync({ NOVA_STATE_DIR: stateDir }, params.run);
   } finally {
     await rm(stateDir, { recursive: true, force: true });
   }

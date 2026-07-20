@@ -72,7 +72,7 @@ beforeEach(() => {
 async function withRestartSentinelStateDir(run: () => Promise<void>): Promise<void> {
   await withTempDir({ prefix: "openclaw-sentinel-" }, async (tempDir) => {
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, run);
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, run);
     } finally {
       closeOpenClawStateDatabaseForTest();
     }
@@ -199,7 +199,7 @@ describe("restart sentinel", () => {
           reason: "restart-health-pending",
         },
       };
-      const legacyPath = path.join(process.env.OPENCLAW_STATE_DIR ?? "", "restart-sentinel.json");
+      const legacyPath = path.join(process.env.NOVA_STATE_DIR ?? "", "restart-sentinel.json");
       const legacyContents = `${JSON.stringify({ version: 1, payload })}\n`;
       await fs.writeFile(legacyPath, legacyContents, "utf-8");
 
@@ -715,7 +715,7 @@ describe("restart sentinel message dedup", () => {
   it("keeps profile-aware doctor guidance actionable outside constrained delivery surfaces", () => {
     expect(
       formatDoctorNonInteractiveHint({
-        OPENCLAW_PROFILE: "isolated",
+        NOVA_PROFILE: "isolated",
         PATH: "/usr/bin:/bin",
       }),
     ).toBe(

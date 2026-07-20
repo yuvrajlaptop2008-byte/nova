@@ -14,7 +14,7 @@ type GuidanceCase = {
 const CASES: GuidanceCase[] = [
   {
     file: "skills/session-logs/SKILL.md",
-    required: ["OPENCLAW_STATE_DIR"],
+    required: ["NOVA_STATE_DIR"],
     forbidden: [
       "for f in ~/.openclaw/agents/<agentId>/sessions/*.jsonl",
       'rg -l "phrase" ~/.openclaw/agents/<agentId>/sessions/*.jsonl',
@@ -23,24 +23,24 @@ const CASES: GuidanceCase[] = [
   },
   {
     file: "skills/gh-issues/SKILL.md",
-    required: ["OPENCLAW_CONFIG_PATH"],
+    required: ["NOVA_CONFIG_PATH"],
     forbidden: ["cat ~/.openclaw/openclaw.json"],
   },
   {
     file: "extensions/canvas/skills/canvas/SKILL.md",
-    required: ["OPENCLAW_CONFIG_PATH"],
+    required: ["NOVA_CONFIG_PATH"],
     forbidden: ["cat ~/.openclaw/openclaw.json"],
   },
   {
     file: "skills/openai-whisper-api/SKILL.md",
-    required: ["OPENCLAW_CONFIG_PATH"],
+    required: ["NOVA_CONFIG_PATH"],
   },
   {
     file: "skills/sherpa-onnx-tts/SKILL.md",
     required: [
-      "OPENCLAW_STATE_DIR",
-      "OPENCLAW_CONFIG_PATH",
-      'STATE_DIR="${OPENCLAW_STATE_DIR:-$HOME/.openclaw}"',
+      "NOVA_STATE_DIR",
+      "NOVA_CONFIG_PATH",
+      'STATE_DIR="${NOVA_STATE_DIR:-$HOME/.openclaw}"',
     ],
     forbidden: [
       'SHERPA_ONNX_RUNTIME_DIR: "~/.openclaw/tools/sherpa-onnx-tts/runtime"',
@@ -50,7 +50,7 @@ const CASES: GuidanceCase[] = [
   },
   {
     file: "skills/coding-agent/SKILL.md",
-    required: ["OPENCLAW_STATE_DIR"],
+    required: ["NOVA_STATE_DIR"],
     forbidden: ["NEVER start Codex in ~/.openclaw/"],
   },
 ];

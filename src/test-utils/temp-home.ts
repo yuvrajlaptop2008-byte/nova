@@ -6,13 +6,7 @@ import { expectDefined } from "@openclaw/normalization-core";
 import { captureEnv, setTestEnvValue } from "./env.js";
 import { cleanupSessionStateForTest } from "./session-state-cleanup.js";
 
-const HOME_ENV_KEYS = [
-  "HOME",
-  "USERPROFILE",
-  "HOMEDRIVE",
-  "HOMEPATH",
-  "OPENCLAW_STATE_DIR",
-] as const;
+const HOME_ENV_KEYS = ["HOME", "USERPROFILE", "HOMEDRIVE", "HOMEPATH", "NOVA_STATE_DIR"] as const;
 
 export type TempHomeEnv = {
   home: string;
@@ -55,7 +49,7 @@ export async function createTempHomeEnv(prefix: string): Promise<TempHomeEnv> {
   const snapshot = captureEnv([...HOME_ENV_KEYS]);
   setTestEnvValue("HOME", home);
   setTestEnvValue("USERPROFILE", home);
-  setTestEnvValue("OPENCLAW_STATE_DIR", path.join(home, ".openclaw"));
+  setTestEnvValue("NOVA_STATE_DIR", path.join(home, ".openclaw"));
 
   if (process.platform === "win32") {
     const match = home.match(/^([A-Za-z]:)(.*)$/);

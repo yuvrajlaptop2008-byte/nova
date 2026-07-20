@@ -171,7 +171,7 @@ describe("command-startup-policy", () => {
         commandPath: ["status"],
         env: {
           ...process.env,
-          OPENCLAW_HIDE_BANNER: "1",
+          NOVA_HIDE_BANNER: "1",
         },
       }).hideBanner,
     ).toBe(true);
@@ -179,9 +179,9 @@ describe("command-startup-policy", () => {
   });
 
   it("uses process env banner suppression when startup env is omitted", () => {
-    const originalHideBanner = process.env.OPENCLAW_HIDE_BANNER;
+    const originalHideBanner = process.env.NOVA_HIDE_BANNER;
     try {
-      process.env.OPENCLAW_HIDE_BANNER = "1";
+      process.env.NOVA_HIDE_BANNER = "1";
 
       expect(
         resolveCliStartupPolicy({
@@ -198,9 +198,9 @@ describe("command-startup-policy", () => {
       ).toBe(false);
     } finally {
       if (originalHideBanner === undefined) {
-        delete process.env.OPENCLAW_HIDE_BANNER;
+        delete process.env.NOVA_HIDE_BANNER;
       } else {
-        process.env.OPENCLAW_HIDE_BANNER = originalHideBanner;
+        process.env.NOVA_HIDE_BANNER = originalHideBanner;
       }
     }
   });

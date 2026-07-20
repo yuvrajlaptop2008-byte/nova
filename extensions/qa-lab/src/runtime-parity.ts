@@ -974,7 +974,7 @@ function isRuntimeParityRootSession(entry: RuntimeParitySessionEntry) {
 }
 
 function runtimeParitySessionEnv(stateDir: string): NodeJS.ProcessEnv {
-  return { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+  return { ...process.env, NOVA_STATE_DIR: stateDir };
 }
 
 function readRuntimeParitySessionEntries(params: {

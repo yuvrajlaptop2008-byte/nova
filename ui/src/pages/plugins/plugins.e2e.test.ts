@@ -22,9 +22,9 @@ import {
 
 const chromiumExecutablePath = resolvePlaywrightChromiumExecutablePath(chromium.executablePath());
 const chromiumAvailable = canRunPlaywrightChromium(chromiumExecutablePath);
-const allowMissingChromium = process.env.OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
+const allowMissingChromium = process.env.NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
 const describeControlUiE2e = chromiumAvailable || !allowMissingChromium ? describe : describe.skip;
-const updateScreenshots = process.env.OPENCLAW_UPDATE_E2E_SCREENSHOTS === "1";
+const updateScreenshots = process.env.NOVA_UPDATE_E2E_SCREENSHOTS === "1";
 const artifactDir = path.resolve(process.cwd(), ".artifacts/control-ui-e2e/plugins");
 const desktopViewport = { height: 1000, width: 1440 };
 const mobileViewport = { height: 852, width: 393 };
@@ -309,7 +309,7 @@ describeControlUiE2e("Control UI Plugins mocked Gateway E2E", () => {
   beforeAll(async () => {
     if (!chromiumAvailable) {
       throw new Error(
-        `Playwright Chromium is not installed at ${chromiumExecutablePath}. Run \`pnpm --dir ui exec playwright install chromium\`, or set OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM=1 only when intentionally skipping this lane.`,
+        `Playwright Chromium is not installed at ${chromiumExecutablePath}. Run \`pnpm --dir ui exec playwright install chromium\`, or set NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM=1 only when intentionally skipping this lane.`,
       );
     }
     if (updateScreenshots) {
@@ -330,7 +330,7 @@ describeControlUiE2e("Control UI Plugins mocked Gateway E2E", () => {
     const page = await context.newPage();
     await page.addInitScript(
       ({ gatewayUrl }) => {
-        window["__OPENCLAW_NATIVE_CONTROL_AUTH__"] = { gatewayUrl };
+        window["__NOVA_NATIVE_CONTROL_AUTH__"] = { gatewayUrl };
       },
       { gatewayUrl: server.baseUrl.replace(/^http/u, "ws") },
     );

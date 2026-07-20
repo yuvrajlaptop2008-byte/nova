@@ -6,7 +6,7 @@ export NO_COLOR=1
 
 source scripts/lib/openclaw-e2e-instance.sh
 
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 openclaw_e2e_install_trash_shim
 
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
@@ -15,13 +15,13 @@ export npm_config_loglevel=error
 export npm_config_fund=false
 export npm_config_audit=false
 export OPENAI_API_KEY="sk-openclaw-release-user-journey"
-export OPENCLAW_GATEWAY_TOKEN="release-user-journey-token"
+export NOVA_GATEWAY_TOKEN="release-user-journey-token"
 export CLICKCLACK_BOT_TOKEN="clickclack-release-token"
 
 PORT="18789"
 MOCK_PORT="44180"
 CLICKCLACK_PORT="44181"
-SUCCESS_MARKER="OPENCLAW_E2E_OK_RELEASE_USER_JOURNEY"
+SUCCESS_MARKER="NOVA_E2E_OK_RELEASE_USER_JOURNEY"
 scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-release-user-journey.XXXXXX")"
 LOG_DIR="$scenario_tmp/logs"
 mkdir -p "$LOG_DIR"

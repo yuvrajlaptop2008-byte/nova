@@ -367,11 +367,11 @@ export function clearActiveMcpLoopbackRuntimeByOwnerToken(ownerToken: string): v
 }
 
 const MCP_AUTH_HEADERS = {
-  Authorization: "Bearer ${OPENCLAW_MCP_TOKEN}",
+  Authorization: "Bearer ${NOVA_MCP_TOKEN}",
 } as const;
 
 const MCP_CAPTURE_HEADERS = {
-  "x-openclaw-cli-capture-key": "${OPENCLAW_MCP_CLI_CAPTURE_KEY}",
+  "x-openclaw-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
 } as const;
 
 function createMcpServerConfig(port: number, headers: Record<string, string>) {

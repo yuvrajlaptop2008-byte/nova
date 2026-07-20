@@ -101,7 +101,7 @@ describe("resolveConfiguredEntries", () => {
   });
 
   it("canonicalizes manifest-owned provider aliases in configured rows", () => {
-    vi.stubEnv("OPENCLAW_BUNDLED_PLUGINS_DIR", path.resolve("extensions"));
+    vi.stubEnv("NOVA_BUNDLED_PLUGINS_DIR", path.resolve("extensions"));
 
     const { entries } = resolveConfiguredEntries({
       agents: {

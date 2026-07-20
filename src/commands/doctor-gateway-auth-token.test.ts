@@ -140,7 +140,7 @@ describe("resolveGatewayAuthTokenForService", () => {
     }
   });
 
-  it("falls back to OPENCLAW_GATEWAY_TOKEN when SecretRef is unresolved", async () => {
+  it("falls back to NOVA_GATEWAY_TOKEN when SecretRef is unresolved", async () => {
     const resolved = await resolveGatewayAuthTokenForService(
       {
         gateway: {
@@ -159,14 +159,14 @@ describe("resolveGatewayAuthTokenForService", () => {
         },
       } as OpenClawConfig,
       {
-        OPENCLAW_GATEWAY_TOKEN: "env-fallback-token",
+        NOVA_GATEWAY_TOKEN: "env-fallback-token",
       } as NodeJS.ProcessEnv,
     );
 
     expect(resolved).toEqual({ token: "env-fallback-token" });
   });
 
-  it("falls back to OPENCLAW_GATEWAY_TOKEN when SecretRef resolves to empty", async () => {
+  it("falls back to NOVA_GATEWAY_TOKEN when SecretRef resolves to empty", async () => {
     const resolved = await resolveGatewayAuthTokenForService(
       {
         gateway: {
@@ -186,7 +186,7 @@ describe("resolveGatewayAuthTokenForService", () => {
       } as OpenClawConfig,
       {
         CUSTOM_GATEWAY_TOKEN: "   ",
-        OPENCLAW_GATEWAY_TOKEN: "env-fallback-token",
+        NOVA_GATEWAY_TOKEN: "env-fallback-token",
       } as NodeJS.ProcessEnv,
     );
 
@@ -299,7 +299,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
         },
         env: {
           vars: {
-            OPENCLAW_GATEWAY_PASSWORD: "configured-password", // pragma: allowlist secret
+            NOVA_GATEWAY_PASSWORD: "configured-password", // pragma: allowlist secret
           },
         },
       } as OpenClawConfig,
@@ -310,7 +310,7 @@ describe("shouldRequireGatewayTokenForInstall", () => {
 
   it("does not require token in inferred mode when password env exists in state-dir .env", async () => {
     await withTempHome(async (_home) => {
-      await writeStateDirDotEnv("OPENCLAW_GATEWAY_PASSWORD=dotenv-password\n", {
+      await writeStateDirDotEnv("NOVA_GATEWAY_PASSWORD=dotenv-password\n", {
         env: process.env,
       });
 

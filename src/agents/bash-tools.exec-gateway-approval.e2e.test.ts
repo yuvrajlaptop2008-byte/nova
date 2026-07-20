@@ -24,17 +24,17 @@ import { createExecTool } from "./bash-tools.exec.js";
 
 const TEST_ENV_KEYS = [
   "HOME",
-  "OPENCLAW_STATE_DIR",
-  "OPENCLAW_CONFIG_PATH",
-  "OPENCLAW_GATEWAY_TOKEN",
-  "OPENCLAW_GATEWAY_PORT",
-  "OPENCLAW_SKIP_CHANNELS",
-  "OPENCLAW_SKIP_GMAIL_WATCHER",
-  "OPENCLAW_SKIP_CRON",
-  "OPENCLAW_SKIP_CANVAS_HOST",
-  "OPENCLAW_SKIP_BROWSER_CONTROL_SERVER",
-  "OPENCLAW_SKIP_PROVIDERS",
-  "OPENCLAW_TEST_MINIMAL_GATEWAY",
+  "NOVA_STATE_DIR",
+  "NOVA_CONFIG_PATH",
+  "NOVA_GATEWAY_TOKEN",
+  "NOVA_GATEWAY_PORT",
+  "NOVA_SKIP_CHANNELS",
+  "NOVA_SKIP_GMAIL_WATCHER",
+  "NOVA_SKIP_CRON",
+  "NOVA_SKIP_CANVAS_HOST",
+  "NOVA_SKIP_BROWSER_CONTROL_SERVER",
+  "NOVA_SKIP_PROVIDERS",
+  "NOVA_TEST_MINIMAL_GATEWAY",
 ];
 const GATEWAY_CONNECT_TIMEOUT_MS = 120_000;
 const EXEC_APPROVAL_E2E_TIMEOUT_MS = 180_000;
@@ -93,17 +93,17 @@ describe("gateway-hosted exec approvals", () => {
       );
 
       setTestEnvValue("HOME", tempHome);
-      setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
-      setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
-      setTestEnvValue("OPENCLAW_GATEWAY_TOKEN", token);
-      setTestEnvValue("OPENCLAW_GATEWAY_PORT", String(port));
-      setTestEnvValue("OPENCLAW_SKIP_CHANNELS", "1");
-      setTestEnvValue("OPENCLAW_SKIP_GMAIL_WATCHER", "1");
-      setTestEnvValue("OPENCLAW_SKIP_CRON", "1");
-      setTestEnvValue("OPENCLAW_SKIP_CANVAS_HOST", "1");
-      setTestEnvValue("OPENCLAW_SKIP_BROWSER_CONTROL_SERVER", "1");
-      setTestEnvValue("OPENCLAW_SKIP_PROVIDERS", "1");
-      setTestEnvValue("OPENCLAW_TEST_MINIMAL_GATEWAY", "1");
+      setTestEnvValue("NOVA_STATE_DIR", stateDir);
+      setTestEnvValue("NOVA_CONFIG_PATH", configPath);
+      setTestEnvValue("NOVA_GATEWAY_TOKEN", token);
+      setTestEnvValue("NOVA_GATEWAY_PORT", String(port));
+      setTestEnvValue("NOVA_SKIP_CHANNELS", "1");
+      setTestEnvValue("NOVA_SKIP_GMAIL_WATCHER", "1");
+      setTestEnvValue("NOVA_SKIP_CRON", "1");
+      setTestEnvValue("NOVA_SKIP_CANVAS_HOST", "1");
+      setTestEnvValue("NOVA_SKIP_BROWSER_CONTROL_SERVER", "1");
+      setTestEnvValue("NOVA_SKIP_PROVIDERS", "1");
+      setTestEnvValue("NOVA_TEST_MINIMAL_GATEWAY", "1");
       clearRuntimeConfigSnapshot();
       clearConfigCache();
       clearSessionStoreCacheForTest();

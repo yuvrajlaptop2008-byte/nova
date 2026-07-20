@@ -72,28 +72,28 @@ describe("resolveGatewayServiceDescription", () => {
   });
 
   it("includes profile when set", () => {
-    expect(resolveGatewayServiceDescription({ env: { OPENCLAW_PROFILE: "work" } })).toBe(
+    expect(resolveGatewayServiceDescription({ env: { NOVA_PROFILE: "work" } })).toBe(
       "Nova Gateway (profile: work)",
     );
   });
 
   it("includes version when set", () => {
-    expect(
-      resolveGatewayServiceDescription({ env: { OPENCLAW_SERVICE_VERSION: "2026.1.10" } }),
-    ).toBe("Nova Gateway (v2026.1.10)");
+    expect(resolveGatewayServiceDescription({ env: { NOVA_SERVICE_VERSION: "2026.1.10" } })).toBe(
+      "Nova Gateway (v2026.1.10)",
+    );
   });
 
   it("includes profile and version when set", () => {
     expect(
       resolveGatewayServiceDescription({
-        env: { OPENCLAW_PROFILE: "dev", OPENCLAW_SERVICE_VERSION: "1.2.3" },
+        env: { NOVA_PROFILE: "dev", NOVA_SERVICE_VERSION: "1.2.3" },
       }),
     ).toBe("Nova Gateway (profile: dev, v1.2.3)");
   });
   it("prefers explicit description override", () => {
     expect(
       resolveGatewayServiceDescription({
-        env: { OPENCLAW_PROFILE: "work", OPENCLAW_SERVICE_VERSION: "1.0.0" },
+        env: { NOVA_PROFILE: "work", NOVA_SERVICE_VERSION: "1.0.0" },
         description: "Custom",
       }),
     ).toBe("Custom");
@@ -102,8 +102,8 @@ describe("resolveGatewayServiceDescription", () => {
   it("resolves version from explicit environment map", () => {
     expect(
       resolveGatewayServiceDescription({
-        env: { OPENCLAW_PROFILE: "work", OPENCLAW_SERVICE_VERSION: "local" },
-        environment: { OPENCLAW_SERVICE_VERSION: "remote" },
+        env: { NOVA_PROFILE: "work", NOVA_SERVICE_VERSION: "local" },
+        environment: { NOVA_SERVICE_VERSION: "remote" },
       }),
     ).toBe("Nova Gateway (profile: work, vremote)");
   });

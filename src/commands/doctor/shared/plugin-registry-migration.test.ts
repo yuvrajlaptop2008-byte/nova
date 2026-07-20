@@ -27,8 +27,8 @@ function makeTempDir() {
 
 function hermeticEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   return {
-    OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-    OPENCLAW_VERSION: "2026.4.25",
+    NOVA_BUNDLED_PLUGINS_DIR: undefined,
+    NOVA_VERSION: "2026.4.25",
     VITEST: "true",
     ...overrides,
   };
@@ -134,7 +134,7 @@ function insertStalePersistedIndexRow(stateDir: string) {
         `,
       ).run();
     },
-    { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } },
+    { env: { ...process.env, NOVA_STATE_DIR: stateDir } },
   );
 }
 

@@ -36,10 +36,10 @@ export function warnLegacyOpenClawEnvVars(env: NodeJS.ProcessEnv = process.env):
 
   process.emitWarning(
     [
-      `Legacy ${detectedPrefixes} environment variables were detected (${legacyVarCount} total), but Nova only reads OPENCLAW_* names now.`,
-      "Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.",
+      `Legacy ${detectedPrefixes} environment variables were detected (${legacyVarCount} total), but Nova only reads NOVA_* names now.`,
+      "Rename them by replacing the legacy prefix with NOVA_; the old names are ignored.",
     ].join("\n"),
-    { code: "OPENCLAW_LEGACY_ENV_VARS", type: "DeprecationWarning" },
+    { code: "NOVA_LEGACY_ENV_VARS", type: "DeprecationWarning" },
   );
   warned = true;
 }

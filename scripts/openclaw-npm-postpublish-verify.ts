@@ -1200,8 +1200,8 @@ async function verifyPublishedRegistryProvenanceOnce(version: string): Promise<v
     version,
     integrity,
     attestations,
-    expectedWorkflowRef: process.env.OPENCLAW_NPM_EXPECTED_WORKFLOW_REF,
-    expectedWorkflowSha: process.env.OPENCLAW_NPM_EXPECTED_WORKFLOW_SHA,
+    expectedWorkflowRef: process.env.NOVA_NPM_EXPECTED_WORKFLOW_REF,
+    expectedWorkflowSha: process.env.NOVA_NPM_EXPECTED_WORKFLOW_SHA,
   });
   console.log(
     `openclaw-npm-postpublish-verify: registry signature and provenance attestation verified (${version})`,

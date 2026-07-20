@@ -122,7 +122,7 @@ function collectGatewayServiceStartRepairIssues(
     return [];
   }
   const issues: GatewayServiceStartRepairIssue[] = [];
-  const serviceVersion = command.environment?.OPENCLAW_SERVICE_VERSION?.trim();
+  const serviceVersion = command.environment?.NOVA_SERVICE_VERSION?.trim();
   if (serviceVersion && serviceVersion !== VERSION) {
     // Version drift often means the service points at old package paths; require
     // reinstall/repair before pretending restart succeeded.
@@ -133,7 +133,7 @@ function collectGatewayServiceStartRepairIssues(
   }
   const servicePort =
     parseTcpPortFromArgs(command.programArguments) ??
-    parseTcpPort(command.environment?.OPENCLAW_GATEWAY_PORT ?? "");
+    parseTcpPort(command.environment?.NOVA_GATEWAY_PORT ?? "");
   if (expectedPort !== undefined && servicePort !== null && servicePort !== expectedPort) {
     issues.push({
       code: "port-mismatch",

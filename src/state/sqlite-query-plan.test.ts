@@ -61,7 +61,7 @@ describe("sqlite hot query plans", () => {
   it("uses shared state indexes for list and queue queries", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expectPlanUsesIndex({
@@ -142,7 +142,7 @@ describe("sqlite hot query plans", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawAgentDatabase({
       agentId: "worker-1",
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expectPlanIncludes({

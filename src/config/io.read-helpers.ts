@@ -140,8 +140,8 @@ export function normalizeConfigIoDeps(overrides: ConfigIoDeps = {}): NormalizedC
     measure: overrides.measure ?? (async (_name, run) => await run()),
     suppressFutureVersionWarning:
       overrides.suppressFutureVersionWarning ??
-      (isTruthyEnvValue(env.OPENCLAW_UPDATE_IN_PROGRESS) ||
-        isTruthyEnvValue(env.OPENCLAW_UPDATE_POST_CORE)),
+      (isTruthyEnvValue(env.NOVA_UPDATE_IN_PROGRESS) ||
+        isTruthyEnvValue(env.NOVA_UPDATE_POST_CORE)),
     observe: overrides.observe ?? true,
   };
 }

@@ -67,7 +67,7 @@ describe("installGatewayDaemonNonInteractive", () => {
             token: {
               source: "env",
               provider: "default",
-              id: "OPENCLAW_GATEWAY_TOKEN",
+              id: "NOVA_GATEWAY_TOKEN",
             },
           },
         },

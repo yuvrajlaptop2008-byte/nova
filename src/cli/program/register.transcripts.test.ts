@@ -10,7 +10,7 @@ import { TranscriptsStore } from "../../transcripts/store.js";
 import { summarizeTranscripts } from "../../transcripts/summary.js";
 import { registerTranscriptsCli } from "./register.transcripts.js";
 
-const originalStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalStateDir = process.env.NOVA_STATE_DIR;
 
 async function makeStateDir(): Promise<string> {
   return await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-transcripts-cli-"));
@@ -68,14 +68,14 @@ describe("transcripts CLI", () => {
 
   beforeEach(async () => {
     stateDir = await makeStateDir();
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.NOVA_STATE_DIR = stateDir;
   });
 
   afterEach(() => {
     if (originalStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalStateDir;
+      process.env.NOVA_STATE_DIR = originalStateDir;
     }
   });
 

@@ -29,7 +29,7 @@ export {
   readBoundedGitHubJson,
 };
 
-const securityTeamSlug = process.env.OPENCLAW_SECURITY_TEAM_SLUG ?? "openclaw-secops";
+const securityTeamSlug = process.env.NOVA_SECURITY_TEAM_SLUG ?? "openclaw-secops";
 const maxListedFiles = 25;
 const securitySensitiveFiles = [
   {
@@ -352,14 +352,14 @@ async function main() {
   }
 
   const api = githubApi(token);
-  const explicitSecurityApprovers = securityApproverSet(process.env.OPENCLAW_SECURITY_APPROVERS);
+  const explicitSecurityApprovers = securityApproverSet(process.env.NOVA_SECURITY_APPROVERS);
   const trustedCommentAuthors = securitySensitiveGuardCommentAuthors(
-    process.env.OPENCLAW_SECURITY_SENSITIVE_GUARD_COMMENT_BOTS,
+    process.env.NOVA_SECURITY_SENSITIVE_GUARD_COMMENT_BOTS,
   );
   const issuePath = `/repos/${owner}/${repo}/issues/${eventPullRequest.number}`;
   const pullPath = `/repos/${owner}/${repo}/pulls/${eventPullRequest.number}`;
   const pullRequest = await api.request(pullPath);
-  const mode = process.env.OPENCLAW_SECURITY_SENSITIVE_GUARD_MODE ?? "enforce";
+  const mode = process.env.NOVA_SECURITY_SENSITIVE_GUARD_MODE ?? "enforce";
   const files = await api.paginate(`${pullPath}/files`);
   const securitySensitiveChanges = collectSecuritySensitiveChanges(files);
 

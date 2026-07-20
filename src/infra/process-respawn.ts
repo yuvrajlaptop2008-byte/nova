@@ -26,14 +26,14 @@ function isTruthy(value: string | undefined): boolean {
   return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on";
 }
 
-const PNPM_VERSIONED_OPENCLAW_ENTRY_PATTERN =
+const PNPM_VERSIONED_NOVA_ENTRY_PATTERN =
   /^(.*?)([\\/])node_modules\2\.pnpm\2openclaw@[^\\/]+\2node_modules\2openclaw\2.+$/;
 
 function rewritePnpmVersionedOpenClawEntryPath(entryPath: string): string {
   // pnpm can expose argv[1] as a versioned realpath that self-update removes.
   // Respawn through the stable Nova package wrapper instead.
   return entryPath.replace(
-    PNPM_VERSIONED_OPENCLAW_ENTRY_PATTERN,
+    PNPM_VERSIONED_NOVA_ENTRY_PATTERN,
     "$1$2node_modules$2openclaw$2openclaw.mjs",
   );
 }
@@ -63,14 +63,14 @@ function spawnDetachedGatewayProcess(opts: GatewayRespawnOptions = {}): {
 /**
  * Attempt to restart this process with a fresh PID.
  * - supervised environments (launchd/systemd/schtasks): caller should exit and let supervisor restart
- * - OPENCLAW_NO_RESPAWN=1: caller should keep in-process restart behavior (tests/dev)
+ * - NOVA_NO_RESPAWN=1: caller should keep in-process restart behavior (tests/dev)
  * - unmanaged environments: caller should keep in-process restart behavior so
  *   custom supervisors keep tracking the same gateway PID
  */
 export function restartGatewayProcessWithFreshPid(
   _opts: GatewayRespawnOptions = {},
 ): GatewayRespawnResult {
-  if (isTruthy(process.env.OPENCLAW_NO_RESPAWN)) {
+  if (isTruthy(process.env.NOVA_NO_RESPAWN)) {
     return { mode: "disabled" };
   }
   const supervisor = detectGatewayRespawnSupervisor(process.env);
@@ -138,8 +138,8 @@ export function respawnGatewayProcessForUpdate(
     }
     return { mode: "supervised" };
   }
-  if (isTruthy(process.env.OPENCLAW_NO_RESPAWN)) {
-    return { mode: "disabled", detail: "OPENCLAW_NO_RESPAWN" };
+  if (isTruthy(process.env.NOVA_NO_RESPAWN)) {
+    return { mode: "disabled", detail: "NOVA_NO_RESPAWN" };
   }
   try {
     const { child, pid } = spawnDetachedGatewayProcess(opts);

@@ -4,7 +4,7 @@ import {
   assertSqliteIntegrity,
   isTerminalSqliteIntegrityError,
 } from "../infra/sqlite-integrity.js";
-import { OPENCLAW_SQLITE_BUSY_TIMEOUT_MS } from "./openclaw-state-db.js";
+import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "./openclaw-state-db.js";
 
 export type OpenClawDatabaseVerifyTarget = {
   path: string;
@@ -40,7 +40,7 @@ export function verifyOpenClawDatabases(
     let database: InstanceType<typeof sqlite.DatabaseSync> | undefined;
     try {
       database = new sqlite.DatabaseSync(target.path, { readOnly: true });
-      database.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+      database.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
       assertSqliteIntegrity(database, target.label);
       return { path: target.path, ok: true };
     } catch (error) {

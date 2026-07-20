@@ -48,7 +48,7 @@ function runResolver(remote: string, args: string[]) {
     env: {
       ...process.env,
       GITHUB_OUTPUT: "",
-      OPENCLAW_REF_REMOTE: remote,
+      NOVA_REF_REMOTE: remote,
     },
   });
 }

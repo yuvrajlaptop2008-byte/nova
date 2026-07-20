@@ -119,7 +119,7 @@ describe("file log redaction", () => {
         },
       }),
     );
-    withEnv({ OPENCLAW_CONFIG_PATH: configPath }, () => {
+    withEnv({ NOVA_CONFIG_PATH: configPath }, () => {
       setLoggerOverride({ level: "info", file: logPath });
 
       getLogger().info({
@@ -149,7 +149,7 @@ describe("file log redaction", () => {
         },
       }),
     );
-    withEnv({ OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_TEST_FILE_LOG: "1" }, () => {
+    withEnv({ NOVA_CONFIG_PATH: configPath, NOVA_TEST_FILE_LOG: "1" }, () => {
       getLogger().info({ message: "configured log path works" });
     });
 

@@ -35,17 +35,17 @@ const NARRATIVE_SESSION_LOCKS_KEY = Symbol.for(
   "openclaw.memoryCore.dreamingNarrative.sessionLocks",
 );
 const EXPECTS_POSIX_PRIVATE_FILE_MODE = process.platform !== "win32";
-const originalNarrativeStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalNarrativeStateDir = process.env.NOVA_STATE_DIR;
 
 function setNarrativeTestEnv(stateDir: string): void {
-  Reflect.set(process.env, "OPENCLAW_STATE_DIR", stateDir);
+  Reflect.set(process.env, "NOVA_STATE_DIR", stateDir);
 }
 
 function restoreNarrativeTestEnv(): void {
   if (originalNarrativeStateDir === undefined) {
-    Reflect.deleteProperty(process.env, "OPENCLAW_STATE_DIR");
+    Reflect.deleteProperty(process.env, "NOVA_STATE_DIR");
   } else {
-    Reflect.set(process.env, "OPENCLAW_STATE_DIR", originalNarrativeStateDir);
+    Reflect.set(process.env, "NOVA_STATE_DIR", originalNarrativeStateDir);
   }
 }
 

@@ -31,7 +31,7 @@ describe("readLoggingConfig", () => {
     const configPath = writeConfig(`{ logging: { file: "/tmp/should-not-read.log" } }`);
     fs.rmSync(configPath);
 
-    withEnv({ OPENCLAW_CONFIG_PATH: configPath }, () => {
+    withEnv({ NOVA_CONFIG_PATH: configPath }, () => {
       expect(readLoggingConfig()).toBeUndefined();
     });
   });
@@ -45,7 +45,7 @@ describe("readLoggingConfig", () => {
       },
     }`);
 
-    withEnv({ OPENCLAW_CONFIG_PATH: configPath }, () => {
+    withEnv({ NOVA_CONFIG_PATH: configPath }, () => {
       expect(readLoggingConfig()).toStrictEqual({
         level: "debug",
         file: "/tmp/openclaw-custom.log",
@@ -62,7 +62,7 @@ describe("readLoggingConfig", () => {
       },
     }`);
 
-    withEnv({ OPENCLAW_CONFIG_PATH: configPath }, () => {
+    withEnv({ NOVA_CONFIG_PATH: configPath }, () => {
       expect(readLoggingConfig()).toStrictEqual({
         consoleLevel: "warn",
       });
@@ -70,15 +70,12 @@ describe("readLoggingConfig", () => {
   });
 
   it("returns undefined for missing or malformed config files", () => {
-    withEnv(
-      { OPENCLAW_CONFIG_PATH: path.join(os.tmpdir(), "openclaw-missing-config.json") },
-      () => {
-        expect(readLoggingConfig()).toBeUndefined();
-      },
-    );
+    withEnv({ NOVA_CONFIG_PATH: path.join(os.tmpdir(), "openclaw-missing-config.json") }, () => {
+      expect(readLoggingConfig()).toBeUndefined();
+    });
 
     const configPath = writeConfig(`{ logging: `);
-    withEnv({ OPENCLAW_CONFIG_PATH: configPath }, () => {
+    withEnv({ NOVA_CONFIG_PATH: configPath }, () => {
       expect(readLoggingConfig()).toBeUndefined();
     });
   });

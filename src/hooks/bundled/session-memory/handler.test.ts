@@ -372,7 +372,7 @@ describe("session-memory hook", () => {
     await withEnvAsync(
       {
         NODE_ENV: "production",
-        OPENCLAW_TEST_FAST: undefined,
+        NOVA_TEST_FAST: undefined,
         VITEST: undefined,
       },
       async () => {
@@ -397,7 +397,7 @@ describe("session-memory hook", () => {
     await withEnvAsync(
       {
         NODE_ENV: "production",
-        OPENCLAW_TEST_FAST: undefined,
+        NOVA_TEST_FAST: undefined,
         VITEST: undefined,
       },
       async () => {
@@ -454,7 +454,7 @@ describe("session-memory hook", () => {
     await withEnvAsync(
       {
         NODE_ENV: "production",
-        OPENCLAW_TEST_FAST: undefined,
+        NOVA_TEST_FAST: undefined,
         VITEST: undefined,
       },
       async () => {
@@ -1090,7 +1090,7 @@ describe("session-memory hook", () => {
     loggerMocks.info.mockClear();
 
     await withEnvAsync(
-      { HOME: fakeHome, USERPROFILE: fakeHome, OPENCLAW_HOME: undefined },
+      { HOME: fakeHome, USERPROFILE: fakeHome, NOVA_HOME: undefined },
       async () => {
         const { files } = await runNewWithPreviousSessionEntry({
           tempDir: siblingWorkspace,

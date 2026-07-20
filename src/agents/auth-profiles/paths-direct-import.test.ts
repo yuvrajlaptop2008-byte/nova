@@ -36,8 +36,8 @@ describe("path-resolve helpers (direct-import coverage attribution)", () => {
 
   it("resolveAuthStorePath falls back to the default agent dir when agentDir is omitted", () => {
     // Omitting agentDir exercises the default agent-dir branch. With
-    // OPENCLAW_STATE_DIR set to our tempdir, the resolved path must live under it.
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    // NOVA_STATE_DIR set to our tempdir, the resolved path must live under it.
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const resolved = resolveAuthStorePath();
       expect(resolved.startsWith(stateDir)).toBe(true);
       expect(path.basename(resolved)).toMatch(/auth-profiles/);
@@ -52,7 +52,7 @@ describe("path-resolve helpers (direct-import coverage attribution)", () => {
   });
 
   it("resolveLegacyAuthStorePath falls back to the default agent dir", () => {
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const resolved = resolveLegacyAuthStorePath();
       expect(resolved.startsWith(stateDir)).toBe(true);
     });
@@ -65,7 +65,7 @@ describe("path-resolve helpers (direct-import coverage attribution)", () => {
   });
 
   it("resolveAuthStatePath falls back to the default agent dir", () => {
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const resolved = resolveAuthStatePath();
       expect(resolved.startsWith(stateDir)).toBe(true);
     });

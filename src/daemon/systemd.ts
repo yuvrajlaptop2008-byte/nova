@@ -69,11 +69,11 @@ function resolveSystemdUnitPathForName(env: GatewayServiceEnv, name: string): st
 }
 
 function resolveSystemdServiceName(env: GatewayServiceEnv): string {
-  const override = env.OPENCLAW_SYSTEMD_UNIT?.trim();
+  const override = env.NOVA_SYSTEMD_UNIT?.trim();
   if (override) {
     return override.endsWith(".service") ? override.slice(0, -".service".length) : override;
   }
-  return resolveGatewaySystemdServiceName(env.OPENCLAW_PROFILE);
+  return resolveGatewaySystemdServiceName(env.NOVA_PROFILE);
 }
 
 function resolveSystemdUnitPath(env: GatewayServiceEnv): string {
@@ -378,7 +378,7 @@ function resolveSystemdEnvironmentFilePath(params: {
   stateDir: string;
   environment?: GatewayServiceEnv;
 }): string {
-  const serviceKind = params.environment?.OPENCLAW_SERVICE_KIND?.trim();
+  const serviceKind = params.environment?.NOVA_SERVICE_KIND?.trim();
   const filename =
     serviceKind === "node" ? SYSTEMD_NODE_DOTENV_FILENAME : SYSTEMD_GATEWAY_DOTENV_FILENAME;
   return path.join(params.stateDir, filename);
@@ -388,7 +388,7 @@ function resolveLegacyNodeSystemdEnvironmentFilePath(params: {
   stateDir: string;
   environment?: GatewayServiceEnv;
 }): string | null {
-  if (params.environment?.OPENCLAW_SERVICE_KIND?.trim() !== "node") {
+  if (params.environment?.NOVA_SERVICE_KIND?.trim() !== "node") {
     return null;
   }
   const legacyPath = path.join(params.stateDir, SYSTEMD_GATEWAY_DOTENV_FILENAME);
@@ -397,7 +397,7 @@ function resolveLegacyNodeSystemdEnvironmentFilePath(params: {
 }
 
 function isNodeSystemdEnvironment(env: GatewayServiceEnv): boolean {
-  return env.OPENCLAW_SERVICE_KIND?.trim() === "node";
+  return env.NOVA_SERVICE_KIND?.trim() === "node";
 }
 
 function expandSystemdSpecifier(input: string, env: GatewayServiceEnv): string {
@@ -1186,7 +1186,7 @@ async function removeNodeSystemdManagedEnvironmentKeys(env: GatewayServiceEnv): 
   } catch {
     return;
   }
-  const managedKeys = new Set(["OPENCLAW_GATEWAY_TOKEN", "OPENCLAW_GATEWAY_PASSWORD"]);
+  const managedKeys = new Set(["NOVA_GATEWAY_TOKEN", "NOVA_GATEWAY_PASSWORD"]);
   const remaining = Object.fromEntries(
     Object.entries(existingFile.environment).filter(([key, value]) => {
       const normalized = normalizeSystemdEnvironmentKey(key);

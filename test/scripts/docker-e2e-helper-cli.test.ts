@@ -93,7 +93,7 @@ describe("Docker E2E helper CLIs", () => {
       writeFileSync(file, `${JSON.stringify({ filler: "x".repeat(128) })}\n`, "utf8");
 
       const result = runHelper("scripts/docker-e2e.mjs", "failed-reruns", file, {
-        OPENCLAW_DOCKER_E2E_JSON_ARTIFACT_MAX_BYTES: "64",
+        NOVA_DOCKER_E2E_JSON_ARTIFACT_MAX_BYTES: "64",
       });
 
       expect(result.status).toBe(1);
@@ -147,7 +147,7 @@ describe("Docker E2E helper CLIs", () => {
       writeFileSync(file, `${JSON.stringify({ filler: "x".repeat(128) })}\n`, "utf8");
 
       const result = runHelper("scripts/docker-e2e-timings.mjs", file, {
-        OPENCLAW_DOCKER_E2E_JSON_ARTIFACT_MAX_BYTES: "64",
+        NOVA_DOCKER_E2E_JSON_ARTIFACT_MAX_BYTES: "64",
       });
 
       expect(result.status).toBe(1);
@@ -190,7 +190,7 @@ describe("Docker E2E helper CLIs", () => {
       writeFileSync(file, `${JSON.stringify({ filler: "x".repeat(128) })}\n`, "utf8");
 
       const result = runHelper("scripts/docker-e2e-rerun.mjs", file, "--ref", EXACT_TARGET_REF, {
-        OPENCLAW_DOCKER_E2E_JSON_ARTIFACT_MAX_BYTES: "64",
+        NOVA_DOCKER_E2E_JSON_ARTIFACT_MAX_BYTES: "64",
       });
 
       expect(result.status).toBe(1);

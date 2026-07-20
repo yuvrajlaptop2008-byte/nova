@@ -308,8 +308,8 @@ export function resolveQaEvidenceProfile(params: {
   }
 
   const envProfiles = [
-    ["OPENCLAW_E2E_PROFILE", params.env?.OPENCLAW_E2E_PROFILE],
-    ["OPENCLAW_QA_PROFILE", params.env?.OPENCLAW_QA_PROFILE],
+    ["NOVA_E2E_PROFILE", params.env?.NOVA_E2E_PROFILE],
+    ["NOVA_QA_PROFILE", params.env?.NOVA_QA_PROFILE],
   ] as const;
   for (const [, value] of envProfiles) {
     const normalized = value?.trim();
@@ -323,21 +323,21 @@ export function resolveQaEvidenceProfile(params: {
 }
 
 function resolveQaEvidenceRunner(params: { env?: NodeJS.ProcessEnv; fallback?: string }) {
-  return params.env?.OPENCLAW_QA_RUNNER?.trim() || params.fallback || "host";
+  return params.env?.NOVA_QA_RUNNER?.trim() || params.fallback || "host";
 }
 
 function resolveQaEvidenceChannelDriver(params: { env?: NodeJS.ProcessEnv; fallback?: string }) {
   const id =
     params.fallback?.trim() ||
-    params.env?.OPENCLAW_QA_CHANNEL_DRIVER?.trim() ||
-    params.env?.OPENCLAW_E2E_CHANNEL_DRIVER?.trim();
+    params.env?.NOVA_QA_CHANNEL_DRIVER?.trim() ||
+    params.env?.NOVA_E2E_CHANNEL_DRIVER?.trim();
   return id ? { id } : undefined;
 }
 
 function resolveQaEvidencePackageSource(env: NodeJS.ProcessEnv | undefined) {
-  const spec = env?.OPENCLAW_QA_PACKAGE_SOURCE?.trim() || undefined;
-  const sha = env?.OPENCLAW_QA_PACKAGE_SOURCE_SHA?.trim() || undefined;
-  const explicitKind = env?.OPENCLAW_QA_PACKAGE_SOURCE_KIND?.trim();
+  const spec = env?.NOVA_QA_PACKAGE_SOURCE?.trim() || undefined;
+  const sha = env?.NOVA_QA_PACKAGE_SOURCE_SHA?.trim() || undefined;
+  const explicitKind = env?.NOVA_QA_PACKAGE_SOURCE_KIND?.trim();
   const kind =
     explicitKind ||
     (spec && spec.endsWith(".tgz") ? "packed-tarball" : spec ? "npm-package" : "source-checkout");

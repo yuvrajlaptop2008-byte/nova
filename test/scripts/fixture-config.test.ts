@@ -21,11 +21,11 @@ function runFixture(
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_CONFIG_BATCH_PATH: path.join(root, "batch.json"),
-      OPENCLAW_CONFIG_PATH: path.join(root, "openclaw.json"),
-      OPENCLAW_GATEWAY_TOKEN: "test-token",
-      OPENCLAW_OPENWEBUI_MODEL: "openai/gpt-5.4-mini",
-      OPENCLAW_STATE_DIR: root,
+      NOVA_CONFIG_BATCH_PATH: path.join(root, "batch.json"),
+      NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+      NOVA_GATEWAY_TOKEN: "test-token",
+      NOVA_OPENWEBUI_MODEL: "openai/gpt-5.4-mini",
+      NOVA_STATE_DIR: root,
       ...env,
     },
   });
@@ -103,11 +103,11 @@ describe("scripts/e2e/lib/fixture.mjs config commands", () => {
     const root = makeTempRoot();
     try {
       const result = runFixture(root, "openwebui-config", ["test-key"], {
-        OPENCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS: "300s",
+        NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS: "300s",
       });
 
       expect(result.status).not.toBe(0);
-      expect(result.stderr).toContain("invalid OPENCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS: 300s");
+      expect(result.stderr).toContain("invalid NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS: 300s");
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
@@ -117,7 +117,7 @@ describe("scripts/e2e/lib/fixture.mjs config commands", () => {
     const root = makeTempRoot();
     try {
       const result = runFixture(root, "openwebui-config", ["test-key"], {
-        OPENCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS: "300",
+        NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS: "300",
       });
 
       expect(result.status).toBe(0);

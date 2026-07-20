@@ -44,11 +44,11 @@ export function resolvePlainGhBin(
   env = process.env,
   systemCandidates = PLAIN_GH_SYSTEM_CANDIDATES,
 ) {
-  if (env.OPENCLAW_GH_BIN) {
-    if (isExecutable(env.OPENCLAW_GH_BIN)) {
-      return env.OPENCLAW_GH_BIN;
+  if (env.NOVA_GH_BIN) {
+    if (isExecutable(env.NOVA_GH_BIN)) {
+      return env.NOVA_GH_BIN;
     }
-    throw new Error(`OPENCLAW_GH_BIN is not executable: ${env.OPENCLAW_GH_BIN}`);
+    throw new Error(`NOVA_GH_BIN is not executable: ${env.NOVA_GH_BIN}`);
   }
 
   for (const candidate of systemCandidates) {
@@ -90,8 +90,8 @@ export function execPlainGh(args, options = {}) {
 
 export function execGhApiRead(endpoint, options = {}) {
   const env = plainGhEnv(options.env ?? process.env);
-  // Keep reads on the normal PATH shim; OPENCLAW_GH_BIN pins maintainer writes.
-  delete env.OPENCLAW_GH_BIN;
+  // Keep reads on the normal PATH shim; NOVA_GH_BIN pins maintainer writes.
+  delete env.NOVA_GH_BIN;
   return execFileSync("gh", ["api", endpoint, "--method", "GET"], {
     ...options,
     env,

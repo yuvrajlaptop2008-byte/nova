@@ -240,12 +240,12 @@ export async function runZaiFallbackRepro(deps: RunZaiFallbackReproDeps = {}): P
     };
     await writeFile(configPath, JSON.stringify(config, null, 2), "utf8");
 
-    const sessionId = env.OPENCLAW_ZAI_FALLBACK_SESSION_ID ?? createUuid();
+    const sessionId = env.NOVA_ZAI_FALLBACK_SESSION_ID ?? createUuid();
 
     const baseEnv: NodeJS.ProcessEnv = {
       ...env,
-      OPENCLAW_CONFIG_PATH: configPath,
-      OPENCLAW_STATE_DIR: stateDir,
+      NOVA_CONFIG_PATH: configPath,
+      NOVA_STATE_DIR: stateDir,
       ZAI_API_KEY: zaiKey,
       Z_AI_API_KEY: "",
     };

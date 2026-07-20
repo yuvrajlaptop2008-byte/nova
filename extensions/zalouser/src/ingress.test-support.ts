@@ -65,8 +65,8 @@ export async function withZalouserIngressTestQueue<T>(
     path.join(resolvePreferredOpenClawTmpDir(), "openclaw-zalouser-ingress-"),
   );
   const stateDir = await fs.realpath(createdDir);
-  const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  const previousStateDir = process.env.NOVA_STATE_DIR;
+  process.env.NOVA_STATE_DIR = stateDir;
   const queue = createChannelIngressQueueForTests<ZalouserTestIngressPayload>({
     channelId: "zalouser",
     accountId: "default",
@@ -76,9 +76,9 @@ export async function withZalouserIngressTestQueue<T>(
     return await fn(queue);
   } finally {
     if (previousStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previousStateDir;
+      process.env.NOVA_STATE_DIR = previousStateDir;
     }
     closeOpenClawStateDatabaseForTest();
     await fs.rm(stateDir, { recursive: true, force: true });

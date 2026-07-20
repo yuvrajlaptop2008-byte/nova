@@ -615,8 +615,8 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
     // Planning happens before candidate env publication, while channel starts
     // happen after it. Use one candidate snapshot across both phases.
     const shouldSkipChannelRestart =
-      isTruthyEnvValue(candidateEnv.OPENCLAW_SKIP_CHANNELS) ||
-      isTruthyEnvValue(candidateEnv.OPENCLAW_SKIP_PROVIDERS);
+      isTruthyEnvValue(candidateEnv.NOVA_SKIP_CHANNELS) ||
+      isTruthyEnvValue(candidateEnv.NOVA_SKIP_PROVIDERS);
     const channelReloadTargets = () =>
       new Set<ChannelKind>([...channelsToRestart, ...restartChannelAccounts.keys()]);
     const getChannelAutostartSuppression = () => params.getChannelAutostartSuppression?.() ?? null;
@@ -997,9 +997,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
               isCancelled: () => restartAbortController.signal.aborted,
               signal: restartAbortController.signal,
               onSkipped: () =>
-                params.logHooks.info(
-                  "skipping gmail watcher restart (OPENCLAW_SKIP_GMAIL_WATCHER=1)",
-                ),
+                params.logHooks.info("skipping gmail watcher restart (NOVA_SKIP_GMAIL_WATCHER=1)"),
             });
           }
         }
@@ -1054,7 +1052,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
     if (channelsToRestart.size > 0 || restartChannelAccounts.size > 0) {
       if (shouldSkipChannelRestart) {
         params.logChannels.info(
-          "skipping channel reload (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)",
+          "skipping channel reload (NOVA_SKIP_CHANNELS=1 or NOVA_SKIP_PROVIDERS=1)",
         );
       } else if (getChannelAutostartSuppression()) {
         const cancelledByRestart = pluginReloadAborted;

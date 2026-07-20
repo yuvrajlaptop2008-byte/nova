@@ -24,9 +24,9 @@ import {
   clearOpenClawStateDatabaseOpenFailure,
   closeOpenClawStateDatabaseForTest,
   detectOpenClawStateDatabaseSchemaMigrations,
-  OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+  NOVA_SQLITE_BUSY_TIMEOUT_MS,
   openOpenClawStateDatabase,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
   repairOpenClawStateDatabaseSchema,
   runOpenClawStateWriteTransaction,
   withOpenClawStateStartupMigrationCheckpointDatabase,
@@ -141,7 +141,7 @@ function seedLegacySessionWatchCursorSchema(stateDir: string): {
   explicitTarget: string;
   watcherSessionKey: string;
 } {
-  const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+  const options = { env: { NOVA_STATE_DIR: stateDir } };
   const databasePath = openOpenClawStateDatabase(options).path;
   closeOpenClawStateDatabaseForTest();
 
@@ -363,7 +363,7 @@ function createLegacyAuditStateDatabase(stateDir: string): string {
 }
 
 function createCanonicalAuditStateDatabase(stateDir: string): string {
-  const database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+  const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
   const databasePath = database.path;
   closeOpenClawStateDatabaseForTest();
   return databasePath;
@@ -512,12 +512,12 @@ function runHotRollbackJournalRecoveryProbe(params: { moduleUrl: string; rootDir
       import fs from "node:fs";
       import { DatabaseSync } from "node:sqlite";
 
-      const database = new DatabaseSync(process.env.OPENCLAW_HOT_JOURNAL_DATABASE_PATH);
+      const database = new DatabaseSync(process.env.NOVA_HOT_JOURNAL_DATABASE_PATH);
       database.exec("PRAGMA journal_mode = DELETE; PRAGMA synchronous = FULL; BEGIN IMMEDIATE;");
       database
         .prepare("UPDATE hot_journal_probe SET value = ? WHERE id = 1")
         .run("uncommitted");
-      fs.writeFileSync(process.env.OPENCLAW_HOT_JOURNAL_READY_PATH, "ready");
+      fs.writeFileSync(process.env.NOVA_HOT_JOURNAL_READY_PATH, "ready");
       setInterval(() => {}, 1_000);
     \`;
     const writer = spawn(
@@ -526,8 +526,8 @@ function runHotRollbackJournalRecoveryProbe(params: { moduleUrl: string; rootDir
       {
         env: {
           ...process.env,
-          OPENCLAW_HOT_JOURNAL_DATABASE_PATH: databasePath,
-          OPENCLAW_HOT_JOURNAL_READY_PATH: readyPath,
+          NOVA_HOT_JOURNAL_DATABASE_PATH: databasePath,
+          NOVA_HOT_JOURNAL_READY_PATH: readyPath,
         },
         stdio: ["ignore", "ignore", "pipe"],
       },
@@ -598,7 +598,7 @@ function runHotRollbackJournalRecoveryProbe(params: { moduleUrl: string; rootDir
 }
 
 function expectNoncanonicalAuditSchemaRejected(stateDir: string, databasePath: string): void {
-  const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+  const options = { env: { NOVA_STATE_DIR: stateDir } };
   expect(detectOpenClawStateDatabaseSchemaMigrations(options)).toEqual([
     { kind: "audit-events-v2", path: databasePath },
   ]);
@@ -618,10 +618,10 @@ function runConcurrentSchemaProbe(params: {
     import fs from "node:fs";
     import { DatabaseSync } from "node:sqlite";
 
-    const pageBarrierDir = process.env.OPENCLAW_SCHEMA_TEST_PAGE_BARRIER_DIR;
+    const pageBarrierDir = process.env.NOVA_SCHEMA_TEST_PAGE_BARRIER_DIR;
     if (pageBarrierDir) {
-      const pageReadyPath = process.env.OPENCLAW_SCHEMA_TEST_PAGE_READY_PATH;
-      const workerCount = Number(process.env.OPENCLAW_SCHEMA_TEST_WORKER_COUNT);
+      const pageReadyPath = process.env.NOVA_SCHEMA_TEST_PAGE_READY_PATH;
+      const workerCount = Number(process.env.NOVA_SCHEMA_TEST_WORKER_COUNT);
       const originalPrepare = DatabaseSync.prototype.prepare;
       const sleepBuffer = new Int32Array(new SharedArrayBuffer(4));
       DatabaseSync.prototype.prepare = function (sql) {
@@ -661,10 +661,10 @@ function runConcurrentSchemaProbe(params: {
     const {
       closeOpenClawStateDatabaseForTest,
       openOpenClawStateDatabase,
-    } = await import(process.env.OPENCLAW_SCHEMA_TEST_MODULE_URL);
-    const databasePath = process.env.OPENCLAW_SCHEMA_TEST_DATABASE_PATH;
-    const readyPath = process.env.OPENCLAW_SCHEMA_TEST_READY_PATH;
-    const startPath = process.env.OPENCLAW_SCHEMA_TEST_START_PATH;
+    } = await import(process.env.NOVA_SCHEMA_TEST_MODULE_URL);
+    const databasePath = process.env.NOVA_SCHEMA_TEST_DATABASE_PATH;
+    const readyPath = process.env.NOVA_SCHEMA_TEST_READY_PATH;
+    const startPath = process.env.NOVA_SCHEMA_TEST_START_PATH;
     fs.writeFileSync(readyPath, "ready");
     const deadline = Date.now() + 15_000;
     while (!fs.existsSync(startPath)) {
@@ -786,15 +786,15 @@ function runConcurrentSchemaProbe(params: {
           {
             env: {
               ...process.env,
-              OPENCLAW_SCHEMA_TEST_DATABASE_PATH: databasePath,
-              OPENCLAW_SCHEMA_TEST_MODULE_URL: moduleUrl,
-              OPENCLAW_SCHEMA_TEST_READY_PATH: readyPath,
-              OPENCLAW_SCHEMA_TEST_START_PATH: startPath,
+              NOVA_SCHEMA_TEST_DATABASE_PATH: databasePath,
+              NOVA_SCHEMA_TEST_MODULE_URL: moduleUrl,
+              NOVA_SCHEMA_TEST_READY_PATH: readyPath,
+              NOVA_SCHEMA_TEST_START_PATH: startPath,
               ...(mode === "fresh"
                 ? {
-                    OPENCLAW_SCHEMA_TEST_PAGE_BARRIER_DIR: barrierDir,
-                    OPENCLAW_SCHEMA_TEST_PAGE_READY_PATH: pageReadyPath,
-                    OPENCLAW_SCHEMA_TEST_WORKER_COUNT: String(workerCount),
+                    NOVA_SCHEMA_TEST_PAGE_BARRIER_DIR: barrierDir,
+                    NOVA_SCHEMA_TEST_PAGE_READY_PATH: pageReadyPath,
+                    NOVA_SCHEMA_TEST_WORKER_COUNT: String(workerCount),
                   }
                 : {}),
             },
@@ -862,7 +862,7 @@ describe("openclaw state database", () => {
   it("resolves under the shared state database directory", () => {
     const stateDir = createTempStateDir();
 
-    expect(resolveOpenClawStateSqlitePath({ OPENCLAW_STATE_DIR: stateDir })).toBe(
+    expect(resolveOpenClawStateSqlitePath({ NOVA_STATE_DIR: stateDir })).toBe(
       path.join(stateDir, "state", "openclaw.sqlite"),
     );
   });
@@ -881,7 +881,7 @@ describe("openclaw state database", () => {
   it("creates the shared state schema from the committed SQL shape", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expect(collectSqliteSchemaShape(database.db)).toEqual(
@@ -913,7 +913,7 @@ describe("openclaw state database", () => {
 
   it("drops unreleased transient verification history on open", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const databasePath = openOpenClawStateDatabase(options).path;
     closeOpenClawStateDatabaseForTest();
 
@@ -955,7 +955,7 @@ INSERT INTO device_identities VALUES (
     seed.close();
 
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expect(
@@ -968,7 +968,7 @@ INSERT INTO device_identities VALUES (
       created_at_ms: 10,
       updated_at_ms: 20,
     });
-    expect(readSqliteNumberPragma(database.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(database.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
     expect(collectSqliteSchemaShape(database.db)).toEqual(
       createSqliteSchemaShapeFromSql(new URL("./openclaw-state-schema.sql", import.meta.url)),
     );
@@ -995,7 +995,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     seed.close();
 
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expect(
@@ -1007,7 +1007,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
       mode: "remote",
       timestamp: 42.5,
     });
-    expect(readSqliteNumberPragma(database.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(database.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
     expect(collectSqliteSchemaShape(database.db)).toEqual(
       createSqliteSchemaShapeFromSql(new URL("./openclaw-state-schema.sql", import.meta.url)),
     );
@@ -1015,7 +1015,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("doctor migrates existing APNs tombstone tables to STRICT without losing rows", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const databasePath = openOpenClawStateDatabase(options).path;
     closeOpenClawStateDatabaseForTest();
 
@@ -1050,7 +1050,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("doctor migrates version 2 tables to STRICT without losing rows", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const opened = openOpenClawStateDatabase(options);
     const databasePath = opened.path;
     opened.db
@@ -1110,7 +1110,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("doctor migrates version 3 ambient watch sentinels into cursor provenance", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const seeded = seedLegacySessionWatchCursorSchema(stateDir);
 
     expect(detectOpenClawStateDatabaseSchemaMigrations(options)).toEqual([
@@ -1153,19 +1153,19 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
         updated_at: 400,
       },
     ]);
-    expect(readSqliteNumberPragma(migrated.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(migrated.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
     expect(
       migrated.db
         .prepare("SELECT schema_version FROM schema_meta WHERE meta_key = 'primary'")
         .get(),
-    ).toEqual({ schema_version: OPENCLAW_STATE_SCHEMA_VERSION });
+    ).toEqual({ schema_version: NOVA_STATE_SCHEMA_VERSION });
     closeOpenClawStateDatabaseForTest();
     expect(repairOpenClawStateDatabaseSchema(options)).toEqual({ changes: [], warnings: [] });
   });
 
   it("automatically migrates version 3 ambient watch sentinels on database open", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const seeded = seedLegacySessionWatchCursorSchema(stateDir);
 
     const migrated = openOpenClawStateDatabase(options);
@@ -1181,13 +1181,13 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
       { target_session_key: seeded.explicitTarget, provenance: "explicit" },
       { target_session_key: seeded.ambientTarget, provenance: "ambient-group" },
     ]);
-    expect(readSqliteNumberPragma(migrated.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(migrated.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
     expect(detectOpenClawStateDatabaseSchemaMigrations(options)).toEqual([]);
   });
 
   it("rejects a placement turn claim tuple without an owner", () => {
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: createTempStateDir() },
+      env: { NOVA_STATE_DIR: createTempStateDir() },
     });
 
     expect(() =>
@@ -1326,7 +1326,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it.each(validPlacementShapes)("allows a valid $name", (input) => {
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: createTempStateDir() },
+      env: { NOVA_STATE_DIR: createTempStateDir() },
     });
 
     expect(() => insertPlacementConstraintProbe(database.db, input)).not.toThrow();
@@ -1467,7 +1467,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it.each(invalidPlacementShapes)("rejects a placement with $name", (input) => {
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: createTempStateDir() },
+      env: { NOVA_STATE_DIR: createTempStateDir() },
     });
 
     expect(() => insertPlacementConstraintProbe(database.db, input)).toThrow();
@@ -1512,7 +1512,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it.each(invalidPlacementClaimOwners)("rejects a placement with $name", (input) => {
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: createTempStateDir() },
+      env: { NOVA_STATE_DIR: createTempStateDir() },
     });
 
     expect(() =>
@@ -1535,7 +1535,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("allows an exact worker claim while placement drains", () => {
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: createTempStateDir() },
+      env: { NOVA_STATE_DIR: createTempStateDir() },
     });
 
     expect(() =>
@@ -1556,7 +1556,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("repairs a same-name shared-state uniqueness index", () => {
     const stateDir = createTempStateDir();
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const created = openOpenClawStateDatabase({ env });
     const databasePath = created.path;
     closeOpenClawStateDatabaseForTest();
@@ -1591,7 +1591,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("migrates the released audit ledger to message-compatible attribution exactly once", () => {
     const stateDir = createTempStateDir();
     const databasePath = createLegacyAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
 
     expect(detectOpenClawStateDatabaseSchemaMigrations(options)).toEqual([
       { kind: "audit-events-v2", path: databasePath },
@@ -1711,10 +1711,10 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
           "idx_audit_events_direction_sequence",
         ]),
       );
-      expect(readSqliteNumberPragma(db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+      expect(readSqliteNumberPragma(db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
       expect(
         db.prepare("SELECT schema_version FROM schema_meta WHERE meta_key = 'primary'").get(),
-      ).toEqual({ schema_version: OPENCLAW_STATE_SCHEMA_VERSION });
+      ).toEqual({ schema_version: NOVA_STATE_SCHEMA_VERSION });
       expect(() =>
         db
           .prepare(
@@ -1737,7 +1737,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("preserves an empty audit ledger's sequence high-water mark", () => {
     const stateDir = createTempStateDir();
     const databasePath = createLegacyAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const { DatabaseSync } = requireNodeSqlite();
     const legacy = new DatabaseSync(databasePath);
     legacy.exec(
@@ -1780,7 +1780,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("refuses an audit sequence high-water mark outside the supported cursor range", () => {
     const stateDir = createTempStateDir();
     const databasePath = createLegacyAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const { DatabaseSync } = requireNodeSqlite();
     const legacy = new DatabaseSync(databasePath);
     legacy.exec("UPDATE sqlite_sequence SET seq = 9007199254740992 WHERE name = 'audit_events';");
@@ -1811,7 +1811,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("lets normal open create an audit ledger for a pre-v2 database", () => {
     const stateDir = createTempStateDir();
     const databasePath = createLegacyAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const { DatabaseSync } = requireNodeSqlite();
     const legacy = new DatabaseSync(databasePath);
     legacy.exec("DROP TABLE audit_events");
@@ -1829,13 +1829,13 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
         .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'audit_events'")
         .get(),
     ).toEqual({ name: "audit_events" });
-    expect(readSqliteNumberPragma(opened.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(opened.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
   });
 
   it("refuses to rebuild a noncanonical audit table with unknown data columns", () => {
     const stateDir = createTempStateDir();
     const databasePath = createLegacyAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const { DatabaseSync } = requireNodeSqlite();
     const customized = new DatabaseSync(databasePath);
     customized.exec("ALTER TABLE audit_events ADD COLUMN operator_note TEXT;");
@@ -1996,7 +1996,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("creates the bounded skill curator tables", () => {
     const stateDir = createTempStateDir();
-    const database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
     const kysely = getNodeSqliteKysely<StateDbTestDatabase>(database.db);
 
     executeSqliteQuerySync(
@@ -2103,7 +2103,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("rejects stale schema_meta indexes before writable initialization", () => {
     const stateDir = createTempStateDir();
     const databasePath = createCanonicalAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     createUnsafeSchemaMetaIndexDrift(databasePath);
 
     expect(() => openOpenClawStateDatabase(options)).toThrow(
@@ -2114,7 +2114,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("defers unrelated current-schema index corruption but keeps doctor scans full", () => {
     const stateDir = createTempStateDir();
     const databasePath = createCanonicalAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     createUnsafeIndexDrift(databasePath);
 
     expect(openOpenClawStateDatabase(options).db.isOpen).toBe(true);
@@ -2137,13 +2137,13 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("runs full integrity before a pending state schema migration", () => {
     const stateDir = createTempStateDir();
     const databasePath = createCanonicalAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     createUnsafeIndexDrift(databasePath);
 
     const { DatabaseSync } = requireNodeSqlite();
     const before = new DatabaseSync(databasePath);
     try {
-      before.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION - 1};`);
+      before.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION - 1};`);
     } finally {
       before.close();
     }
@@ -2156,7 +2156,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("runs full integrity before mutating a nonempty unversioned state database", () => {
     const stateDir = createTempStateDir();
     const databasePath = createCanonicalAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     createUnsafeIndexDrift(databasePath);
 
     const { DatabaseSync } = requireNodeSqlite();
@@ -2175,7 +2175,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("defers current-schema foreign-key violations but keeps doctor scans full", () => {
     const stateDir = createTempStateDir();
     const databasePath = createCanonicalAuditStateDatabase(stateDir);
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const { DatabaseSync } = requireNodeSqlite();
     const corrupted = new DatabaseSync(databasePath);
     try {
@@ -2229,7 +2229,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("adds gateway boot lifecycle startup markers to existing state databases", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2240,7 +2240,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     legacyDb.close();
 
     const reopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const columns = reopened.db
       .prepare("PRAGMA table_info(gateway_boot_lifecycle)")
@@ -2252,7 +2252,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("adds worker bootstrap lifecycle columns to existing state databases", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2271,7 +2271,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     legacyDb.close();
 
     const reopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const columns = reopened.db.prepare("PRAGMA table_info(worker_environments)").all() as Array<{
       name?: string;
@@ -2297,7 +2297,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("adds staged worker-result refs during the v5 state migration", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const databasePath = openOpenClawStateDatabase(options).path;
     closeOpenClawStateDatabaseForTest();
 
@@ -2315,18 +2315,18 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
       .prepare("PRAGMA table_info(worker_workspace_pending_results)")
       .all() as Array<{ name?: string }>;
     expect(columns.map((column) => column.name)).toContain("staged_result_ref");
-    expect(readSqliteNumberPragma(reopened.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(reopened.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
     expect(
       reopened.db
         .prepare("SELECT schema_version FROM schema_meta WHERE meta_key = 'primary'")
         .get(),
-    ).toEqual({ schema_version: OPENCLAW_STATE_SCHEMA_VERSION });
+    ).toEqual({ schema_version: NOVA_STATE_SCHEMA_VERSION });
   });
 
   it("adds worker transcript commit tables to existing state databases", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2340,7 +2340,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     legacyDb.close();
 
     const reopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const tables = reopened.db
       .prepare(
@@ -2360,7 +2360,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("backfills durable approval transport references in databases created by PR 1", () => {
     const stateDir = createTempStateDir();
-    const database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    const database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
     const databasePath = database.path;
     const approvalId = "approval/from-pr1";
     const expectedRef = buildApprovalResolutionRef({ approvalId, approvalKind: "exec" });
@@ -2405,7 +2405,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     `);
     legacyDb.close();
 
-    const reopened = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } });
+    const reopened = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } });
     expect(
       reopened.db
         .prepare("SELECT resolution_ref FROM operator_approvals WHERE approval_id = ?")
@@ -2422,7 +2422,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("migrates operator approvals to accept system-agent records", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const database = openOpenClawStateDatabase(options);
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2459,7 +2459,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("does not recursively recommend doctor when operator approval repair refuses a shape", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const database = openOpenClawStateDatabase(options);
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2495,7 +2495,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     "restores the true legacy managed-image table through $migrationPath",
     ({ migrationPath, withRow }) => {
       const stateDir = createTempStateDir();
-      const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+      const options = { env: { NOVA_STATE_DIR: stateDir } };
       const databasePath = openOpenClawStateDatabase(options).path;
       closeOpenClawStateDatabaseForTest();
 
@@ -2561,7 +2561,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("backfills diagnostic event sequences in legacy creation order", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const databasePath = openOpenClawStateDatabase(options).path;
     closeOpenClawStateDatabaseForTest();
 
@@ -2611,7 +2611,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("adds relay origins to existing APNs registration tables", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const databasePath = openOpenClawStateDatabase(options).path;
     closeOpenClawStateDatabaseForTest();
 
@@ -2642,10 +2642,10 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
       try {
         expect(db.prepare("PRAGMA integrity_check").get()).toEqual({ integrity_check: "ok" });
         expect(db.prepare("PRAGMA foreign_key_check").all()).toEqual([]);
-        expect(readSqliteNumberPragma(db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+        expect(readSqliteNumberPragma(db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
         expect(
           db.prepare("SELECT schema_version FROM schema_meta WHERE meta_key = 'primary'").get(),
-        ).toEqual({ schema_version: OPENCLAW_STATE_SCHEMA_VERSION });
+        ).toEqual({ schema_version: NOVA_STATE_SCHEMA_VERSION });
         expect(
           db
             .prepare("SELECT agent_id, requester_agent_id FROM task_runs WHERE task_id = ?")
@@ -2677,10 +2677,10 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
         expect(db.prepare("PRAGMA integrity_check").get()).toEqual({ integrity_check: "ok" });
         expect(db.prepare("PRAGMA foreign_key_check").all()).toEqual([]);
         expect(readSqliteNumberPragma(db, "auto_vacuum")).toBe(2);
-        expect(readSqliteNumberPragma(db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+        expect(readSqliteNumberPragma(db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
         expect(
           db.prepare("SELECT schema_version FROM schema_meta WHERE meta_key = 'primary'").get(),
-        ).toEqual({ schema_version: OPENCLAW_STATE_SCHEMA_VERSION });
+        ).toEqual({ schema_version: NOVA_STATE_SCHEMA_VERSION });
         expect(collectSqliteSchemaShape(db)).toEqual(expectedShape);
       } finally {
         db.close();
@@ -2691,7 +2691,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("migrates requester and executor attribution for existing cross-agent tasks", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2768,7 +2768,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     legacyDb.close();
 
     const reopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const columns = reopened.db.prepare("PRAGMA table_info(task_runs)").all() as Array<{
       name?: string;
@@ -2837,7 +2837,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     closeOpenClawStateDatabaseForTest();
 
     const currentReopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     expect(
       currentReopened.db
@@ -2858,7 +2858,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
       { layout: "state-only", prefix: "openclaw-state-task-delivery-status-" },
       async ({ stateDir }) => {
         const database = openOpenClawStateDatabase({
-          env: { OPENCLAW_STATE_DIR: stateDir },
+          env: { NOVA_STATE_DIR: stateDir },
         });
         const insert = database.db.prepare(
           `INSERT INTO task_runs (
@@ -2887,7 +2887,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
         closeOpenClawStateDatabaseForTest();
 
         const readStatuses = () =>
-          openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: stateDir } })
+          openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: stateDir } })
             .db.prepare("SELECT task_id, delivery_status FROM task_runs ORDER BY task_id")
             .all();
         const expectedStatuses = [
@@ -2918,7 +2918,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("adds hosted catalog snapshot trust columns to existing state databases", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2935,7 +2935,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     legacyDb.close();
 
     const reopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const columns = reopened.db
       .prepare("PRAGMA table_info(official_external_plugin_catalog_snapshots)")
@@ -2956,7 +2956,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("adds task detail storage to an existing state database", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -2967,7 +2967,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     legacyDb.close();
 
     const reopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const columns = reopened.db.prepare("PRAGMA table_info(task_runs)").all() as Array<{
       name?: string;
@@ -2978,7 +2978,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("rolls back the requester attribution column when its backfill fails", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const databasePath = database.path;
     closeOpenClawStateDatabaseForTest();
@@ -3030,7 +3030,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
     expect(() =>
       openOpenClawStateDatabase({
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       }),
     ).toThrow(/blocked task attribution repair/);
 
@@ -3045,7 +3045,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     interruptedDb.close();
 
     const reopened = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     expect(
       reopened.db
@@ -3123,7 +3123,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     db.close();
 
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expect(() =>
@@ -3204,7 +3204,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     db.close();
 
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expect(
@@ -3278,7 +3278,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     db.close();
 
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expect(() =>
@@ -3314,16 +3314,14 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("configures durable SQLite connection pragmas", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
-    expect(readSqliteNumberPragma(database.db, "busy_timeout")).toBe(
-      OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
-    );
+    expect(readSqliteNumberPragma(database.db, "busy_timeout")).toBe(NOVA_SQLITE_BUSY_TIMEOUT_MS);
     expect(readSqliteNumberPragma(database.db, "foreign_keys")).toBe(1);
     expect(readSqliteNumberPragma(database.db, "synchronous")).toBe(1);
     expect(readSqliteNumberPragma(database.db, "auto_vacuum")).toBe(2);
-    expect(readSqliteNumberPragma(database.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(database.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
     expect(readSqliteNumberPragma(database.db, "wal_autocheckpoint")).toBe(1000);
     const journalMode = database.db.prepare("PRAGMA journal_mode").get() as
       | { journal_mode?: string }
@@ -3336,7 +3334,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     const statfs = vi.spyOn(fs, "statfsSync").mockReturnValue(statfsFixture(0x6969));
 
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     const journalMode = database.db.prepare("PRAGMA journal_mode").get() as
@@ -3349,7 +3347,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
   it("records durable schema metadata", () => {
     const stateDir = createTempStateDir();
     const database = openOpenClawStateDatabase({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
     const stateDb = getNodeSqliteKysely<StateDbTestDatabase>(database.db);
 
@@ -3360,20 +3358,20 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
       ),
     ).toEqual({
       role: "global",
-      schema_version: OPENCLAW_STATE_SCHEMA_VERSION,
+      schema_version: NOVA_STATE_SCHEMA_VERSION,
       app_version: VERSION,
     });
   });
 
   it("latches newer global schema failures before integrity scans", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
     const databasePath = openOpenClawStateDatabase(options).path;
     closeOpenClawStateDatabaseForTest();
     createUnsafeIndexDrift(databasePath);
     const { DatabaseSync } = requireNodeSqlite();
     const db = new DatabaseSync(databasePath);
-    db.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION + 1};`);
+    db.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION + 1};`);
     db.close();
 
     let firstFailure: unknown;
@@ -3430,7 +3428,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
     expect(first.db.isOpen).toBe(true);
     expect(second.db.isOpen).toBe(true);
     expect(openOpenClawStateDatabase({ path: firstPath })).toBe(first);
-    expect(readSqliteNumberPragma(first.db, "user_version")).toBe(OPENCLAW_STATE_SCHEMA_VERSION);
+    expect(readSqliteNumberPragma(first.db, "user_version")).toBe(NOVA_STATE_SCHEMA_VERSION);
   });
 
   it("keys explicit relative paths by resolved database pathname", () => {
@@ -3506,7 +3504,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("uses savepoints for nested write transaction rollback", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
 
     runOpenClawStateWriteTransaction((database) => {
       const stateDb = getNodeSqliteKysely<StateDbTestDatabase>(database.db);
@@ -3552,7 +3550,7 @@ INSERT INTO macos_port_guardian_records VALUES (4242, 18789, '/usr/bin/ssh', 're
 
   it("rejects Promise-returning write transactions", () => {
     const stateDir = createTempStateDir();
-    const options = { env: { OPENCLAW_STATE_DIR: stateDir } };
+    const options = { env: { NOVA_STATE_DIR: stateDir } };
 
     expect(() =>
       runOpenClawStateWriteTransaction(async () => {

@@ -16,7 +16,7 @@ import {
 } from "./bundle-staging.js";
 
 export const WORKER_BUNDLE_MANIFEST_VERSION = "openclaw-worker-bundle-v1";
-const OPENCLAW_NPM_REGISTRY = "https://registry.npmjs.org/";
+const NOVA_NPM_REGISTRY = "https://registry.npmjs.org/";
 const NPM_RELEASE_PROOF_TIMEOUT_MS = 60_000;
 const NPM_SHA512_INTEGRITY_PATTERN = /^sha512-[A-Za-z0-9+/]{86}==$/u;
 type WorkerInstallationArtifactBase = {
@@ -184,7 +184,7 @@ async function verifyPublishedNpmRelease(params: {
           "version",
           "dist.integrity",
           "--json",
-          `--registry=${OPENCLAW_NPM_REGISTRY}`,
+          `--registry=${NOVA_NPM_REGISTRY}`,
         ],
         cwd: temporaryRoot,
         failureMessage: `Nova ${params.version} is not published; use the worker bundle install`,
@@ -209,7 +209,7 @@ async function verifyPublishedNpmRelease(params: {
         temporaryRoot,
         "--ignore-scripts",
         "--json",
-        `--registry=${OPENCLAW_NPM_REGISTRY}`,
+        `--registry=${NOVA_NPM_REGISTRY}`,
       ],
       cwd: temporaryRoot,
       failureMessage: "Unable to verify the installed Nova package; use the worker bundle install",

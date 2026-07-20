@@ -22,7 +22,7 @@
 //   that re-sends the accumulated partial text unchanged (abortStreaming only
 //   runs when finalization throws, and performFlush/finalize have no dirty
 //   check against the last sent chunk).
-// Refresh goldens with OPENCLAW_TRACE_UPDATE=1 (see delivery-trace harness docs).
+// Refresh goldens with NOVA_TRACE_UPDATE=1 (see delivery-trace harness docs).
 import {
   deliveryTraceScenarios,
   expectDeliveryTraceMatchesGolden,

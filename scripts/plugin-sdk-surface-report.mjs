@@ -134,38 +134,38 @@ const defaultPublicDeprecatedExportsByEntrypointBudget = Object.freeze({
 export function readPluginSdkSurfaceBudgets(env = process.env) {
   const budgets = {
     publicEntrypoints: readPluginSdkSurfaceBudgetEnv(
-      "OPENCLAW_PLUGIN_SDK_MAX_PUBLIC_ENTRYPOINTS",
+      "NOVA_PLUGIN_SDK_MAX_PUBLIC_ENTRYPOINTS",
       // +1: session-discussion binds one external discussion provider to sessions.
       140,
       env,
     ),
     publicExports: readPluginSdkSurfaceBudgetEnv(
-      "OPENCLAW_PLUGIN_SDK_MAX_PUBLIC_EXPORTS",
+      "NOVA_PLUGIN_SDK_MAX_PUBLIC_EXPORTS",
       // +4: session discussion state, info, provider, and registration contracts.
       // +2: structured media placeholder formatter and its text-fact contract.
       4721,
       env,
     ),
     publicFunctionExports: readPluginSdkSurfaceBudgetEnv(
-      "OPENCLAW_PLUGIN_SDK_MAX_PUBLIC_FUNCTION_EXPORTS",
+      "NOVA_PLUGIN_SDK_MAX_PUBLIC_FUNCTION_EXPORTS",
       // +1: session discussion provider registration.
       // +1: structured media placeholder formatter for text-only channel carriers.
       2879,
       env,
     ),
     publicDeprecatedExports: readPluginSdkSurfaceBudgetEnv(
-      "OPENCLAW_PLUGIN_SDK_MAX_PUBLIC_DEPRECATED_EXPORTS",
+      "NOVA_PLUGIN_SDK_MAX_PUBLIC_DEPRECATED_EXPORTS",
       1697,
       env,
     ),
     publicWildcardReexports: readPluginSdkSurfaceBudgetEnv(
-      "OPENCLAW_PLUGIN_SDK_MAX_PUBLIC_WILDCARD_REEXPORTS",
+      "NOVA_PLUGIN_SDK_MAX_PUBLIC_WILDCARD_REEXPORTS",
       83,
       env,
     ),
   };
   const publicDeprecatedExportsByEntrypointBudget = readPluginSdkEntrypointBudgetEnv(
-    "OPENCLAW_PLUGIN_SDK_MAX_PUBLIC_DEPRECATED_EXPORTS_BY_ENTRYPOINT",
+    "NOVA_PLUGIN_SDK_MAX_PUBLIC_DEPRECATED_EXPORTS_BY_ENTRYPOINT",
     defaultPublicDeprecatedExportsByEntrypointBudget,
     env,
   );

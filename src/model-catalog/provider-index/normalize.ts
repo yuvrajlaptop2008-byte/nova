@@ -19,7 +19,7 @@ import type {
 
 // Provider-index normalization accepts generated discovery metadata from the
 // bundled index and rejects malformed or prototype-polluting entries.
-const OPENCLAW_PROVIDER_INDEX_VERSION = 1;
+const NOVA_PROVIDER_INDEX_VERSION = 1;
 
 function normalizeSafeKey(value: unknown): string {
   const key = normalizeOptionalString(value) ?? "";
@@ -214,7 +214,7 @@ function normalizeProvider(
 }
 
 export function normalizeOpenClawProviderIndex(value: unknown): OpenClawProviderIndex | undefined {
-  if (!isRecord(value) || value.version !== OPENCLAW_PROVIDER_INDEX_VERSION) {
+  if (!isRecord(value) || value.version !== NOVA_PROVIDER_INDEX_VERSION) {
     return undefined;
   }
   if (!isRecord(value.providers)) {
@@ -234,7 +234,7 @@ export function normalizeOpenClawProviderIndex(value: unknown): OpenClawProvider
     }
   }
   return {
-    version: OPENCLAW_PROVIDER_INDEX_VERSION,
+    version: NOVA_PROVIDER_INDEX_VERSION,
     providers: Object.fromEntries(
       Object.entries(providers).toSorted(([left], [right]) => left.localeCompare(right)),
     ),

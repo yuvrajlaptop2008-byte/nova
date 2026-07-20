@@ -800,8 +800,8 @@ function readManagedGatewayLaunchAgent(checkout) {
     Object.entries(environmentVariables ?? {}).filter((entry) => typeof entry[1] === "string"),
   );
   const stateDir =
-    typeof environmentVariables?.OPENCLAW_STATE_DIR === "string"
-      ? environmentVariables.OPENCLAW_STATE_DIR
+    typeof environmentVariables?.NOVA_STATE_DIR === "string"
+      ? environmentVariables.NOVA_STATE_DIR
       : path.join(home, ".openclaw");
   const gatewayCommand = resolveManagedGatewayCommand(programArguments, home, stateDir, label);
   const gatewayEntrypoint = gatewayCommand?.entrypoint ?? null;
@@ -824,8 +824,8 @@ function readManagedGatewayLaunchAgent(checkout) {
     );
   }
   const configPath =
-    typeof plist?.EnvironmentVariables?.OPENCLAW_CONFIG_PATH === "string"
-      ? plist.EnvironmentVariables.OPENCLAW_CONFIG_PATH
+    typeof plist?.EnvironmentVariables?.NOVA_CONFIG_PATH === "string"
+      ? plist.EnvironmentVariables.NOVA_CONFIG_PATH
       : path.join(gatewayCommand.stateDir, "openclaw.json");
   return {
     configPath,
@@ -1046,22 +1046,22 @@ export function runBuiltGatewayCli(checkout, args, deployment, options = {}) {
     wrapperPath,
   } = managedDeployment;
   const baseEnv = { ...process.env };
-  delete baseEnv.OPENCLAW_GATEWAY_URL;
-  delete baseEnv.OPENCLAW_GATEWAY_TOKEN;
-  delete baseEnv.OPENCLAW_GATEWAY_PASSWORD;
-  delete baseEnv.OPENCLAW_CONFIG_PATH;
-  delete baseEnv.OPENCLAW_GATEWAY_PORT;
+  delete baseEnv.NOVA_GATEWAY_URL;
+  delete baseEnv.NOVA_GATEWAY_TOKEN;
+  delete baseEnv.NOVA_GATEWAY_PASSWORD;
+  delete baseEnv.NOVA_CONFIG_PATH;
+  delete baseEnv.NOVA_GATEWAY_PORT;
   Object.assign(baseEnv, serviceEnvironment);
-  delete baseEnv.OPENCLAW_GATEWAY_URL;
+  delete baseEnv.NOVA_GATEWAY_URL;
   let effectiveConfigPath = configPath;
   if (wrapperPath && envFilePath) {
-    delete baseEnv.OPENCLAW_CONFIG_PATH;
-    delete baseEnv.OPENCLAW_GATEWAY_PORT;
+    delete baseEnv.NOVA_CONFIG_PATH;
+    delete baseEnv.NOVA_GATEWAY_PORT;
     const wrapperPrefix = executable === "/bin/sh" ? [wrapperPath, envFilePath] : [envFilePath];
     try {
       const configuredPath = execFileSync(
         executable,
-        [...wrapperPrefix, "/usr/bin/printenv", "OPENCLAW_CONFIG_PATH"],
+        [...wrapperPrefix, "/usr/bin/printenv", "NOVA_CONFIG_PATH"],
         { encoding: "utf8", env: baseEnv, stdio: ["ignore", "pipe", "ignore"] },
       ).trim();
       if (configuredPath) {
@@ -1083,10 +1083,10 @@ export function runBuiltGatewayCli(checkout, args, deployment, options = {}) {
     })}\n`,
     { flag: "wx", mode: 0o600 },
   );
-  const envOverrides = [`OPENCLAW_CONFIG_PATH=${overlayPath}`, `OPENCLAW_GATEWAY_PORT=${port}`];
+  const envOverrides = [`NOVA_CONFIG_PATH=${overlayPath}`, `NOVA_GATEWAY_PORT=${port}`];
   const env = Object.assign(baseEnv, {
-    OPENCLAW_CONFIG_PATH: overlayPath,
-    OPENCLAW_GATEWAY_PORT: String(port),
+    NOVA_CONFIG_PATH: overlayPath,
+    NOVA_GATEWAY_PORT: String(port),
   });
   try {
     const callArgs =
@@ -1095,7 +1095,7 @@ export function runBuiltGatewayCli(checkout, args, deployment, options = {}) {
             ...(executable === "/bin/sh" ? [wrapperPath, envFilePath] : [envFilePath]),
             "/usr/bin/env",
             "-u",
-            "OPENCLAW_GATEWAY_URL",
+            "NOVA_GATEWAY_URL",
             ...envOverrides,
             runtime,
             entrypoint,

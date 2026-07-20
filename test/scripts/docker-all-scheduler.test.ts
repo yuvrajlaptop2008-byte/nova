@@ -147,7 +147,7 @@ describe("scripts/test-docker-all scheduler", () => {
     expect(result.status).toBe(0);
     expect(result.stderr).toBe("");
     expect(result.stdout).toContain("Usage: node scripts/test-docker-all.mjs [--plan-json]");
-    expect(result.stdout).toContain("OPENCLAW_DOCKER_ALL_* env vars");
+    expect(result.stdout).toContain("NOVA_DOCKER_ALL_* env vars");
   });
 
   it("rejects unknown CLI options without a stack trace", () => {
@@ -181,9 +181,9 @@ describe("scripts/test-docker-all scheduler", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_DOCKER_ALL_PLAN_RELEASE_ALL: "1",
-          OPENCLAW_DOCKER_ALL_PROFILE: "release-path",
-          OPENCLAW_UPGRADE_SURVIVOR_TARGET_ROOT: process.cwd(),
+          NOVA_DOCKER_ALL_PLAN_RELEASE_ALL: "1",
+          NOVA_DOCKER_ALL_PROFILE: "release-path",
+          NOVA_UPGRADE_SURVIVOR_TARGET_ROOT: process.cwd(),
         },
       },
     );
@@ -198,13 +198,13 @@ describe("scripts/test-docker-all scheduler", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_DOCKER_ALL_PARALLELISM: "1e3",
+        NOVA_DOCKER_ALL_PARALLELISM: "1e3",
       },
     });
 
     expect(result.status).toBe(1);
     expect(result.stdout).toBe("");
-    expect(result.stderr).toContain("OPENCLAW_DOCKER_ALL_PARALLELISM must be a positive integer");
+    expect(result.stderr).toContain("NOVA_DOCKER_ALL_PARALLELISM must be a positive integer");
     expect(result.stderr).not.toContain("at ");
   });
 
@@ -212,9 +212,9 @@ describe("scripts/test-docker-all scheduler", () => {
     const localCommand = githubWorkflowRerunCommand(["install-e2e"], "a".repeat(40), {
       GITHUB_REF_NAME: "full-release-validation-temp-deleted",
       GITHUB_RUN_ID: "12345",
-      OPENCLAW_DOCKER_E2E_BARE_IMAGE: "openclaw-docker-e2e-bare:local",
-      OPENCLAW_DOCKER_E2E_FUNCTIONAL_IMAGE: "openclaw-docker-e2e-functional:local",
-      OPENCLAW_DOCKER_E2E_PACKAGE_ARTIFACT_NAME: "docker-e2e-package",
+      NOVA_DOCKER_E2E_BARE_IMAGE: "openclaw-docker-e2e-bare:local",
+      NOVA_DOCKER_E2E_FUNCTIONAL_IMAGE: "openclaw-docker-e2e-functional:local",
+      NOVA_DOCKER_E2E_PACKAGE_ARTIFACT_NAME: "docker-e2e-package",
     });
     expect(localCommand).not.toContain("--ref 'full-release-validation-temp-deleted'");
     expect(localCommand).not.toContain("package_artifact_run_id=");
@@ -225,13 +225,13 @@ describe("scripts/test-docker-all scheduler", () => {
     expectDeclaredDispatchInputs(localCommand);
 
     const registryCommand = githubWorkflowRerunCommand(["install-e2e"], "b".repeat(40), {
-      OPENCLAW_DOCKER_E2E_BARE_IMAGE: "ghcr.io/openclaw/openclaw-docker-e2e-bare:test",
-      OPENCLAW_DOCKER_E2E_FUNCTIONAL_IMAGE: "ghcr.io/openclaw/openclaw-docker-e2e-functional:test",
-      OPENCLAW_DOCKER_E2E_ALLOW_UNRELEASED_CHANGELOG: "true",
-      OPENCLAW_DOCKER_E2E_WORKFLOW_REF: "main",
-      OPENCLAW_UPGRADE_SURVIVOR_BASELINE_SPEC: "openclaw@2026.5.3",
-      OPENCLAW_UPGRADE_SURVIVOR_BASELINE_SPECS: "openclaw@2026.5.3 openclaw@2026.5.2",
-      OPENCLAW_UPGRADE_SURVIVOR_SCENARIOS: "plugin-dependency-cleanup",
+      NOVA_DOCKER_E2E_BARE_IMAGE: "ghcr.io/openclaw/openclaw-docker-e2e-bare:test",
+      NOVA_DOCKER_E2E_FUNCTIONAL_IMAGE: "ghcr.io/openclaw/openclaw-docker-e2e-functional:test",
+      NOVA_DOCKER_E2E_ALLOW_UNRELEASED_CHANGELOG: "true",
+      NOVA_DOCKER_E2E_WORKFLOW_REF: "main",
+      NOVA_UPGRADE_SURVIVOR_BASELINE_SPEC: "openclaw@2026.5.3",
+      NOVA_UPGRADE_SURVIVOR_BASELINE_SPECS: "openclaw@2026.5.3 openclaw@2026.5.2",
+      NOVA_UPGRADE_SURVIVOR_SCENARIOS: "plugin-dependency-cleanup",
     });
     expect(registryCommand).toContain("--ref 'main'");
     expect(registryCommand).toContain(
@@ -258,8 +258,8 @@ describe("scripts/test-docker-all scheduler", () => {
         },
         {
           ...process.env,
-          OPENCLAW_DOCKER_E2E_ALLOW_UNRELEASED_CHANGELOG: "true",
-          OPENCLAW_DOCKER_E2E_SELECTED_SHA: selectedSha,
+          NOVA_DOCKER_E2E_ALLOW_UNRELEASED_CHANGELOG: "true",
+          NOVA_DOCKER_E2E_SELECTED_SHA: selectedSha,
         },
       );
 
@@ -294,19 +294,17 @@ describe("scripts/test-docker-all scheduler", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_DOCKER_ALL_BUILD: "0",
-          OPENCLAW_DOCKER_ALL_DOCKER_LIMIT: "1e3",
-          OPENCLAW_DOCKER_ALL_DRY_RUN: "1",
-          OPENCLAW_DOCKER_ALL_LOG_DIR: logDir,
-          OPENCLAW_DOCKER_ALL_PREFLIGHT: "0",
-          OPENCLAW_DOCKER_ALL_TIMINGS: "0",
+          NOVA_DOCKER_ALL_BUILD: "0",
+          NOVA_DOCKER_ALL_DOCKER_LIMIT: "1e3",
+          NOVA_DOCKER_ALL_DRY_RUN: "1",
+          NOVA_DOCKER_ALL_LOG_DIR: logDir,
+          NOVA_DOCKER_ALL_PREFLIGHT: "0",
+          NOVA_DOCKER_ALL_TIMINGS: "0",
         },
       });
 
       expect(result.status).toBe(1);
-      expect(result.stderr).toContain(
-        "OPENCLAW_DOCKER_ALL_DOCKER_LIMIT must be a positive integer",
-      );
+      expect(result.stderr).toContain("NOVA_DOCKER_ALL_DOCKER_LIMIT must be a positive integer");
       expect(result.stderr).not.toContain("at ");
     } finally {
       rmSync(logDir, { force: true, recursive: true });
@@ -321,13 +319,13 @@ describe("scripts/test-docker-all scheduler", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_DOCKER_ALL_CHUNK: "openwebui",
-          OPENCLAW_DOCKER_ALL_DRY_RUN: "1",
-          OPENCLAW_DOCKER_ALL_INCLUDE_OPENWEBUI: "0",
-          OPENCLAW_DOCKER_ALL_LOG_DIR: logDir,
-          OPENCLAW_DOCKER_ALL_PREFLIGHT: "0",
-          OPENCLAW_DOCKER_ALL_PROFILE: "release-path",
-          OPENCLAW_DOCKER_ALL_TIMINGS: "0",
+          NOVA_DOCKER_ALL_CHUNK: "openwebui",
+          NOVA_DOCKER_ALL_DRY_RUN: "1",
+          NOVA_DOCKER_ALL_INCLUDE_OPENWEBUI: "0",
+          NOVA_DOCKER_ALL_LOG_DIR: logDir,
+          NOVA_DOCKER_ALL_PREFLIGHT: "0",
+          NOVA_DOCKER_ALL_PROFILE: "release-path",
+          NOVA_DOCKER_ALL_TIMINGS: "0",
         },
       });
 
@@ -361,11 +359,11 @@ describe("scripts/test-docker-all scheduler", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_ALLOW_FROZEN_TARGET_SCENARIO_OMISSIONS: "0",
-          OPENCLAW_DOCKER_ALL_DRY_RUN: "1",
-          OPENCLAW_DOCKER_ALL_LANES: "published-upgrade-survivor",
-          OPENCLAW_DOCKER_ALL_TIMINGS: "0",
-          OPENCLAW_UPGRADE_SURVIVOR_TARGET_ROOT: root,
+          NOVA_ALLOW_FROZEN_TARGET_SCENARIO_OMISSIONS: "0",
+          NOVA_DOCKER_ALL_DRY_RUN: "1",
+          NOVA_DOCKER_ALL_LANES: "published-upgrade-survivor",
+          NOVA_DOCKER_ALL_TIMINGS: "0",
+          NOVA_UPGRADE_SURVIVOR_TARGET_ROOT: root,
         },
       });
 
@@ -388,13 +386,13 @@ describe("scripts/test-docker-all scheduler", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_ALLOW_FROZEN_TARGET_SCENARIO_OMISSIONS: "1",
-          OPENCLAW_DOCKER_ALL_BUILD: "0",
-          OPENCLAW_DOCKER_ALL_LANES: "published-upgrade-survivor",
-          OPENCLAW_DOCKER_ALL_LOG_DIR: logDir,
-          OPENCLAW_DOCKER_ALL_TIMINGS: "0",
-          OPENCLAW_UPGRADE_SURVIVOR_SCENARIOS: "reported-issues",
-          OPENCLAW_UPGRADE_SURVIVOR_TARGET_ROOT: root,
+          NOVA_ALLOW_FROZEN_TARGET_SCENARIO_OMISSIONS: "1",
+          NOVA_DOCKER_ALL_BUILD: "0",
+          NOVA_DOCKER_ALL_LANES: "published-upgrade-survivor",
+          NOVA_DOCKER_ALL_LOG_DIR: logDir,
+          NOVA_DOCKER_ALL_TIMINGS: "0",
+          NOVA_UPGRADE_SURVIVOR_SCENARIOS: "reported-issues",
+          NOVA_UPGRADE_SURVIVOR_TARGET_ROOT: root,
         },
       });
 
@@ -422,12 +420,12 @@ describe("scripts/test-docker-all scheduler", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_ALLOW_FROZEN_TARGET_SCENARIO_OMISSIONS: "1",
-          OPENCLAW_DOCKER_ALL_DRY_RUN: "1",
-          OPENCLAW_DOCKER_ALL_LANES: "published-upgrade-survivor,plugin-binding-command-escape",
-          OPENCLAW_DOCKER_ALL_TIMINGS: "0",
-          OPENCLAW_UPGRADE_SURVIVOR_SCENARIOS: "reported-issues",
-          OPENCLAW_UPGRADE_SURVIVOR_TARGET_ROOT: root,
+          NOVA_ALLOW_FROZEN_TARGET_SCENARIO_OMISSIONS: "1",
+          NOVA_DOCKER_ALL_DRY_RUN: "1",
+          NOVA_DOCKER_ALL_LANES: "published-upgrade-survivor,plugin-binding-command-escape",
+          NOVA_DOCKER_ALL_TIMINGS: "0",
+          NOVA_UPGRADE_SURVIVOR_SCENARIOS: "reported-issues",
+          NOVA_UPGRADE_SURVIVOR_TARGET_ROOT: root,
         },
       });
 
@@ -463,7 +461,7 @@ process.exit(0);
     try {
       const baseEnv = {
         ...process.env,
-        OPENCLAW_DOCKER_E2E_IMAGE: "openclaw-test-image",
+        NOVA_DOCKER_E2E_IMAGE: "openclaw-test-image",
         PATH: `${root}${path.delimiter}${process.env.PATH ?? ""}`,
       };
       const cleanupFailure = await runCleanupSmokePhase(baseEnv, logDir, phases);
@@ -473,7 +471,7 @@ process.exit(0);
       }
       await writeRunSummary(logDir, {
         failures: [cleanupFailure],
-        image: baseEnv.OPENCLAW_DOCKER_E2E_IMAGE,
+        image: baseEnv.NOVA_DOCKER_E2E_IMAGE,
         images: {
           bare: "openclaw-test-bare",
           functional: "openclaw-test-image",

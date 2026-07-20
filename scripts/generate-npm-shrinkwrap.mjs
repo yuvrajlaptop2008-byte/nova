@@ -458,14 +458,14 @@ export function createNpmShrinkwrapExecOptions(invocation, cwd, env = process.en
     cwd,
     env: invocation.env ?? env,
     maxBuffer: readPositiveIntEnv(
-      "OPENCLAW_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES",
+      "NOVA_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES",
       NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES,
       env,
     ),
     shell: invocation.shell,
     stdio: ["ignore", "pipe", "pipe"],
     timeout: readPositiveIntEnv(
-      "OPENCLAW_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS",
+      "NOVA_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS",
       NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS,
       env,
     ),
@@ -1354,13 +1354,13 @@ export function resolveShrinkwrapJobs(
   env = process.env,
   fallback = NPM_SHRINKWRAP_DEFAULT_JOBS,
 ) {
-  const raw = rawValue ?? env.OPENCLAW_NPM_SHRINKWRAP_JOBS ?? String(fallback);
-  const jobs = readPositiveIntEnv("OPENCLAW_NPM_SHRINKWRAP_JOBS", raw, {
-    OPENCLAW_NPM_SHRINKWRAP_JOBS: raw,
+  const raw = rawValue ?? env.NOVA_NPM_SHRINKWRAP_JOBS ?? String(fallback);
+  const jobs = readPositiveIntEnv("NOVA_NPM_SHRINKWRAP_JOBS", raw, {
+    NOVA_NPM_SHRINKWRAP_JOBS: raw,
   });
   if (jobs > NPM_SHRINKWRAP_MAX_JOBS) {
     throw new Error(
-      `invalid OPENCLAW_NPM_SHRINKWRAP_JOBS: ${raw}; maximum is ${NPM_SHRINKWRAP_MAX_JOBS}`,
+      `invalid NOVA_NPM_SHRINKWRAP_JOBS: ${raw}; maximum is ${NPM_SHRINKWRAP_MAX_JOBS}`,
     );
   }
   return jobs;

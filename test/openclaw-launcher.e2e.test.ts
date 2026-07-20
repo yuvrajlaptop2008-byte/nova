@@ -49,7 +49,7 @@ async function addCompileCacheProbe(fixtureRoot: string): Promise<void> {
     [
       'import module from "node:module";',
       "process.stdout.write(",
-      '  `${module.getCompileCacheDir?.() ? "cache:enabled" : "cache:disabled"};respawn:${process.env.OPENCLAW_COMPILE_CACHE_DISABLED_RESPAWNED ?? "0"}`',
+      '  `${module.getCompileCacheDir?.() ? "cache:enabled" : "cache:disabled"};respawn:${process.env.NOVA_COMPILE_CACHE_DISABLED_RESPAWNED ?? "0"}`',
       ");",
     ].join("\n"),
     "utf8",
@@ -127,12 +127,12 @@ function isProcessAlive(pid: number | undefined): boolean {
 
 function launcherEnv(extra: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   const env = { ...process.env, ...extra };
-  delete env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-  delete env.OPENCLAW_CONFIG_PATH;
-  delete env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
-  delete env.OPENCLAW_HOME;
-  delete env.OPENCLAW_STATE_DIR;
-  delete env.OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR;
+  delete env.NOVA_BUNDLED_PLUGINS_DIR;
+  delete env.NOVA_CONFIG_PATH;
+  delete env.NOVA_DISABLE_BUNDLED_PLUGINS;
+  delete env.NOVA_HOME;
+  delete env.NOVA_STATE_DIR;
+  delete env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR;
   delete env.NODE_COMPILE_CACHE;
   delete env.NODE_DISABLE_COMPILE_CACHE;
   for (const [key, value] of Object.entries(extra)) {
@@ -350,7 +350,7 @@ describe("openclaw launcher", () => {
       [path.join(fixtureRoot, "nova.mjs"), "--version"],
       {
         cwd: fixtureRoot,
-        env: launcherEnv({ OPENCLAW_CONTAINER: "demo" }),
+        env: launcherEnv({ NOVA_CONTAINER: "demo" }),
         encoding: "utf8",
       },
     );
@@ -410,7 +410,7 @@ describe("openclaw launcher", () => {
     });
   });
 
-  it.runIf(process.env.OPENCLAW_TEST_BUN_LAUNCHER === "1" && hasBunRuntime())(
+  it.runIf(process.env.NOVA_TEST_BUN_LAUNCHER === "1" && hasBunRuntime())(
     "rejects the real Bun runtime before loading the CLI",
     async () => {
       const fixtureRoot = await makeLauncherFixture(fixtureRoots);
@@ -543,7 +543,7 @@ describe("openclaw launcher", () => {
       [path.join(fixtureRoot, "nova.mjs"), "models", "--help"],
       {
         cwd: fixtureRoot,
-        env: launcherEnv({ OPENCLAW_CONTAINER: "demo" }),
+        env: launcherEnv({ NOVA_CONTAINER: "demo" }),
         encoding: "utf8",
       },
     );
@@ -557,7 +557,7 @@ describe("openclaw launcher", () => {
     {
       name: "container env",
       args: ["browser", "--help"],
-      env: { OPENCLAW_CONTAINER: "demo" },
+      env: { NOVA_CONTAINER: "demo" },
     },
     {
       name: "root --container flag",
@@ -618,7 +618,7 @@ describe("openclaw launcher", () => {
 
     const result = spawnSync(process.execPath, [path.join(fixtureRoot, "nova.mjs"), "--help"], {
       cwd: fixtureRoot,
-      env: launcherEnv({ OPENCLAW_CONFIG_PATH: configPath }),
+      env: launcherEnv({ NOVA_CONFIG_PATH: configPath }),
       encoding: "utf8",
     });
 
@@ -651,7 +651,7 @@ describe("openclaw launcher", () => {
       [path.join(fixtureRoot, "nova.mjs"), "nodes", "--help"],
       {
         cwd: fixtureRoot,
-        env: launcherEnv({ OPENCLAW_CONFIG_PATH: configPath }),
+        env: launcherEnv({ NOVA_CONFIG_PATH: configPath }),
         encoding: "utf8",
       },
     );
@@ -661,7 +661,7 @@ describe("openclaw launcher", () => {
     expect(result.stdout).not.toContain("PRECOMPUTED");
   });
 
-  it("checks the OPENCLAW_HOME default config path before using precomputed root help", async () => {
+  it("checks the NOVA_HOME default config path before using precomputed root help", async () => {
     const fixtureRoot = await makeLauncherFixture(fixtureRoots);
     const openclawHome = path.join(fixtureRoot, "home");
     const configDir = path.join(openclawHome, ".openclaw");
@@ -684,7 +684,7 @@ describe("openclaw launcher", () => {
 
     const result = spawnSync(process.execPath, [path.join(fixtureRoot, "nova.mjs"), "--help"], {
       cwd: fixtureRoot,
-      env: launcherEnv({ OPENCLAW_HOME: openclawHome }),
+      env: launcherEnv({ NOVA_HOME: openclawHome }),
       encoding: "utf8",
     });
 
@@ -716,7 +716,7 @@ describe("openclaw launcher", () => {
 
     const result = spawnSync(process.execPath, [path.join(fixtureRoot, "nova.mjs"), "--help"], {
       cwd: fixtureRoot,
-      env: launcherEnv({ HOME: home, OPENCLAW_HOME: undefined }),
+      env: launcherEnv({ HOME: home, NOVA_HOME: undefined }),
       encoding: "utf8",
     });
 
@@ -742,7 +742,7 @@ describe("openclaw launcher", () => {
 
     const result = spawnSync(process.execPath, [path.join(fixtureRoot, "nova.mjs"), "--help"], {
       cwd: fixtureRoot,
-      env: launcherEnv({ OPENCLAW_CONFIG_PATH: configPath }),
+      env: launcherEnv({ NOVA_CONFIG_PATH: configPath }),
       encoding: "utf8",
     });
 

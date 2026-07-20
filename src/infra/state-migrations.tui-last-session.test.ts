@@ -71,7 +71,7 @@ function seedPointer(params: {
         }),
       );
     },
-    { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+    { env: { ...process.env, NOVA_STATE_DIR: params.stateDir } },
   );
 }
 

@@ -864,7 +864,7 @@ describe("createBackupArchive", () => {
         const restoredEntries = createSqliteAuditRecordStore({
           scope: CONFIG_AUDIT_SCOPE,
           maxEntries: CONFIG_AUDIT_MAX_ENTRIES,
-          env: { ...process.env, OPENCLAW_STATE_DIR: restoredStateDir },
+          env: { ...process.env, NOVA_STATE_DIR: restoredStateDir },
         }).entries();
         expect(restoredEntries).toHaveLength(2);
         expect(new Set(restoredEntries.map((entry) => entry.key)).size).toBe(2);
@@ -1093,7 +1093,7 @@ describe("createBackupArchive", () => {
         closeOpenClawAgentDatabasesForTest();
         const sqlite = requireNodeSqlite();
         const liveDbPath = path.join(state.agentDir(), "openclaw-agent.sqlite");
-        const deletedSecretMarker = "OPENCLAW_DELETED_SECRET_PAGE_MARKER";
+        const deletedSecretMarker = "NOVA_DELETED_SECRET_PAGE_MARKER";
         const deletedSecret = `${deletedSecretMarker}-${"x".repeat(16_384)}`;
         const liveDb = new sqlite.DatabaseSync(liveDbPath);
         try {
@@ -1989,7 +1989,7 @@ describe("createBackupArchive", () => {
         layout: "state-only",
         prefix: "openclaw-backup-managed-root-workspace-",
         scenario: "minimal",
-        env: { OPENCLAW_OAUTH_DIR: undefined },
+        env: { NOVA_OAUTH_DIR: undefined },
       },
       async (state) => {
         const stateDir = state.stateDir;
@@ -2000,8 +2000,8 @@ describe("createBackupArchive", () => {
         const toolRuntimeDir = path.join(stateDir, "tools", "runtime");
         const workspaceDbPath = path.join(workspaceDir, "workspace.sqlite");
         const outputDir = state.path("backups");
-        state.envVars.OPENCLAW_CONFIG_PATH = configPath;
-        state.envVars.OPENCLAW_OAUTH_DIR = oauthDir;
+        state.envVars.NOVA_CONFIG_PATH = configPath;
+        state.envVars.NOVA_OAUTH_DIR = oauthDir;
         state.applyEnv();
         await fs.mkdir(workspaceDir, { recursive: true });
         await fs.mkdir(runtimeDir, { recursive: true });

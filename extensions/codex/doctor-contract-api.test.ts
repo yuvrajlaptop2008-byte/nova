@@ -66,7 +66,7 @@ async function createBindingMigrationFixture(options: {
   threadId: string;
 }) {
   const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-codex-doctor-"));
-  const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+  const env = { ...process.env, NOVA_STATE_DIR: stateDir };
   const sessionsDir = path.join(stateDir, "agents", "main", "sessions");
   const storePath = path.join(sessionsDir, "sessions.json");
   const transcriptPath = path.join(sessionsDir, `${options.name}.jsonl`);
@@ -1065,7 +1065,7 @@ describe("codex doctor contract", () => {
       }),
       "utf8",
     );
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const env = { ...process.env, NOVA_STATE_DIR: stateDir };
     const params = {
       // The store directory is exactly stateDir's parent. It stays indexed-only,
       // and its explicit locator cannot escape that directory.

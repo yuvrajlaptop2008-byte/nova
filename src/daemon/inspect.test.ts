@@ -23,9 +23,9 @@ Wants=network-online.target
 [Service]
 ExecStart=/usr/bin/node /home/openclaw/.npm-global/lib/node_modules/openclaw/dist/entry.js gateway --port 18789
 Restart=always
-Environment=OPENCLAW_SERVICE_MARKER=openclaw
-Environment=OPENCLAW_SERVICE_KIND=gateway
-Environment=OPENCLAW_SERVICE_VERSION=2026.3.8
+Environment=NOVA_SERVICE_MARKER=openclaw
+Environment=NOVA_SERVICE_KIND=gateway
+Environment=NOVA_SERVICE_VERSION=2026.3.8
 
 [Install]
 WantedBy=default.target
@@ -64,7 +64,7 @@ Requires=openclaw-gateway.service
 ExecStart=/usr/bin/node /opt/openclaw-worker/dist/index.js worker
 `;
 
-const CUSTOM_OPENCLAW_GATEWAY_CONTENTS = `\
+const CUSTOM_NOVA_GATEWAY_CONTENTS = `\
 [Unit]
 Description=Custom Nova gateway
 
@@ -191,7 +191,7 @@ describe("findExtraGatewayServices (linux / scanSystemdDir) — real filesystem"
       const unitPath = path.join(systemdDir, "custom-openclaw.service");
       try {
         await fs.mkdir(systemdDir, { recursive: true });
-        await fs.writeFile(unitPath, CUSTOM_OPENCLAW_GATEWAY_CONTENTS);
+        await fs.writeFile(unitPath, CUSTOM_NOVA_GATEWAY_CONTENTS);
         const result = await findExtraGatewayServices({ HOME: tmpHome });
         expect(result).toEqual([
           {

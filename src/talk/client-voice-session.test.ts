@@ -27,7 +27,7 @@ const { sendDurableMessageBatch } = vi.hoisted(() => ({
 
 vi.mock("../channels/message/runtime.js", () => ({ sendDurableMessageBatch }));
 
-const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
 let tempDir: string;
 
 async function seedSession(
@@ -82,7 +82,7 @@ describe("client voice session", () => {
     tempDir = await fs.realpath(
       await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-voice-session-")),
     );
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     sendDurableMessageBatch.mockClear();
   });
 

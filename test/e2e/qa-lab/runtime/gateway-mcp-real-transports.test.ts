@@ -38,8 +38,8 @@ describe("gateway MCP real transport producer", () => {
     expect(mcp.args[3]).toContain("serveOpenClawChannelMcp");
     expect(mcp.cwd).toBe(root);
     expect(mcp.envPatch).toStrictEqual({
-      OPENCLAW_QA_GATEWAY_TOKEN: "secret-token",
-      OPENCLAW_QA_GATEWAY_URL: "ws://127.0.0.1:12345",
+      NOVA_QA_GATEWAY_TOKEN: "secret-token",
+      NOVA_QA_GATEWAY_URL: "ws://127.0.0.1:12345",
     });
   });
 
@@ -89,10 +89,10 @@ describe("gateway MCP real transport producer", () => {
       cwd: root,
       env: {
         HOME: "/tmp/plugin-tools/home",
-        OPENCLAW_CONFIG_PATH: "/tmp/plugin-tools/openclaw.json",
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-        OPENCLAW_HOME: "/tmp/plugin-tools/home",
-        OPENCLAW_STATE_DIR: "/tmp/plugin-tools/state",
+        NOVA_CONFIG_PATH: "/tmp/plugin-tools/openclaw.json",
+        NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+        NOVA_HOME: "/tmp/plugin-tools/home",
+        NOVA_STATE_DIR: "/tmp/plugin-tools/state",
       },
     });
   });

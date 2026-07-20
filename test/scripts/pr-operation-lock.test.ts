@@ -99,9 +99,7 @@ function createRepo(nestedName?: string) {
 function bashSource(repoDir: string, supervised = false) {
   return [
     "set -euo pipefail",
-    ...(supervised
-      ? []
-      : ["unset OPENCLAW_PR_LOCK_NOTIFY_FD", "unset OPENCLAW_PR_LOCK_SUPERVISOR_PID"]),
+    ...(supervised ? [] : ["unset NOVA_PR_LOCK_NOTIFY_FD", "unset NOVA_PR_LOCK_SUPERVISOR_PID"]),
     `source '${worktreeScript}'`,
     `source '${lockScript}'`,
     `source '${commonScript}'`,
@@ -783,11 +781,11 @@ describePosix("scripts/pr per-PR operation lock", () => {
     }
     const env: NodeJS.ProcessEnv = {
       ...process.env,
-      OPENCLAW_PR_DEDICATED_PROCESS_GROUP: "1",
+      NOVA_PR_DEDICATED_PROCESS_GROUP: "1",
       PATH: `${binDir}:${process.env.PATH ?? ""}`,
     };
-    delete env.OPENCLAW_PR_LOCK_NOTIFY_FD;
-    delete env.OPENCLAW_PR_LOCK_SUPERVISOR_PID;
+    delete env.NOVA_PR_LOCK_NOTIFY_FD;
+    delete env.NOVA_PR_LOCK_SUPERVISOR_PID;
 
     const result = spawnSync(cli, ["review-init", "42"], {
       cwd: repoDir,
@@ -1203,7 +1201,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
   it("reports exact recovery when lock notification fails", () => {
     const repoDir = createRepo();
     const result = runLockShell(repoDir, [
-      "OPENCLAW_PR_LOCK_NOTIFY_FD=9",
+      "NOVA_PR_LOCK_NOTIFY_FD=9",
       "set +e",
       "acquire_pr_operation_lock 42",
       "lock_status=$?",
@@ -1235,7 +1233,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
       const foreignOid = refOid(repoDir, foreignRef);
       const fixture = writeOperationFixture(repoDir, "forged-notification.sh", [
         "acquire_pr_operation_lock 42",
-        `printf '%s\\t%s\\n' '${foreignRef}' '${foreignOid}' >&"$OPENCLAW_PR_LOCK_NOTIFY_FD"`,
+        `printf '%s\\t%s\\n' '${foreignRef}' '${foreignOid}' >&"$NOVA_PR_LOCK_NOTIFY_FD"`,
       ]);
       const result = await runSupervisedFixture(repoDir, fixture);
 
@@ -1261,7 +1259,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
     const repoDir = createRepo();
     const fixture = writeOperationFixture(repoDir, "malformed-notification.sh", [
       "acquire_pr_operation_lock 42",
-      `${command} >&"$OPENCLAW_PR_LOCK_NOTIFY_FD"`,
+      `${command} >&"$NOVA_PR_LOCK_NOTIFY_FD"`,
     ]);
     const result = await runSupervisedFixture(repoDir, fixture);
     const ownerOid = refOid(repoDir);
@@ -1284,7 +1282,7 @@ describePosix("scripts/pr per-PR operation lock", () => {
     const repoDir = createRepo();
     const fixture = writeOperationFixture(repoDir, "oversized-notification.sh", [
       "acquire_pr_operation_lock 42",
-      `node -e 'process.stdout.write("x".repeat(8192))' >&"$OPENCLAW_PR_LOCK_NOTIFY_FD"`,
+      `node -e 'process.stdout.write("x".repeat(8192))' >&"$NOVA_PR_LOCK_NOTIFY_FD"`,
     ]);
     const result = await runSupervisedFixture(repoDir, fixture);
     const ownerOid = refOid(repoDir);

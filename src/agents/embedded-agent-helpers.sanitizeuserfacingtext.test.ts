@@ -624,9 +624,9 @@ describe("sanitizeUserFacingText", () => {
       "Nova runtime context for the immediately preceding user message.",
       "This context is runtime-generated, not user-authored. Keep internal details private.",
       "",
-      "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+      "<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>",
       "secret runtime context",
-      "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+      "<<<END_NOVA_INTERNAL_CONTEXT>>>",
       "",
       "Visible reply.",
     ].join("\n");

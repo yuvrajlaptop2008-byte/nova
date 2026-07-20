@@ -238,7 +238,7 @@ let zeroTimeoutGatewayRequestMs: number | undefined;
 
 function resetAgentCliCommandMocksForTest() {
   vi.clearAllMocks();
-  vi.stubEnv("OPENCLAW_GATEWAY_URL", "");
+  vi.stubEnv("NOVA_GATEWAY_URL", "");
   agentViaGatewayTesting.resetLazyImportsForTests();
   agentViaGatewayTesting.setGatewayAbortRetryDelaysMsForTests([0, 0, 0, 0]);
   loadAgentSessionModuleMock.mockImplementation(async () => await import("./agent/session.js"));
@@ -330,7 +330,7 @@ describe("agentCliCommand", () => {
     },
   ])("keeps ordinary $label runs least-privilege", async ({ gatewayUrl, overrides }) => {
     if (gatewayUrl) {
-      vi.stubEnv("OPENCLAW_GATEWAY_URL", gatewayUrl);
+      vi.stubEnv("NOVA_GATEWAY_URL", gatewayUrl);
     }
     await withTempStore(async () => {
       mockGatewaySuccessReply();

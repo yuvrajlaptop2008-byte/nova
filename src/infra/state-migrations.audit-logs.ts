@@ -353,7 +353,7 @@ async function migrateLegacyAuditLogSource(params: {
       warnings.push(...prepared.warnings);
       return result(false);
     }
-    const env = { ...process.env, OPENCLAW_STATE_DIR: params.stateDir };
+    const env = { ...process.env, NOVA_STATE_DIR: params.stateDir };
     const maxEntries =
       params.source.kind === "config" ? CONFIG_AUDIT_MAX_ENTRIES : SYSTEM_AGENT_AUDIT_MAX_ENTRIES;
     const store = createSqliteAuditRecordStore<ConfigAuditRecord | SystemAgentAuditEntry>({
@@ -602,7 +602,7 @@ export async function migrateLegacyAuditLogs(params: {
   if (params.detected.sources.length === 0) {
     return { changes, warnings };
   }
-  const env = { ...process.env, OPENCLAW_STATE_DIR: params.stateDir };
+  const env = { ...process.env, NOVA_STATE_DIR: params.stateDir };
   let lock: Awaited<ReturnType<typeof acquireGatewayLock>>;
   try {
     // Exclusive state ownership excludes a predecessor Gateway and sibling doctor.

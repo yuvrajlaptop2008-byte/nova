@@ -35,13 +35,13 @@ function sanitizedEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   // check:changed and gate runs export these to children; drop ambient copies
   // so lock and mode behavior under test only sees explicit overrides.
   const env: NodeJS.ProcessEnv = { ...process.env };
-  delete env.OPENCLAW_PR_GATES_REMOTE;
-  delete env.OPENCLAW_TESTBOX;
-  delete env.OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD;
-  delete env.OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD;
-  delete env.OPENCLAW_OXLINT_SKIP_LOCK;
-  delete env.OPENCLAW_HEAVY_CHECK_LOCK_TIMEOUT_MS;
-  delete env.OPENCLAW_HEAVY_CHECK_LOCK_POLL_MS;
+  delete env.NOVA_PR_GATES_REMOTE;
+  delete env.NOVA_TESTBOX;
+  delete env.NOVA_TEST_HEAVY_CHECK_LOCK_HELD;
+  delete env.NOVA_TSGO_HEAVY_CHECK_LOCK_HELD;
+  delete env.NOVA_OXLINT_SKIP_LOCK;
+  delete env.NOVA_HEAVY_CHECK_LOCK_TIMEOUT_MS;
+  delete env.NOVA_HEAVY_CHECK_LOCK_POLL_MS;
   return { ...env, ...overrides };
 }
 
@@ -260,10 +260,10 @@ describe("resolve_pr_gates_remote_mode", () => {
     { value: undefined, expected: "local" },
     { value: "", expected: "local" },
     { value: "testbox", expected: "testbox" },
-  ])("resolves OPENCLAW_PR_GATES_REMOTE=$value to $expected", ({ value, expected }) => {
+  ])("resolves NOVA_PR_GATES_REMOTE=$value to $expected", ({ value, expected }) => {
     const env: NodeJS.ProcessEnv = {};
     if (value !== undefined) {
-      env.OPENCLAW_PR_GATES_REMOTE = value;
+      env.NOVA_PR_GATES_REMOTE = value;
     }
     const result = runGatesBash("resolve_pr_gates_remote_mode", { env });
     expect(result.status).toBe(0);
@@ -272,18 +272,18 @@ describe("resolve_pr_gates_remote_mode", () => {
 
   it("rejects unsupported values", () => {
     const result = runGatesBash("resolve_pr_gates_remote_mode", {
-      env: { OPENCLAW_PR_GATES_REMOTE: "azure" },
+      env: { NOVA_PR_GATES_REMOTE: "azure" },
     });
     expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain("Unsupported OPENCLAW_PR_GATES_REMOTE=azure");
+    expect(result.stderr).toContain("Unsupported NOVA_PR_GATES_REMOTE=azure");
   });
 
   it("rejects the hosted-gates conflict before touching the worktree", () => {
     const result = runGatesBash("prepare_gates 424242", {
-      env: { OPENCLAW_PR_GATES_REMOTE: "testbox", OPENCLAW_TESTBOX: "1" },
+      env: { NOVA_PR_GATES_REMOTE: "testbox", NOVA_TESTBOX: "1" },
     });
     expect(result.status).toBe(2);
-    expect(result.stdout).toContain("conflicts with OPENCLAW_TESTBOX=1");
+    expect(result.stdout).toContain("conflicts with NOVA_TESTBOX=1");
   });
 });
 
@@ -434,7 +434,7 @@ describe("lease-retry gate stamp refresh", () => {
         cwd: repoDir,
         env: {
           PATH: `${stubBin}:${process.env.PATH ?? ""}`,
-          OPENCLAW_PR_GATES_REMOTE: "testbox",
+          NOVA_PR_GATES_REMOTE: "testbox",
         },
       },
     );
@@ -499,7 +499,7 @@ describe("prepare sync-head transitions", () => {
         "test -e .local/published",
         "grep -F 'Preserved hosted PR ancestry' .local/prep.md",
       ].join("\n"),
-      { cwd: repoDir, env: { OPENCLAW_TESTBOX: "1" }, sourcePrepareCore: true },
+      { cwd: repoDir, env: { NOVA_TESTBOX: "1" }, sourcePrepareCore: true },
     );
 
     expect(result.status, result.stderr).toBe(0);
@@ -828,7 +828,7 @@ describe("prepare gate stamp transitions", () => {
         "prepare_gates 4242",
         "cat .local/gates.env",
       ].join("\n"),
-      { cwd: repoDir, env: { OPENCLAW_TESTBOX: "1" } },
+      { cwd: repoDir, env: { NOVA_TESTBOX: "1" } },
     );
 
     expect(result.status).toBe(0);
@@ -862,7 +862,7 @@ describe("pr-gates-lock helper", () => {
     expect(await waitFor(() => existsSync(firstStatus), 5_000)).toBe(true);
 
     const second = spawnGateLockHolder(repoDir, secondStatus, {
-      OPENCLAW_HEAVY_CHECK_LOCK_POLL_MS: "50",
+      NOVA_HEAVY_CHECK_LOCK_POLL_MS: "50",
     });
     await waitForStderr(second, "queued behind the local heavy-check lock", 5_000);
     expect(existsSync(secondStatus)).toBe(false);
@@ -888,8 +888,8 @@ describe("pr-gates-lock helper", () => {
 
     const statusFile = join(repoDir, "status");
     const holder = spawnGateLockHolder(repoDir, statusFile, {
-      OPENCLAW_HEAVY_CHECK_LOCK_TIMEOUT_MS: "200",
-      OPENCLAW_HEAVY_CHECK_LOCK_POLL_MS: "50",
+      NOVA_HEAVY_CHECK_LOCK_TIMEOUT_MS: "200",
+      NOVA_HEAVY_CHECK_LOCK_POLL_MS: "50",
     });
     await waitForExit(holder);
 
@@ -939,10 +939,10 @@ describe("gates.sh gate lock plumbing", () => {
     const result = runGatesBash(
       [
         "acquire_pr_gates_lock",
-        'echo "held=${OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD:-unset},${OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD:-unset},${OPENCLAW_OXLINT_SKIP_LOCK:-unset}"',
+        'echo "held=${NOVA_TEST_HEAVY_CHECK_LOCK_HELD:-unset},${NOVA_TSGO_HEAVY_CHECK_LOCK_HELD:-unset},${NOVA_OXLINT_SKIP_LOCK:-unset}"',
         "jq -r .tool .git/openclaw-local-checks/heavy-check.lock/owner.json",
         "release_pr_gates_lock",
-        'echo "released=${OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD:-unset}"',
+        'echo "released=${NOVA_TEST_HEAVY_CHECK_LOCK_HELD:-unset}"',
         '[ -d .git/openclaw-local-checks/heavy-check.lock ] && echo "lock=held" || echo "lock=free"',
       ].join("\n"),
       { cwd: repoDir },
@@ -963,7 +963,7 @@ describe("gates.sh gate lock plumbing", () => {
         '[ -d .git/openclaw-local-checks/heavy-check.lock ] && echo "lock=held" || echo "lock=free"',
         'echo "helper_pid=${PR_GATES_LOCK_PID:-none}"',
       ].join("\n"),
-      { cwd: repoDir, env: { OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD: "1" } },
+      { cwd: repoDir, env: { NOVA_TEST_HEAVY_CHECK_LOCK_HELD: "1" } },
     );
 
     expect(result.status).toBe(0);
@@ -983,8 +983,8 @@ describe("gates.sh gate lock plumbing", () => {
     const result = runGatesBash("acquire_pr_gates_lock", {
       cwd: repoDir,
       env: {
-        OPENCLAW_HEAVY_CHECK_LOCK_TIMEOUT_MS: "200",
-        OPENCLAW_HEAVY_CHECK_LOCK_POLL_MS: "50",
+        NOVA_HEAVY_CHECK_LOCK_TIMEOUT_MS: "200",
+        NOVA_HEAVY_CHECK_LOCK_POLL_MS: "50",
       },
     });
 

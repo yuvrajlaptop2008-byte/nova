@@ -9,10 +9,10 @@ import { parseStrictNonNegativeInteger } from "../infra/parse-finite-number.js";
  * Path helpers for the shared Nova SQLite state database.
  *
  * Tests get worker-scoped temp state roots unless they explicitly provide
- * `OPENCLAW_STATE_DIR`, which prevents parallel Vitest workers from sharing WAL files.
+ * `NOVA_STATE_DIR`, which prevents parallel Vitest workers from sharing WAL files.
  */
 function resolveOpenClawStateRootDir(env: NodeJS.ProcessEnv): string {
-  if (env.OPENCLAW_STATE_DIR?.trim()) {
+  if (env.NOVA_STATE_DIR?.trim()) {
     return resolveStateDir(env);
   }
   if (env.VITEST || env.NODE_ENV === "test") {

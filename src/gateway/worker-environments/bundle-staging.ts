@@ -164,8 +164,7 @@ async function stageManifestEntry(
 // tsdown keeps some @openclaw workspace packages external of dist (never-bundle list),
 // so shipped dist imports them at runtime; scan staged bytes for those specifiers to
 // know which workspace builds must ride along in the bundle.
-const OPENCLAW_IMPORT_SPECIFIER_PATTERN =
-  /["'`](@openclaw\/[a-z0-9-]+)(?:\/[A-Za-z0-9./_-]+)?["'`]/gu;
+const NOVA_IMPORT_SPECIFIER_PATTERN = /["'`](@openclaw\/[a-z0-9-]+)(?:\/[A-Za-z0-9./_-]+)?["'`]/gu;
 
 function collectOpenclawImportSpecifiers(
   relativePath: string,
@@ -175,7 +174,7 @@ function collectOpenclawImportSpecifiers(
   if (!/\.(?:cjs|js|mjs)$/u.test(relativePath)) {
     return;
   }
-  for (const match of contents.toString("utf8").matchAll(OPENCLAW_IMPORT_SPECIFIER_PATTERN)) {
+  for (const match of contents.toString("utf8").matchAll(NOVA_IMPORT_SPECIFIER_PATTERN)) {
     const packageName = match[1];
     if (packageName) {
       into.add(packageName);

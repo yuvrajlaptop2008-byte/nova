@@ -45,64 +45,62 @@ import {
 import { restoreLiveEnv, snapshotLiveEnv, type LiveEnvSnapshot } from "./live-env-test-helpers.js";
 
 const LIVE = isLiveTestEnabled();
-const CODEX_HARNESS_LIVE = isTruthyEnvValue(process.env.OPENCLAW_LIVE_CODEX_HARNESS);
-const CODEX_HARNESS_DEBUG = isTruthyEnvValue(process.env.OPENCLAW_LIVE_CODEX_HARNESS_DEBUG);
-const CODEX_HARNESS_IMAGE_PROBE = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_IMAGE_PROBE,
-);
+const CODEX_HARNESS_LIVE = isTruthyEnvValue(process.env.NOVA_LIVE_CODEX_HARNESS);
+const CODEX_HARNESS_DEBUG = isTruthyEnvValue(process.env.NOVA_LIVE_CODEX_HARNESS_DEBUG);
+const CODEX_HARNESS_IMAGE_PROBE = isTruthyEnvValue(process.env.NOVA_LIVE_CODEX_HARNESS_IMAGE_PROBE);
 const CODEX_HARNESS_CHAT_IMAGE_PROBE = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_CHAT_IMAGE_PROBE,
+  process.env.NOVA_LIVE_CODEX_HARNESS_CHAT_IMAGE_PROBE,
 );
-const CODEX_HARNESS_MCP_PROBE = isTruthyEnvValue(process.env.OPENCLAW_LIVE_CODEX_HARNESS_MCP_PROBE);
+const CODEX_HARNESS_MCP_PROBE = isTruthyEnvValue(process.env.NOVA_LIVE_CODEX_HARNESS_MCP_PROBE);
 const CODEX_HARNESS_SUBAGENT_PROBE = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_SUBAGENT_PROBE,
+  process.env.NOVA_LIVE_CODEX_HARNESS_SUBAGENT_PROBE,
 );
 const CODEX_HARNESS_GUARDIAN_PROBE = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_GUARDIAN_PROBE,
+  process.env.NOVA_LIVE_CODEX_HARNESS_GUARDIAN_PROBE,
 );
 const CODEX_HARNESS_CODE_MODE_ONLY = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_CODE_MODE_ONLY,
+  process.env.NOVA_LIVE_CODEX_HARNESS_CODE_MODE_ONLY,
 );
 const CODEX_HARNESS_DISABLE_LOOP_RELAY = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_DISABLE_LOOP_RELAY,
+  process.env.NOVA_LIVE_CODEX_HARNESS_DISABLE_LOOP_RELAY,
 );
 const CODEX_HARNESS_REQUIRE_GUARDIAN_EVENTS = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_REQUIRE_GUARDIAN_EVENTS,
+  process.env.NOVA_LIVE_CODEX_HARNESS_REQUIRE_GUARDIAN_EVENTS,
 );
 const CODEX_HARNESS_RESUME_STRESS = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS,
+  process.env.NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS,
 );
 const CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS = resolveBoundedPositiveIntEnv(
-  "OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS",
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS,
+  "NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS",
+  process.env.NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS,
   4,
   20,
 );
 const CODEX_HARNESS_RESUME_STRESS_RESTARTS = resolveBoundedPositiveIntEnv(
-  "OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS",
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS,
+  "NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS",
+  process.env.NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS,
   3,
   10,
 );
 const CODEX_HARNESS_COMPACTION_STRESS = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_COMPACTION_STRESS,
+  process.env.NOVA_LIVE_CODEX_HARNESS_COMPACTION_STRESS,
 );
 const CODEX_HARNESS_COMPACTION_STRESS_TURNS = resolveBoundedPositiveIntEnv(
-  "OPENCLAW_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS",
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS,
+  "NOVA_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS",
+  process.env.NOVA_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS,
   4,
   8,
 );
 const CODEX_HARNESS_LARGE_OUTPUT_BYTES = resolveBoundedPositiveIntEnv(
-  "OPENCLAW_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES",
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES,
+  "NOVA_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES",
+  process.env.NOVA_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES,
   300_000,
   1_000_000,
   100_000,
 );
 const CODEX_HARNESS_SUBAGENT_COUNT = resolveBoundedPositiveIntEnv(
-  "OPENCLAW_LIVE_CODEX_HARNESS_SUBAGENT_COUNT",
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_SUBAGENT_COUNT,
+  "NOVA_LIVE_CODEX_HARNESS_SUBAGENT_COUNT",
+  process.env.NOVA_LIVE_CODEX_HARNESS_SUBAGENT_COUNT,
   1,
   12,
 );
@@ -110,7 +108,7 @@ const CODEX_HARNESS_SUBAGENT_ONLY = shouldUseCodexHarnessSubagentOnlyFastPath({
   chatImageProbe: CODEX_HARNESS_CHAT_IMAGE_PROBE,
   codeModeOnly: CODEX_HARNESS_CODE_MODE_ONLY,
   compactionStress: CODEX_HARNESS_COMPACTION_STRESS,
-  explicitOptOut: process.env.OPENCLAW_LIVE_CODEX_HARNESS_SUBAGENT_ONLY === "0",
+  explicitOptOut: process.env.NOVA_LIVE_CODEX_HARNESS_SUBAGENT_ONLY === "0",
   guardianProbe: CODEX_HARNESS_GUARDIAN_PROBE,
   imageProbe: CODEX_HARNESS_IMAGE_PROBE,
   mcpProbe: CODEX_HARNESS_MCP_PROBE,
@@ -119,7 +117,7 @@ const CODEX_HARNESS_SUBAGENT_ONLY = shouldUseCodexHarnessSubagentOnlyFastPath({
 });
 const CODEX_HARNESS_RESTART_STRESS = CODEX_HARNESS_RESUME_STRESS || CODEX_HARNESS_COMPACTION_STRESS;
 const CODEX_HARNESS_REQUEST_TIMEOUT_MS = resolveLiveTimeoutMs(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_REQUEST_TIMEOUT_MS,
+  process.env.NOVA_LIVE_CODEX_HARNESS_REQUEST_TIMEOUT_MS,
   300_000,
 );
 const CODEX_HARNESS_AGENT_TIMEOUT_SECONDS = Math.max(
@@ -127,9 +125,9 @@ const CODEX_HARNESS_AGENT_TIMEOUT_SECONDS = Math.max(
   Math.ceil(CODEX_HARNESS_REQUEST_TIMEOUT_MS / 1000) - 10,
 );
 const CODEX_HARNESS_AUTH_MODE =
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_AUTH === "api-key" ? "api-key" : "codex-auth";
+  process.env.NOVA_LIVE_CODEX_HARNESS_AUTH === "api-key" ? "api-key" : "codex-auth";
 const CODEX_HARNESS_THINKING = resolveCodexHarnessThinkingLevel(
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_THINKING,
+  process.env.NOVA_LIVE_CODEX_HARNESS_THINKING,
 );
 const describeLive = LIVE && CODEX_HARNESS_LIVE ? describe : describe.skip;
 const describeDisabled = LIVE && !CODEX_HARNESS_LIVE ? describe : describe.skip;
@@ -204,20 +202,20 @@ function resolveBoundedPositiveIntEnv(
 function resolveCodexHarnessThinkingLevel(raw: string | undefined): CodexHarnessThinkingLevel {
   const normalized = raw?.trim().toLowerCase() || "low";
   if (!["off", "minimal", "low", "medium", "high", "xhigh", "max", "ultra"].includes(normalized)) {
-    throw new Error(`invalid OPENCLAW_LIVE_CODEX_HARNESS_THINKING: ${raw}`);
+    throw new Error(`invalid NOVA_LIVE_CODEX_HARNESS_THINKING: ${raw}`);
   }
   return normalized as CodexHarnessThinkingLevel;
 }
 
 function resolveCodexHarnessExpectedEffort(modelId: string): string | null {
-  const configured = process.env.OPENCLAW_LIVE_CODEX_HARNESS_EXPECTED_EFFORT;
+  const configured = process.env.NOVA_LIVE_CODEX_HARNESS_EXPECTED_EFFORT;
   if (configured?.trim()) {
     const expected = resolveCodexHarnessThinkingLevel(configured);
     return expected === "off" ? null : expected;
   }
   const supported = CODEX_HARNESS_SUPPORTED_EFFORTS.get(modelId);
   if (!supported) {
-    throw new Error(`set OPENCLAW_LIVE_CODEX_HARNESS_EXPECTED_EFFORT for unknown model ${modelId}`);
+    throw new Error(`set NOVA_LIVE_CODEX_HARNESS_EXPECTED_EFFORT for unknown model ${modelId}`);
   }
   if (CODEX_HARNESS_THINKING === "off") {
     return null;
@@ -271,7 +269,7 @@ async function subscribeCodexLiveDebugEvents(sessionKey: string): Promise<() => 
 }
 
 function snapshotEnv(): LiveEnvSnapshot {
-  return snapshotLiveEnv(["OPENCLAW_ALLOW_SLOW_REPLY_TESTS"]);
+  return snapshotLiveEnv(["NOVA_ALLOW_SLOW_REPLY_TESTS"]);
 }
 
 function restoreEnv(snapshot: LiveEnvSnapshot): void {
@@ -594,7 +592,7 @@ function recordCodexAttemptIdentity(params: {
     `expected an actual Codex app-server turn for ${params.sessionKey}; events=${JSON.stringify(events)}`,
   ).toBeDefined();
   const expectedModel = parseModelKey(
-    process.env.OPENCLAW_LIVE_CODEX_HARNESS_MODEL ?? DEFAULT_CODEX_MODEL,
+    process.env.NOVA_LIVE_CODEX_HARNESS_MODEL ?? DEFAULT_CODEX_MODEL,
   ).modelId;
   expect(turnStarting?.data).toMatchObject({ model: expectedModel });
   const actualEffort = turnStarting?.data?.effort;
@@ -1174,7 +1172,7 @@ async function verifyCodexGuardianProbe(params: {
   }
 
   const askBackToken = `OPENCLAW-GUARDIAN-ASK-BACK-${randomBytes(3).toString("hex").toUpperCase()}`;
-  const fakeSecret = `OPENCLAW_FAKE_SECRET_${randomBytes(4).toString("hex").toUpperCase()}`;
+  const fakeSecret = `NOVA_FAKE_SECRET_${randomBytes(4).toString("hex").toUpperCase()}`;
   params.setPluginApprovalDecision?.("deny");
   const deniedResult = await requestAgentTextWithEvents({
     client: params.client,
@@ -1523,7 +1521,7 @@ describeLive("gateway live (Codex harness)", () => {
   it(
     "runs gateway agent turns through the plugin-owned Codex app-server harness",
     async () => {
-      const modelKey = process.env.OPENCLAW_LIVE_CODEX_HARNESS_MODEL ?? DEFAULT_CODEX_MODEL;
+      const modelKey = process.env.NOVA_LIVE_CODEX_HARNESS_MODEL ?? DEFAULT_CODEX_MODEL;
       const { clearRuntimeConfigSnapshot } = await import("../config/config.js");
       const { startGatewayServer } = await import("./server.js");
 
@@ -1536,7 +1534,7 @@ describeLive("gateway live (Codex harness)", () => {
       const port = await getFreeGatewayPort();
 
       clearRuntimeConfigSnapshot();
-      process.env.OPENCLAW_AGENT_RUNTIME = "codex";
+      process.env.NOVA_AGENT_RUNTIME = "codex";
       // Keep the runtime fixed on the plugin-owned Codex app-server harness.
       // CI can opt into API-key auth to avoid stale OAuth refresh secrets,
       // while local maintainer runs can continue exercising staged ~/.codex auth.
@@ -1548,17 +1546,17 @@ describeLive("gateway live (Codex harness)", () => {
       } else if (!process.env.OPENAI_BASE_URL?.trim()) {
         delete process.env.OPENAI_BASE_URL;
       }
-      setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
+      setTestEnvValue("NOVA_CONFIG_PATH", configPath);
       // This live lane exercises the full config-loaded runtime inside Vitest's
       // fast-test envelope, so config-override completeness checks do not apply.
-      setTestEnvValue("OPENCLAW_ALLOW_SLOW_REPLY_TESTS", "1");
-      process.env.OPENCLAW_GATEWAY_TOKEN = token;
-      process.env.OPENCLAW_SKIP_BROWSER_CONTROL_SERVER = "1";
-      process.env.OPENCLAW_SKIP_CANVAS_HOST = "1";
-      process.env.OPENCLAW_SKIP_CHANNELS = "1";
-      process.env.OPENCLAW_SKIP_CRON = "1";
-      process.env.OPENCLAW_SKIP_GMAIL_WATCHER = "1";
-      setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+      setTestEnvValue("NOVA_ALLOW_SLOW_REPLY_TESTS", "1");
+      process.env.NOVA_GATEWAY_TOKEN = token;
+      process.env.NOVA_SKIP_BROWSER_CONTROL_SERVER = "1";
+      process.env.NOVA_SKIP_CANVAS_HOST = "1";
+      process.env.NOVA_SKIP_CHANNELS = "1";
+      process.env.NOVA_SKIP_CRON = "1";
+      process.env.NOVA_SKIP_GMAIL_WATCHER = "1";
+      setTestEnvValue("NOVA_STATE_DIR", stateDir);
 
       await fs.mkdir(stateDir, { recursive: true });
       await writeLiveGatewayConfig({

@@ -18,7 +18,7 @@ vi.mock("./bundled-dir.js", async (importOriginal) => {
   return {
     ...actual,
     resolveBundledPluginsDir: (env: NodeJS.ProcessEnv = process.env) =>
-      env.OPENCLAW_BUNDLED_PLUGINS_DIR ?? actual.resolveBundledPluginsDir(env),
+      env.NOVA_BUNDLED_PLUGINS_DIR ?? actual.resolveBundledPluginsDir(env),
   };
 });
 
@@ -92,10 +92,10 @@ function buildDiscoveryEnv(stateDir: string): NodeJS.ProcessEnv {
   const bundledPluginsDir = path.join(stateDir, "empty-bundled-plugins");
   mkdirSafe(bundledPluginsDir);
   return {
-    OPENCLAW_STATE_DIR: stateDir,
-    OPENCLAW_HOME: undefined,
-    OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-    OPENCLAW_BUNDLED_PLUGINS_DIR: bundledPluginsDir,
+    NOVA_STATE_DIR: stateDir,
+    NOVA_HOME: undefined,
+    NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+    NOVA_BUNDLED_PLUGINS_DIR: bundledPluginsDir,
   };
 }
 
@@ -104,11 +104,11 @@ function buildDiscoveryEnvWithOverrides(
   overrides: Partial<NodeJS.ProcessEnv> = {},
 ): NodeJS.ProcessEnv {
   const enablesBundledOverride =
-    Object.hasOwn(overrides, "OPENCLAW_BUNDLED_PLUGINS_DIR") &&
-    overrides.OPENCLAW_BUNDLED_PLUGINS_DIR !== undefined;
+    Object.hasOwn(overrides, "NOVA_BUNDLED_PLUGINS_DIR") &&
+    overrides.NOVA_BUNDLED_PLUGINS_DIR !== undefined;
   return {
     ...buildDiscoveryEnv(stateDir),
-    ...(enablesBundledOverride ? { OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined } : {}),
+    ...(enablesBundledOverride ? { NOVA_DISABLE_BUNDLED_PLUGINS: undefined } : {}),
     ...overrides,
   };
 }
@@ -116,8 +116,8 @@ function buildDiscoveryEnvWithOverrides(
 function buildBundledDiscoveryEnv(stateDir: string): NodeJS.ProcessEnv {
   return {
     ...buildDiscoveryEnv(stateDir),
-    OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-    OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
+    NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+    NOVA_BUNDLED_PLUGINS_DIR: undefined,
   };
 }
 
@@ -754,8 +754,8 @@ describe("discoverOpenClawPlugins", () => {
       discoverOpenClawPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+          NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+          NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
         },
       }),
     );
@@ -789,8 +789,8 @@ describe("discoverOpenClawPlugins", () => {
       discoverOpenClawPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
+          NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+          NOVA_BUNDLED_PLUGINS_DIR: bundledRoot,
         },
       }),
     );
@@ -842,8 +842,8 @@ describe("discoverOpenClawPlugins", () => {
       discoverOpenClawPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
+          NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+          NOVA_BUNDLED_PLUGINS_DIR: bundledRoot,
         },
       }),
     );
@@ -1157,7 +1157,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const result = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+        NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
       installRecords: {
         discord: {
@@ -1503,7 +1503,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const { candidates, diagnostics } = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
+        NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
       }),
     });
 
@@ -1539,7 +1539,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const { candidates, diagnostics } = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: "2026.5.27",
+        NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27",
       }),
     });
 
@@ -1573,7 +1573,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const { candidates, diagnostics } = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
+        NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
       }),
     });
 
@@ -1601,7 +1601,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const { candidates, diagnostics } = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
+        NOVA_COMPATIBILITY_HOST_VERSION: "2026.5.27-beta.1",
       }),
     });
 
@@ -1630,7 +1630,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const { candidates } = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+        NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
     });
 
@@ -1657,7 +1657,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const { candidates, diagnostics } = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+        NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
     });
 
@@ -1713,7 +1713,7 @@ describe("discoverOpenClawPlugins", () => {
 
     const { candidates } = discoverOpenClawPlugins({
       env: buildDiscoveryEnvWithOverrides(stateDir, {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+        NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       }),
     });
 
@@ -2303,7 +2303,7 @@ describe("discoverOpenClawPlugins", () => {
       const result = discoverOpenClawPlugins({
         env: {
           ...buildDiscoveryEnv(stateDir),
-          OPENCLAW_PLUGINS_PATHS: blockedDir,
+          NOVA_PLUGINS_PATHS: blockedDir,
         },
       });
       const blockedDiagnostics = result.diagnostics.filter(
@@ -2400,8 +2400,8 @@ describe("discoverOpenClawPlugins", () => {
 
     const env = {
       ...buildDiscoveryEnv(stateDir),
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-      OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+      NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+      NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
     };
     const first = withOpenClawPackageArgv(packageRoot, () =>
       discoverWithEnv({ workspaceDir: workspaceA, env }),

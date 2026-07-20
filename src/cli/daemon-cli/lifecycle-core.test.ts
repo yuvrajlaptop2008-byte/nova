@@ -112,7 +112,7 @@ function stubServiceGatewayTokenEnv() {
   service.readCommand.mockResolvedValue({
     programArguments: [],
     environment: {
-      OPENCLAW_GATEWAY_TOKEN: "service-token",
+      NOVA_GATEWAY_TOKEN: "service-token",
       SERVICE_GATEWAY_TOKEN: "service-token",
     },
   });
@@ -160,7 +160,7 @@ describe("runServiceRestart token drift", () => {
     clearGatewayRestartIntentSync.mockClear();
     service.readCommand.mockResolvedValue({
       programArguments: [],
-      environment: { OPENCLAW_GATEWAY_TOKEN: "service-token" },
+      environment: { NOVA_GATEWAY_TOKEN: "service-token" },
     });
     stubEmptyGatewayEnv();
   });
@@ -236,7 +236,7 @@ describe("runServiceRestart token drift", () => {
 
   it("prints the container restart hint when restart is requested for a not-loaded service", async () => {
     service.isLoaded.mockResolvedValue(false);
-    vi.stubEnv("OPENCLAW_CONTAINER_HINT", "openclaw-demo-container");
+    vi.stubEnv("NOVA_CONTAINER_HINT", "openclaw-demo-container");
 
     await runServiceRestart({
       serviceNoun: "Gateway",
@@ -258,7 +258,7 @@ describe("runServiceRestart token drift", () => {
     service.readRuntime.mockResolvedValue({ status: "running", pid: 1234 });
     service.readCommand.mockResolvedValue({
       programArguments: ["openclaw", "gateway", "--port", "18789"],
-      environment: { OPENCLAW_GATEWAY_PORT: "18789" },
+      environment: { NOVA_GATEWAY_PORT: "18789" },
     });
     type RepairLoadedService = NonNullable<
       Parameters<typeof runServiceRestart>[0]["repairLoadedService"]
@@ -320,9 +320,9 @@ describe("runServiceRestart token drift", () => {
     });
     service.readCommand.mockResolvedValue({
       programArguments: [],
-      environment: { OPENCLAW_GATEWAY_TOKEN: "env-token" },
+      environment: { NOVA_GATEWAY_TOKEN: "env-token" },
     });
-    vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", "env-token");
+    vi.stubEnv("NOVA_GATEWAY_TOKEN", "env-token");
 
     await runServiceRestart(createServiceRunArgs(true));
 
@@ -604,7 +604,7 @@ describe("runServiceRestart token drift", () => {
     service.readRuntime.mockResolvedValue({ status: "running", pid: 4242 });
     service.readCommand.mockResolvedValue({
       programArguments: ["openclaw", "gateway", "run"],
-      environment: { OPENCLAW_SERVICE_VERSION: "2026.4.24" },
+      environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
 
     await runServiceStart(createServiceRunArgs());
@@ -623,7 +623,7 @@ describe("runServiceRestart token drift", () => {
     service.readRuntime.mockResolvedValue({ status: "running", pid: 4242 });
     service.readCommand.mockResolvedValue({
       programArguments: ["openclaw", "gateway", "run"],
-      environment: { OPENCLAW_SERVICE_VERSION: "2026.4.24" },
+      environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
 
     await runServiceStart({
@@ -716,7 +716,7 @@ describe("runServiceRestart token drift", () => {
   it("repairs stale loaded services during start before reporting success", async () => {
     service.readCommand.mockResolvedValue({
       programArguments: ["openclaw", "gateway"],
-      environment: { OPENCLAW_SERVICE_VERSION: "2026.4.24" },
+      environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
     type RepairLoadedService = NonNullable<
       Parameters<typeof runServiceStart>[0]["repairLoadedService"]
@@ -763,7 +763,7 @@ describe("runServiceRestart token drift", () => {
   it("fails start with an install hint when a stale loaded service has no repair callback", async () => {
     service.readCommand.mockResolvedValue({
       programArguments: ["openclaw", "gateway"],
-      environment: { OPENCLAW_SERVICE_VERSION: "2026.4.24" },
+      environment: { NOVA_SERVICE_VERSION: "2026.4.24" },
     });
 
     await expect(runServiceStart(createServiceRunArgs())).rejects.toThrow("__exit__:1");

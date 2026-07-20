@@ -418,7 +418,7 @@ describe("crabline transport", () => {
           CRABLINE_WHATSAPP_ADMIN_TOKEN: expect.any(String),
           CRABLINE_WHATSAPP_RECORDER_PATH: expect.stringMatching(/whatsapp-fake-provider\.jsonl$/u),
           CRABLINE_WHATSAPP_SELF_JID: "15550000000@s.whatsapp.net",
-          OPENCLAW_WHATSAPP_WEB_SOCKET_URL: expect.stringMatching(
+          NOVA_WHATSAPP_WEB_SOCKET_URL: expect.stringMatching(
             /^ws:\/\/127\.0\.0\.1:\d+\/ws\/chat\?access_token=/u,
           ),
         });

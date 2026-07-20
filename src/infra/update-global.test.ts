@@ -97,8 +97,8 @@ describe("update global helpers", () => {
   });
 
   it("prefers explicit package spec overrides", () => {
-    envSnapshot = captureEnv(["OPENCLAW_UPDATE_PACKAGE_SPEC"]);
-    process.env.OPENCLAW_UPDATE_PACKAGE_SPEC = "file:/tmp/openclaw.tgz";
+    envSnapshot = captureEnv(["NOVA_UPDATE_PACKAGE_SPEC"]);
+    process.env.NOVA_UPDATE_PACKAGE_SPEC = "file:/tmp/openclaw.tgz";
 
     expect(resolveGlobalInstallSpec({ packageName: "openclaw", tag: "latest" })).toBe(
       "file:/tmp/openclaw.tgz",
@@ -107,7 +107,7 @@ describe("update global helpers", () => {
       resolveGlobalInstallSpec({
         packageName: "openclaw",
         tag: "beta",
-        env: { OPENCLAW_UPDATE_PACKAGE_SPEC: "openclaw@next" },
+        env: { NOVA_UPDATE_PACKAGE_SPEC: "openclaw@next" },
       }),
     ).toBe("openclaw@next");
   });

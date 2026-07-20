@@ -39,15 +39,15 @@ describe("legacy workspace Doctor migration", () => {
     const stateDir = path.join(homeDir, ".openclaw");
     const workspaceDir = path.join(homeDir, "workspace");
     fs.mkdirSync(workspaceDir, { recursive: true });
-    envSnapshot ??= captureEnv(["HOME", "OPENCLAW_HOME", "OPENCLAW_STATE_DIR"]);
+    envSnapshot ??= captureEnv(["HOME", "NOVA_HOME", "NOVA_STATE_DIR"]);
     setTestEnvValue("HOME", homeDir);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
     const cfg = {
       agents: { defaults: { workspace: workspaceDir } },
     } satisfies OpenClawConfig;
     return {
       cfg,
-      env: { ...process.env, HOME: homeDir, OPENCLAW_STATE_DIR: stateDir },
+      env: { ...process.env, HOME: homeDir, NOVA_STATE_DIR: stateDir },
       homeDir,
       stateDir,
       workspaceDir,

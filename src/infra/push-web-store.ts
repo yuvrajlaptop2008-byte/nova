@@ -49,9 +49,7 @@ type WebPushSubscriptionInsert = Insertable<WebPushDatabase["web_push_subscripti
 type WebPushVapidKeyInsert = Insertable<WebPushDatabase["web_push_vapid_keys"]>;
 
 function webPushStateDatabaseOptions(stateDir?: string): OpenClawStateDatabaseOptions {
-  return stateDir
-    ? { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } }
-    : { env: process.env };
+  return stateDir ? { env: { ...process.env, NOVA_STATE_DIR: stateDir } } : { env: process.env };
 }
 
 export function hashWebPushEndpoint(endpoint: string): string {

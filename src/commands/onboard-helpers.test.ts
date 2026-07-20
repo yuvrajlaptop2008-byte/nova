@@ -174,10 +174,10 @@ describe("handleReset", () => {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_PROFILE: "work",
-          OPENCLAW_STATE_DIR: profileStateDir,
-          OPENCLAW_CONFIG_PATH: profileConfigPath,
+          NOVA_HOME: homeDir,
+          NOVA_PROFILE: "work",
+          NOVA_STATE_DIR: profileStateDir,
+          NOVA_CONFIG_PATH: profileConfigPath,
         },
         async () => await handleReset("full", workspaceDir, runtime),
       );
@@ -215,10 +215,10 @@ describe("handleReset", () => {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_PROFILE: "work",
-          OPENCLAW_STATE_DIR: profileStateDir,
-          OPENCLAW_CONFIG_PATH: profileConfigPath,
+          NOVA_HOME: homeDir,
+          NOVA_PROFILE: "work",
+          NOVA_STATE_DIR: profileStateDir,
+          NOVA_CONFIG_PATH: profileConfigPath,
         },
         async () => await handleReset("full", workspaceDir, runtime),
       );
@@ -570,7 +570,7 @@ describe("probeGatewayReachable", () => {
       ok: false,
       connectLatencyMs: 42,
       error: "foreign protocol error",
-      connectErrorDetails: { code: "NOT_AN_OPENCLAW_CONNECT_ERROR" },
+      connectErrorDetails: { code: "NOT_AN_NOVA_CONNECT_ERROR" },
       auth: { role: null, scopes: [], capability: "unknown" },
       server: { version: null, connId: null },
     });

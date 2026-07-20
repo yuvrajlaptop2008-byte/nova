@@ -29,9 +29,9 @@ function runPullHelperWithEnv(binDir: string, env: Record<string, string>) {
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_DOCKER_PULL_ATTEMPTS: "1",
-      OPENCLAW_DOCKER_PULL_RETRY_DELAY_SECONDS: "0",
-      OPENCLAW_DOCKER_PULL_TIMEOUT_SECONDS: "42",
+      NOVA_DOCKER_PULL_ATTEMPTS: "1",
+      NOVA_DOCKER_PULL_RETRY_DELAY_SECONDS: "0",
+      NOVA_DOCKER_PULL_TIMEOUT_SECONDS: "42",
       ...env,
       PATH: binDir,
     },
@@ -196,7 +196,7 @@ describe("scripts/ci-docker-pull-retry.sh", () => {
       ].join("\n"),
     );
 
-    const result = runPullHelperWithEnv(binDir, { OPENCLAW_DOCKER_PULL_ATTEMPTS: "2" });
+    const result = runPullHelperWithEnv(binDir, { NOVA_DOCKER_PULL_ATTEMPTS: "2" });
 
     expect(result.status).toBe(42);
     expect(result.stderr).toContain("Docker pull failed or timed out after 42s: status=42");

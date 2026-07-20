@@ -75,7 +75,7 @@ function useDevelopmentDiscoveryEnv() {
 
 async function expectSshPortOmitted(rawPort: string) {
   useDevelopmentDiscoveryEnv();
-  process.env.OPENCLAW_SSH_PORT = rawPort;
+  process.env.NOVA_SSH_PORT = rawPort;
 
   const service = makeDiscoveryService({ id: "bonjour" });
 
@@ -97,7 +97,7 @@ async function expectSshPortOmitted(rawPort: string) {
 function startStuckDiscovery(timeoutMs: string) {
   vi.useFakeTimers();
   useDevelopmentDiscoveryEnv();
-  process.env.OPENCLAW_GATEWAY_DISCOVERY_ADVERTISE_TIMEOUT_MS = timeoutMs;
+  process.env.NOVA_GATEWAY_DISCOVERY_ADVERTISE_TIMEOUT_MS = timeoutMs;
 
   const service = makeDiscoveryService({
     id: "stuck-discovery",
@@ -130,7 +130,7 @@ describe("startGatewayDiscovery", () => {
   it("starts registered local discovery services with gateway advertisement context", async () => {
     process.env.NODE_ENV = "development";
     delete process.env.VITEST;
-    process.env.OPENCLAW_SSH_PORT = "2222";
+    process.env.NOVA_SSH_PORT = "2222";
 
     const stopped: string[] = [];
     const bonjour = makeDiscoveryService({
@@ -243,10 +243,10 @@ describe("startGatewayDiscovery", () => {
     expect(result.bonjourStop).toBeNull();
   });
 
-  it("skips local discovery services for truthy OPENCLAW_DISABLE_BONJOUR values", async () => {
+  it("skips local discovery services for truthy NOVA_DISABLE_BONJOUR values", async () => {
     process.env.NODE_ENV = "development";
     delete process.env.VITEST;
-    process.env.OPENCLAW_DISABLE_BONJOUR = "yes";
+    process.env.NOVA_DISABLE_BONJOUR = "yes";
 
     const service = makeDiscoveryService({ id: "bonjour" });
     const result = await startGatewayDiscovery({

@@ -12,7 +12,7 @@ import { runSkillHistoryScanReview } from "./history-scan-review.js";
 import { listSkillProposals } from "./service.js";
 
 const LIVE =
-  isLiveTestEnabled(["OPENCLAW_LIVE_SKILL_HISTORY_SCAN"]) &&
+  isLiveTestEnabled(["NOVA_LIVE_SKILL_HISTORY_SCAN"]) &&
   Boolean(process.env.OPENAI_API_KEY?.trim());
 const describeLive = LIVE ? describe : describe.skip;
 const tempDirs = createTrackedTempDirs();
@@ -20,7 +20,7 @@ let testState: OpenClawTestState;
 let workspaceDir = "";
 
 function liveConfig(): OpenClawConfig {
-  const modelId = process.env.OPENCLAW_LIVE_SKILL_HISTORY_MODEL ?? "gpt-5.6-luna";
+  const modelId = process.env.NOVA_LIVE_SKILL_HISTORY_MODEL ?? "gpt-5.6-luna";
   return {
     models: {
       providers: {

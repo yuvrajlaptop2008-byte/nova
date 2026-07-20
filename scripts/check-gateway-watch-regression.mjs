@@ -33,16 +33,16 @@ const DEFAULTS = {
 };
 
 const WATCH_GATEWAY_SKIP_ENV = {
-  OPENCLAW_DISABLE_BONJOUR: "1",
-  OPENCLAW_SKIP_ACPX_RUNTIME: "1",
-  OPENCLAW_SKIP_ACPX_RUNTIME_PROBE: "1",
-  OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-  OPENCLAW_SKIP_CANVAS_HOST: "1",
-  OPENCLAW_SKIP_CHANNELS: "1",
-  OPENCLAW_SKIP_CRON: "1",
-  OPENCLAW_SKIP_GMAIL_WATCHER: "1",
-  OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
-  OPENCLAW_TEST_MINIMAL_GATEWAY: "1",
+  NOVA_DISABLE_BONJOUR: "1",
+  NOVA_SKIP_ACPX_RUNTIME: "1",
+  NOVA_SKIP_ACPX_RUNTIME_PROBE: "1",
+  NOVA_SKIP_BROWSER_CONTROL_SERVER: "1",
+  NOVA_SKIP_CANVAS_HOST: "1",
+  NOVA_SKIP_CHANNELS: "1",
+  NOVA_SKIP_CRON: "1",
+  NOVA_SKIP_GMAIL_WATCHER: "1",
+  NOVA_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
+  NOVA_TEST_MINIMAL_GATEWAY: "1",
   NODE_ENV: "test",
 };
 
@@ -500,18 +500,18 @@ export function buildTimedWatchCommand(
   const shellPath = deps.shellPath ?? resolveTimedWatchShell(deps);
   const nodeExecPath = deps.nodeExecPath ?? process.execPath;
   const shellSource = [
-    'echo "$$" > "$OPENCLAW_WATCH_PID_FILE"',
-    'mkdir -p "$OPENCLAW_STATE_DIR"',
-    `printf '%s\n' '{"gateway":{"controlUi":{"enabled":false}},"plugins":{"enabled":false}}' > "$OPENCLAW_CONFIG_PATH"`,
+    'echo "$$" > "$NOVA_WATCH_PID_FILE"',
+    'mkdir -p "$NOVA_STATE_DIR"',
+    `printf '%s\n' '{"gateway":{"controlUi":{"enabled":false}},"plugins":{"enabled":false}}' > "$NOVA_CONFIG_PATH"`,
     `exec ${shellQuote(nodeExecPath)} scripts/watch-node.mjs gateway --force --allow-unconfigured --port ${String(port)} --token watch-regression-token`,
   ].join("\n");
   const nodeBinDir = path.dirname(nodeExecPath);
   const env = {
-    OPENCLAW_WATCH_PID_FILE: pidFilePath,
+    NOVA_WATCH_PID_FILE: pidFilePath,
     HOME: isolatedHomeDir,
-    OPENCLAW_HOME: isolatedHomeDir,
-    OPENCLAW_CONFIG_PATH: isolatedConfigPath,
-    OPENCLAW_STATE_DIR: isolatedStateDir,
+    NOVA_HOME: isolatedHomeDir,
+    NOVA_CONFIG_PATH: isolatedConfigPath,
+    NOVA_STATE_DIR: isolatedStateDir,
     PATH: `${nodeBinDir}${path.delimiter}${process.env.PATH ?? ""}`,
     XDG_CONFIG_HOME: path.join(isolatedHomeDir, ".config"),
     ...WATCH_GATEWAY_SKIP_ENV,

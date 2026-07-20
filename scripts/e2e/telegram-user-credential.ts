@@ -23,24 +23,24 @@ const TELEGRAM_USER_ID_RE = /^\d+$/u;
 const DEFAULT_CHUNKED_PAYLOAD_MAX_BYTES = 64 * 1024 * 1024;
 const DEFAULT_CHUNKED_PAYLOAD_MAX_CHUNKS = 4096;
 const COMMAND_TIMEOUT_MS = optionalPositiveInteger(
-  process.env.OPENCLAW_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS?.trim(),
+  process.env.NOVA_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS?.trim(),
   120_000,
-  "OPENCLAW_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS",
+  "NOVA_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS",
 );
 const BROKER_TIMEOUT_MS = optionalPositiveInteger(
-  process.env.OPENCLAW_TELEGRAM_USER_CREDENTIAL_BROKER_TIMEOUT_MS?.trim(),
+  process.env.NOVA_TELEGRAM_USER_CREDENTIAL_BROKER_TIMEOUT_MS?.trim(),
   30_000,
-  "OPENCLAW_TELEGRAM_USER_CREDENTIAL_BROKER_TIMEOUT_MS",
+  "NOVA_TELEGRAM_USER_CREDENTIAL_BROKER_TIMEOUT_MS",
 );
 const CHUNKED_PAYLOAD_MAX_BYTES = optionalPositiveInteger(
-  process.env.OPENCLAW_QA_CREDENTIAL_PAYLOAD_MAX_BYTES?.trim(),
+  process.env.NOVA_QA_CREDENTIAL_PAYLOAD_MAX_BYTES?.trim(),
   DEFAULT_CHUNKED_PAYLOAD_MAX_BYTES,
-  "OPENCLAW_QA_CREDENTIAL_PAYLOAD_MAX_BYTES",
+  "NOVA_QA_CREDENTIAL_PAYLOAD_MAX_BYTES",
 );
 const CHUNKED_PAYLOAD_MAX_CHUNKS = optionalPositiveInteger(
-  process.env.OPENCLAW_QA_CREDENTIAL_PAYLOAD_MAX_CHUNKS?.trim(),
+  process.env.NOVA_QA_CREDENTIAL_PAYLOAD_MAX_CHUNKS?.trim(),
   DEFAULT_CHUNKED_PAYLOAD_MAX_CHUNKS,
-  "OPENCLAW_QA_CREDENTIAL_PAYLOAD_MAX_CHUNKS",
+  "NOVA_QA_CREDENTIAL_PAYLOAD_MAX_CHUNKS",
 );
 
 function usage(): never {
@@ -318,38 +318,38 @@ async function resolveConvexLeaseConfig(opts: Map<string, string>) {
   const fileEnv = await readEnvFile(envFile);
   const siteUrl =
     opts.get("site-url") ||
-    process.env.OPENCLAW_QA_CONVEX_SITE_URL?.trim() ||
-    fileEnv.OPENCLAW_QA_CONVEX_SITE_URL;
+    process.env.NOVA_QA_CONVEX_SITE_URL?.trim() ||
+    fileEnv.NOVA_QA_CONVEX_SITE_URL;
   const token =
     opts.get("ci-secret") ||
-    process.env.OPENCLAW_QA_CONVEX_SECRET_CI?.trim() ||
-    fileEnv.OPENCLAW_QA_CONVEX_SECRET_CI;
+    process.env.NOVA_QA_CONVEX_SECRET_CI?.trim() ||
+    fileEnv.NOVA_QA_CONVEX_SECRET_CI;
   if (!siteUrl) {
-    throw new Error("Missing OPENCLAW_QA_CONVEX_SITE_URL.");
+    throw new Error("Missing NOVA_QA_CONVEX_SITE_URL.");
   }
   if (!token) {
-    throw new Error("Missing OPENCLAW_QA_CONVEX_SECRET_CI.");
+    throw new Error("Missing NOVA_QA_CONVEX_SECRET_CI.");
   }
   return {
     siteUrl,
     token,
     leaseTtlMs: optionalPositiveInteger(
       opts.get("lease-ttl-ms") ||
-        process.env.OPENCLAW_QA_CREDENTIAL_LEASE_TTL_MS?.trim() ||
-        fileEnv.OPENCLAW_QA_CREDENTIAL_LEASE_TTL_MS,
+        process.env.NOVA_QA_CREDENTIAL_LEASE_TTL_MS?.trim() ||
+        fileEnv.NOVA_QA_CREDENTIAL_LEASE_TTL_MS,
       20 * 60 * 1_000,
-      "OPENCLAW_QA_CREDENTIAL_LEASE_TTL_MS",
+      "NOVA_QA_CREDENTIAL_LEASE_TTL_MS",
     ),
     heartbeatIntervalMs: optionalPositiveInteger(
       opts.get("heartbeat-interval-ms") ||
-        process.env.OPENCLAW_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS?.trim() ||
-        fileEnv.OPENCLAW_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS,
+        process.env.NOVA_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS?.trim() ||
+        fileEnv.NOVA_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS,
       30_000,
-      "OPENCLAW_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS",
+      "NOVA_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS",
     ),
     ownerId:
       opts.get("owner-id") ||
-      process.env.OPENCLAW_QA_CREDENTIAL_OWNER_ID?.trim() ||
+      process.env.NOVA_QA_CREDENTIAL_OWNER_ID?.trim() ||
       buildTelegramUserCredentialOwnerId(),
   };
 }
@@ -449,7 +449,7 @@ async function createTelegramUserPayload(opts: Map<string, string>) {
   const config = await readJson(`${userDriverDir}/config.local.json`);
   const botCredentials = await readJson(botCredentialsFile);
   const sutToken =
-    process.env.OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN?.trim() ||
+    process.env.NOVA_QA_TELEGRAM_SUT_BOT_TOKEN?.trim() ||
     process.env.TELEGRAM_E2E_SUT_BOT_TOKEN?.trim() ||
     (typeof botCredentials.sutBotToken === "string" ? botCredentials.sutBotToken.trim() : "") ||
     (typeof botCredentials.botAToken === "string" ? botCredentials.botAToken.trim() : "") ||
@@ -459,7 +459,7 @@ async function createTelegramUserPayload(opts: Map<string, string>) {
   }
 
   const groupId =
-    process.env.OPENCLAW_QA_TELEGRAM_GROUP_ID?.trim() ||
+    process.env.NOVA_QA_TELEGRAM_GROUP_ID?.trim() ||
     process.env.TELEGRAM_E2E_GROUP_ID?.trim() ||
     (typeof config.defaultChatId === "string" ? config.defaultChatId.trim() : "") ||
     (typeof botCredentials.groupId === "string" ? botCredentials.groupId.trim() : "");

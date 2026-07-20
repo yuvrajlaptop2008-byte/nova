@@ -256,7 +256,7 @@ const CONCURRENT_DELETE_TEXT = "sqlite concurrent delete while send is active";
 const CLEANUP_PRUNE_SESSION_ID = "sqlite-cleanup-prune";
 const CLEANUP_PRUNE_SESSION_KEY = "agent:main:dashboard:sqlite-cleanup-prune";
 const CLEANUP_PRUNE_TEXT = "sqlite cleanup prune me";
-const FULL_TURN_ASSISTANT_TEXT = "OPENCLAW_E2E_OK_12";
+const FULL_TURN_ASSISTANT_TEXT = "NOVA_E2E_OK_12";
 const FULL_TURN_SESSION_KEY = "agent:main:sqlite-full-turn";
 const MANUAL_COMPACTION_SESSION_KEY = "agent:main:dashboard:sqlite-manual-compact";
 const PLUGIN_SDK_APPEND_TEXT = "sqlite sdk consumer appended by identity";
@@ -295,8 +295,8 @@ export async function runSqliteSessionsTranscriptsFlipProof(
     config: buildMockOpenAiConfig(mockOpenAiPort),
     env: {
       OPENAI_API_KEY: "sk-openclaw-e2e-mock",
-      OPENCLAW_TEST_MINIMAL_GATEWAY: undefined,
-      OPENCLAW_SKIP_PROVIDERS: undefined,
+      NOVA_TEST_MINIMAL_GATEWAY: undefined,
+      NOVA_SKIP_PROVIDERS: undefined,
     },
     startTimeoutMs: 90_000,
     stopTimeoutMs: 3_000,
@@ -1606,22 +1606,22 @@ async function runSqliteBusyContentionProof(
       `
         import fs from "node:fs";
         import { DatabaseSync } from "node:sqlite";
-        const db = new DatabaseSync(process.env.OPENCLAW_E2E_BUSY_DB_PATH);
+        const db = new DatabaseSync(process.env.NOVA_E2E_BUSY_DB_PATH);
         db.exec("PRAGMA busy_timeout = 30000; BEGIN IMMEDIATE;");
-        fs.writeFileSync(process.env.OPENCLAW_E2E_BUSY_READY_PATH, "ready");
+        fs.writeFileSync(process.env.NOVA_E2E_BUSY_READY_PATH, "ready");
         setTimeout(() => {
           db.exec("COMMIT");
           db.close();
-        }, Number(process.env.OPENCLAW_E2E_BUSY_HOLD_MS));
+        }, Number(process.env.NOVA_E2E_BUSY_HOLD_MS));
       `,
     ],
     {
       cwd: process.cwd(),
       env: {
         ...process.env,
-        OPENCLAW_E2E_BUSY_DB_PATH: context.agentDbPath,
-        OPENCLAW_E2E_BUSY_HOLD_MS: String(holdMs),
-        OPENCLAW_E2E_BUSY_READY_PATH: readyPath,
+        NOVA_E2E_BUSY_DB_PATH: context.agentDbPath,
+        NOVA_E2E_BUSY_HOLD_MS: String(holdMs),
+        NOVA_E2E_BUSY_READY_PATH: readyPath,
       },
       stdio: ["ignore", "pipe", "pipe"],
     },

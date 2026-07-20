@@ -18,11 +18,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-multi-node-update-e2e" OPENCLAW_MULTI_NODE_UPDATE_E2E_IMAGE)"
-SKIP_BUILD="${OPENCLAW_MULTI_NODE_UPDATE_E2E_SKIP_BUILD:-0}"
-DOCKER_RUN_TIMEOUT="${OPENCLAW_MULTI_NODE_DOCKER_TIMEOUT:-300s}"
-RUN_ID="${OPENCLAW_MULTI_NODE_RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
-ARTIFACT_DIR="${OPENCLAW_MULTI_NODE_ARTIFACT_DIR:-$ROOT_DIR/.artifacts/multi-node-update/$RUN_ID}"
+IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-multi-node-update-e2e" NOVA_MULTI_NODE_UPDATE_E2E_IMAGE)"
+SKIP_BUILD="${NOVA_MULTI_NODE_UPDATE_E2E_SKIP_BUILD:-0}"
+DOCKER_RUN_TIMEOUT="${NOVA_MULTI_NODE_DOCKER_TIMEOUT:-300s}"
+RUN_ID="${NOVA_MULTI_NODE_RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
+ARTIFACT_DIR="${NOVA_MULTI_NODE_ARTIFACT_DIR:-$ROOT_DIR/.artifacts/multi-node-update/$RUN_ID}"
 
 mkdir -p "$ARTIFACT_DIR"
 chmod -R a+rwX "$ARTIFACT_DIR" || true
@@ -33,7 +33,7 @@ trap cleanup EXIT
 
 # Build the bare e2e image and prepare the package tarball.
 docker_e2e_build_or_reuse "$IMAGE_NAME" multi-node-update "$ROOT_DIR/scripts/e2e/Dockerfile" "$ROOT_DIR" "bare" "$SKIP_BUILD"
-PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz multi-node-update "${OPENCLAW_CURRENT_PACKAGE_TGZ:-}")"
+PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz multi-node-update "${NOVA_CURRENT_PACKAGE_TGZ:-}")"
 docker_e2e_package_mount_args "$PACKAGE_TGZ"
 
 echo "=== Running multi-node-update Docker E2E ==="
@@ -42,11 +42,11 @@ CONTAINER_EXIT=0
 docker_e2e_run_with_harness \
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
   -e CI=true \
-  -e OPENCLAW_NO_ONBOARD=1 \
-  -e OPENCLAW_NO_PROMPT=1 \
-  -e OPENCLAW_SKIP_PROVIDERS=1 \
-  -e OPENCLAW_SKIP_CHANNELS=1 \
-  -e OPENCLAW_DISABLE_BONJOUR=1 \
+  -e NOVA_NO_ONBOARD=1 \
+  -e NOVA_NO_PROMPT=1 \
+  -e NOVA_SKIP_PROVIDERS=1 \
+  -e NOVA_SKIP_CHANNELS=1 \
+  -e NOVA_DISABLE_BONJOUR=1 \
   -e OPENAI_API_KEY=sk-multi-node-test \
   -v "$ARTIFACT_DIR:/tmp/artifacts" \
   "${DOCKER_E2E_PACKAGE_ARGS[@]}" \
@@ -110,8 +110,8 @@ echo "Installing OpenClaw package under node-A prefix: $NPM_PREFIX_A"
 openclaw_e2e_install_package "$ARTIFACTS/install-a.log" "OpenClaw package under node-A prefix" "$NPM_PREFIX_A"
 echo "Installed. Checking openclaw location..."
 
-OPENCLAW_A="$(command -v openclaw)"
-echo "openclaw binary: $OPENCLAW_A"
+NOVA_A="$(command -v openclaw)"
+echo "openclaw binary: $NOVA_A"
 echo "openclaw version: $(openclaw --version 2>/dev/null || echo unknown)"
 
 # Record the package root for node-A install.
@@ -211,7 +211,7 @@ start_gateway() {
   fi
   (
     load_unit_environment "\$unit"
-    export OPENCLAW_NO_RESPAWN=1
+    export NOVA_NO_RESPAWN=1
     echo "systemctl shim: starting: \$exec_start"
     nohup bash -lc "exec \$exec_start" >>"$GATEWAY_DAEMON_LOG" 2>&1 &
     printf "%s\n" "\$!" >"$GATEWAY_PID_FILE"

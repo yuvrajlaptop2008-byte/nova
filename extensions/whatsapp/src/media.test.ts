@@ -95,10 +95,10 @@ afterEach(() => {
 
 describe("web media loading", () => {
   beforeAll(() => {
-    // Ensure state dir is stable and not influenced by other tests that stub OPENCLAW_STATE_DIR.
+    // Ensure state dir is stable and not influenced by other tests that stub NOVA_STATE_DIR.
     // Also keep it outside the Nova temp root so default localRoots doesn't accidentally make all state readable.
-    stateDirSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-    process.env.OPENCLAW_STATE_DIR = path.join(
+    stateDirSnapshot = captureEnv(["NOVA_STATE_DIR"]);
+    process.env.NOVA_STATE_DIR = path.join(
       path.parse(os.tmpdir()).root,
       "var",
       "lib",

@@ -114,7 +114,7 @@ function hasLegacyStateMigrationInputs(): boolean {
   const stateDir = resolveStateDir(process.env, os.homedir);
   const oauthDir = resolveOAuthDir(process.env, stateDir);
   if (
-    !process.env.OPENCLAW_STATE_DIR?.trim() &&
+    !process.env.NOVA_STATE_DIR?.trim() &&
     resolveLegacyStateDirs(() => resolveRequiredHomeDir(process.env, os.homedir)).some(
       fileOrDirExists,
     )

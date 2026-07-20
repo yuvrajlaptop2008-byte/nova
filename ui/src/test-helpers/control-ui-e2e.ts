@@ -175,7 +175,7 @@ export async function startControlUiE2eServer(
     clearScreen: false,
     configFile: false,
     define: {
-      "globalThis.OPENCLAW_CONTROL_UI_BUILD_INFO": JSON.stringify(buildInfo),
+      "globalThis.NOVA_CONTROL_UI_BUILD_INFO": JSON.stringify(buildInfo),
     },
     logLevel: "error",
     optimizeDeps: {
@@ -352,12 +352,12 @@ function installControlUiMockGateway(input: {
     socketUrls: () => string[];
   };
   type WindowWithGateway = Window & {
-    __OPENCLAW_CONTROL_UI_BASE_PATH__?: string;
+    __NOVA_CONTROL_UI_BASE_PATH__?: string;
     openclawControlUiE2eGateway?: ExposedGateway;
   };
 
   const scenario: BrowserScenario = input.scenario;
-  (window as unknown as WindowWithGateway)["__OPENCLAW_CONTROL_UI_BASE_PATH__"] = scenario.basePath;
+  (window as unknown as WindowWithGateway)["__NOVA_CONTROL_UI_BASE_PATH__"] = scenario.basePath;
   const protocolVersion = input.protocolVersion;
   const methodResponseOverridesStorageKey = "openclaw.control-ui-e2e.method-responses.v1";
   const methodResponseOverrides: Record<string, unknown> = {};

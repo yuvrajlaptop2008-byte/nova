@@ -84,12 +84,12 @@ const QA_GATEWAY_CHILD_GRACEFUL_SHUTDOWN_TIMEOUT_MS = 5_000;
 const QA_GATEWAY_CHILD_FORCE_SHUTDOWN_TIMEOUT_MS = 10_000;
 const QA_MOCK_OPENAI_API_KEY = ["qa", "mock", "openai", "key"].join("-");
 const QA_GATEWAY_CHILD_BLOCKED_SECRET_ENV_VARS = Object.freeze([
-  "OPENCLAW_QA_CONVEX_SECRET_CI",
-  "OPENCLAW_QA_CONVEX_SECRET_MAINTAINER",
-  "OPENCLAW_QA_SUT_FORBIDDEN_SENTINEL",
-  "OPENCLAW_QA_TELEGRAM_GROUP_ID",
-  "OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN",
-  "OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN",
+  "NOVA_QA_CONVEX_SECRET_CI",
+  "NOVA_QA_CONVEX_SECRET_MAINTAINER",
+  "NOVA_QA_SUT_FORBIDDEN_SENTINEL",
+  "NOVA_QA_TELEGRAM_GROUP_ID",
+  "NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN",
+  "NOVA_QA_TELEGRAM_SUT_BOT_TOKEN",
 ]);
 
 export type QaGatewayChildStateMutationContext = {
@@ -171,7 +171,7 @@ async function runQaGatewayCliCommand(params: {
 }): Promise<string> {
   const child = spawn(params.executablePath, [...params.argsPrefix, ...params.args], {
     cwd: params.cwd,
-    env: { ...params.env, OPENCLAW_CLI: "1" },
+    env: { ...params.env, NOVA_CLI: "1" },
     stdio: ["ignore", "pipe", "pipe"],
   });
   return await readQaGatewayCliCommand(child);
@@ -394,33 +394,33 @@ export function buildQaRuntimeEnv(params: {
           claudeCliAuthMode: params.claudeCliAuthMode,
         })
       : {}),
-    OPENCLAW_HOME: params.homeDir,
-    OPENCLAW_CONFIG_PATH: params.configPath,
-    OPENCLAW_STATE_DIR: params.stateDir,
-    OPENCLAW_OAUTH_DIR: path.join(params.stateDir, "credentials"),
-    OPENCLAW_GATEWAY_TOKEN: params.gatewayToken,
-    OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-    OPENCLAW_SKIP_GMAIL_WATCHER: "1",
-    OPENCLAW_SKIP_CANVAS_HOST: "1",
-    OPENCLAW_SKIP_STARTUP_MODEL_PREWARM: "1",
-    OPENCLAW_NO_RESPAWN: "1",
-    OPENCLAW_TEST_FAST: "1",
-    OPENCLAW_EMBEDDED_ABORT_SETTLE_TIMEOUT_MS: "2000",
-    OPENCLAW_QA_PARENT_PID: String(process.pid),
-    OPENCLAW_QA_TEMP_ROOT: params.tempRoot,
+    NOVA_HOME: params.homeDir,
+    NOVA_CONFIG_PATH: params.configPath,
+    NOVA_STATE_DIR: params.stateDir,
+    NOVA_OAUTH_DIR: path.join(params.stateDir, "credentials"),
+    NOVA_GATEWAY_TOKEN: params.gatewayToken,
+    NOVA_SKIP_BROWSER_CONTROL_SERVER: "1",
+    NOVA_SKIP_GMAIL_WATCHER: "1",
+    NOVA_SKIP_CANVAS_HOST: "1",
+    NOVA_SKIP_STARTUP_MODEL_PREWARM: "1",
+    NOVA_NO_RESPAWN: "1",
+    NOVA_TEST_FAST: "1",
+    NOVA_EMBEDDED_ABORT_SETTLE_TIMEOUT_MS: "2000",
+    NOVA_QA_PARENT_PID: String(process.pid),
+    NOVA_QA_TEMP_ROOT: params.tempRoot,
     ...(params.stagedBundledPluginsRoot
-      ? { OPENCLAW_QA_STAGED_RUNTIME_ROOT: params.stagedBundledPluginsRoot }
+      ? { NOVA_QA_STAGED_RUNTIME_ROOT: params.stagedBundledPluginsRoot }
       : {}),
-    OPENCLAW_QA_ALLOW_LOCAL_IMAGE_PROVIDER: "1",
+    NOVA_QA_ALLOW_LOCAL_IMAGE_PROVIDER: "1",
     // QA uses the fast runtime envelope for speed, but it still exercises
     // normal config-driven heartbeats and runtime config writes.
-    OPENCLAW_ALLOW_SLOW_REPLY_TESTS: "1",
+    NOVA_ALLOW_SLOW_REPLY_TESTS: "1",
     XDG_CONFIG_HOME: params.xdgConfigHome,
     XDG_DATA_HOME: params.xdgDataHome,
     XDG_CACHE_HOME: params.xdgCacheHome,
-    ...(params.bundledPluginsDir ? { OPENCLAW_BUNDLED_PLUGINS_DIR: params.bundledPluginsDir } : {}),
+    ...(params.bundledPluginsDir ? { NOVA_BUNDLED_PLUGINS_DIR: params.bundledPluginsDir } : {}),
     ...(params.compatibilityHostVersion
-      ? { OPENCLAW_COMPATIBILITY_HOST_VERSION: params.compatibilityHostVersion }
+      ? { NOVA_COMPATIBILITY_HOST_VERSION: params.compatibilityHostVersion }
       : {}),
   };
   const normalizedEnv = normalizeQaProviderModeEnv(env, params.providerMode);
@@ -439,8 +439,8 @@ function buildQaForcedRuntimeEnvPatch(params: {
     return undefined;
   }
   const patch: NodeJS.ProcessEnv = {
-    OPENCLAW_BUILD_PRIVATE_QA: "1",
-    OPENCLAW_QA_FORCE_RUNTIME: params.forcedRuntime,
+    NOVA_BUILD_PRIVATE_QA: "1",
+    NOVA_QA_FORCE_RUNTIME: params.forcedRuntime,
   };
   if (params.forcedRuntime !== "codex" || params.providerMode !== "mock-openai") {
     return patch;
@@ -449,7 +449,7 @@ function buildQaForcedRuntimeEnvPatch(params: {
   if (!providerBaseUrl) {
     throw new Error("forced Codex mock QA requires the managed mock provider URL");
   }
-  patch.OPENCLAW_CODEX_APP_SERVER_ARGS = `app-server -c openai_base_url=${providerBaseUrl} --listen stdio://`;
+  patch.NOVA_CODEX_APP_SERVER_ARGS = `app-server -c openai_base_url=${providerBaseUrl} --listen stdio://`;
   patch.OPENAI_API_KEY = QA_MOCK_OPENAI_API_KEY;
   patch.CODEX_API_KEY = QA_MOCK_OPENAI_API_KEY;
   return patch;
@@ -1124,7 +1124,7 @@ export async function startQaGatewayChild(params: {
   const stderrLog = createWriteStream(stderrLogPath, { flags: "a" });
 
   const logs = () => redactQaGatewayDebugText(output.text());
-  const keepTemp = process.env.OPENCLAW_QA_KEEP_TEMP === "1";
+  const keepTemp = process.env.NOVA_QA_KEEP_TEMP === "1";
   let gatewayPort = 0;
   let baseUrl = "";
   let wsUrl = "";

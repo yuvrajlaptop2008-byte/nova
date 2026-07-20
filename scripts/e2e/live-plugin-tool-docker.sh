@@ -8,15 +8,15 @@ source "$ROOT_DIR/scripts/lib/openclaw-e2e-instance.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-live-plugin-tool-e2e" OPENCLAW_LIVE_PLUGIN_TOOL_E2E_IMAGE)"
-DOCKER_TARGET="${OPENCLAW_LIVE_PLUGIN_TOOL_DOCKER_TARGET:-bare}"
-HOST_BUILD="${OPENCLAW_LIVE_PLUGIN_TOOL_HOST_BUILD:-1}"
-PACKAGE_TGZ="${OPENCLAW_CURRENT_PACKAGE_TGZ:-}"
-PROFILE_FILE="${OPENCLAW_LIVE_PLUGIN_TOOL_PROFILE_FILE:-${OPENCLAW_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}}"
-AGENT_TURN_TIMEOUT_SECONDS="$(openclaw_e2e_read_positive_int_env OPENCLAW_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS 300)"
-AGENT_OUTPUT_MAX_BYTES="$(openclaw_e2e_read_positive_int_env OPENCLAW_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_MAX_BYTES 1048576)"
-AGENT_OUTPUT_DUMP_BYTES="$(openclaw_e2e_read_nonnegative_int_env OPENCLAW_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_DUMP_BYTES 16384)"
-SESSION_SCAN_MAX_ENTRIES="$(openclaw_e2e_read_positive_int_env OPENCLAW_LIVE_PLUGIN_TOOL_SESSION_SCAN_MAX_ENTRIES 50000)"
+IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-live-plugin-tool-e2e" NOVA_LIVE_PLUGIN_TOOL_E2E_IMAGE)"
+DOCKER_TARGET="${NOVA_LIVE_PLUGIN_TOOL_DOCKER_TARGET:-bare}"
+HOST_BUILD="${NOVA_LIVE_PLUGIN_TOOL_HOST_BUILD:-1}"
+PACKAGE_TGZ="${NOVA_CURRENT_PACKAGE_TGZ:-}"
+PROFILE_FILE="${NOVA_LIVE_PLUGIN_TOOL_PROFILE_FILE:-${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}}"
+AGENT_TURN_TIMEOUT_SECONDS="$(openclaw_e2e_read_positive_int_env NOVA_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS 300)"
+AGENT_OUTPUT_MAX_BYTES="$(openclaw_e2e_read_positive_int_env NOVA_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_MAX_BYTES 1048576)"
+AGENT_OUTPUT_DUMP_BYTES="$(openclaw_e2e_read_nonnegative_int_env NOVA_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_DUMP_BYTES 16384)"
+SESSION_SCAN_MAX_ENTRIES="$(openclaw_e2e_read_positive_int_env NOVA_LIVE_PLUGIN_TOOL_SESSION_SCAN_MAX_ENTRIES 50000)"
 run_log=""
 
 cleanup() {
@@ -40,8 +40,8 @@ prepare_package_tgz() {
     PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz live-plugin-tool "$PACKAGE_TGZ")"
     return 0
   fi
-  if [ "$HOST_BUILD" = "0" ] && [ -z "${OPENCLAW_CURRENT_PACKAGE_TGZ:-}" ]; then
-    echo "OPENCLAW_LIVE_PLUGIN_TOOL_HOST_BUILD=0 requires OPENCLAW_CURRENT_PACKAGE_TGZ" >&2
+  if [ "$HOST_BUILD" = "0" ] && [ -z "${NOVA_CURRENT_PACKAGE_TGZ:-}" ]; then
+    echo "NOVA_LIVE_PLUGIN_TOOL_HOST_BUILD=0 requires NOVA_CURRENT_PACKAGE_TGZ" >&2
     exit 1
   fi
   PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz live-plugin-tool)"
@@ -59,12 +59,12 @@ if [ -f "$PROFILE_FILE" ] && [ -r "$PROFILE_FILE" ]; then
   PROFILE_MOUNT=(-v "$PROFILE_FILE":/home/appuser/.profile:ro)
   PROFILE_STATUS="$PROFILE_FILE"
 fi
-AGENT_TURN_TIMEOUT_SECONDS="$(openclaw_e2e_read_positive_int_env OPENCLAW_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS "$AGENT_TURN_TIMEOUT_SECONDS")"
-COMMAND_TIMEOUT="${OPENCLAW_E2E_COMMAND_TIMEOUT:-$((10#$AGENT_TURN_TIMEOUT_SECONDS + 60))s}"
+AGENT_TURN_TIMEOUT_SECONDS="$(openclaw_e2e_read_positive_int_env NOVA_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS "$AGENT_TURN_TIMEOUT_SECONDS")"
+COMMAND_TIMEOUT="${NOVA_E2E_COMMAND_TIMEOUT:-$((10#$AGENT_TURN_TIMEOUT_SECONDS + 60))s}"
 
 docker_e2e_package_mount_args "$PACKAGE_TGZ"
 run_log="$(docker_e2e_run_log live-plugin-tool)"
-OPENCLAW_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 live-plugin-tool empty)"
+NOVA_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 live-plugin-tool empty)"
 
 echo "Running live plugin tool Docker E2E..."
 echo "Profile file: $PROFILE_STATUS"
@@ -72,27 +72,27 @@ if ! docker_e2e_run_with_harness \
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
   -e OPENAI_API_KEY \
   -e OPENAI_BASE_URL \
-  -e OPENCLAW_LIVE_PLUGIN_TOOL_MODEL="${OPENCLAW_LIVE_PLUGIN_TOOL_MODEL:-openai/gpt-5.6-luna}" \
-  -e "OPENCLAW_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_DUMP_BYTES=$AGENT_OUTPUT_DUMP_BYTES" \
-  -e "OPENCLAW_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_MAX_BYTES=$AGENT_OUTPUT_MAX_BYTES" \
-  -e "OPENCLAW_LIVE_PLUGIN_TOOL_SESSION_SCAN_MAX_ENTRIES=$SESSION_SCAN_MAX_ENTRIES" \
-  -e "OPENCLAW_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS=$AGENT_TURN_TIMEOUT_SECONDS" \
-  -e "OPENCLAW_E2E_COMMAND_TIMEOUT=$COMMAND_TIMEOUT" \
-  -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$OPENCLAW_TEST_STATE_SCRIPT_B64" \
+  -e NOVA_LIVE_PLUGIN_TOOL_MODEL="${NOVA_LIVE_PLUGIN_TOOL_MODEL:-openai/gpt-5.6-luna}" \
+  -e "NOVA_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_DUMP_BYTES=$AGENT_OUTPUT_DUMP_BYTES" \
+  -e "NOVA_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_MAX_BYTES=$AGENT_OUTPUT_MAX_BYTES" \
+  -e "NOVA_LIVE_PLUGIN_TOOL_SESSION_SCAN_MAX_ENTRIES=$SESSION_SCAN_MAX_ENTRIES" \
+  -e "NOVA_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS=$AGENT_TURN_TIMEOUT_SECONDS" \
+  -e "NOVA_E2E_COMMAND_TIMEOUT=$COMMAND_TIMEOUT" \
+  -e "NOVA_TEST_STATE_SCRIPT_B64=$NOVA_TEST_STATE_SCRIPT_B64" \
   "${DOCKER_E2E_PACKAGE_ARGS[@]}" \
   "${PROFILE_MOUNT[@]}" \
   -i "$IMAGE_NAME" bash -s >"$run_log" 2>&1 <<'EOF'; then
 set -euo pipefail
 
 source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export npm_config_prefix="$NPM_CONFIG_PREFIX"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export NPM_CONFIG_CACHE="${NPM_CONFIG_CACHE:-$XDG_CACHE_HOME/npm}"
 export npm_config_cache="$NPM_CONFIG_CACHE"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export OPENCLAW_AGENT_HARNESS_FALLBACK=none
+export NOVA_AGENT_HARNESS_FALLBACK=none
 
 for profile_path in "$HOME/.profile" /home/appuser/.profile; do
   if [ -f "$profile_path" ] && [ -r "$profile_path" ]; then
@@ -111,7 +111,7 @@ if [ -n "${OPENAI_BASE_URL:-}" ]; then
   export OPENAI_BASE_URL
 fi
 
-MODEL_REF="${OPENCLAW_LIVE_PLUGIN_TOOL_MODEL:?missing OPENCLAW_LIVE_PLUGIN_TOOL_MODEL}"
+MODEL_REF="${NOVA_LIVE_PLUGIN_TOOL_MODEL:?missing NOVA_LIVE_PLUGIN_TOOL_MODEL}"
 PLUGIN_ID="e2e-slug-tool"
 PLUGIN_NAME="@openclaw/e2e-slug-tool"
 PLUGIN_VERSION="0.0.0-e2e.1"
@@ -122,7 +122,7 @@ export MODEL_REF PLUGIN_ID PLUGIN_NAME PLUGIN_VERSION TOOL_NAME SEED EXPECTED_SL
 
 dump_debug_logs() {
   local status="$1"
-  local agent_output_dump_bytes="${OPENCLAW_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_DUMP_BYTES:-16384}"
+  local agent_output_dump_bytes="${NOVA_LIVE_PLUGIN_TOOL_AGENT_OUTPUT_DUMP_BYTES:-16384}"
   echo "Live plugin tool scenario failed with exit code $status" >&2
   if [ -f /tmp/openclaw-agent.json ]; then
     echo "--- /tmp/openclaw-agent.json (last ${agent_output_dump_bytes} bytes) ---" >&2
@@ -179,7 +179,7 @@ openclaw agent --local \
   --model "$MODEL_REF" \
   --message "Call the tool named ${TOOL_NAME}. Reply with only the exact text returned by that tool. Do not compute, transform, or explain it." \
   --thinking off \
-  --timeout "${OPENCLAW_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS:-300}" \
+  --timeout "${NOVA_LIVE_PLUGIN_TOOL_TIMEOUT_SECONDS:-300}" \
   --json >/tmp/openclaw-agent.json 2>/tmp/openclaw-agent.err
 
 node --disable-warning=ExperimentalWarning scripts/e2e/lib/live-plugin-tool/assertions.mjs assert-agent-turn

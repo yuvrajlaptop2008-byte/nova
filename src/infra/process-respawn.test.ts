@@ -68,7 +68,7 @@ function expectLaunchdSupervisedWithoutKickstart(params?: { launchJobLabel?: str
   if (params?.launchJobLabel) {
     process.env.LAUNCH_JOB_LABEL = params.launchJobLabel;
   }
-  process.env.OPENCLAW_LAUNCHD_LABEL = "ai.openclaw.gateway";
+  process.env.NOVA_LAUNCHD_LABEL = "ai.openclaw.gateway";
   const result = restartGatewayProcessWithFreshPid();
   expect(result).toEqual({ mode: "supervised" });
   expect(triggerOpenClawRestartMock).not.toHaveBeenCalled();
@@ -76,17 +76,17 @@ function expectLaunchdSupervisedWithoutKickstart(params?: { launchJobLabel?: str
 }
 
 describe("restartGatewayProcessWithFreshPid", () => {
-  it("returns disabled when OPENCLAW_NO_RESPAWN is set", () => {
-    process.env.OPENCLAW_NO_RESPAWN = "1";
+  it("returns disabled when NOVA_NO_RESPAWN is set", () => {
+    process.env.NOVA_NO_RESPAWN = "1";
     const result = restartGatewayProcessWithFreshPid();
     expect(result.mode).toBe("disabled");
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
-  it("keeps OPENCLAW_NO_RESPAWN ahead of inherited supervisor hints", () => {
+  it("keeps NOVA_NO_RESPAWN ahead of inherited supervisor hints", () => {
     clearSupervisorHints();
     setPlatform("darwin");
-    process.env.OPENCLAW_NO_RESPAWN = "1";
+    process.env.NOVA_NO_RESPAWN = "1";
     process.env.LAUNCH_JOB_LABEL = "ai.openclaw.gateway";
 
     const result = restartGatewayProcessWithFreshPid();
@@ -132,7 +132,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
   it("launchd supervisor never returns failed regardless of triggerOpenClawRestart outcome", () => {
     clearSupervisorHints();
     setPlatform("darwin");
-    process.env.OPENCLAW_LAUNCHD_LABEL = "ai.openclaw.gateway";
+    process.env.NOVA_LAUNCHD_LABEL = "ai.openclaw.gateway";
     // Even if triggerOpenClawRestart *would* fail, launchd path must not call it.
     triggerOpenClawRestartMock.mockReturnValue({
       ok: false,
@@ -148,7 +148,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
   it("does not schedule kickstart on non-darwin platforms", () => {
     setPlatform("linux");
     process.env.INVOCATION_ID = "abc123";
-    process.env.OPENCLAW_LAUNCHD_LABEL = "ai.openclaw.gateway";
+    process.env.NOVA_LAUNCHD_LABEL = "ai.openclaw.gateway";
 
     const result = restartGatewayProcessWithFreshPid();
 
@@ -161,7 +161,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
     clearSupervisorHints();
     setPlatform("darwin");
     process.env.XPC_SERVICE_NAME = "ai.openclaw.mac";
-    process.env.OPENCLAW_PROFILE = "mac";
+    process.env.NOVA_PROFILE = "mac";
 
     const result = restartGatewayProcessWithFreshPid();
 
@@ -174,7 +174,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
   });
 
   it("uses in-process restart on unmanaged Unix so custom supervisors keep the tracked PID", () => {
-    delete process.env.OPENCLAW_NO_RESPAWN;
+    delete process.env.NOVA_NO_RESPAWN;
     clearSupervisorHints();
     setPlatform("linux");
     process.execArgv = ["--import", "tsx"];
@@ -190,15 +190,15 @@ describe("restartGatewayProcessWithFreshPid", () => {
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
-  it("returns supervised when OPENCLAW_LAUNCHD_LABEL is set (stock launchd plist)", () => {
+  it("returns supervised when NOVA_LAUNCHD_LABEL is set (stock launchd plist)", () => {
     clearSupervisorHints();
     expectLaunchdSupervisedWithoutKickstart();
   });
 
-  it("returns supervised when OPENCLAW_SYSTEMD_UNIT is set", () => {
+  it("returns supervised when NOVA_SYSTEMD_UNIT is set", () => {
     clearSupervisorHints();
     setPlatform("linux");
-    process.env.OPENCLAW_SYSTEMD_UNIT = "openclaw-gateway.service";
+    process.env.NOVA_SYSTEMD_UNIT = "openclaw-gateway.service";
     const result = restartGatewayProcessWithFreshPid();
     expect(result.mode).toBe("supervised");
     expect(spawnMock).not.toHaveBeenCalled();
@@ -207,8 +207,8 @@ describe("restartGatewayProcessWithFreshPid", () => {
   it("exits to external supervision without invoking inherited native restart hooks", () => {
     clearSupervisorHints();
     setPlatform("win32");
-    process.env.OPENCLAW_SUPERVISOR_MODE = "external";
-    process.env.OPENCLAW_WINDOWS_TASK_NAME = "Nova Gateway";
+    process.env.NOVA_SUPERVISOR_MODE = "external";
+    process.env.NOVA_WINDOWS_TASK_NAME = "Nova Gateway";
 
     const result = restartGatewayProcessWithFreshPid();
 
@@ -220,8 +220,8 @@ describe("restartGatewayProcessWithFreshPid", () => {
   it("returns supervised when Nova gateway task markers are set on Windows", () => {
     clearSupervisorHints();
     setPlatform("win32");
-    process.env.OPENCLAW_SERVICE_MARKER = "openclaw";
-    process.env.OPENCLAW_SERVICE_KIND = "gateway";
+    process.env.NOVA_SERVICE_MARKER = "openclaw";
+    process.env.NOVA_SERVICE_KIND = "gateway";
     triggerOpenClawRestartMock.mockReturnValue({ ok: true, method: "schtasks" });
     const result = restartGatewayProcessWithFreshPid();
     expect(result.mode).toBe("supervised");
@@ -232,8 +232,8 @@ describe("restartGatewayProcessWithFreshPid", () => {
   it("keeps generic service markers out of non-Windows supervisor detection", () => {
     clearSupervisorHints();
     setPlatform("linux");
-    process.env.OPENCLAW_SERVICE_MARKER = "openclaw";
-    process.env.OPENCLAW_SERVICE_KIND = "gateway";
+    process.env.NOVA_SERVICE_MARKER = "openclaw";
+    process.env.NOVA_SERVICE_KIND = "gateway";
 
     const result = restartGatewayProcessWithFreshPid();
 
@@ -257,7 +257,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
   });
 
   it("returns disabled in containers so PID 1 stays alive for in-process restart", () => {
-    delete process.env.OPENCLAW_NO_RESPAWN;
+    delete process.env.NOVA_NO_RESPAWN;
     clearSupervisorHints();
     setPlatform("linux");
     isContainerEnvironmentMock.mockReturnValue(true);
@@ -274,10 +274,10 @@ describe("restartGatewayProcessWithFreshPid", () => {
   it("ignores node task script hints for gateway restart detection on Windows", () => {
     clearSupervisorHints();
     setPlatform("win32");
-    process.env.OPENCLAW_TASK_SCRIPT = "C:\\openclaw\\node.cmd";
-    process.env.OPENCLAW_TASK_SCRIPT_NAME = "node.cmd";
-    process.env.OPENCLAW_SERVICE_MARKER = "openclaw";
-    process.env.OPENCLAW_SERVICE_KIND = "node";
+    process.env.NOVA_TASK_SCRIPT = "C:\\openclaw\\node.cmd";
+    process.env.NOVA_TASK_SCRIPT_NAME = "node.cmd";
+    process.env.NOVA_SERVICE_MARKER = "openclaw";
+    process.env.NOVA_SERVICE_KIND = "node";
 
     const result = restartGatewayProcessWithFreshPid();
 
@@ -287,7 +287,7 @@ describe("restartGatewayProcessWithFreshPid", () => {
   });
 
   it("does not attempt detached spawn on unmanaged Unix even if spawn would throw", () => {
-    delete process.env.OPENCLAW_NO_RESPAWN;
+    delete process.env.NOVA_NO_RESPAWN;
     clearSupervisorHints();
     setPlatform("linux");
 
@@ -304,13 +304,13 @@ describe("restartGatewayProcessWithFreshPid", () => {
 });
 
 describe("respawnGatewayProcessForUpdate", () => {
-  it("keeps OPENCLAW_NO_RESPAWN semantics for update restarts", () => {
+  it("keeps NOVA_NO_RESPAWN semantics for update restarts", () => {
     clearSupervisorHints();
-    process.env.OPENCLAW_NO_RESPAWN = "1";
+    process.env.NOVA_NO_RESPAWN = "1";
 
     const result = respawnGatewayProcessForUpdate();
 
-    expect(result).toEqual({ mode: "disabled", detail: "OPENCLAW_NO_RESPAWN" });
+    expect(result).toEqual({ mode: "disabled", detail: "NOVA_NO_RESPAWN" });
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
@@ -344,7 +344,7 @@ describe("respawnGatewayProcessForUpdate", () => {
   it("delegates update restarts to external supervision without spawning", () => {
     clearSupervisorHints();
     setPlatform("linux");
-    process.env.OPENCLAW_SUPERVISOR_MODE = "external";
+    process.env.NOVA_SUPERVISOR_MODE = "external";
 
     const result = respawnGatewayProcessForUpdate();
 
@@ -444,9 +444,9 @@ describe("respawnGatewayProcessForUpdate", () => {
   it("exits to a managed supervisor for updates even when respawn is disabled", () => {
     clearSupervisorHints();
     setPlatform("linux");
-    process.env.OPENCLAW_NO_RESPAWN = "1";
-    process.env.OPENCLAW_SERVICE_MARKER = "openclaw";
-    process.env.OPENCLAW_SERVICE_KIND = "gateway";
+    process.env.NOVA_NO_RESPAWN = "1";
+    process.env.NOVA_SERVICE_MARKER = "openclaw";
+    process.env.NOVA_SERVICE_KIND = "gateway";
 
     const result = respawnGatewayProcessForUpdate();
 
@@ -455,7 +455,7 @@ describe("respawnGatewayProcessForUpdate", () => {
   });
 
   it("returns failed when update detached respawn throws", () => {
-    delete process.env.OPENCLAW_NO_RESPAWN;
+    delete process.env.NOVA_NO_RESPAWN;
     clearSupervisorHints();
     setPlatform("linux");
 

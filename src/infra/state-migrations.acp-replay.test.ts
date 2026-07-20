@@ -85,7 +85,7 @@ describe("legacy ACP replay doctor migration", () => {
       });
       await expect(fs.stat(sourcePath)).rejects.toMatchObject({ code: "ENOENT" });
       const replay = await createSqliteAcpEventLedger({
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       }).readReplay({ sessionId: "session-1", sessionKey: "agent:main:work" });
       expect(replay.complete).toBe(true);
       expect(replay.events[0]?.update).toEqual({
@@ -93,7 +93,7 @@ describe("legacy ACP replay doctor migration", () => {
         content: { type: "text", text: "Answer" },
       });
       const db = openOpenClawStateDatabase({
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       }).db;
       const aggregate = db
         .prepare("SELECT estimated_bytes AS total FROM acp_replay_sessions WHERE session_id = ?")
@@ -159,7 +159,7 @@ describe("legacy ACP replay doctor migration", () => {
       expect(second.warnings).toEqual([]);
       await expect(fs.stat(sourcePath)).rejects.toMatchObject({ code: "ENOENT" });
       const db = openOpenClawStateDatabase({
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       }).db;
       const rows = db
         .prepare("SELECT session_id FROM acp_replay_sessions ORDER BY session_id")
@@ -187,7 +187,7 @@ describe("legacy ACP replay doctor migration", () => {
       await expect(fs.stat(sourcePath)).resolves.toBeDefined();
       await expect(
         createSqliteAcpEventLedger({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).readReplayBySessionId({ sessionId: "broken" }),
       ).resolves.toEqual({ complete: false, events: [] });
     });
@@ -195,7 +195,7 @@ describe("legacy ACP replay doctor migration", () => {
 
   it("removes a retry source when its prior import already exists", async () => {
     await withTempDir({ prefix: "openclaw-acp-replay-migration-" }, async (stateDir) => {
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const ledger = createSqliteAcpEventLedger({ env, now: () => 1_000 });
       await ledger.startSession({
         sessionId: "session-1",
@@ -251,7 +251,7 @@ describe("legacy ACP replay doctor migration", () => {
 
   it("retains a conflicting retry source instead of discarding changed events", async () => {
     await withTempDir({ prefix: "openclaw-acp-replay-migration-" }, async (stateDir) => {
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const ledger = createSqliteAcpEventLedger({ env, now: () => 2_000 });
       await ledger.startSession({
         sessionId: "session-1",
@@ -324,7 +324,7 @@ describe("legacy ACP replay doctor migration", () => {
       await writeLegacyStore(stateDir);
       await expect(
         createSqliteAcpEventLedger({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).readReplayBySessionId({ sessionId: "session-1" }),
       ).resolves.toEqual({ complete: false, events: [] });
     });

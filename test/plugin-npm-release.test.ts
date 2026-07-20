@@ -11,7 +11,7 @@ import {
   collectPluginReleaseVersionFloorErrors,
   collectPublishablePluginPackages,
   collectPublishablePluginPackageErrors,
-  OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+  NOVA_PLUGIN_NPM_REPOSITORY_URL,
   parsePluginReleaseArgs,
   parsePluginNpmReleaseArgs,
   parsePluginReleaseSelection,
@@ -188,7 +188,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           type: "module",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
           openclaw: {
             extensions: ["./index.ts"],
@@ -231,7 +231,7 @@ describe("collectPublishablePluginPackageErrors", () => {
       'package name must start with "@openclaw/"; found "broken".',
       "package.json private must not be true.",
       'package.json type must be "module" so built .js runtime entries load as ESM.',
-      `package.json repository.url must be "${OPENCLAW_PLUGIN_NPM_REPOSITORY_URL}" so npm provenance can validate GitHub trusted publishing; found "<missing>".`,
+      `package.json repository.url must be "${NOVA_PLUGIN_NPM_REPOSITORY_URL}" so npm provenance can validate GitHub trusted publishing; found "<missing>".`,
       'package.json version must match YYYY.M.PATCH, YYYY.M.PATCH-N, YYYY.M.PATCH-alpha.N, or YYYY.M.PATCH-beta.N; found "latest".',
       "openclaw.extensions must contain only non-empty strings.",
       "openclaw.install.npmSpec must be a non-empty string for publishable plugins.",
@@ -261,7 +261,7 @@ describe("collectPublishablePluginPackageErrors", () => {
         },
       }),
     ).toEqual([
-      `package.json repository.url must be "${OPENCLAW_PLUGIN_NPM_REPOSITORY_URL}" so npm provenance can validate GitHub trusted publishing; found "<missing>".`,
+      `package.json repository.url must be "${NOVA_PLUGIN_NPM_REPOSITORY_URL}" so npm provenance can validate GitHub trusted publishing; found "<missing>".`,
     ]);
   });
 
@@ -277,7 +277,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           type: "module",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
           openclaw: {
             extensions: ["./index.ts"],
@@ -303,7 +303,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           type: "module",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
           openclaw: {
             extensions: ["./index.ts"],
@@ -334,7 +334,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           type: "module",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
           openclaw: {
             extensions: ["./index.ts"],
@@ -363,7 +363,7 @@ describe("collectPublishablePluginPackageErrors", () => {
           type: "module",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
           dependencies: {
             "@openai/codex": "0.142.5",
@@ -508,7 +508,7 @@ describe("collectPluginReleasePlan", () => {
       type: "module",
       repository: {
         type: "git",
-        url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+        url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
       openclaw: {
         extensions: ["./index.ts"],
@@ -585,7 +585,7 @@ describe("collectPublishablePluginPackages", () => {
       type: "module",
       repository: {
         type: "git",
-        url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+        url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
       openclaw: {
         extensions: ["./index.ts"],
@@ -620,7 +620,7 @@ describe("collectPublishablePluginPackages", () => {
       name: "@openclaw/demo-plugin",
       version: "2026.7.33",
       type: "module",
-      repository: { type: "git", url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL },
+      repository: { type: "git", url: NOVA_PLUGIN_NPM_REPOSITORY_URL },
       openclaw: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.7.33"),
@@ -642,7 +642,7 @@ describe("collectPublishablePluginPackages", () => {
       name: "@openclaw/demo-plugin",
       version: "2026.7.33",
       type: "module",
-      repository: { type: "git", url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL },
+      repository: { type: "git", url: NOVA_PLUGIN_NPM_REPOSITORY_URL },
       openclaw: {
         extensions: ["./index.ts"],
         ...externalPluginContract("2026.7.33"),
@@ -666,7 +666,7 @@ describe("collectPublishablePluginPackages", () => {
       type: "module",
       repository: {
         type: "git",
-        url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+        url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
       dependencies: {
         "demo-runtime": "1.2.3",
@@ -713,7 +713,7 @@ describe("collectPublishablePluginPackages", () => {
       type: "module",
       repository: {
         type: "git",
-        url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+        url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
       openclaw: {
         extensions: ["./index.ts"],
@@ -793,7 +793,7 @@ describe("collectPublishablePluginPackages", () => {
       type: "module",
       repository: {
         type: "git",
-        url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+        url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
       },
       openclaw: {
         extensions: ["./index.ts"],

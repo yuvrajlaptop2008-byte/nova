@@ -65,9 +65,9 @@ function doctorChangesText(): string {
 }
 
 function createAgentDir(agentId: string, includeNestedAgentDir = true) {
-  const stateDir = process.env.OPENCLAW_STATE_DIR;
+  const stateDir = process.env.NOVA_STATE_DIR;
   if (!stateDir) {
-    throw new Error("OPENCLAW_STATE_DIR is not set");
+    throw new Error("NOVA_STATE_DIR is not set");
   }
   const targetDir = includeNestedAgentDir
     ? path.join(stateDir, "agents", agentId, "agent")
@@ -120,11 +120,11 @@ describe("structured state integrity findings", () => {
   let tempHome = "";
 
   beforeEach(() => {
-    envSnapshot = captureEnv(["HOME", "OPENCLAW_HOME", "OPENCLAW_STATE_DIR"]);
+    envSnapshot = captureEnv(["HOME", "NOVA_HOME", "NOVA_STATE_DIR"]);
     tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-doctor-state-integrity-"));
     setTestEnvValue("HOME", tempHome);
-    setTestEnvValue("OPENCLAW_HOME", tempHome);
-    setTestEnvValue("OPENCLAW_STATE_DIR", path.join(tempHome, ".openclaw"));
+    setTestEnvValue("NOVA_HOME", tempHome);
+    setTestEnvValue("NOVA_STATE_DIR", path.join(tempHome, ".openclaw"));
   });
 
   afterEach(() => {
@@ -262,18 +262,18 @@ describe("doctor state integrity oauth dir checks", () => {
   beforeEach(() => {
     envSnapshot = captureEnv([
       "HOME",
-      "OPENCLAW_HOME",
-      "OPENCLAW_STATE_DIR",
-      "OPENCLAW_OAUTH_DIR",
-      "OPENCLAW_AGENT_DIR",
+      "NOVA_HOME",
+      "NOVA_STATE_DIR",
+      "NOVA_OAUTH_DIR",
+      "NOVA_AGENT_DIR",
     ]);
     tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-doctor-state-integrity-"));
     const stateDir = path.join(tempHome, ".openclaw");
     setTestEnvValue("HOME", tempHome);
-    setTestEnvValue("OPENCLAW_HOME", tempHome);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
-    deleteTestEnvValue("OPENCLAW_OAUTH_DIR");
-    deleteTestEnvValue("OPENCLAW_AGENT_DIR");
+    setTestEnvValue("NOVA_HOME", tempHome);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
+    deleteTestEnvValue("NOVA_OAUTH_DIR");
+    deleteTestEnvValue("NOVA_AGENT_DIR");
     fs.mkdirSync(stateDir, { recursive: true, mode: 0o700 });
     noteMock.mockClear();
   });
@@ -317,8 +317,8 @@ describe("doctor state integrity oauth dir checks", () => {
     expect(hasRepairPromptMessage(confirmRuntimeRepair, "Create OAuth dir at")).toBe(true);
   });
 
-  it("prompts for oauth dir when OPENCLAW_OAUTH_DIR is explicitly configured", async () => {
-    process.env.OPENCLAW_OAUTH_DIR = path.join(tempHome, ".oauth");
+  it("prompts for oauth dir when NOVA_OAUTH_DIR is explicitly configured", async () => {
+    process.env.NOVA_OAUTH_DIR = path.join(tempHome, ".oauth");
     const cfg: OpenClawConfig = {};
     const confirmRuntimeRepair = await runStateIntegrity(cfg);
     expect(hasRepairPromptMessage(confirmRuntimeRepair, "Create OAuth dir at")).toBe(true);
@@ -381,15 +381,10 @@ describe("doctor state integrity oauth dir checks", () => {
     expect(text).toContain("Examples: main");
   });
 
-  it("does not let OPENCLAW_AGENT_DIR hide an unconfigured agent dir", async () => {
+  it("does not let NOVA_AGENT_DIR hide an unconfigured agent dir", async () => {
     createAgentDir("legacy");
-    const legacyAgentDir = path.join(
-      process.env.OPENCLAW_STATE_DIR ?? "",
-      "agents",
-      "legacy",
-      "agent",
-    );
-    setTestEnvValue("OPENCLAW_AGENT_DIR", legacyAgentDir);
+    const legacyAgentDir = path.join(process.env.NOVA_STATE_DIR ?? "", "agents", "legacy", "agent");
+    setTestEnvValue("NOVA_AGENT_DIR", legacyAgentDir);
 
     const text = await runStateIntegrityText({
       agents: {
@@ -498,7 +493,7 @@ describe("doctor state integrity oauth dir checks", () => {
 
     const realpathNative = fs.realpathSync.native.bind(fs.realpathSync);
     const resolvedResearchAgentDir = realpathNative(
-      path.join(process.env.OPENCLAW_STATE_DIR ?? "", "agents", "Research", "agent"),
+      path.join(process.env.NOVA_STATE_DIR ?? "", "agents", "Research", "agent"),
     );
     const realpathSpy = vi
       .spyOn(fs.realpathSync, "native")
@@ -584,8 +579,8 @@ describe("doctor state integrity oauth dir checks", () => {
       try {
         const symlinkStateDir = path.join(symlinkHome, ".openclaw");
         setTestEnvValue("HOME", symlinkHome);
-        setTestEnvValue("OPENCLAW_HOME", symlinkHome);
-        setTestEnvValue("OPENCLAW_STATE_DIR", symlinkStateDir);
+        setTestEnvValue("NOVA_HOME", symlinkHome);
+        setTestEnvValue("NOVA_STATE_DIR", symlinkStateDir);
 
         setupSessionState(cfg, process.env, symlinkHome);
         const sessionsDir = resolveSessionTranscriptsDirForAgent(
@@ -678,7 +673,7 @@ describe("doctor state integrity oauth dir checks", () => {
         updatedAt: Date.now(),
       },
     });
-    const stateDir = process.env.OPENCLAW_STATE_DIR ?? "";
+    const stateDir = process.env.NOVA_STATE_DIR ?? "";
     await writeTuiLastSessionKey({
       scopeKey: "default",
       sessionKey: "agent:main:main",

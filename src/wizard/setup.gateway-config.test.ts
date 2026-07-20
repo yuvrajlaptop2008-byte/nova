@@ -115,9 +115,9 @@ describe("configureGatewayForSetup", () => {
     );
   });
 
-  it("prefers OPENCLAW_GATEWAY_TOKEN during quickstart token setup", async () => {
-    const prevToken = process.env.OPENCLAW_GATEWAY_TOKEN;
-    process.env.OPENCLAW_GATEWAY_TOKEN = "token-from-env";
+  it("prefers NOVA_GATEWAY_TOKEN during quickstart token setup", async () => {
+    const prevToken = process.env.NOVA_GATEWAY_TOKEN;
+    process.env.NOVA_GATEWAY_TOKEN = "token-from-env";
     mocks.randomToken.mockReturnValue("generated-token");
     mocks.randomToken.mockClear();
 
@@ -130,16 +130,16 @@ describe("configureGatewayForSetup", () => {
       expect(result.settings.gatewayToken).toBe("token-from-env");
     } finally {
       if (prevToken === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_TOKEN;
+        delete process.env.NOVA_GATEWAY_TOKEN;
       } else {
-        process.env.OPENCLAW_GATEWAY_TOKEN = prevToken;
+        process.env.NOVA_GATEWAY_TOKEN = prevToken;
       }
     }
   });
 
-  it("keeps OPENCLAW_GATEWAY_TOKEN in advanced flow when user confirms keeping existing", async () => {
-    const prevToken = process.env.OPENCLAW_GATEWAY_TOKEN;
-    process.env.OPENCLAW_GATEWAY_TOKEN = "advanced-env-token";
+  it("keeps NOVA_GATEWAY_TOKEN in advanced flow when user confirms keeping existing", async () => {
+    const prevToken = process.env.NOVA_GATEWAY_TOKEN;
+    process.env.NOVA_GATEWAY_TOKEN = "advanced-env-token";
     mocks.randomToken.mockReturnValue("should-not-be-used");
     mocks.randomToken.mockClear();
 
@@ -180,9 +180,9 @@ describe("configureGatewayForSetup", () => {
       expect(mocks.randomToken).not.toHaveBeenCalled();
     } finally {
       if (prevToken === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_TOKEN;
+        delete process.env.NOVA_GATEWAY_TOKEN;
       } else {
-        process.env.OPENCLAW_GATEWAY_TOKEN = prevToken;
+        process.env.NOVA_GATEWAY_TOKEN = prevToken;
       }
     }
   });
@@ -270,12 +270,12 @@ describe("configureGatewayForSetup", () => {
   });
 
   it("honors secretInputMode=ref for gateway password prompts", async () => {
-    const previous = process.env.OPENCLAW_GATEWAY_PASSWORD;
-    process.env.OPENCLAW_GATEWAY_PASSWORD = "gateway-secret"; // pragma: allowlist secret
+    const previous = process.env.NOVA_GATEWAY_PASSWORD;
+    process.env.NOVA_GATEWAY_PASSWORD = "gateway-secret"; // pragma: allowlist secret
     try {
       const prompter = createPrompter({
         selectQueue: ["loopback", "password", "off", "env"],
-        textQueue: ["18789", "OPENCLAW_GATEWAY_PASSWORD"],
+        textQueue: ["18789", "NOVA_GATEWAY_PASSWORD"],
       });
       const runtime = createRuntime();
 
@@ -294,24 +294,24 @@ describe("configureGatewayForSetup", () => {
       expect(result.nextConfig.gateway?.auth?.password).toEqual({
         source: "env",
         provider: "default",
-        id: "OPENCLAW_GATEWAY_PASSWORD",
+        id: "NOVA_GATEWAY_PASSWORD",
       });
     } finally {
       if (previous === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_PASSWORD;
+        delete process.env.NOVA_GATEWAY_PASSWORD;
       } else {
-        process.env.OPENCLAW_GATEWAY_PASSWORD = previous;
+        process.env.NOVA_GATEWAY_PASSWORD = previous;
       }
     }
   });
 
   it("stores gateway token as SecretRef when secretInputMode=ref", async () => {
-    const previous = process.env.OPENCLAW_GATEWAY_TOKEN;
-    process.env.OPENCLAW_GATEWAY_TOKEN = "token-from-env";
+    const previous = process.env.NOVA_GATEWAY_TOKEN;
+    process.env.NOVA_GATEWAY_TOKEN = "token-from-env";
     try {
       const prompter = createPrompter({
         selectQueue: ["loopback", "token", "off", "env"],
-        textQueue: ["18789", "OPENCLAW_GATEWAY_TOKEN"],
+        textQueue: ["18789", "NOVA_GATEWAY_TOKEN"],
       });
       const runtime = createRuntime();
 
@@ -330,14 +330,14 @@ describe("configureGatewayForSetup", () => {
       expect(result.nextConfig.gateway?.auth?.token).toEqual({
         source: "env",
         provider: "default",
-        id: "OPENCLAW_GATEWAY_TOKEN",
+        id: "NOVA_GATEWAY_TOKEN",
       });
       expect(result.settings.gatewayToken).toBe("token-from-env");
     } finally {
       if (previous === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_TOKEN;
+        delete process.env.NOVA_GATEWAY_TOKEN;
       } else {
-        process.env.OPENCLAW_GATEWAY_TOKEN = previous;
+        process.env.NOVA_GATEWAY_TOKEN = previous;
       }
     }
   });

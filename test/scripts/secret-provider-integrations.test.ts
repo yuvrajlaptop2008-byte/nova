@@ -201,9 +201,9 @@ function runProofHarness(
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_ENTRY: fakeNova,
-      OPENCLAW_SECRET_PROOF_READY_MS: "60",
-      OPENCLAW_SECRET_PROOF_RPC_MS: "1000",
+      NOVA_ENTRY: fakeNova,
+      NOVA_SECRET_PROOF_READY_MS: "60",
+      NOVA_SECRET_PROOF_RPC_MS: "1000",
       ...envOverrides,
     },
     timeout: 5_000,
@@ -225,7 +225,7 @@ describe("secret provider integration proof harness", () => {
 
     const command = await proof.resolveOpenClawCommand(
       ["gateway", "status"],
-      { ...process.env, OPENCLAW_SECRET_PROOF_SENTINEL: "1" },
+      { ...process.env, NOVA_SECRET_PROOF_SENTINEL: "1" },
       {
         nodeExecPath: "/opt/node/bin/node",
         npmExecPath: fakePnpm,
@@ -235,7 +235,7 @@ describe("secret provider integration proof harness", () => {
 
     expect(command.command).toBe("/opt/node/bin/node");
     expect(command.args).toEqual([fakePnpm, "openclaw", "gateway", "status"]);
-    expect(command.options.env.OPENCLAW_SECRET_PROOF_SENTINEL).toBe("1");
+    expect(command.options.env.NOVA_SECRET_PROOF_SENTINEL).toBe("1");
     expect(command.options.shell).toBe(false);
   });
 
@@ -255,7 +255,7 @@ describe("secret provider integration proof harness", () => {
     const root = makeTempDir();
     const fakeNova = writeSignaledStartupNova(root);
     const result = runProofHarness(root, fakeNova, "start", {
-      OPENCLAW_SECRET_PROOF_READY_MS: "2000",
+      NOVA_SECRET_PROOF_READY_MS: "2000",
     });
 
     expect(result.error).toBeUndefined();
@@ -272,7 +272,7 @@ describe("secret provider integration proof harness", () => {
       gatewayDescendantMarkerPath: markerPath,
     });
     const result = runProofHarness(root, fakeNova, "start", {
-      OPENCLAW_SECRET_PROOF_TEARDOWN_GRACE_MS: "100",
+      NOVA_SECRET_PROOF_TEARDOWN_GRACE_MS: "100",
     });
 
     expect(result.error).toBeUndefined();
@@ -290,8 +290,8 @@ describe("secret provider integration proof harness", () => {
   });
 
   it("bounds captured command output", async () => {
-    const previousLimit = process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES;
-    process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES = "1024";
+    const previousLimit = process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES;
+    process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES = "1024";
     try {
       const proof = await import(
         `${pathToFileURL(proofScriptPath).href}?case=output-${Date.now()}`
@@ -306,16 +306,16 @@ describe("secret provider integration proof harness", () => {
       expect(result.stdout).toContain("stdout truncated after 1024 bytes");
     } finally {
       if (previousLimit === undefined) {
-        delete process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES;
+        delete process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES;
       } else {
-        process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES = previousLimit;
+        process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES = previousLimit;
       }
     }
   });
 
   it("clamps oversized command timeout env values before scheduling timers", async () => {
-    const previousTimeout = process.env.OPENCLAW_SECRET_PROOF_COMMAND_MS;
-    process.env.OPENCLAW_SECRET_PROOF_COMMAND_MS = String(Number.MAX_SAFE_INTEGER);
+    const previousTimeout = process.env.NOVA_SECRET_PROOF_COMMAND_MS;
+    process.env.NOVA_SECRET_PROOF_COMMAND_MS = String(Number.MAX_SAFE_INTEGER);
     try {
       const proof = await import(
         `${pathToFileURL(proofScriptPath).href}?case=command-timeout-clamp-${Date.now()}`
@@ -330,9 +330,9 @@ describe("secret provider integration proof harness", () => {
       ).resolves.toMatchObject({ code: 0 });
     } finally {
       if (previousTimeout === undefined) {
-        delete process.env.OPENCLAW_SECRET_PROOF_COMMAND_MS;
+        delete process.env.NOVA_SECRET_PROOF_COMMAND_MS;
       } else {
-        process.env.OPENCLAW_SECRET_PROOF_COMMAND_MS = previousTimeout;
+        process.env.NOVA_SECRET_PROOF_COMMAND_MS = previousTimeout;
       }
     }
   });
@@ -368,23 +368,23 @@ describe("secret provider integration proof harness", () => {
   });
 
   it("blocks skipped secret proofs unless local rehearsals explicitly allow skips", async () => {
-    const previousAllowSkips = process.env.OPENCLAW_SECRET_PROOF_ALLOW_SKIPS;
+    const previousAllowSkips = process.env.NOVA_SECRET_PROOF_ALLOW_SKIPS;
     const proof = await import(
       `${pathToFileURL(proofScriptPath).href}?case=skip-block-${Date.now()}`
     );
     const entries = [{ name: "PX", status: "skip", elapsedMs: 1, evidence: "missing service" }];
 
     try {
-      delete process.env.OPENCLAW_SECRET_PROOF_ALLOW_SKIPS;
+      delete process.env.NOVA_SECRET_PROOF_ALLOW_SKIPS;
       expect(proof.collectBlockingProofResults(entries)).toEqual(entries);
 
-      process.env.OPENCLAW_SECRET_PROOF_ALLOW_SKIPS = "1";
+      process.env.NOVA_SECRET_PROOF_ALLOW_SKIPS = "1";
       expect(proof.collectBlockingProofResults(entries)).toEqual([]);
     } finally {
       if (previousAllowSkips === undefined) {
-        delete process.env.OPENCLAW_SECRET_PROOF_ALLOW_SKIPS;
+        delete process.env.NOVA_SECRET_PROOF_ALLOW_SKIPS;
       } else {
-        process.env.OPENCLAW_SECRET_PROOF_ALLOW_SKIPS = previousAllowSkips;
+        process.env.NOVA_SECRET_PROOF_ALLOW_SKIPS = previousAllowSkips;
       }
     }
   });
@@ -411,10 +411,10 @@ describe("secret provider integration proof harness", () => {
   it.runIf(process.platform !== "win32")("bounds captured PTY configure output", async () => {
     const root = makeTempDir();
     const fakeNova = writeNoisySecretsConfigureNova(root);
-    const previousLimit = process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES;
-    const previousEntry = process.env.OPENCLAW_ENTRY;
-    process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES = "128";
-    process.env.OPENCLAW_ENTRY = fakeNova;
+    const previousLimit = process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES;
+    const previousEntry = process.env.NOVA_ENTRY;
+    process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES = "128";
+    process.env.NOVA_ENTRY = fakeNova;
     try {
       const proof = await import(
         `${pathToFileURL(proofScriptPath).href}?case=pty-output-${Date.now()}`
@@ -424,7 +424,7 @@ describe("secret provider integration proof harness", () => {
         .runPtySecretsConfigurePreset({
           env: {
             ...process.env,
-            OPENCLAW_ENTRY: fakeNova,
+            NOVA_ENTRY: fakeNova,
           },
         })
         .catch((caught: unknown) => caught);
@@ -437,14 +437,14 @@ describe("secret provider integration proof harness", () => {
       expect((error as Error).message.length).toBeLessThan(600);
     } finally {
       if (previousLimit === undefined) {
-        delete process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES;
+        delete process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES;
       } else {
-        process.env.OPENCLAW_SECRET_PROOF_OUTPUT_BYTES = previousLimit;
+        process.env.NOVA_SECRET_PROOF_OUTPUT_BYTES = previousLimit;
       }
       if (previousEntry === undefined) {
-        delete process.env.OPENCLAW_ENTRY;
+        delete process.env.NOVA_ENTRY;
       } else {
-        process.env.OPENCLAW_ENTRY = previousEntry;
+        process.env.NOVA_ENTRY = previousEntry;
       }
     }
   });
@@ -457,7 +457,7 @@ describe("secret provider integration proof harness", () => {
       const descendantPidPath = path.join(root, "descendant.pid");
       const readyPath = path.join(root, "ready");
       let descendantPid = 0;
-      const previousEntry = process.env.OPENCLAW_ENTRY;
+      const previousEntry = process.env.NOVA_ENTRY;
       const descendantScript = [
         "import fs from 'node:fs';",
         "process.on('SIGHUP', () => {});",
@@ -481,7 +481,7 @@ describe("secret provider integration proof harness", () => {
         ].join("\n"),
         { mode: 0o755 },
       );
-      process.env.OPENCLAW_ENTRY = fakeNova;
+      process.env.NOVA_ENTRY = fakeNova;
       const proof = await import(
         `${pathToFileURL(proofScriptPath).href}?case=pty-timeout-${Date.now()}`
       );
@@ -491,7 +491,7 @@ describe("secret provider integration proof harness", () => {
           {
             env: {
               ...process.env,
-              OPENCLAW_ENTRY: fakeNova,
+              NOVA_ENTRY: fakeNova,
             },
           },
           { timeoutKillGraceMs: 50, timeoutMs: 500 },
@@ -509,9 +509,9 @@ describe("secret provider integration proof harness", () => {
           process.kill(descendantPid, "SIGKILL");
         }
         if (previousEntry === undefined) {
-          delete process.env.OPENCLAW_ENTRY;
+          delete process.env.NOVA_ENTRY;
         } else {
-          process.env.OPENCLAW_ENTRY = previousEntry;
+          process.env.NOVA_ENTRY = previousEntry;
         }
       }
     },
@@ -535,10 +535,10 @@ describe("secret provider integration proof harness", () => {
   );
 
   it.each([
-    ["OPENCLAW_SECRET_PROOF_COMMAND_MS", "150ms"],
-    ["OPENCLAW_SECRET_PROOF_READY_MS", "0"],
-    ["OPENCLAW_SECRET_PROOF_OUTPUT_BYTES", "4mb"],
-    ["OPENCLAW_SECRET_PROOF_RESOLVER_STDIN_BYTES", "4mb"],
+    ["NOVA_SECRET_PROOF_COMMAND_MS", "150ms"],
+    ["NOVA_SECRET_PROOF_READY_MS", "0"],
+    ["NOVA_SECRET_PROOF_OUTPUT_BYTES", "4mb"],
+    ["NOVA_SECRET_PROOF_RESOLVER_STDIN_BYTES", "4mb"],
   ])("rejects malformed proof env limit %s=%s", async (name, value) => {
     const previous = process.env[name];
     process.env[name] = value;
@@ -565,8 +565,8 @@ describe("secret provider integration proof harness", () => {
       `${JSON.stringify({ mode: "ok", calls: 0, values: { "proof/id": "ok" } }, null, 2)}\n`,
       "utf8",
     );
-    const previousLimit = process.env.OPENCLAW_SECRET_PROOF_RESOLVER_STDIN_BYTES;
-    process.env.OPENCLAW_SECRET_PROOF_RESOLVER_STDIN_BYTES = "64";
+    const previousLimit = process.env.NOVA_SECRET_PROOF_RESOLVER_STDIN_BYTES;
+    process.env.NOVA_SECRET_PROOF_RESOLVER_STDIN_BYTES = "64";
 
     try {
       const proof = await import(
@@ -590,9 +590,9 @@ describe("secret provider integration proof harness", () => {
       expect(JSON.parse(fs.readFileSync(storePath, "utf8")).calls).toBe(0);
     } finally {
       if (previousLimit === undefined) {
-        delete process.env.OPENCLAW_SECRET_PROOF_RESOLVER_STDIN_BYTES;
+        delete process.env.NOVA_SECRET_PROOF_RESOLVER_STDIN_BYTES;
       } else {
-        process.env.OPENCLAW_SECRET_PROOF_RESOLVER_STDIN_BYTES = previousLimit;
+        process.env.NOVA_SECRET_PROOF_RESOLVER_STDIN_BYTES = previousLimit;
       }
     }
   });
@@ -973,7 +973,7 @@ describe("secret provider integration proof harness", () => {
     const root = makeTempDir();
     const fakeNova = writeLeakingStartupNova(root);
     const result = runProofHarness(root, fakeNova, "startup-fails", {
-      OPENCLAW_SECRET_PROOF_OUTPUT_BYTES: "128",
+      NOVA_SECRET_PROOF_OUTPUT_BYTES: "128",
     });
 
     expect(result.error).toBeUndefined();

@@ -18,12 +18,12 @@ describe("SQLite CLI maintenance ownership", () => {
           ...process.env,
           HOME: tempHome,
           USERPROFILE: tempHome,
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_FAST: "1",
         };
-        delete env.OPENCLAW_CONFIG_PATH;
-        delete env.OPENCLAW_HOME;
+        delete env.NOVA_CONFIG_PATH;
+        delete env.NOVA_HOME;
         delete env.VITEST;
 
         try {
@@ -102,12 +102,12 @@ describe("SQLite CLI maintenance ownership", () => {
           ...process.env,
           HOME: tempHome,
           USERPROFILE: tempHome,
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_FAST: "1",
         };
-        delete env.OPENCLAW_CONFIG_PATH;
-        delete env.OPENCLAW_HOME;
+        delete env.NOVA_CONFIG_PATH;
+        delete env.NOVA_HOME;
         delete env.VITEST;
 
         const entry = path.resolve(process.cwd(), "src/entry.ts");
@@ -159,12 +159,12 @@ describe("SQLite CLI maintenance ownership", () => {
           ...process.env,
           HOME: tempHome,
           USERPROFILE: tempHome,
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_FAST: "1",
         };
-        delete env.OPENCLAW_CONFIG_PATH;
-        delete env.OPENCLAW_HOME;
+        delete env.NOVA_CONFIG_PATH;
+        delete env.NOVA_HOME;
         delete env.VITEST;
 
         const entry = path.resolve(process.cwd(), "src/entry.ts");

@@ -502,7 +502,7 @@ describe("node host invoke", () => {
         "---\nname: cwd-skill\ndescription: Cwd skill\n---\n",
       );
 
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         const request = vi.fn<GatewayClient["request"]>().mockResolvedValue(null);
         const skillBins: SkillBinsProvider = { current: async () => [] };
         await handleInvoke(
@@ -675,7 +675,7 @@ describe("node host invoke", () => {
   it("forwards suppressNotifyOnExit on completed system.run events", async () => {
     const tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-node-event-suppress-"));
     try {
-      await withEnvAsync({ OPENCLAW_HOME: tempHome }, async () => {
+      await withEnvAsync({ NOVA_HOME: tempHome }, async () => {
         saveExecApprovals({
           version: 1,
           defaults: { security: "allowlist", ask: "on-miss", askFallback: "deny" },

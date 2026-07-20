@@ -7,7 +7,7 @@ import { maybeOfferUpdateBeforeDoctor } from "./doctor-update.js";
 
 const originalStdinIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdin, "isTTY");
 const originalStdoutIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");
-const originalServiceRepairPolicy = process.env.OPENCLAW_SERVICE_REPAIR_POLICY;
+const originalServiceRepairPolicy = process.env.NOVA_SERVICE_REPAIR_POLICY;
 
 const mocks = vi.hoisted(() => ({
   createUpdateProgress: vi.fn(),
@@ -111,9 +111,9 @@ afterEach(() => {
     delete (process.stdout as Partial<typeof process.stdout>).isTTY;
   }
   if (originalServiceRepairPolicy === undefined) {
-    delete process.env.OPENCLAW_SERVICE_REPAIR_POLICY;
+    delete process.env.NOVA_SERVICE_REPAIR_POLICY;
   } else {
-    process.env.OPENCLAW_SERVICE_REPAIR_POLICY = originalServiceRepairPolicy;
+    process.env.NOVA_SERVICE_REPAIR_POLICY = originalServiceRepairPolicy;
   }
 });
 
@@ -256,7 +256,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     mocks.readGatewayServiceState.mockResolvedValue({
       installed: true,
       running: true,
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
       command: {
         programArguments: ["node", "/repo/link/dist/index.js", "gateway", "run"],
       },
@@ -268,7 +268,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     });
 
     expect(mocks.restartGatewayService).toHaveBeenCalledWith({
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
       stdout: process.stdout,
     });
     expect(mocks.runGatewayUpdate).toHaveBeenCalledWith(
@@ -294,7 +294,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
       .mockResolvedValueOnce({
         installed: true,
         running: true,
-        env: { OPENCLAW_PROFILE: "work" },
+        env: { NOVA_PROFILE: "work" },
         command: {
           programArguments: ["node", "/repo/link/dist/index.js", "gateway", "run"],
         },
@@ -302,7 +302,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
       .mockResolvedValueOnce({
         installed: true,
         running: false,
-        env: { OPENCLAW_PROFILE: "work" },
+        env: { NOVA_PROFILE: "work" },
         command: {
           programArguments: ["node", "/repo/link/dist/index.js", "gateway", "run"],
         },
@@ -314,7 +314,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     });
 
     expect(mocks.restartGatewayService).toHaveBeenCalledWith({
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
       stdout: process.stdout,
     });
   });
@@ -329,7 +329,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     mocks.readGatewayServiceState.mockResolvedValue({
       installed: true,
       running: true,
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
       command: {
         programArguments: ["node", "/repo/other/dist/index.js", "gateway", "run"],
       },
@@ -365,7 +365,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     mocks.readGatewayServiceState.mockResolvedValue({
       installed: true,
       running: true,
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
       command: {
         programArguments: ["node", "dist/index.js", "gateway", "run"],
       },
@@ -401,7 +401,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     mocks.readGatewayServiceState.mockResolvedValue({
       installed: true,
       running: false,
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
       command: {
         programArguments: ["node", "/repo/link/dist/index.js", "gateway", "run"],
       },
@@ -423,7 +423,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
 
   it("leaves a running gateway alone when service repair is externally managed", async () => {
     mockGitCheckout();
-    process.env.OPENCLAW_SERVICE_REPAIR_POLICY = "external";
+    process.env.NOVA_SERVICE_REPAIR_POLICY = "external";
     mocks.runGatewayUpdate.mockResolvedValue({
       status: "ok",
       mode: "git",
@@ -432,7 +432,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     mocks.readGatewayServiceState.mockResolvedValue({
       installed: true,
       running: true,
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
     });
 
     await expect(runOffer({ confirm: vi.fn().mockResolvedValue(true) })).resolves.toEqual({
@@ -461,7 +461,7 @@ describe("maybeOfferUpdateBeforeDoctor", () => {
     mocks.readGatewayServiceState.mockResolvedValue({
       installed: true,
       running: true,
-      env: { OPENCLAW_PROFILE: "work" },
+      env: { NOVA_PROFILE: "work" },
     });
     mocks.restartGatewayService.mockRejectedValue(new Error("schtasks failed"));
 

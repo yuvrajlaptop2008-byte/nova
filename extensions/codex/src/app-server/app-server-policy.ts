@@ -31,12 +31,10 @@ export function resolveCodexAppServerForOpenClawToolPolicy(params: {
   const explicitMode =
     params.execPolicy?.mode === "full" ||
     params.pluginConfig.appServer?.mode !== undefined ||
-    isCodexAppServerPolicyMode(params.env.OPENCLAW_CODEX_APP_SERVER_MODE);
+    isCodexAppServerPolicyMode(params.env.NOVA_CODEX_APP_SERVER_MODE);
   const explicitApprovalPolicy =
     params.pluginConfig.appServer?.approvalPolicy !== undefined ||
-    isConfiguredCodexAppServerApprovalPolicy(
-      params.env.OPENCLAW_CODEX_APP_SERVER_APPROVAL_POLICY,
-    ) ||
+    isConfiguredCodexAppServerApprovalPolicy(params.env.NOVA_CODEX_APP_SERVER_APPROVAL_POLICY) ||
     params.appServer.approvalPolicySource === "requirements";
   if (explicitMode || explicitApprovalPolicy) {
     return params.appServer;

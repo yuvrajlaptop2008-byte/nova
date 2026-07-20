@@ -81,7 +81,7 @@ describe("run-with-env", () => {
   it("parses leading env assignments before the command separator", () => {
     expect(
       parseRunWithEnvArgs([
-        "OPENCLAW_GATEWAY_PROJECT_SHARDS=1",
+        "NOVA_GATEWAY_PROJECT_SHARDS=1",
         "EMPTY=",
         "--",
         "node",
@@ -90,7 +90,7 @@ describe("run-with-env", () => {
       ]),
     ).toEqual({
       env: {
-        OPENCLAW_GATEWAY_PROJECT_SHARDS: "1",
+        NOVA_GATEWAY_PROJECT_SHARDS: "1",
         EMPTY: "",
       },
       command: "node",
@@ -99,9 +99,7 @@ describe("run-with-env", () => {
   });
 
   it("rejects missing command separators", () => {
-    expect(() => parseRunWithEnvArgs(["OPENCLAW_GATEWAY_PROJECT_SHARDS=1", "node"])).toThrow(
-      /Usage:/u,
-    );
+    expect(() => parseRunWithEnvArgs(["NOVA_GATEWAY_PROJECT_SHARDS=1", "node"])).toThrow(/Usage:/u);
   });
 
   it("prints wrapper help without spawning a command", () => {
@@ -116,9 +114,9 @@ describe("run-with-env", () => {
   });
 
   it("keeps command help passthrough after the separator", () => {
-    expect(
-      isRunWithEnvHelpRequest(["OPENCLAW_GATEWAY_PROJECT_SHARDS=1", "--", "node", "--help"]),
-    ).toBe(false);
+    expect(isRunWithEnvHelpRequest(["NOVA_GATEWAY_PROJECT_SHARDS=1", "--", "node", "--help"])).toBe(
+      false,
+    );
   });
 
   it("rejects malformed assignments before spawning", () => {
@@ -175,15 +173,15 @@ describe("run-with-env", () => {
 
   it("rejects malformed force-kill grace configuration before spawning", () => {
     expect(resolveForceKillDelayMs({})).toBe(5_000);
-    expect(resolveForceKillDelayMs({ OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS: "250" })).toBe(250);
+    expect(resolveForceKillDelayMs({ NOVA_RUN_WITH_ENV_FORCE_KILL_MS: "250" })).toBe(250);
     expect(
       resolveForceKillDelayMs({
-        OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
+        NOVA_RUN_WITH_ENV_FORCE_KILL_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
       }),
     ).toBe(MAX_TIMER_TIMEOUT_MS);
     for (const value of ["0", "-1", "1e3", "100ms"]) {
-      expect(() => resolveForceKillDelayMs({ OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS: value })).toThrow(
-        "OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS must be a positive integer",
+      expect(() => resolveForceKillDelayMs({ NOVA_RUN_WITH_ENV_FORCE_KILL_MS: value })).toThrow(
+        "NOVA_RUN_WITH_ENV_FORCE_KILL_MS must be a positive integer",
       );
     }
 
@@ -191,7 +189,7 @@ describe("run-with-env", () => {
       process.execPath,
       [
         "scripts/run-with-env.mjs",
-        "OPENCLAW_RUN_WITH_ENV_SIGNAL_TEST=1",
+        "NOVA_RUN_WITH_ENV_SIGNAL_TEST=1",
         "--",
         "node",
         "-e",
@@ -200,15 +198,13 @@ describe("run-with-env", () => {
       {
         cwd: process.cwd(),
         encoding: "utf8",
-        env: { ...process.env, OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS: "100ms" },
+        env: { ...process.env, NOVA_RUN_WITH_ENV_FORCE_KILL_MS: "100ms" },
       },
     );
 
     expect(result.status).toBe(2);
     expect(result.stdout).toBe("");
-    expect(result.stderr).toContain(
-      "OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS must be a positive integer",
-    );
+    expect(result.stderr).toContain("NOVA_RUN_WITH_ENV_FORCE_KILL_MS must be a positive integer");
   });
 
   it("signals Windows wrapped command trees with taskkill", () => {
@@ -348,7 +344,7 @@ describe("run-with-env", () => {
         ],
         {
           cwd: process.cwd(),
-          env: { ...process.env, OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS: "200" },
+          env: { ...process.env, NOVA_RUN_WITH_ENV_FORCE_KILL_MS: "200" },
           stdio: "ignore",
         },
       );
@@ -424,7 +420,7 @@ describe("run-with-env", () => {
           cwd: process.cwd(),
           env: {
             ...process.env,
-            OPENCLAW_RUN_WITH_ENV_FORCE_KILL_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
+            NOVA_RUN_WITH_ENV_FORCE_KILL_MS: String(MAX_TIMER_TIMEOUT_MS + 1),
           },
           stdio: "ignore",
         },
@@ -453,7 +449,7 @@ describe("run-with-env", () => {
       process.execPath,
       [
         "scripts/run-with-env.mjs",
-        "OPENCLAW_RUN_WITH_ENV_SIGNAL_TEST=1",
+        "NOVA_RUN_WITH_ENV_SIGNAL_TEST=1",
         "--",
         "node",
         "-e",
@@ -471,7 +467,7 @@ describe("run-with-env", () => {
       process.execPath,
       [
         "scripts/run-with-env.mjs",
-        "OPENCLAW_RUN_WITH_ENV_SIGNAL_TEST=1",
+        "NOVA_RUN_WITH_ENV_SIGNAL_TEST=1",
         "--",
         "node",
         "-e",

@@ -91,16 +91,16 @@ async function withSandbox(test: (sandboxDir: string) => Promise<void>) {
 }
 
 async function withTempOpenClawStateDir<T>(test: (stateDir: string) => Promise<T>): Promise<T> {
-  const previous = process.env.OPENCLAW_STATE_DIR;
+  const previous = process.env.NOVA_STATE_DIR;
   const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "msg-runner-state-"));
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  process.env.NOVA_STATE_DIR = stateDir;
   try {
     return await test(stateDir);
   } finally {
     if (previous === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previous;
+      process.env.NOVA_STATE_DIR = previous;
     }
     await fs.rm(stateDir, { recursive: true, force: true });
   }

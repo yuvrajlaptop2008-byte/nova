@@ -496,7 +496,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
         { label: "first", args: ["--eval", appendScript("first")], timeoutMs: 5_000 },
         { label: "second", args: ["--eval", appendScript("second")], timeoutMs: 5_000 },
       ],
-      { OPENCLAW_LOCAL_CHECK: "1" },
+      { NOVA_LOCAL_CHECK: "1" },
     );
 
     expect(fs.readFileSync(logPath, "utf8").trim().split("\n")).toEqual([
@@ -513,13 +513,13 @@ describe("prepare-extension-package-boundary-artifacts", () => {
     const outputPath = path.join(rootDir, "env.txt");
     const writeEnvScript =
       `const fs=require("node:fs");` +
-      `fs.writeFileSync(${JSON.stringify(outputPath)}, process.env.OPENCLAW_TEST_ENV || "", "utf8");`;
+      `fs.writeFileSync(${JSON.stringify(outputPath)}, process.env.NOVA_TEST_ENV || "", "utf8");`;
 
     await runNodeStepsInParallel([
       {
         label: "env-step",
         args: ["--eval", writeEnvScript],
-        env: { OPENCLAW_TEST_ENV: "passed" },
+        env: { NOVA_TEST_ENV: "passed" },
         timeoutMs: 5_000,
       },
     ]);
@@ -623,7 +623,7 @@ describe("prepare-extension-package-boundary-artifacts", () => {
   it("keeps bundled-private runtime shims in production while gating QA helpers", () => {
     const productionOutputs = resolveBoundaryEntryShimRequiredOutputs({});
     const privateQaOutputs = resolveBoundaryEntryShimRequiredOutputs({
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
+      NOVA_BUILD_PRIVATE_QA: "1",
     });
 
     expect(productionOutputs).toContain("dist/plugin-sdk/provider-auth-runtime.d.ts");
@@ -643,18 +643,18 @@ describe("prepare-extension-package-boundary-artifacts", () => {
     expect(resolveBoundaryRootShimsTimeoutMs({})).toBe(300_000);
     expect(
       resolveBoundaryRootShimsTimeoutMs({
-        OPENCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "450000",
+        NOVA_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "450000",
       }),
     ).toBe(450_000);
     expect(() =>
       resolveBoundaryRootShimsTimeoutMs({
-        OPENCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "120s",
+        NOVA_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "120s",
       }),
-    ).toThrow("OPENCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS must be a positive integer");
+    ).toThrow("NOVA_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS must be a positive integer");
     expect(() =>
       resolveBoundaryRootShimsTimeoutMs({
-        OPENCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "0",
+        NOVA_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS: "0",
       }),
-    ).toThrow("OPENCLAW_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS must be a positive integer");
+    ).toThrow("NOVA_PLUGIN_SDK_BOUNDARY_ROOT_SHIMS_TIMEOUT_MS must be a positive integer");
   });
 });

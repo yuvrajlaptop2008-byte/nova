@@ -164,8 +164,8 @@ async function withFreshBundleCheckSource(sourceDir, run) {
     await fs.copyFile(path.join(sourceDir, "index.html"), path.join(checkSourceDir, "index.html"));
     bundleA2ui(rootDir, {
       ...process.env,
-      OPENCLAW_A2UI_BUNDLE_OUT: path.join(checkSourceDir, "a2ui.bundle.js"),
-      OPENCLAW_A2UI_BUNDLE_HASH_FILE: path.join(tempDir, ".bundle.hash"),
+      NOVA_A2UI_BUNDLE_OUT: path.join(checkSourceDir, "a2ui.bundle.js"),
+      NOVA_A2UI_BUNDLE_HASH_FILE: path.join(tempDir, ".bundle.hash"),
     });
     await run(checkSourceDir);
   } finally {

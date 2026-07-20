@@ -122,7 +122,7 @@ describe("session store lifecycle mutations", () => {
     expect(
       searchSessionTranscripts({
         agentId: "main",
-        env: { ...process.env, OPENCLAW_STATE_DIR: tempDir },
+        env: { ...process.env, NOVA_STATE_DIR: tempDir },
         query: "foreverneedle",
         sessionKeys: ["agent:main:room"],
       }).hits,
@@ -221,7 +221,7 @@ describe("session store lifecycle mutations", () => {
     expect(
       searchSessionTranscripts({
         agentId: "main",
-        env: { ...process.env, OPENCLAW_STATE_DIR: tempDir },
+        env: { ...process.env, NOVA_STATE_DIR: tempDir },
         query: "deleteforever",
         sessionKeys: [sessionKey],
       }).hits,
@@ -245,7 +245,7 @@ describe("session store lifecycle mutations", () => {
     expect(
       searchSessionTranscripts({
         agentId: "main",
-        env: { ...process.env, OPENCLAW_STATE_DIR: tempDir },
+        env: { ...process.env, NOVA_STATE_DIR: tempDir },
         query: "deleteforever",
         sessionKeys: [sessionKey],
       }).hits,

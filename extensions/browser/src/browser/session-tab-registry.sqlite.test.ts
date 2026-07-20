@@ -137,7 +137,7 @@ function setBrowserProfileConfig(): void {
 }
 
 describe("durable session tab registry", () => {
-  const originalStateDir = process.env.OPENCLAW_STATE_DIR;
+  const originalStateDir = process.env.NOVA_STATE_DIR;
   let stateDir: string;
   let freshModuleCounter = 0;
 
@@ -184,7 +184,7 @@ describe("durable session tab registry", () => {
     clearRuntimeConfigSnapshot();
     clearProcessLocalTabState();
     stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-browser-tabs-"));
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.NOVA_STATE_DIR = stateDir;
     resetPluginStateStoreForTests();
     installRuntime();
     openStore().clear();
@@ -197,9 +197,9 @@ describe("durable session tab registry", () => {
     resetPluginStateStoreForTests();
     fs.rmSync(stateDir, { recursive: true, force: true });
     if (originalStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalStateDir;
+      process.env.NOVA_STATE_DIR = originalStateDir;
     }
   });
 

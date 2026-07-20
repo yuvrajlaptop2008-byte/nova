@@ -302,7 +302,7 @@ describe("commitConfigWithPendingPluginInstalls", () => {
     fs.mkdirSync(nextInstallPath, { recursive: true });
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await commitPluginInstallRecordsWithConfig({
           previousInstallRecords: {
             codex: {
@@ -353,7 +353,7 @@ describe("commitConfigWithPendingPluginInstalls", () => {
     fs.mkdirSync(nextInstallPath, { recursive: true });
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await commitPluginInstallRecordsWithConfig({
           previousInstallRecords: {
             codex: {
@@ -404,7 +404,7 @@ describe("commitConfigWithPendingPluginInstalls", () => {
     fs.mkdirSync(nextInstallPath, { recursive: true });
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await commitPluginInstallRecordsWithConfig({
           previousInstallRecords: {
             "voice-call": {
@@ -455,7 +455,7 @@ describe("commitConfigWithPendingPluginInstalls", () => {
     mocks.replaceConfigFile.mockRejectedValueOnce(new Error("config changed"));
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await expect(
           commitPluginInstallRecordsWithConfig({
             previousInstallRecords: {
@@ -532,7 +532,7 @@ describe("commitConfigWithPendingPluginInstalls", () => {
     );
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await expect(
           commitPluginInstallRecordsWithConfig({
             previousInstallRecords: {
@@ -590,7 +590,7 @@ describe("commitConfigWithPendingPluginInstalls", () => {
     });
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await commitPluginInstallRecordsWithConfig({
           previousInstallRecords: {},
           nextInstallRecords: {
@@ -631,7 +631,7 @@ describe("commitConfigWithPendingPluginInstalls", () => {
     mocks.replaceConfigFile.mockRejectedValueOnce(new Error("config changed"));
 
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await expect(
           commitPluginInstallRecordsWithConfig({
             previousInstallRecords: {},

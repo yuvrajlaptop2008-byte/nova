@@ -72,7 +72,7 @@ describe("completion-runtime", () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-state-bob's-"));
 
     try {
-      await withEnvAsync({ HOME: homeDir, OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ HOME: homeDir, NOVA_STATE_DIR: stateDir }, async () => {
         const cachePath = resolveCompletionCachePath("powershell", "openclaw");
         await fs.mkdir(path.dirname(cachePath), { recursive: true });
         await fs.writeFile(cachePath, "# powershell completion\n", "utf-8");
@@ -94,7 +94,7 @@ describe("completion-runtime", () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-completion-state-"));
 
     try {
-      await withEnvAsync({ HOME: homeDir, OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ HOME: homeDir, NOVA_STATE_DIR: stateDir }, async () => {
         await expect(installCompletion("zsh", true, "openclaw")).rejects.toThrow(
           "Completion cache not found",
         );

@@ -92,7 +92,7 @@ describe("doctor managed npm generation repair", () => {
 
     await expect(
       maybeRepairStaleManagedNpmInstallGenerations({
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
         prompter: { shouldRepair: true },
         stateDir,
       }),
@@ -128,7 +128,7 @@ describe("doctor managed npm generation repair", () => {
           entries: { [PLUGIN_ID]: { enabled: true } },
         },
       },
-      env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+      env: { ...process.env, NOVA_STATE_DIR: stateDir },
       prompter: { shouldRepair: true },
       stateDir,
     });

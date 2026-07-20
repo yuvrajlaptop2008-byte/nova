@@ -528,8 +528,8 @@ describe("plugin scheduled turns", () => {
 
     const registry = withEnv(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
+        NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
         loadOpenClawPlugins({
@@ -666,8 +666,8 @@ describe("plugin scheduled turns", () => {
 
     const registry = withEnv(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
+        NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
         loadOpenClawPlugins({

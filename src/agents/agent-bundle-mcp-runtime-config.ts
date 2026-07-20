@@ -29,7 +29,7 @@ const SESSION_MCP_CONFIG_DISCOVERY_CACHE_KEY = Symbol.for(
 );
 const SESSION_MCP_CONFIG_DISCOVERY_CACHE_LIMIT = 128;
 const SESSION_MCP_PREPARED_CONFIG_VARIANT_LIMIT = 64;
-const EMPTY_OPENCLAW_CONFIG: OpenClawConfig = {};
+const EMPTY_NOVA_CONFIG: OpenClawConfig = {};
 
 type SessionMcpConfigDiscoveryCacheState = {
   entries: PluginLruCache<SessionMcpConfigDiscoveryCacheEntry>;
@@ -71,7 +71,7 @@ function buildSessionMcpConfigDiscoveryCacheKey(params: {
   return JSON.stringify({
     v: 1,
     workspaceDir: params.workspaceDir,
-    config: resolveRuntimeConfigCacheKey(params.cfg ?? EMPTY_OPENCLAW_CONFIG),
+    config: resolveRuntimeConfigCacheKey(params.cfg ?? EMPTY_NOVA_CONFIG),
     manifestRegistry: resolveManifestRegistryCacheId(params.manifestRegistry),
   });
 }

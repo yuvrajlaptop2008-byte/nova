@@ -21,7 +21,7 @@ import { agentHandlers } from "./agent.js";
 import { suspendHandlers } from "./suspend.js";
 import type { GatewayRequestContext } from "./types.js";
 
-const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
 
 export const REAL_PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
@@ -632,7 +632,7 @@ export function resetTimeConfig() {
 }
 
 export function useTestStateDir(root: string): void {
-  setTestEnvValue("OPENCLAW_STATE_DIR", root);
+  setTestEnvValue("NOVA_STATE_DIR", root);
 }
 
 export async function expectResetCall(expectedMessage: string) {

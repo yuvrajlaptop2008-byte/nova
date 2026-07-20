@@ -92,7 +92,7 @@ function openLegacySqliteStore(io: MatrixInboundDedupeMigrationIo, storageRootDi
   return io.context.openPluginStateKeyedStore<unknown>({
     namespace: LEGACY_SQLITE_NAMESPACE,
     maxEntries: LEGACY_SQLITE_MAX_ENTRIES,
-    env: { ...io.env, OPENCLAW_STATE_DIR: storageRootDir },
+    env: { ...io.env, NOVA_STATE_DIR: storageRootDir },
   });
 }
 
@@ -100,7 +100,7 @@ function openLegacyMarkersStore(io: MatrixInboundDedupeMigrationIo, storageRootD
   return io.context.openPluginStateKeyedStore<unknown>({
     namespace: LEGACY_MARKERS_NAMESPACE,
     maxEntries: LEGACY_MARKERS_MAX_ENTRIES,
-    env: { ...io.env, OPENCLAW_STATE_DIR: storageRootDir },
+    env: { ...io.env, NOVA_STATE_DIR: storageRootDir },
   });
 }
 

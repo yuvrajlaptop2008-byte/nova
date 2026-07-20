@@ -128,9 +128,9 @@ describe("session binding service", () => {
   let testStateDir = "";
 
   beforeEach(async () => {
-    previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    previousStateDir = process.env.NOVA_STATE_DIR;
     testStateDir = await tempDirs.make("openclaw-session-binding-");
-    process.env.OPENCLAW_STATE_DIR = testStateDir;
+    process.env.NOVA_STATE_DIR = testStateDir;
     testing.resetSessionBindingAdaptersForTests();
     setMinimalCurrentConversationRegistry();
   });
@@ -139,9 +139,9 @@ describe("session binding service", () => {
     testing.resetSessionBindingAdaptersForTests();
     closeOpenClawStateDatabaseForTest();
     if (previousStateDir == null) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = previousStateDir;
+      process.env.NOVA_STATE_DIR = previousStateDir;
     }
     await tempDirs.cleanup();
   });

@@ -56,7 +56,7 @@ export type RegisterSlackModalHandler = (
 ) => void;
 
 type SlackInteractionContextPrefix = "slack:interaction:view" | "slack:interaction:view-closed";
-const OPENCLAW_MODAL_CALLBACK_PREFIX = "openclaw:";
+const NOVA_MODAL_CALLBACK_PREFIX = "openclaw:";
 
 function resolveSlackModalPluginInteractiveData(params: {
   callbackId: string;
@@ -66,17 +66,17 @@ function resolveSlackModalPluginInteractiveData(params: {
   if (metadataData) {
     return metadataData;
   }
-  if (!params.callbackId.startsWith(OPENCLAW_MODAL_CALLBACK_PREFIX)) {
+  if (!params.callbackId.startsWith(NOVA_MODAL_CALLBACK_PREFIX)) {
     return undefined;
   }
-  const callbackData = params.callbackId.slice(OPENCLAW_MODAL_CALLBACK_PREFIX.length).trim();
+  const callbackData = params.callbackId.slice(NOVA_MODAL_CALLBACK_PREFIX.length).trim();
   return callbackData || undefined;
 }
 
 function shouldHandleSlackModalLifecycleBody(body: unknown): boolean {
   const typed = body as SlackModalBody;
   const callbackId = typed.view?.callback_id ?? "";
-  if (callbackId.startsWith(OPENCLAW_MODAL_CALLBACK_PREFIX)) {
+  if (callbackId.startsWith(NOVA_MODAL_CALLBACK_PREFIX)) {
     return true;
   }
   const metadata = parseSlackModalPrivateMetadata(typed.view?.private_metadata);

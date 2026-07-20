@@ -333,7 +333,7 @@ function extractCompatTokens(record: PluginCompatRecord): string[] {
     for (const match of value.matchAll(/\bopenclaw\/[a-z0-9/-]+\b/g)) {
       tokens.add(match[0]);
     }
-    for (const match of value.matchAll(/\bOPENCLAW_[A-Z0-9_]+\b/g)) {
+    for (const match of value.matchAll(/\bNOVA_[A-Z0-9_]+\b/g)) {
       tokens.add(match[0]);
     }
     for (const match of value.matchAll(/\b[a-z][a-zA-Z0-9_]*(?:\.[a-zA-Z0-9_]+)+\b/g)) {

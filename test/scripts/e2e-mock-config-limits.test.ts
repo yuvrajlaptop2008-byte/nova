@@ -21,10 +21,10 @@ const scrubbedEnvKeys = [
   "MOCK_REQUEST_LOG",
   "MOCK_TLS_CERT",
   "MOCK_TLS_KEY",
-  "OPENCLAW_CONFIG_RELOAD_LOG_MAX_READ_BYTES",
-  "OPENCLAW_CONFIG_RELOAD_LOG_PATH",
-  "OPENCLAW_CONFIG_RELOAD_LOG_TIMEOUT_MS",
-  "OPENCLAW_MOCK_OPENAI_PORT",
+  "NOVA_CONFIG_RELOAD_LOG_MAX_READ_BYTES",
+  "NOVA_CONFIG_RELOAD_LOG_PATH",
+  "NOVA_CONFIG_RELOAD_LOG_TIMEOUT_MS",
+  "NOVA_MOCK_OPENAI_PORT",
   "RAW_SCHEMA_ERROR",
   "SUCCESS_MARKER",
 ];
@@ -142,7 +142,7 @@ async function withMockServer(
 describe("mock OpenAI response markers", () => {
   it("echoes dynamic Nova E2E markers", async () => {
     await withMockServer(mockOpenAiPath, {}, async (baseUrl) => {
-      for (const marker of ["OPENCLAW_E2E_SEED_0_123", "OPENCLAW_E2E_ANDROID_OK"]) {
+      for (const marker of ["NOVA_E2E_SEED_0_123", "NOVA_E2E_ANDROID_OK"]) {
         const response = await fetch(`${baseUrl}/v1/responses`, {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -201,10 +201,10 @@ describe("e2e mock and config helper numeric limits", () => {
     expect(mockPort.stderr).toContain("invalid MOCK_PORT: 44080tcp");
 
     const fallbackPort = runScript(mockOpenAiPath, {
-      OPENCLAW_MOCK_OPENAI_PORT: "44080http",
+      NOVA_MOCK_OPENAI_PORT: "44080http",
     });
     expect(fallbackPort.status).not.toBe(0);
-    expect(fallbackPort.stderr).toContain("invalid OPENCLAW_MOCK_OPENAI_PORT: 44080http");
+    expect(fallbackPort.stderr).toContain("invalid NOVA_MOCK_OPENAI_PORT: 44080http");
   });
 
   it("rejects out-of-range mock OpenAI port env values", () => {
@@ -213,10 +213,10 @@ describe("e2e mock and config helper numeric limits", () => {
     expect(mockPort.stderr).toContain("invalid MOCK_PORT: 65536");
 
     const fallbackPort = runScript(mockOpenAiPath, {
-      OPENCLAW_MOCK_OPENAI_PORT: "65536",
+      NOVA_MOCK_OPENAI_PORT: "65536",
     });
     expect(fallbackPort.status).not.toBe(0);
-    expect(fallbackPort.stderr).toContain("invalid OPENCLAW_MOCK_OPENAI_PORT: 65536");
+    expect(fallbackPort.stderr).toContain("invalid NOVA_MOCK_OPENAI_PORT: 65536");
   });
 
   it("rejects loose OpenAI web-search mock port env values", () => {
@@ -244,20 +244,20 @@ describe("e2e mock and config helper numeric limits", () => {
 
   it("rejects loose config-reload log timeout env values", () => {
     const result = runScript(configReloadAssertPath, {
-      OPENCLAW_CONFIG_RELOAD_LOG_TIMEOUT_MS: "30000ms",
+      NOVA_CONFIG_RELOAD_LOG_TIMEOUT_MS: "30000ms",
     });
 
     expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain("invalid OPENCLAW_CONFIG_RELOAD_LOG_TIMEOUT_MS: 30000ms");
+    expect(result.stderr).toContain("invalid NOVA_CONFIG_RELOAD_LOG_TIMEOUT_MS: 30000ms");
   });
 
   it("rejects loose config-reload log read caps", () => {
     const result = runScript(configReloadAssertPath, {
-      OPENCLAW_CONFIG_RELOAD_LOG_MAX_READ_BYTES: "256kb",
+      NOVA_CONFIG_RELOAD_LOG_MAX_READ_BYTES: "256kb",
     });
 
     expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain("invalid OPENCLAW_CONFIG_RELOAD_LOG_MAX_READ_BYTES: 256kb");
+    expect(result.stderr).toContain("invalid NOVA_CONFIG_RELOAD_LOG_MAX_READ_BYTES: 256kb");
   });
 
   it("returns a clear error when mock OpenAI cannot append request logs", async () => {
@@ -270,7 +270,7 @@ describe("e2e mock and config helper numeric limits", () => {
           const response = await fetch(`${baseUrl}/v1/responses`, {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ input: "OPENCLAW_E2E_OK" }),
+            body: JSON.stringify({ input: "NOVA_E2E_OK" }),
           });
           const body = await response.json();
 
@@ -294,14 +294,14 @@ describe("e2e mock and config helper numeric limits", () => {
         {
           MOCK_REQUEST_LOG: requestLogDirectory,
           RAW_SCHEMA_ERROR: "400 schema rejected",
-          SUCCESS_MARKER: "OPENCLAW_SCHEMA_E2E_OK",
+          SUCCESS_MARKER: "NOVA_SCHEMA_E2E_OK",
         },
         async (baseUrl, output) => {
           const response = await fetch(`${baseUrl}/v1/responses`, {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
-              input: "OPENCLAW_SCHEMA_E2E_OK",
+              input: "NOVA_SCHEMA_E2E_OK",
               reasoning: { effort: "low" },
               tools: [{ type: "web_search" }],
             }),

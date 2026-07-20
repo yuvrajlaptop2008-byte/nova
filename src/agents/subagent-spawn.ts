@@ -782,7 +782,7 @@ async function waitForProvisionalSessionDeletion(
       return;
     }
     await new Promise<void>((resolve) => {
-      const timer = setTimeout(resolve, process.env.OPENCLAW_TEST_FAST === "1" ? 1 : 1_000);
+      const timer = setTimeout(resolve, process.env.NOVA_TEST_FAST === "1" ? 1 : 1_000);
       timer.unref?.();
     });
   }
@@ -839,7 +839,7 @@ async function terminateAcceptedCollectorRun(params: {
       }
     }
     await new Promise<void>((resolve) => {
-      const timer = setTimeout(resolve, process.env.OPENCLAW_TEST_FAST === "1" ? 1 : 1_000);
+      const timer = setTimeout(resolve, process.env.NOVA_TEST_FAST === "1" ? 1 : 1_000);
       timer.unref?.();
     });
   }
@@ -1825,10 +1825,7 @@ export async function spawnSubagentDirect(
             } catch {
               // The child is stopped; retry only the durable terminal write.
               await new Promise<void>((resolve) => {
-                const timer = setTimeout(
-                  resolve,
-                  process.env.OPENCLAW_TEST_FAST === "1" ? 1 : 1_000,
-                );
+                const timer = setTimeout(resolve, process.env.NOVA_TEST_FAST === "1" ? 1 : 1_000);
                 timer.unref?.();
               });
             }

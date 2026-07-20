@@ -11,14 +11,14 @@ const SCHEMAS = [
     schema: "src/state/openclaw-state-schema.sql",
     outFile: "src/state/openclaw-state-db.generated.d.ts",
     schemaOutFile: "src/state/openclaw-state-schema.generated.ts",
-    schemaExport: "OPENCLAW_STATE_SCHEMA_SQL",
+    schemaExport: "NOVA_STATE_SCHEMA_SQL",
   },
   {
     name: "openclaw-agent",
     schema: "src/state/openclaw-agent-schema.sql",
     outFile: "src/state/openclaw-agent-db.generated.d.ts",
     schemaOutFile: "src/state/openclaw-agent-schema.generated.ts",
-    schemaExport: "OPENCLAW_AGENT_SCHEMA_SQL",
+    schemaExport: "NOVA_AGENT_SCHEMA_SQL",
   },
 ];
 

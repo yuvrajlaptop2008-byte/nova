@@ -12,7 +12,7 @@ import {
 
 const executablePath = resolvePlaywrightChromiumExecutablePath(chromium.executablePath());
 const available = canRunPlaywrightChromium(executablePath);
-const allowMissing = process.env.OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
+const allowMissing = process.env.NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
 const suite = available || !allowMissing ? describe : describe.skip;
 
 let browser: Browser;
@@ -257,7 +257,7 @@ suite("Claude native session catalog", () => {
         expect(await buildHost.locator(".sidebar-recent-session").count()).toBe(1);
       }
 
-      const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+      const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
       if (artifactDir) {
         await fs.mkdir(artifactDir, { recursive: true });
         await page.screenshot({
@@ -308,7 +308,7 @@ suite("Claude native session catalog", () => {
       await connecting.waitFor();
       expect(await page.locator(".tabstrip-tab.is-connecting").count()).toBe(1);
 
-      const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+      const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
       if (artifactDir) {
         await fs.mkdir(artifactDir, { recursive: true });
         await page.screenshot({ path: path.join(artifactDir, "claude-terminal-connecting.png") });
@@ -521,7 +521,7 @@ suite("Claude native session catalog", () => {
     await expect
       .poll(() => page.getByText("This thread is on a paired node and is view-only.").count())
       .toBe(1);
-    const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+    const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
     const expectCenteredLayout = async (screenshotName: string) => {
       const [workbenchBox, threadBox, composerBox] = await Promise.all([
         page.locator(".chat-workbench").boundingBox(),

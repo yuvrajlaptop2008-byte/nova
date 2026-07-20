@@ -29,7 +29,7 @@ write_secret_file() {
 }
 
 activate_claude_oauth_access_token() {
-  local credentials="${OPENCLAW_CLAUDE_CREDENTIALS_JSON:-}"
+  local credentials="${NOVA_CLAUDE_CREDENTIALS_JSON:-}"
   if [[ -z "$credentials" ]]; then
     return
   fi
@@ -79,11 +79,11 @@ for env_key in \
   MINIMAX_API_KEY \
   OPENCODE_API_KEY \
   OPENCODE_ZEN_API_KEY \
-  OPENCLAW_LIVE_BROWSER_CDP_URL \
-  OPENCLAW_LIVE_SETUP_TOKEN \
-  OPENCLAW_LIVE_SETUP_TOKEN_MODEL \
-  OPENCLAW_LIVE_SETUP_TOKEN_PROFILE \
-  OPENCLAW_LIVE_SETUP_TOKEN_VALUE \
+  NOVA_LIVE_BROWSER_CDP_URL \
+  NOVA_LIVE_SETUP_TOKEN \
+  NOVA_LIVE_SETUP_TOKEN_MODEL \
+  NOVA_LIVE_SETUP_TOKEN_PROFILE \
+  NOVA_LIVE_SETUP_TOKEN_VALUE \
   FACTORY_API_KEY \
   GEMINI_API_KEY \
   GOOGLE_API_KEY \
@@ -105,16 +105,16 @@ do
   append_profile_env "$env_key"
 done
 
-write_secret_file "$HOME/.codex/auth.json" OPENCLAW_CODEX_AUTH_JSON
-write_secret_file "$HOME/.codex/config.toml" OPENCLAW_CODEX_CONFIG_TOML
-write_secret_file "$HOME/.claude.json" OPENCLAW_CLAUDE_JSON
-write_secret_file "$HOME/.claude/.credentials.json" OPENCLAW_CLAUDE_CREDENTIALS_JSON
-write_secret_file "$HOME/.claude/settings.json" OPENCLAW_CLAUDE_SETTINGS_JSON
-write_secret_file "$HOME/.claude/settings.local.json" OPENCLAW_CLAUDE_SETTINGS_LOCAL_JSON
-write_secret_file "$HOME/.gemini/settings.json" OPENCLAW_GEMINI_SETTINGS_JSON
+write_secret_file "$HOME/.codex/auth.json" NOVA_CODEX_AUTH_JSON
+write_secret_file "$HOME/.codex/config.toml" NOVA_CODEX_CONFIG_TOML
+write_secret_file "$HOME/.claude.json" NOVA_CLAUDE_JSON
+write_secret_file "$HOME/.claude/.credentials.json" NOVA_CLAUDE_CREDENTIALS_JSON
+write_secret_file "$HOME/.claude/settings.json" NOVA_CLAUDE_SETTINGS_JSON
+write_secret_file "$HOME/.claude/settings.local.json" NOVA_CLAUDE_SETTINGS_LOCAL_JSON
+write_secret_file "$HOME/.gemini/settings.json" NOVA_GEMINI_SETTINGS_JSON
 
 if [[ -n "${GITHUB_ENV:-}" ]]; then
   {
-    echo "OPENCLAW_PROFILE_FILE=$profile_path"
+    echo "NOVA_PROFILE_FILE=$profile_path"
   } >>"$GITHUB_ENV"
 fi

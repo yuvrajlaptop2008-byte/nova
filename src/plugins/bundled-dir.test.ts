@@ -9,8 +9,8 @@ import {
 import { cleanupTrackedTempDirs, makeTrackedTempDir } from "./test-helpers/fs-fixtures.js";
 
 const tempDirs: string[] = [];
-const originalBundledDir = process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-const originalDisableBundledPlugins = process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+const originalBundledDir = process.env.NOVA_BUNDLED_PLUGINS_DIR;
+const originalDisableBundledPlugins = process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 const originalVitest = process.env.VITEST;
 const originalArgv1 = process.argv[1];
 const originalExecArgv = [...process.execArgv];
@@ -93,14 +93,14 @@ function expectResolvedBundledDir(params: {
     process.env.VITEST = params.vitest;
   }
   if (params.bundledDirOverride === undefined) {
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+    delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
   } else {
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = params.bundledDirOverride;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = params.bundledDirOverride;
   }
   if (params.disableBundledPlugins === undefined) {
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
   } else {
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = params.disableBundledPlugins;
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS = params.disableBundledPlugins;
   }
 
   expect(fs.realpathSync(resolveBundledPluginsDir() ?? "")).toBe(
@@ -163,14 +163,14 @@ function requireBundledDir(value: string | null | undefined): string {
 afterEach(() => {
   vi.restoreAllMocks();
   if (originalBundledDir === undefined) {
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+    delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
   } else {
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = originalBundledDir;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = originalBundledDir;
   }
   if (originalDisableBundledPlugins === undefined) {
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
   } else {
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = originalDisableBundledPlugins;
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS = originalDisableBundledPlugins;
   }
   if (originalVitest === undefined) {
     delete process.env.VITEST;
@@ -359,10 +359,10 @@ describe("resolveBundledPluginsDir", () => {
         "Nova source checkout detected without pnpm workspace dependencies; run `pnpm install` from the repo root so bundled plugins can load package-local dependencies.",
     });
 
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "1";
     expect(resolveSourceCheckoutDependencyDiagnostic()).toBeNull();
 
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
     fs.mkdirSync(path.join(repoRoot, "node_modules", ".pnpm"), { recursive: true });
     // The diagnostic also scans the real checkout hosting this test run (via
     // module-root resolution), which may itself lack node_modules in nested
@@ -379,8 +379,8 @@ describe("resolveBundledPluginsDir", () => {
     });
     vi.spyOn(process, "cwd").mockReturnValue(repoRoot);
     process.argv[1] = "/usr/bin/env";
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "1";
+    delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
 
     const bundledDir = requireBundledDir(resolveBundledPluginsDir());
 
@@ -388,19 +388,19 @@ describe("resolveBundledPluginsDir", () => {
     expect(fs.readdirSync(bundledDir)).toStrictEqual([]);
   });
 
-  it("separates tilde override cache entries by OPENCLAW_HOME", () => {
+  it("separates tilde override cache entries by NOVA_HOME", () => {
     const homeA = makeRepoRoot("openclaw-bundled-dir-home-a-");
     const homeB = makeRepoRoot("openclaw-bundled-dir-home-b-");
     seedBundledPluginTree(homeA, "bundled", "memory-core");
     seedBundledPluginTree(homeB, "bundled", "discord");
     const envBase = {
-      OPENCLAW_BUNDLED_PLUGINS_DIR: "~/bundled",
-      OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+      NOVA_BUNDLED_PLUGINS_DIR: "~/bundled",
+      NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
       VITEST: "true",
     } satisfies NodeJS.ProcessEnv;
 
-    const bundledA = resolveBundledPluginsDir({ ...envBase, OPENCLAW_HOME: homeA });
-    const bundledB = resolveBundledPluginsDir({ ...envBase, OPENCLAW_HOME: homeB });
+    const bundledA = resolveBundledPluginsDir({ ...envBase, NOVA_HOME: homeA });
+    const bundledB = resolveBundledPluginsDir({ ...envBase, NOVA_HOME: homeB });
 
     expect(fs.realpathSync(bundledA ?? "")).toBe(fs.realpathSync(path.join(homeA, "bundled")));
     expect(fs.realpathSync(bundledB ?? "")).toBe(fs.realpathSync(path.join(homeB, "bundled")));
@@ -417,8 +417,8 @@ describe("resolveBundledPluginsDir", () => {
     process.argv[1] = path.join(installedRoot, "openclaw.mjs");
     process.execArgv.length = 0;
     delete process.env.VITEST;
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = path.join(installedRoot, "dist", "extensions");
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = path.join(installedRoot, "dist", "extensions");
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
     const bundledDir = requireBundledDir(resolveBundledPluginsDir());
 
@@ -435,9 +435,9 @@ describe("resolveBundledPluginsDir", () => {
     process.argv[1] = "/usr/bin/env";
     process.execArgv.length = 0;
     process.env.VITEST = "true";
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = path.join(overrideRoot, "extensions");
-    delete process.env.OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR;
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = path.join(overrideRoot, "extensions");
+    delete process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
     const bundledDir = requireBundledDir(resolveBundledPluginsDir());
 
@@ -459,8 +459,8 @@ describe("resolveBundledPluginsDir", () => {
     process.argv[1] = "/usr/bin/env";
     process.execArgv.length = 0;
     process.env.VITEST = "true";
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
     const bundledDir = requireBundledDir(resolveBundledPluginsDir());
 
@@ -478,8 +478,8 @@ describe("resolveBundledPluginsDir", () => {
       makeRepoRoot("openclaw-bundled-dir-missing-override-"),
       "extensions",
     );
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = missingOverride;
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = missingOverride;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
     const bundledDir = requireBundledDir(resolveBundledPluginsDir());
 
@@ -499,8 +499,8 @@ describe("resolveBundledPluginsDir", () => {
     process.argv[1] = path.join(installedRoot, "openclaw.mjs");
     process.execArgv.length = 0;
     delete process.env.VITEST;
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = path.join(overrideRoot, "extensions");
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = path.join(overrideRoot, "extensions");
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
     const bundledDir = resolveBundledPluginsDir();
 
@@ -540,8 +540,8 @@ describe("resolveBundledPluginsDir", () => {
     vi.spyOn(process, "cwd").mockReturnValue(nestedWorktree);
     process.argv[1] = workerArgv1;
     process.execArgv.length = 0;
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
     const bundledDir = requireBundledDir(resolveBundledPluginsDir());
 
@@ -570,8 +570,8 @@ describe("resolveBundledPluginsDir", () => {
     process.argv[1] = "/usr/bin/env";
     process.execArgv.length = 0;
     delete process.env.VITEST;
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-    delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+    delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
+    delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
 
     const bundledDir = requireBundledDir(resolveBundledPluginsDir());
 

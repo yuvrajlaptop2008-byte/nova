@@ -47,7 +47,7 @@ describe("Control UI Vite config", () => {
       resolveControlUiBuildInfo({
         env: {
           GIT_COMMIT: "0123456789abcdef0123456789abcdef01234567",
-          OPENCLAW_BUILD_TIMESTAMP: "2026-07-10T12:34:56Z",
+          NOVA_BUILD_TIMESTAMP: "2026-07-10T12:34:56Z",
         },
         readGitCommit,
         readGitCommitTimestamp,
@@ -213,8 +213,8 @@ describe("Control UI Vite config", () => {
     expect(
       resolveControlUiBuildInfo({
         env: {
-          OPENCLAW_VERSION: "latest",
-          OPENCLAW_BUILD_TIMESTAMP: "2026-07-10T13:14:15.000Z",
+          NOVA_VERSION: "latest",
+          NOVA_BUILD_TIMESTAMP: "2026-07-10T13:14:15.000Z",
         },
         readGitCommit: () => "a".repeat(40),
         readPackageVersion: () => "2026.7.10",
@@ -226,8 +226,8 @@ describe("Control UI Vite config", () => {
     expect(
       resolveControlUiBuildInfo({
         env: {
-          OPENCLAW_CONTROL_UI_BUILD_ID: "   ",
-          OPENCLAW_BUILD_TIMESTAMP: "2026-07-10T13:14:15.000Z",
+          NOVA_CONTROL_UI_BUILD_ID: "   ",
+          NOVA_BUILD_TIMESTAMP: "2026-07-10T13:14:15.000Z",
         },
         readGitCommit: () => "a".repeat(40),
         readPackageVersion: () => "2026.7.10",
@@ -248,11 +248,11 @@ describe("Control UI Vite config", () => {
 
     expect(() =>
       resolveControlUiBuildInfo({
-        env: { OPENCLAW_BUILD_TIMESTAMP: "2026-07-10 12:34:56" },
+        env: { NOVA_BUILD_TIMESTAMP: "2026-07-10 12:34:56" },
         readGitCommit: () => "a".repeat(40),
         readPackageVersion: () => "2026.7.10",
       }),
-    ).toThrow("OPENCLAW_BUILD_TIMESTAMP must be a valid UTC ISO-8601 timestamp ending in Z");
+    ).toThrow("NOVA_BUILD_TIMESTAMP must be a valid UTC ISO-8601 timestamp ending in Z");
   });
 
   it("resolves root tsconfig package aliases for source imports", () => {

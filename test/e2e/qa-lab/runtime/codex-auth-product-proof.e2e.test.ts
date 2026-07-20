@@ -109,8 +109,8 @@ describe("Codex auth product proof", () => {
       instance = await createOpenClawTestInstance({
         name: "qa-codex-auth-product-proof",
         env: {
-          OPENCLAW_AGENT_HARNESS_FALLBACK: "none",
-          OPENCLAW_SKIP_PROVIDERS: undefined,
+          NOVA_AGENT_HARNESS_FALLBACK: "none",
+          NOVA_SKIP_PROVIDERS: undefined,
         },
         config: {
           plugins: {
@@ -145,7 +145,7 @@ describe("Codex auth product proof", () => {
       });
 
       const requestLog = instance.state.path("codex-auth-app-server.jsonl");
-      instance.env.OPENCLAW_QA_CODEX_AUTH_APP_SERVER_LOG = requestLog;
+      instance.env.NOVA_QA_CODEX_AUTH_APP_SERVER_LOG = requestLog;
       const appServerLog = createJsonlRequestTailer<AppServerLogEntry>(requestLog);
       const canonicalStore = await runCodexAuthDoctorMigrationProof(instance, {
         accountId: ACCOUNT_ID,

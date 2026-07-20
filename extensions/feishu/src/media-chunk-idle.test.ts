@@ -19,8 +19,8 @@ describe("saveMediaStreamWithIdleTimeout", () => {
 
   beforeAll(async () => {
     stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-feishu-idle-"));
-    envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
+    process.env.NOVA_STATE_DIR = stateDir;
   });
 
   afterAll(async () => {

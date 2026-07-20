@@ -74,7 +74,7 @@ describe("subagent registry persistence resume", () => {
   it("resumes a persisted run from canonical SQLite state", async () => {
     tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-subagent-"));
     const stateDir = tempStateDir;
-    await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+    await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
       const run: SubagentRunRecord = {
         runId: "run-1",
         childSessionKey: "agent:main:subagent:test",
@@ -122,7 +122,7 @@ describe("subagent registry persistence resume", () => {
   it("retries pending child delivery before a recovered requester-turn wake", async () => {
     tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-subagent-"));
     const stateDir = tempStateDir;
-    await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+    await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
       const run: SubagentRunRecord = {
         runId: "run-pending-delivery",
         requesterTurnRunId: "run-requester",

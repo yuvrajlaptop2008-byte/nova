@@ -903,7 +903,7 @@ describe("openai image generation provider", () => {
 
   it("allows loopback image requests for openai only inside the QA harness envelope", async () => {
     mockGeneratedPngResponse();
-    vi.stubEnv("OPENCLAW_QA_ALLOW_LOCAL_IMAGE_PROVIDER", "1");
+    vi.stubEnv("NOVA_QA_ALLOW_LOCAL_IMAGE_PROVIDER", "1");
 
     const provider = buildOpenAIImageGenerationProvider();
     const result = await provider.generateImage({
@@ -929,7 +929,7 @@ describe("openai image generation provider", () => {
 
   it("uses a model-specific QA image endpoint without changing the text provider route", async () => {
     mockGeneratedPngResponse();
-    vi.stubEnv("OPENCLAW_QA_ALLOW_LOCAL_IMAGE_PROVIDER", "1");
+    vi.stubEnv("NOVA_QA_ALLOW_LOCAL_IMAGE_PROVIDER", "1");
 
     const provider = buildOpenAIImageGenerationProvider();
     await provider.generateImage({

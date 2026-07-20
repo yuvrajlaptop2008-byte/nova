@@ -5,7 +5,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "${ROOT_DIR}/scripts/lib/restart-mac-gateway.sh"
-APP_BUNDLE="${OPENCLAW_APP_BUNDLE:-}"
+APP_BUNDLE="${NOVA_APP_BUNDLE:-}"
 APP_EXECUTABLE_RELATIVE_PATH="Contents/MacOS/OpenClaw"
 DEBUG_PROCESS_PATTERN="${ROOT_DIR}/apps/macos/.build/debug/OpenClaw"
 LOCAL_PROCESS_PATTERN="${ROOT_DIR}/apps/macos/.build-local/debug/OpenClaw"
@@ -16,11 +16,11 @@ LOCK_DIR="${TMPDIR:-/tmp}/openclaw-restart-${LOCK_KEY}"
 LOCK_PID_FILE="${LOCK_DIR}/pid"
 LOCK_HELD=0
 WAIT_FOR_LOCK=0
-LOG_PATH="${OPENCLAW_RESTART_LOG:-${TMPDIR:-/tmp}/openclaw-restart-${LOCK_KEY}.log}"
+LOG_PATH="${NOVA_RESTART_LOG:-${TMPDIR:-/tmp}/openclaw-restart-${LOCK_KEY}.log}"
 NO_SIGN=0
 SIGN=0
 AUTO_DETECT_SIGNING=1
-GATEWAY_WAIT_SECONDS="${OPENCLAW_GATEWAY_WAIT_SECONDS:-0}"
+GATEWAY_WAIT_SECONDS="${NOVA_GATEWAY_WAIT_SECONDS:-0}"
 LAUNCHAGENT_DISABLE_MARKER="${HOME}/.openclaw/disable-launchagent"
 ATTACH_ONLY=1
 TARGET_ONLY=0
@@ -99,7 +99,7 @@ canonicalize_app_bundle() {
     return 0
   fi
   if [[ ! -d "${APP_BUNDLE}" ]]; then
-    fail "OPENCLAW_APP_BUNDLE does not exist: ${APP_BUNDLE}"
+    fail "NOVA_APP_BUNDLE does not exist: ${APP_BUNDLE}"
   fi
   APP_BUNDLE="$(cd "${APP_BUNDLE}" && pwd -P)"
 }
@@ -124,7 +124,7 @@ for arg in "$@"; do
       log "  --target-only    Restart only this checkout's dist app; fail if another OpenClaw app is active"
       log ""
       log "Env:"
-      log "  OPENCLAW_GATEWAY_WAIT_SECONDS=0  Wait time before gateway port check (unsigned only)"
+      log "  NOVA_GATEWAY_WAIT_SECONDS=0  Wait time before gateway port check (unsigned only)"
       log ""
       log "Unsigned recovery:"
       log "  node openclaw.mjs daemon install --force --runtime node"
@@ -148,7 +148,7 @@ if [[ "$TARGET_ONLY" -eq 1 && "$ATTACH_ONLY" -ne 1 ]]; then
   fail "--target-only requires --attach-only"
 fi
 if [[ "$TARGET_ONLY" -eq 1 && -n "$APP_BUNDLE" ]]; then
-  fail "--target-only does not accept OPENCLAW_APP_BUNDLE"
+  fail "--target-only does not accept NOVA_APP_BUNDLE"
 fi
 canonicalize_app_bundle
 
@@ -396,7 +396,7 @@ fi
 # must leave the currently running and on-disk app untouched.
 run_step "package app" env \
   SKIP_TSC="${SKIP_TSC:-1}" \
-  OPENCLAW_PACKAGE_APP_ROOT="${STAGED_APP_BUNDLE}" \
+  NOVA_PACKAGE_APP_ROOT="${STAGED_APP_BUNDLE}" \
   "${ROOT_DIR}/scripts/package-mac-app.sh"
 run_step "verify packaged app" /usr/bin/codesign --verify --deep --strict "${STAGED_APP_BUNDLE}"
 
@@ -434,7 +434,7 @@ choose_app_bundle() {
     return 0
   fi
 
-  fail "App bundle not found. Set OPENCLAW_APP_BUNDLE to your installed OpenClaw.app"
+  fail "App bundle not found. Set NOVA_APP_BUNDLE to your installed OpenClaw.app"
 }
 
 # When signed, clear any previous launchagent override marker.

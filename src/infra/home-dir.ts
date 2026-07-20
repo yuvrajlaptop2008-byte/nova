@@ -42,7 +42,7 @@ function resolveRawOsHomeDir(env: NodeJS.ProcessEnv, homedir: () => string): str
 }
 
 function resolveRawHomeDir(env: NodeJS.ProcessEnv, homedir: () => string): string | undefined {
-  const explicitHome = normalize(env.OPENCLAW_HOME);
+  const explicitHome = normalize(env.NOVA_HOME);
   if (!explicitHome) {
     return resolveRawOsHomeDir(env, homedir);
   }
@@ -53,7 +53,7 @@ function resolveRawHomeDir(env: NodeJS.ProcessEnv, homedir: () => string): strin
   return explicitHome;
 }
 
-/** Resolves Nova's effective home, honoring OPENCLAW_HOME before OS homes. */
+/** Resolves Nova's effective home, honoring NOVA_HOME before OS homes. */
 export function resolveEffectiveHomeDir(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = os.homedir,
@@ -62,7 +62,7 @@ export function resolveEffectiveHomeDir(
   return raw ? path.resolve(raw) : undefined;
 }
 
-/** Resolves the underlying OS user home, ignoring OPENCLAW_HOME overrides. */
+/** Resolves the underlying OS user home, ignoring NOVA_HOME overrides. */
 export function resolveOsHomeDir(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = os.homedir,
@@ -81,7 +81,7 @@ export function resolveRequiredHomeDir(
     return path.resolve(resolved);
   }
   throw new Error(
-    "Unable to resolve an Nova home: set OPENCLAW_HOME, HOME, or USERPROFILE, or run from an existing directory.",
+    "Unable to resolve an Nova home: set NOVA_HOME, HOME, or USERPROFILE, or run from an existing directory.",
   );
 }
 
@@ -155,7 +155,7 @@ export function resolveUserPath(
   return resolveHomeRelativePath(input, { env, homedir });
 }
 
-/** Resolves a user-supplied path against the OS home, ignoring OPENCLAW_HOME. */
+/** Resolves a user-supplied path against the OS home, ignoring NOVA_HOME. */
 export function resolveOsHomeRelativePath(
   input: string,
   opts?: {

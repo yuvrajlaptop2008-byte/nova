@@ -437,7 +437,7 @@ function systemEventOptions(index = 0) {
 }
 
 const ORIGINAL_TZ = process.env.TZ;
-const ORIGINAL_STATE_DIR = process.env.OPENCLAW_STATE_DIR;
+const ORIGINAL_STATE_DIR = process.env.NOVA_STATE_DIR;
 let scopedStateDir: string | undefined;
 
 describe("createTelegramBot", () => {
@@ -454,7 +454,7 @@ describe("createTelegramBot", () => {
     scopedStateDir = fs.realpathSync(
       fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-telegram-bot-state-")),
     );
-    process.env.OPENCLAW_STATE_DIR = scopedStateDir;
+    process.env.NOVA_STATE_DIR = scopedStateDir;
   });
   afterAll(() => {
     if (ORIGINAL_TZ === undefined) {
@@ -464,9 +464,9 @@ describe("createTelegramBot", () => {
     }
     closeOpenClawStateDatabaseForTest();
     if (ORIGINAL_STATE_DIR === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = ORIGINAL_STATE_DIR;
+      process.env.NOVA_STATE_DIR = ORIGINAL_STATE_DIR;
     }
     if (scopedStateDir) {
       fs.rmSync(scopedStateDir, { recursive: true, force: true });

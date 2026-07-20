@@ -105,11 +105,11 @@ export async function runPolicyRepairCheck(checkId: string, repairCheckCtx: Heal
 
 export const describe0BeforeEach0 = async () => {
   clearHealthChecksForTest();
-  originalOpenClawHome = process.env.OPENCLAW_HOME;
-  originalOpenClawStateDir = process.env.OPENCLAW_STATE_DIR;
+  originalOpenClawHome = process.env.NOVA_HOME;
+  originalOpenClawStateDir = process.env.NOVA_STATE_DIR;
   workspaceDir = await fs.mkdtemp(join(tmpdir(), "policy-doctor-"));
-  process.env.OPENCLAW_HOME = workspaceDir;
-  delete process.env.OPENCLAW_STATE_DIR;
+  process.env.NOVA_HOME = workspaceDir;
+  delete process.env.NOVA_STATE_DIR;
   await fs.mkdir(join(workspaceDir, ".openclaw"), { recursive: true });
   try {
     await fs.symlink(
@@ -127,14 +127,14 @@ export const describe0BeforeEach0 = async () => {
 
 export const describe0AfterEach1 = async () => {
   if (originalOpenClawHome === undefined) {
-    delete process.env.OPENCLAW_HOME;
+    delete process.env.NOVA_HOME;
   } else {
-    process.env.OPENCLAW_HOME = originalOpenClawHome;
+    process.env.NOVA_HOME = originalOpenClawHome;
   }
   if (originalOpenClawStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = originalOpenClawStateDir;
+    process.env.NOVA_STATE_DIR = originalOpenClawStateDir;
   }
   await fs.rm(workspaceDir, { recursive: true, force: true });
   clearHealthChecksForTest();

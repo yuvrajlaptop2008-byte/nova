@@ -93,7 +93,7 @@ describe("CLI startup benchmark script spawners", () => {
             cwd: process.cwd(),
             env: {
               ...process.env,
-              OPENCLAW_STARTUP_BENCH_ENFORCE_NONCANONICAL_ARCH: "1",
+              NOVA_STARTUP_BENCH_ENFORCE_NONCANONICAL_ARCH: "1",
             },
             stdio: "pipe",
           },
@@ -194,7 +194,7 @@ describe("CLI startup benchmark script spawners", () => {
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_STARTUP_BENCH_ENFORCE_NONCANONICAL_ARCH: "1",
+            NOVA_STARTUP_BENCH_ENFORCE_NONCANONICAL_ARCH: "1",
           },
         },
       );
@@ -467,14 +467,14 @@ describe("CLI startup benchmark script spawners", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT: "20pct",
+        NOVA_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT: "20pct",
       },
     });
 
     expect(result.status).toBe(1);
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain(
-      "OPENCLAW_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT must be a non-negative number",
+      "NOVA_STARTUP_BENCH_MAX_RSS_REGRESSION_PCT must be a non-negative number",
     );
     expect(result.stderr).not.toContain("at ");
   });

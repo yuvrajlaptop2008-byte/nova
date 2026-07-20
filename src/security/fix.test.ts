@@ -30,8 +30,8 @@ describe("security fix", () => {
 
   const createFixEnv = (stateDir: string, configPath: string) => ({
     ...process.env,
-    OPENCLAW_STATE_DIR: stateDir,
-    OPENCLAW_CONFIG_PATH: configPath,
+    NOVA_STATE_DIR: stateDir,
+    NOVA_CONFIG_PATH: configPath,
   });
 
   const runConfigFixScenario = async (params: {
@@ -395,7 +395,7 @@ describe("security fix", () => {
       const result = await fixSecurityFootguns({
         env: {
           ...createFixEnv(stateDir, configPath),
-          OPENCLAW_INCLUDE_ROOTS: sharedDir,
+          NOVA_INCLUDE_ROOTS: sharedDir,
         },
         stateDir,
         configPath,

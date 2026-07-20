@@ -343,7 +343,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config.auth?.order?.anthropic).toBeUndefined();
@@ -366,7 +366,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config.auth?.order?.anthropic).toBeUndefined();
@@ -399,7 +399,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
         const result = maybeRepairStaleConfiguredAuthOrders({
           cfg,
-          env: { OPENCLAW_STATE_DIR: stateDir },
+          env: { NOVA_STATE_DIR: stateDir },
         });
 
         expect(result.config).toBe(cfg);
@@ -432,7 +432,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result).toEqual({ config: cfg, changes: [] });
@@ -443,7 +443,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("preserves an ordered profile in a registered custom agent directory", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-auth-order-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:setup-token" }),
@@ -478,7 +478,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("does not use a registered inactive store as the automatic fallback proof", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-fallback-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       const customAgentDir = path.join(stateDir, "custom-agents", "retained");
       const database = openOpenClawAgentDatabase({
@@ -509,7 +509,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("preserves an ordered runtime profile from a registered custom agent directory", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-runtime-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -562,7 +562,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("does not repair while a registered custom agent has an unmigrated auth store", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-legacy-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -604,7 +604,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result).toEqual({ config: cfg, changes: [] });
@@ -635,7 +635,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
         const result = maybeRepairStaleConfiguredAuthOrders({
           cfg,
-          env: { OPENCLAW_STATE_DIR: stateDir },
+          env: { NOVA_STATE_DIR: stateDir },
         });
 
         expect(result.config).toBe(cfg);
@@ -647,7 +647,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
     },
   );
 
-  it.each(["OPENCLAW_AGENT_DIR", "PI_CODING_AGENT_DIR"] as const)(
+  it.each(["NOVA_AGENT_DIR", "PI_CODING_AGENT_DIR"] as const)(
     "preserves profiles in the %s-selected auth store",
     async (envKey) => {
       const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-env-auth-order-"));
@@ -668,7 +668,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
         const result = maybeRepairStaleConfiguredAuthOrders({
           cfg,
           env: {
-            OPENCLAW_STATE_DIR: stateDir,
+            NOVA_STATE_DIR: stateDir,
             [envKey]: selectedAgentDir,
           },
         });
@@ -722,7 +722,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result).toEqual({ config: cfg, changes: [] });
@@ -748,7 +748,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config).toBe(cfg);
@@ -758,7 +758,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
         collectStaleConfiguredAuthOrderWarnings({
           cfg,
           doctorFixCommand: "openclaw doctor --fix",
-          env: { OPENCLAW_STATE_DIR: stateDir },
+          env: { NOVA_STATE_DIR: stateDir },
         }).join("\n"),
       ).toContain("SQLite auth profile store is unreadable");
     } finally {
@@ -790,7 +790,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
         const result = maybeRepairStaleConfiguredAuthOrders({
           cfg,
-          env: { OPENCLAW_STATE_DIR: stateDir },
+          env: { NOVA_STATE_DIR: stateDir },
         });
 
         expect(result.config).toBe(cfg);
@@ -829,7 +829,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
         const result = maybeRepairStaleConfiguredAuthOrders({
           cfg,
-          env: { OPENCLAW_STATE_DIR: stateDir },
+          env: { NOVA_STATE_DIR: stateDir },
         });
 
         expect(result.config).toBe(cfg);
@@ -857,7 +857,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config).toBe(cfg);
@@ -870,7 +870,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("fails closed when a registered custom auth database is unreadable", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-invalid-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -900,7 +900,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("fails closed when registered auth runtime state is unreadable without a secrets row", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-state-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -943,7 +943,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("fails closed when a registered auth database owner no longer matches", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-owner-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -977,7 +977,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("uses the live owner after a registered database pathname is recreated", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-reowned-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1011,7 +1011,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("fails closed when an active agent points at another agent's database", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-active-owner-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1082,7 +1082,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config).toBe(cfg);
@@ -1097,7 +1097,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("prefers a configured owner over the retained directory basename", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-renamed-owner-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1130,7 +1130,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("uses durable ownership for a deconfigured relocated agent directory", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-relocated-owner-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1163,7 +1163,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
   it("fails closed when an environment-selected directory belongs to another agent", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-env-owner-auth-"));
     const envAgentDir = path.join(stateDir, "custom-env-agent");
-    const env = { OPENCLAW_STATE_DIR: stateDir, OPENCLAW_AGENT_DIR: envAgentDir };
+    const env = { NOVA_STATE_DIR: stateDir, NOVA_AGENT_DIR: envAgentDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1221,7 +1221,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config).toBe(cfg);
@@ -1236,7 +1236,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("fails closed when a stale registered database leaves a SQLite sidecar", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-sidecar-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1271,7 +1271,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
   it("ignores a stale registered auth database after its pathname is removed", async () => {
     const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-missing-auth-"));
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     try {
       writePersistedAuthProfileStoreRaw(
         tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1303,7 +1303,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
     "fails closed on a dangling registered auth database symlink",
     async () => {
       const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-custom-dangling-auth-"));
-      const env = { OPENCLAW_STATE_DIR: stateDir };
+      const env = { NOVA_STATE_DIR: stateDir };
       try {
         writePersistedAuthProfileStoreRaw(
           tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1339,7 +1339,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
       const stateDir = await fs.mkdtemp(
         path.join(os.tmpdir(), "openclaw-custom-dangling-parent-auth-"),
       );
-      const env = { OPENCLAW_STATE_DIR: stateDir };
+      const env = { NOVA_STATE_DIR: stateDir };
       try {
         writePersistedAuthProfileStoreRaw(
           tokenStore({ profileId: "claude-cli:main-token" }),
@@ -1399,7 +1399,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config).toBe(cfg);
@@ -1426,7 +1426,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config.auth?.order?.anthropic).toBeUndefined();
@@ -1455,7 +1455,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result.config.auth?.order?.anthropic).toBeUndefined();
@@ -1481,7 +1481,7 @@ describe("repairStaleConfiguredAuthOrders", () => {
 
       const result = maybeRepairStaleConfiguredAuthOrders({
         cfg,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
 
       expect(result).toEqual({ config: cfg, changes: [] });

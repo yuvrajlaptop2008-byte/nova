@@ -54,8 +54,8 @@ export type InstallHooksResult =
     };
 
 export const HOOK_INSTALL_ERROR_CODE = {
-  MISSING_OPENCLAW_HOOKS: "missing_openclaw_hooks",
-  EMPTY_OPENCLAW_HOOKS: "empty_openclaw_hooks",
+  MISSING_NOVA_HOOKS: "missing_openclaw_hooks",
+  EMPTY_NOVA_HOOKS: "empty_openclaw_hooks",
 } as const;
 
 type HookInstallErrorCode = (typeof HOOK_INSTALL_ERROR_CODE)[keyof typeof HOOK_INSTALL_ERROR_CODE];
@@ -239,7 +239,7 @@ function resolveOpenClawHooks(
     return {
       ok: false,
       error: "package.json missing openclaw.hooks",
-      code: HOOK_INSTALL_ERROR_CODE.MISSING_OPENCLAW_HOOKS,
+      code: HOOK_INSTALL_ERROR_CODE.MISSING_NOVA_HOOKS,
     };
   }
   const list = normalizeTrimmedStringList(hooks);
@@ -247,7 +247,7 @@ function resolveOpenClawHooks(
     return {
       ok: false,
       error: "package.json openclaw.hooks is empty",
-      code: HOOK_INSTALL_ERROR_CODE.EMPTY_OPENCLAW_HOOKS,
+      code: HOOK_INSTALL_ERROR_CODE.EMPTY_NOVA_HOOKS,
     };
   }
   return { ok: true, entries: list };

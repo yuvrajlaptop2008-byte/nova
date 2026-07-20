@@ -183,8 +183,8 @@ runs:
         printf '%s\n' "$CACHE_GENERATION" > "$generation_file"
         # The shard runner treats this as a persistent root and assigns one
         # isolated subdirectory per concurrent Vitest worker.
-        echo "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH=$cache_root" >> "$GITHUB_ENV"
-        echo "OPENCLAW_VITEST_FS_MODULE_CACHE_WRITER=$CACHE_WRITER" >> "$GITHUB_ENV"
+        echo "NOVA_VITEST_FS_MODULE_CACHE_PATH=$cache_root" >> "$GITHUB_ENV"
+        echo "NOVA_VITEST_FS_MODULE_CACHE_WRITER=$CACHE_WRITER" >> "$GITHUB_ENV"
 
     - name: Select Node compile cache epoch
       id: node-compile-cache-epoch
@@ -229,7 +229,7 @@ runs:
         mkdir -p "$cache_root"
         echo "NODE_COMPILE_CACHE=$cache_root" >> "$GITHUB_ENV"
         echo "NODE_COMPILE_CACHE_PORTABLE=1" >> "$GITHUB_ENV"
-        echo "OPENCLAW_NODE_COMPILE_CACHE_WRITER=$CACHE_WRITER" >> "$GITHUB_ENV"
+        echo "NOVA_NODE_COMPILE_CACHE_WRITER=$CACHE_WRITER" >> "$GITHUB_ENV"
 
     # Post actions run last-in-first-out. Register after stickydisk so this bind
     # is gone before stickydisk flushes, unmounts, and snapshots its filesystem.
@@ -268,10 +268,10 @@ runs:
         deps_fingerprint="os-${RUNNER_OS:?}-arch-${RUNNER_ARCH:?}-node-$(node --version)-${deps_input_fingerprint:?}"
         # zizmor: ignore[github-env] static trusted path defined in this composite action.
         echo "PNPM_CONFIG_STORE_DIR=$sticky_store" >> "$GITHUB_ENV"
-        echo "OPENCLAW_STICKY_DEPS_FINGERPRINT=$deps_fingerprint" >> "$GITHUB_ENV"
+        echo "NOVA_STICKY_DEPS_FINGERPRINT=$deps_fingerprint" >> "$GITHUB_ENV"
         # pnpm exec may reconcile a restored workspace before nested builds.
         # Sticky jobs already have every build tool, so invoke their Node entrypoints directly.
-        echo "OPENCLAW_BUILD_ALL_NO_PNPM=1" >> "$GITHUB_ENV"
+        echo "NOVA_BUILD_ALL_NO_PNPM=1" >> "$GITHUB_ENV"
 
     - name: Setup Bun
       if: inputs.install-bun == 'true'
@@ -331,7 +331,7 @@ runs:
           sticky_fingerprint="$(<"$sticky_marker")"
         fi
         if [ "$STICKY_DISK" = "true" ] && [ -n "$sticky_fingerprint" ] &&
-          [ "$sticky_fingerprint" = "${OPENCLAW_STICKY_DEPS_FINGERPRINT:?}" ]; then
+          [ "$sticky_fingerprint" = "${NOVA_STICKY_DEPS_FINGERPRINT:?}" ]; then
           sticky_fingerprint_matches="true"
           if bash "$GITHUB_ACTION_PATH/sticky-importers.sh" restore "$STICKY_ROOT" "$GITHUB_WORKSPACE"; then
             sticky_snapshot_matches="true"
@@ -400,7 +400,7 @@ runs:
           if [ "$sticky_fingerprint_matches" = "true" ]; then
             echo "Sticky dependency snapshot importer contents are incomplete; reinstalling"
           elif [ "$STICKY_DISK" = "true" ] && [ -n "$sticky_fingerprint" ]; then
-            echo "Sticky dependency snapshot is stale (disk: $sticky_fingerprint, want: $OPENCLAW_STICKY_DEPS_FINGERPRINT); reinstalling"
+            echo "Sticky dependency snapshot is stale (disk: $sticky_fingerprint, want: $NOVA_STICKY_DEPS_FINGERPRINT); reinstalling"
           fi
           # A stale marker must not survive a mid-install failure: the commit
           # heuristics skip failed steps, but a wrong marker plus a partial
@@ -437,7 +437,7 @@ runs:
           # publishes the fingerprint; read-only clones are discarded at job
           # end, so capturing there would only burn shard wall clock.
           if [ "$STICKY_DISK" = "true" ] && [ "$STICKY_WRITER" = "true" ]; then
-            bash "$GITHUB_ACTION_PATH/sticky-importers.sh" capture "$STICKY_ROOT" "$GITHUB_WORKSPACE" "$OPENCLAW_STICKY_DEPS_FINGERPRINT"
+            bash "$GITHUB_ACTION_PATH/sticky-importers.sh" capture "$STICKY_ROOT" "$GITHUB_WORKSPACE" "$NOVA_STICKY_DEPS_FINGERPRINT"
           fi
         fi
 

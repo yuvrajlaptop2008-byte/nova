@@ -705,9 +705,9 @@ describe("acquireSessionWriteLock", () => {
     expect(
       resolveSessionWriteLockOptions(undefined, {
         env: {
-          OPENCLAW_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS: "120000",
-          OPENCLAW_SESSION_WRITE_LOCK_STALE_MS: "60000",
-          OPENCLAW_SESSION_WRITE_LOCK_MAX_HOLD_MS: "50000",
+          NOVA_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS: "120000",
+          NOVA_SESSION_WRITE_LOCK_STALE_MS: "60000",
+          NOVA_SESSION_WRITE_LOCK_MAX_HOLD_MS: "50000",
         },
       }),
     ).toEqual({
@@ -721,9 +721,9 @@ describe("acquireSessionWriteLock", () => {
     expect(
       resolveSessionWriteLockOptions(undefined, {
         env: {
-          OPENCLAW_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS: "1e3",
-          OPENCLAW_SESSION_WRITE_LOCK_STALE_MS: "0x1000",
-          OPENCLAW_SESSION_WRITE_LOCK_MAX_HOLD_MS: "9007199254740993",
+          NOVA_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS: "1e3",
+          NOVA_SESSION_WRITE_LOCK_STALE_MS: "0x1000",
+          NOVA_SESSION_WRITE_LOCK_MAX_HOLD_MS: "9007199254740993",
         },
       }),
     ).toEqual({
@@ -737,8 +737,8 @@ describe("acquireSessionWriteLock", () => {
     expect(
       resolveSessionWriteLockOptions(undefined, {
         env: {
-          OPENCLAW_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS: "Infinity",
-          OPENCLAW_SESSION_WRITE_LOCK_STALE_MS: "Infinity",
+          NOVA_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS: "Infinity",
+          NOVA_SESSION_WRITE_LOCK_STALE_MS: "Infinity",
         },
       }),
     ).toMatchObject({
@@ -774,7 +774,7 @@ describe("acquireSessionWriteLock", () => {
 
       const envOverride = await cleanStaleLockFiles({
         sessionsDir,
-        env: { OPENCLAW_SESSION_WRITE_LOCK_STALE_MS: "60000" },
+        env: { NOVA_SESSION_WRITE_LOCK_STALE_MS: "60000" },
         nowMs,
         removeStale: false,
         readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],

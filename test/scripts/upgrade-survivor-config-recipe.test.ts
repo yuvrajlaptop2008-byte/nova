@@ -157,7 +157,7 @@ process.exit(0);
         {
           env: {
             ...process.env,
-            OPENCLAW_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
+            NOVA_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
             PATH: `${binDir}${process.platform === "win32" ? ";" : ":"}${process.env.PATH ?? ""}`,
           },
           stdio: "pipe",

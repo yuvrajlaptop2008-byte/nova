@@ -857,7 +857,7 @@ describe("provider auth profile helpers", () => {
         );
       });
       const { resolveCopilotApiToken } = await import("./provider-auth.js");
-      const env = { OPENCLAW_STATE_DIR: stateDir } as NodeJS.ProcessEnv;
+      const env = { NOVA_STATE_DIR: stateDir } as NodeJS.ProcessEnv;
 
       const firstA = await resolveCopilotApiToken({
         githubToken: "test-auth-token",

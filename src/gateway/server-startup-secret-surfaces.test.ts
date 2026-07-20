@@ -67,7 +67,7 @@ describe("gateway startup secret surfaces", () => {
     const projection = resolveGatewayStartupSecretProjection({
       config: channelConfig(),
       reason: "startup",
-      env: { OPENCLAW_SKIP_CHANNELS: "1" },
+      env: { NOVA_SKIP_CHANNELS: "1" },
     });
 
     expect(projection.sourceConfig.channels).toBeUndefined();

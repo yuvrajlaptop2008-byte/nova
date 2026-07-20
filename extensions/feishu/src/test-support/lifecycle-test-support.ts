@@ -48,15 +48,15 @@ type FeishuLifecycleReplyDispatcher = {
 };
 
 export function setFeishuLifecycleStateDir(prefix: string) {
-  process.env.OPENCLAW_STATE_DIR = `/tmp/${prefix}-${randomUUID()}`;
+  process.env.NOVA_STATE_DIR = `/tmp/${prefix}-${randomUUID()}`;
 }
 
 export function restoreFeishuLifecycleStateDir(originalStateDir: string | undefined) {
   if (originalStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
     return;
   }
-  process.env.OPENCLAW_STATE_DIR = originalStateDir;
+  process.env.NOVA_STATE_DIR = originalStateDir;
 }
 
 const FEISHU_PREFETCHED_BOT_OPEN_ID_SOURCE = {

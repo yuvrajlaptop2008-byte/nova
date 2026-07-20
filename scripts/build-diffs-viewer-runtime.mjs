@@ -81,7 +81,7 @@ async function buildDiffsViewerRuntime(targetName) {
     format: "esm",
     minify: true,
     define: {
-      __OPENCLAW_DIFFS_LANGUAGE_PACK__: String(target.languagePackAvailable),
+      __NOVA_DIFFS_LANGUAGE_PACK__: String(target.languagePackAvailable),
       NaN: "Number.NaN",
     },
     legalComments: "none",

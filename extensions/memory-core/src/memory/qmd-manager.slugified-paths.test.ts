@@ -79,7 +79,7 @@ import { resolveMemoryBackendConfig } from "openclaw/plugin-sdk/memory-core-host
 import { QmdMemoryManager } from "./qmd-manager.js";
 
 const spawnMock = mockedSpawn as unknown as Mock;
-const originalQmdStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalQmdStateDir = process.env.NOVA_STATE_DIR;
 const withLease = async <T>(
   options: { signal?: AbortSignal },
   run: (lease: { signal: AbortSignal; assertOwned: () => void }) => Promise<T>,
@@ -90,14 +90,14 @@ const withLease = async <T>(
   });
 
 function setQmdStateDir(stateDir: string): void {
-  Reflect.set(process.env, "OPENCLAW_STATE_DIR", stateDir);
+  Reflect.set(process.env, "NOVA_STATE_DIR", stateDir);
 }
 
 function restoreQmdStateDir(): void {
   if (originalQmdStateDir === undefined) {
-    Reflect.deleteProperty(process.env, "OPENCLAW_STATE_DIR");
+    Reflect.deleteProperty(process.env, "NOVA_STATE_DIR");
   } else {
-    Reflect.set(process.env, "OPENCLAW_STATE_DIR", originalQmdStateDir);
+    Reflect.set(process.env, "NOVA_STATE_DIR", originalQmdStateDir);
   }
 }
 

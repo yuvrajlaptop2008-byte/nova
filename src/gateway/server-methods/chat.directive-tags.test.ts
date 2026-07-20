@@ -519,7 +519,7 @@ async function withTranscriptFixtureState(
   run: (fixtureDir: string) => Promise<void>,
 ): Promise<void> {
   const fixtureDir = await createTranscriptFixture(prefix);
-  await withEnvAsync({ OPENCLAW_STATE_DIR: fixtureDir }, async () => await run(fixtureDir));
+  await withEnvAsync({ NOVA_STATE_DIR: fixtureDir }, async () => await run(fixtureDir));
 }
 
 async function withSqliteTranscriptFixtureState(
@@ -527,7 +527,7 @@ async function withSqliteTranscriptFixtureState(
   run: (fixtureDir: string) => Promise<void>,
 ): Promise<void> {
   const fixtureDir = createSqliteTranscriptFixture(prefix);
-  await withEnvAsync({ OPENCLAW_STATE_DIR: fixtureDir }, async () => await run(fixtureDir));
+  await withEnvAsync({ NOVA_STATE_DIR: fixtureDir }, async () => await run(fixtureDir));
 }
 
 function transcriptScope(): SessionTranscriptReadScope {

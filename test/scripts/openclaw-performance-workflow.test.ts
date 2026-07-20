@@ -189,7 +189,7 @@ describe("Nova performance workflow", () => {
 
   it("builds only the QA and startup artifacts required by source probes", () => {
     const run = findStep("Run Nova source performance probes", "source_performance").run ?? "";
-    const build = "OPENCLAW_BUILD_PRIVATE_QA=1 node scripts/build-all.mjs sourcePerformance";
+    const build = "NOVA_BUILD_PRIVATE_QA=1 node scripts/build-all.mjs sourcePerformance";
 
     expect(run).toContain("module.BUILD_ALL_PROFILES?.sourcePerformance");
     expect(run).toContain(build);
@@ -837,7 +837,7 @@ esac
     const workflow = readWorkflow();
     const configure = findStep("Configure OCM local workspace dependencies");
 
-    expect(workflow.jobs?.kova?.env).not.toHaveProperty("OPENCLAW_OCM_RUNTIME_BUILD_PROFILE");
+    expect(workflow.jobs?.kova?.env).not.toHaveProperty("NOVA_OCM_RUNTIME_BUILD_PROFILE");
     expect(configure.run).toContain(
       'npm_wrapper="$PERFORMANCE_HELPER_DIR/scripts/ocm-npm-workspace-deps.mjs"',
     );
@@ -846,7 +846,7 @@ esac
       'if [[ -f "${GITHUB_WORKSPACE}/packages/ai/package.json" ]]; then',
     );
     expect(configure.run).toContain(
-      "OPENCLAW_OCM_WORKSPACE_DEPENDENCY_DIRS=$workspace_dependency_dirs",
+      "NOVA_OCM_WORKSPACE_DEPENDENCY_DIRS=$workspace_dependency_dirs",
     );
   });
 

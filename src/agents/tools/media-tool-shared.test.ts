@@ -76,7 +76,7 @@ describe("resolveMediaToolLocalRoots", () => {
     const moviesDir =
       process.platform === "win32" ? "C:\\Users\\peter\\Movies" : "/Users/peter/Movies";
 
-    const roots = withEnv({ OPENCLAW_STATE_DIR: stateDir }, () =>
+    const roots = withEnv({ NOVA_STATE_DIR: stateDir }, () =>
       resolveMediaToolLocalRoots(path.join(stateDir, "workspace-agent"), undefined, [
         path.join(picturesDir, "photo.png"),
         pathToFileURL(path.join(moviesDir, "clip.mp4")).href,

@@ -58,7 +58,7 @@ describe("readBestEffortConfig", () => {
 
   it("can read snapshots without applying config env vars to the process", async () => {
     await withTempHome(async (home) => {
-      const key = "OPENCLAW_ISOLATED_CONFIG_READ_TEST";
+      const key = "NOVA_ISOLATED_CONFIG_READ_TEST";
       await withEnvAsync({ [key]: undefined }, async () => {
         await writeOpenClawConfig(home, {
           env: { vars: { [key]: "from-config" } },
@@ -74,7 +74,7 @@ describe("readBestEffortConfig", () => {
 
   it("resolves config env above exact lower-precedence values in isolated snapshots", async () => {
     await withTempHome(async (home) => {
-      const key = "OPENCLAW_GATEWAY_TOKEN";
+      const key = "NOVA_GATEWAY_TOKEN";
       await withEnvAsync({ [key]: "shell-token" }, async () => {
         await writeOpenClawConfig(home, {
           env: { vars: { [key]: "config-token" } },
@@ -136,7 +136,7 @@ describe("readBestEffortConfig", () => {
 
   it("can read best-effort config without applying env vars or recording observation", async () => {
     await withTempHome(async (home) => {
-      const key = "OPENCLAW_ISOLATED_BEST_EFFORT_CONFIG_TEST";
+      const key = "NOVA_ISOLATED_BEST_EFFORT_CONFIG_TEST";
       await withEnvAsync({ [key]: undefined }, async () => {
         await writeOpenClawConfig(home, {
           env: { vars: { [key]: "from-config" } },
@@ -158,7 +158,7 @@ describe("readBestEffortConfig", () => {
     await withTempHome(async (home) => {
       const mixedCaseKey = "Nova_Config_Path";
       const customConfigPath = `${home}/custom-openclaw.json`;
-      await withEnvAsync({ OPENCLAW_CONFIG_PATH: undefined }, async () => {
+      await withEnvAsync({ NOVA_CONFIG_PATH: undefined }, async () => {
         await withEnvAsync({ [mixedCaseKey]: customConfigPath }, async () => {
           const platformSpy = vi.spyOn(process, "platform", "get").mockReturnValue("win32");
           try {

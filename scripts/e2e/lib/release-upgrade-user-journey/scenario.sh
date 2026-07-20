@@ -6,7 +6,7 @@ export NO_COLOR=1
 
 source scripts/lib/openclaw-e2e-instance.sh
 
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 openclaw_e2e_install_trash_shim
 
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
@@ -20,7 +20,7 @@ export CLICKCLACK_BOT_TOKEN="clickclack-release-upgrade-token"
 PORT="18789"
 MOCK_PORT="44210"
 CLICKCLACK_PORT="44211"
-SUCCESS_MARKER="OPENCLAW_E2E_OK_RELEASE_UPGRADE"
+SUCCESS_MARKER="NOVA_E2E_OK_RELEASE_UPGRADE"
 scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-release-upgrade-user-journey.XXXXXX")"
 LOG_DIR="$scenario_tmp/logs"
 mkdir -p "$LOG_DIR"
@@ -44,11 +44,11 @@ CLICKCLACK_STATE="$scenario_tmp/clickclack.json"
 export SUCCESS_MARKER MOCK_REQUEST_LOG CLICKCLACK_STATE
 
 candidate_version="$(
-  tar -xOf "${OPENCLAW_CURRENT_PACKAGE_TGZ:?missing OPENCLAW_CURRENT_PACKAGE_TGZ}" package/package.json |
+  tar -xOf "${NOVA_CURRENT_PACKAGE_TGZ:?missing NOVA_CURRENT_PACKAGE_TGZ}" package/package.json |
     node -e 'let raw = ""; process.stdin.setEncoding("utf8"); process.stdin.on("data", (chunk) => { raw += chunk; }); process.stdin.on("end", () => { process.stdout.write(JSON.parse(raw).version); });'
 )"
-if [ -n "${OPENCLAW_RELEASE_UPGRADE_BASELINE_SPEC:-}" ]; then
-  BASELINE_SPEC="$OPENCLAW_RELEASE_UPGRADE_BASELINE_SPEC"
+if [ -n "${NOVA_RELEASE_UPGRADE_BASELINE_SPEC:-}" ]; then
+  BASELINE_SPEC="$NOVA_RELEASE_UPGRADE_BASELINE_SPEC"
 else
   BASELINE_SPEC="$(node scripts/lib/release-upgrade-baseline.mjs --candidate-version "$candidate_version")"
 fi
@@ -93,7 +93,7 @@ start_gateway() {
 }
 
 echo "Installing published baseline $BASELINE_SPEC..."
-if ! openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g "$BASELINE_SPEC" --no-fund --no-audit >"$BASELINE_INSTALL_LOG" 2>&1; then
+if ! openclaw_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g "$BASELINE_SPEC" --no-fund --no-audit >"$BASELINE_INSTALL_LOG" 2>&1; then
   cat "$BASELINE_INSTALL_LOG" >&2 || true
   exit 1
 fi

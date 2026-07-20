@@ -373,7 +373,7 @@ export async function detectLegacyStateMigrations(params: {
   const hasPluginInstallIndex = fileExists(pluginInstallIndexPath);
   const debugProxyCaptureSidecar = detectLegacyDebugProxyCaptureSidecar(stateDir, env);
   const stateSchemaMigrations = detectOpenClawStateDatabaseSchemaMigrations({
-    env: { ...env, OPENCLAW_STATE_DIR: stateDir },
+    env: { ...env, NOVA_STATE_DIR: stateDir },
   });
   const taskRunsSidecarPath = resolveLegacyTaskRunsSidecarPath(stateDir);
   const flowRunsSidecarPath = resolveLegacyFlowRunsSidecarPath(stateDir);
@@ -824,7 +824,7 @@ async function migratePluginDoctorStatePlans(params: {
   try {
     lock = await acquireGatewayLock({
       allowInTests: true,
-      env: { ...params.env, OPENCLAW_STATE_DIR: params.stateDir },
+      env: { ...params.env, NOVA_STATE_DIR: params.stateDir },
       pollIntervalMs: PLUGIN_DOCTOR_MIGRATION_LOCK_POLL_INTERVAL_MS,
       role: "sqlite-maintenance",
       timeoutMs: PLUGIN_DOCTOR_MIGRATION_LOCK_TIMEOUT_MS,
@@ -892,7 +892,7 @@ export async function autoMigrateLegacyPluginDoctorState(params: {
   const stateDir = resolveStateDir(env, params.homedir ?? os.homedir);
   const oauthDir = resolveOAuthDir(env, stateDir);
   const stateSchema = repairOpenClawStateDatabaseSchema({
-    env: { ...env, OPENCLAW_STATE_DIR: stateDir },
+    env: { ...env, NOVA_STATE_DIR: stateDir },
   });
   const changes = [...stateDirResult.changes, ...stateSchema.changes];
   const warnings = [...stateDirResult.warnings, ...stateSchema.warnings];
@@ -940,7 +940,7 @@ function migrateLegacyStateSchema(
   warnings: string[];
 } {
   return repairOpenClawStateDatabaseSchema({
-    env: { ...env, OPENCLAW_STATE_DIR: detected.stateDir },
+    env: { ...env, NOVA_STATE_DIR: detected.stateDir },
   });
 }
 
@@ -1062,7 +1062,7 @@ export async function runLegacyStateMigrations(params: {
   });
   const channelPairing = migrateLegacyChannelPairingState({
     detected: detected.channelPairing,
-    env: { ...env, OPENCLAW_STATE_DIR: detected.stateDir },
+    env: { ...env, NOVA_STATE_DIR: detected.stateDir },
   });
   const preSessionChannelPlans = await runLegacyMigrationPlans(
     detected.channelPlans.plans.filter((plan) => plan.kind === "plugin-state-import"),
@@ -1079,7 +1079,7 @@ export async function runLegacyStateMigrations(params: {
   });
   const acpSessionMetadata = await migrateLegacyAcpSessionMetadata({
     cfg: params.config ?? ({} as OpenClawConfig),
-    env: { ...env, OPENCLAW_STATE_DIR: detected.stateDir },
+    env: { ...env, NOVA_STATE_DIR: detected.stateDir },
     now,
   });
   const agentDir = await migrateLegacyAgentDir(detected, now);
@@ -1223,7 +1223,7 @@ export async function autoMigrateLegacyState(params: {
   const stateDir = resolveStateDir(env, homedir);
   autoMigrateChecked.add(`${path.resolve(stateDir)}\0${migrationMode}`);
   const stateSchema = repairOpenClawStateDatabaseSchema({
-    env: { ...env, OPENCLAW_STATE_DIR: stateDir },
+    env: { ...env, NOVA_STATE_DIR: stateDir },
   });
   if (stateSchema.warnings.length > 0) {
     return {
@@ -1298,7 +1298,7 @@ export async function autoMigrateLegacyState(params: {
     stateDir: detected.stateDir,
     doctorOnlyStateMigrations: params.doctorOnlyStateMigrations,
   });
-  const hasCustomAgentDir = env.OPENCLAW_AGENT_DIR?.trim() || env.PI_CODING_AGENT_DIR?.trim();
+  const hasCustomAgentDir = env.NOVA_AGENT_DIR?.trim() || env.PI_CODING_AGENT_DIR?.trim();
   if (hasCustomAgentDir) {
     const pluginStateSidecar = await migrateLegacyPluginStateSidecar({
       stateDir: detected.stateDir,
@@ -1343,7 +1343,7 @@ export async function autoMigrateLegacyState(params: {
     });
     const channelPairing = migrateLegacyChannelPairingState({
       detected: detected.channelPairing,
-      env: { ...env, OPENCLAW_STATE_DIR: detected.stateDir },
+      env: { ...env, NOVA_STATE_DIR: detected.stateDir },
     });
     const preSessionChannelPlans = await runLegacyMigrationPlans(
       detected.channelPlans.plans.filter((plan) => plan.kind === "plugin-state-import"),
@@ -1533,7 +1533,7 @@ export async function autoMigrateLegacyState(params: {
   });
   const channelPairing = migrateLegacyChannelPairingState({
     detected: detected.channelPairing,
-    env: { ...env, OPENCLAW_STATE_DIR: detected.stateDir },
+    env: { ...env, NOVA_STATE_DIR: detected.stateDir },
   });
   const preSessionChannelPlans = await runLegacyMigrationPlans(
     detected.channelPlans.plans.filter((plan) => plan.kind === "plugin-state-import"),

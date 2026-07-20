@@ -96,8 +96,8 @@ function extractWindowsBackgroundControlMarkers(decoded: string): {
     return match[0];
   };
   return {
-    done: marker("__OPENCLAW_BACKGROUND_DONE__", false),
-    exitPrefix: marker("__OPENCLAW_BACKGROUND_EXIT__", true),
+    done: marker("__NOVA_BACKGROUND_DONE__", false),
+    exitPrefix: marker("__NOVA_BACKGROUND_EXIT__", true),
   };
 }
 
@@ -333,7 +333,7 @@ exit 1
     expect(script).toContain("assertPublishedTargetMatchesHarnessCheckout");
     expect(script).toContain("readHarnessCheckoutVersion");
     expect(script).toContain("openClawVersionFamily");
-    expect(script).toContain("OPENCLAW_PARALLELS_ALLOW_HARNESS_TARGET_MISMATCH");
+    expect(script).toContain("NOVA_PARALLELS_ALLOW_HARNESS_TARGET_MISMATCH");
     expect(script).toContain("checkout the matching release branch");
   });
 
@@ -383,7 +383,7 @@ exit 1
     ].join("\n");
 
     expect(scripts).toContain("print_log_tail()");
-    expect(scripts).toContain("OPENCLAW_PARALLELS_NPM_UPDATE_LOG_TAIL_BYTES");
+    expect(scripts).toContain("NOVA_PARALLELS_NPM_UPDATE_LOG_TAIL_BYTES");
     expect(scripts).toContain('print_log_tail "$output_file"');
     expect(scripts).toContain("print_log_tail /tmp/openclaw-parallels-macos-gateway.log >&2");
     expect(scripts).toContain("print_log_tail /tmp/openclaw-parallels-linux-gateway.log >&2");
@@ -399,9 +399,9 @@ exit 1
     };
     withEnv(
       {
-        OPENCLAW_PARALLELS_LINUX_MODEL_TIMEOUT_S: undefined,
-        OPENCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S: undefined,
-        OPENCLAW_PARALLELS_MODEL_TIMEOUT_S: undefined,
+        NOVA_PARALLELS_LINUX_MODEL_TIMEOUT_S: undefined,
+        NOVA_PARALLELS_MACOS_MODEL_TIMEOUT_S: undefined,
+        NOVA_PARALLELS_MODEL_TIMEOUT_S: undefined,
       },
       () => {
         expect(macosUpdateScript(input)).toContain("--timeout 1800 --json");
@@ -410,8 +410,8 @@ exit 1
     );
     withEnv(
       {
-        OPENCLAW_PARALLELS_LINUX_MODEL_TIMEOUT_S: "321",
-        OPENCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S: "654",
+        NOVA_PARALLELS_LINUX_MODEL_TIMEOUT_S: "321",
+        NOVA_PARALLELS_MACOS_MODEL_TIMEOUT_S: "654",
       },
       () => {
         expect(macosUpdateScript(input)).toContain("--timeout 654 --json");
@@ -443,22 +443,19 @@ exit 1
   });
 
   it("sets platform-aware fresh lane timeouts", () => {
-    withEnv({ OPENCLAW_PARALLELS_NPM_UPDATE_FRESH_TIMEOUT_S: undefined }, () => {
+    withEnv({ NOVA_PARALLELS_NPM_UPDATE_FRESH_TIMEOUT_S: undefined }, () => {
       expect(freshLaneTimeoutMs("macos")).toBe(75 * 60 * 1000);
       expect(freshLaneTimeoutMs("linux")).toBe(75 * 60 * 1000);
       expect(freshLaneTimeoutMs("windows")).toBe(90 * 60 * 1000);
     });
 
-    withEnv({ OPENCLAW_PARALLELS_NPM_UPDATE_FRESH_TIMEOUT_S: "3" }, () => {
+    withEnv({ NOVA_PARALLELS_NPM_UPDATE_FRESH_TIMEOUT_S: "3" }, () => {
       expect(freshLaneTimeoutMs("macos")).toBe(3000);
     });
 
-    withEnv(
-      { OPENCLAW_PARALLELS_NPM_UPDATE_FRESH_TIMEOUT_S: String(Number.MAX_SAFE_INTEGER) },
-      () => {
-        expect(freshLaneTimeoutMs("linux")).toBe(MAX_TIMER_TIMEOUT_MS);
-      },
-    );
+    withEnv({ NOVA_PARALLELS_NPM_UPDATE_FRESH_TIMEOUT_S: String(Number.MAX_SAFE_INTEGER) }, () => {
+      expect(freshLaneTimeoutMs("linux")).toBe(MAX_TIMER_TIMEOUT_MS);
+    });
   });
 
   it("clamps oversized fresh lane command timeouts before scheduling", async () => {
@@ -663,8 +660,8 @@ exit 1
 
     expect(script).toContain("runWindowsBackgroundPowerShell");
     expect(transports).toContain("runWindowsBackgroundPowerShell");
-    expect(transports).toContain("__OPENCLAW_BACKGROUND_EXIT__");
-    expect(transports).toContain("__OPENCLAW_BACKGROUND_DONE__");
+    expect(transports).toContain("__NOVA_BACKGROUND_EXIT__");
+    expect(transports).toContain("__NOVA_BACKGROUND_DONE__");
     expect(transports).toContain("${options.label} timed out");
   });
 
@@ -928,19 +925,15 @@ exit 7
     );
     expect(windowsScript).toContain("Remove-FuturePluginEntries\nStop-OpenClawGatewayProcesses");
     expect(script).toContain("scrub_future_plugin_entries\nstop_openclaw_gateway_processes");
-    expect(script).toContain("Invoke-WithScopedEnv @{ OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'");
-    expect(macosScript).toContain('OPENCLAW_BIN="$(resolve_required_command openclaw)"');
+    expect(script).toContain("Invoke-WithScopedEnv @{ NOVA_DISABLE_BUNDLED_PLUGINS = '1'");
+    expect(macosScript).toContain('NOVA_BIN="$(resolve_required_command openclaw)"');
     expect(macosScript).toContain("/usr/local/bin:/usr/local/sbin");
-    expect(macosScript).toContain(
-      'OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 "$OPENCLAW_BIN" update --tag',
-    );
+    expect(macosScript).toContain('NOVA_DISABLE_BUNDLED_PLUGINS=1 "$NOVA_BIN" update --tag');
     expect(macosScript).not.toContain("/opt/homebrew/bin/openclaw");
-    expect(script).toContain("OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 openclaw update --tag");
-    expect(macosScript).toContain(
-      'OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 "$OPENCLAW_BIN" gateway stop',
-    );
+    expect(script).toContain("NOVA_DISABLE_BUNDLED_PLUGINS=1 openclaw update --tag");
+    expect(macosScript).toContain('NOVA_DISABLE_BUNDLED_PLUGINS=1 "$NOVA_BIN" gateway stop');
     expect(script).toContain(
-      "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 OPENCLAW_ALLOW_ROOT=1 openclaw gateway stop",
+      "NOVA_DISABLE_BUNDLED_PLUGINS=1 NOVA_ALLOW_ROOT=1 openclaw gateway stop",
     );
   });
 
@@ -952,7 +945,7 @@ exit 7
     });
 
     const updateIndex = script.indexOf("Invoke-Nova update --tag");
-    const scopedIndex = script.indexOf("Invoke-WithScopedEnv @{ OPENCLAW_DISABLE_BUNDLED_PLUGINS");
+    const scopedIndex = script.indexOf("Invoke-WithScopedEnv @{ NOVA_DISABLE_BUNDLED_PLUGINS");
     const versionIndex = script.indexOf("Invoke-Nova --version", scopedIndex);
     const restartIndex = script.indexOf("Invoke-Nova gateway restart");
     const agentIndex = script.indexOf("Invoke-Nova agent --local");
@@ -963,7 +956,7 @@ exit 7
     expect(versionIndex).toBeGreaterThan(updateIndex);
     expect(restartIndex).toBeGreaterThan(updateIndex);
     expect(agentIndex).toBeGreaterThan(updateIndex);
-    expect(script).not.toContain("$env:OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'");
+    expect(script).not.toContain("$env:NOVA_DISABLE_BUNDLED_PLUGINS = '1'");
   });
 
   it("generates a .NET-safe Windows stale import regex in the update-failure guard", () => {

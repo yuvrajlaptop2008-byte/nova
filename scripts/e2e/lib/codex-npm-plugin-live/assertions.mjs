@@ -18,33 +18,32 @@ import {
 
 const command = process.argv[2];
 const allowBetaCompatDiagnostics =
-  process.env.OPENCLAW_CODEX_NPM_PLUGIN_ALLOW_BETA_COMPAT_DIAGNOSTICS === "1";
-const sessionStoreContract =
-  process.env.OPENCLAW_CODEX_NPM_PLUGIN_SESSION_STORE_CONTRACT || "sqlite";
+  process.env.NOVA_CODEX_NPM_PLUGIN_ALLOW_BETA_COMPAT_DIAGNOSTICS === "1";
+const sessionStoreContract = process.env.NOVA_CODEX_NPM_PLUGIN_SESSION_STORE_CONTRACT || "sqlite";
 const bindingStoreContract =
-  process.env.OPENCLAW_CODEX_NPM_PLUGIN_BINDING_STORE_CONTRACT || "plugin-kv";
+  process.env.NOVA_CODEX_NPM_PLUGIN_BINDING_STORE_CONTRACT || "plugin-kv";
 const MAX_TEXT_FILE_BYTES = readPositiveIntEnv(
-  "OPENCLAW_CODEX_NPM_PLUGIN_ASSERT_MAX_TEXT_FILE_BYTES",
+  "NOVA_CODEX_NPM_PLUGIN_ASSERT_MAX_TEXT_FILE_BYTES",
   1024 * 1024,
 );
 const MAX_ERROR_TAIL_BYTES = readPositiveIntEnv(
-  "OPENCLAW_CODEX_NPM_PLUGIN_ASSERT_MAX_ERROR_TAIL_BYTES",
+  "NOVA_CODEX_NPM_PLUGIN_ASSERT_MAX_ERROR_TAIL_BYTES",
   64 * 1024,
 );
 const MAX_TRANSCRIPT_FILES = readPositiveIntEnv(
-  "OPENCLAW_CODEX_NPM_PLUGIN_ASSERT_MAX_TRANSCRIPT_FILES",
+  "NOVA_CODEX_NPM_PLUGIN_ASSERT_MAX_TRANSCRIPT_FILES",
   64,
 );
 const MAX_TRANSCRIPT_WALK_ENTRIES = readPositiveIntEnv(
-  "OPENCLAW_CODEX_NPM_PLUGIN_ASSERT_MAX_TRANSCRIPT_WALK_ENTRIES",
+  "NOVA_CODEX_NPM_PLUGIN_ASSERT_MAX_TRANSCRIPT_WALK_ENTRIES",
   4096,
 );
 const MAX_TRANSCRIPT_SCAN_BYTES = readPositiveIntEnv(
-  "OPENCLAW_CODEX_NPM_PLUGIN_ASSERT_MAX_TRANSCRIPT_SCAN_BYTES",
+  "NOVA_CODEX_NPM_PLUGIN_ASSERT_MAX_TRANSCRIPT_SCAN_BYTES",
   2 * 1024 * 1024,
 );
 const AGENT_TURN_TIMEOUT_SECONDS = readPositiveIntEnv(
-  "OPENCLAW_CODEX_NPM_PLUGIN_AGENT_TIMEOUT_SECONDS",
+  "NOVA_CODEX_NPM_PLUGIN_AGENT_TIMEOUT_SECONDS",
   420,
 );
 const CODEX_BINDING_NAMESPACE = "app-server-thread-bindings";
@@ -102,7 +101,7 @@ function readCodexBinding(sessionId, sessionKey, entry) {
   }
   if (bindingStoreContract !== "plugin-kv") {
     throw new Error(
-      `OPENCLAW_CODEX_NPM_PLUGIN_BINDING_STORE_CONTRACT must be plugin-kv or legacy-sidecar; got ${bindingStoreContract}`,
+      `NOVA_CODEX_NPM_PLUGIN_BINDING_STORE_CONTRACT must be plugin-kv or legacy-sidecar; got ${bindingStoreContract}`,
     );
   }
 
@@ -188,7 +187,7 @@ function readSessionEntry(sessionId) {
   }
   if (sessionStoreContract !== "sqlite") {
     throw new Error(
-      `OPENCLAW_CODEX_NPM_PLUGIN_SESSION_STORE_CONTRACT must be sqlite or legacy-json; got ${sessionStoreContract}`,
+      `NOVA_CODEX_NPM_PLUGIN_SESSION_STORE_CONTRACT must be sqlite or legacy-json; got ${sessionStoreContract}`,
     );
   }
   const dbPath = path.join(stateDir(), "agents", "main", "agent", "openclaw-agent.sqlite");

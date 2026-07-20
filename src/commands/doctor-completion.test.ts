@@ -17,7 +17,7 @@ import {
 
 const originalEnv = captureEnv([
   "HOME",
-  "OPENCLAW_STATE_DIR",
+  "NOVA_STATE_DIR",
   "SHELL",
   COMPLETION_SKIP_PLUGIN_COMMANDS_ENV,
 ]);
@@ -44,7 +44,7 @@ describe("shell completion health mapping", () => {
     const homeDir = tempDirs.make("openclaw-completion-home-");
     const stateDir = tempDirs.make("openclaw-completion-state-");
     setTestEnvValue("HOME", homeDir);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
     setTestEnvValue("SHELL", "/bin/zsh");
 
     const current = await checkShellCompletionStatus("openclaw", { shell: "fish" });
@@ -143,7 +143,7 @@ async function setupDoctorCompletionTest(usesSlowPattern: boolean) {
   const homeDir = tempDirs.make("openclaw-doctor-home-");
   const stateDir = tempDirs.make("openclaw-doctor-state-");
   setTestEnvValue("HOME", homeDir);
-  setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+  setTestEnvValue("NOVA_STATE_DIR", stateDir);
   setTestEnvValue("SHELL", "/bin/bash");
 
   const profilePath = path.join(homeDir, usesSlowPattern ? ".bashrc" : ".bash_profile");
@@ -181,7 +181,7 @@ describe("doctorShellCompletion", () => {
     "uses explicit $generationMode cache generation even with an ambient skip guard",
     async ({ generationMode, expectedSkipValue }) => {
       const stateDir = tempDirs.make("openclaw-doctor-state-");
-      setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+      setTestEnvValue("NOVA_STATE_DIR", stateDir);
       setTestEnvValue(COMPLETION_SKIP_PLUGIN_COMMANDS_ENV, "1");
 
       await expect(

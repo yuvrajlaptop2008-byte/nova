@@ -32,7 +32,7 @@ describe("phone-control doctor state migration", () => {
   beforeEach(async () => {
     resetPluginStateStoreForTests();
     stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-phone-control-doctor-"));
-    env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    env = { ...process.env, NOVA_STATE_DIR: stateDir };
   });
 
   afterEach(async () => {

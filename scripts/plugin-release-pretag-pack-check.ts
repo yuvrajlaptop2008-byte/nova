@@ -93,7 +93,7 @@ export function runPluginReleasePretagPackCheck(rootDir = resolve(".")) {
     };
     const prebuiltPackEnv = {
       ...packEnv,
-      OPENCLAW_PLUGIN_NPM_RUNTIME_BUILD: "0",
+      NOVA_PLUGIN_NPM_RUNTIME_BUILD: "0",
     };
     for (const [index, target] of targets.entries()) {
       if (target.packNpm) {
@@ -111,7 +111,7 @@ export function runPluginReleasePretagPackCheck(rootDir = resolve(".")) {
           cwd: rootDir,
           env: {
             ...prebuiltPackEnv,
-            OPENCLAW_CLAWHUB_PACK_OUTPUT_DIR: outputDir,
+            NOVA_CLAWHUB_PACK_OUTPUT_DIR: outputDir,
           },
           quietStdout: true,
         });

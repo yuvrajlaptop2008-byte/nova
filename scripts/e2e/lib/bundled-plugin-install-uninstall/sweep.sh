@@ -5,22 +5,22 @@ source scripts/lib/openclaw-e2e-instance.sh
 source scripts/lib/docker-e2e-logs.sh
 
 if [ -f dist/index.mjs ]; then
-  OPENCLAW_ENTRY="dist/index.mjs"
+  NOVA_ENTRY="dist/index.mjs"
 elif [ -f dist/index.js ]; then
-  OPENCLAW_ENTRY="dist/index.js"
+  NOVA_ENTRY="dist/index.js"
 else
   echo "Missing dist/index.(m)js (build output):"
   ls -la dist || true
   exit 1
 fi
-export OPENCLAW_ENTRY
+export NOVA_ENTRY
 
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 
 probe="scripts/e2e/lib/bundled-plugin-install-uninstall/probe.mjs"
 runtime_smoke="scripts/e2e/lib/bundled-plugin-install-uninstall/runtime-smoke.mjs"
 node "$probe" select > /tmp/bundled-plugin-sweep-ids
-sweep_command_timeout="${OPENCLAW_BUNDLED_PLUGIN_SWEEP_COMMAND_TIMEOUT:-300s}"
+sweep_command_timeout="${NOVA_BUNDLED_PLUGIN_SWEEP_COMMAND_TIMEOUT:-300s}"
 
 now_ms() {
   node -e 'process.stdout.write(String(Date.now()))'
@@ -45,7 +45,7 @@ run_logged_sweep_command() {
 }
 
 lifecycle_trace_enabled() {
-  case "${OPENCLAW_PLUGIN_LIFECYCLE_TRACE:-}" in
+  case "${NOVA_PLUGIN_LIFECYCLE_TRACE:-}" in
     1 | true | TRUE | yes | YES)
       return 0
       ;;
@@ -64,7 +64,7 @@ for plugin_entry in "${plugin_entries[@]}"; do
   IFS=$'\t' read -r plugin_id plugin_dir _requires_config _plugin_root <<<"$plugin_entry"
   selected_labels+=("${plugin_id}@${plugin_dir}")
 done
-echo "Selected ${#plugin_entries[@]} bundled plugins for shard ${OPENCLAW_BUNDLED_PLUGIN_SWEEP_INDEX:-0}/${OPENCLAW_BUNDLED_PLUGIN_SWEEP_TOTAL:-1}: ${selected_labels[*]}"
+echo "Selected ${#plugin_entries[@]} bundled plugins for shard ${NOVA_BUNDLED_PLUGIN_SWEEP_INDEX:-0}/${NOVA_BUNDLED_PLUGIN_SWEEP_TOTAL:-1}: ${selected_labels[*]}"
 
 plugin_index=0
 for plugin_entry in "${plugin_entries[@]}"; do
@@ -74,18 +74,18 @@ for plugin_entry in "${plugin_entries[@]}"; do
   plugin_started_at="$(now_ms)"
   echo "Installing bundled plugin: $plugin_id ($plugin_dir)"
   run_logged_sweep_command "install $plugin_id" "$install_log" \
-    node "$OPENCLAW_ENTRY" plugins install "$plugin_id"
+    node "$NOVA_ENTRY" plugins install "$plugin_id"
   if lifecycle_trace_enabled; then
     docker_e2e_print_log "$install_log"
   fi
   install_finished_at="$(now_ms)"
   node "$probe" assert-installed "$plugin_id" "$plugin_dir" "$requires_config" "$plugin_root"
   installed_asserted_at="$(now_ms)"
-  if [[ "${OPENCLAW_BUNDLED_PLUGIN_RUNTIME_SMOKE:-1}" != "0" ]]; then
+  if [[ "${NOVA_BUNDLED_PLUGIN_RUNTIME_SMOKE:-1}" != "0" ]]; then
     echo "Running bundled plugin runtime smoke: $plugin_id ($plugin_dir)"
     node "$runtime_smoke" plugin "$plugin_id" "$plugin_dir" "$requires_config" "$plugin_index" "$plugin_root"
     node "$runtime_smoke" tts-global-disable "$plugin_id" "$plugin_dir" "$requires_config" "$plugin_index" "$plugin_root" ""
-    if [[ "$plugin_id" == "${OPENCLAW_BUNDLED_PLUGIN_TTS_LIVE_PROVIDER:-openai}" ]]; then
+    if [[ "$plugin_id" == "${NOVA_BUNDLED_PLUGIN_TTS_LIVE_PROVIDER:-openai}" ]]; then
       node "$runtime_smoke" tts-openai-live "$plugin_id" "$plugin_dir" "$requires_config" "$plugin_index"
     fi
   fi
@@ -93,7 +93,7 @@ for plugin_entry in "${plugin_entries[@]}"; do
 
   echo "Uninstalling bundled plugin: $plugin_id ($plugin_dir)"
   run_logged_sweep_command "uninstall $plugin_id" "$uninstall_log" \
-    node "$OPENCLAW_ENTRY" plugins uninstall "$plugin_id" --force
+    node "$NOVA_ENTRY" plugins uninstall "$plugin_id" --force
   if lifecycle_trace_enabled; then
     docker_e2e_print_log "$uninstall_log"
   fi

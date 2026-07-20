@@ -10,7 +10,7 @@ import { runSkillExperienceReview, type ExperienceReviewCandidate } from "./expe
 import { listSkillProposals } from "./service.js";
 
 const LIVE =
-  isLiveTestEnabled(["OPENCLAW_LIVE_SKILL_EXPERIENCE_REVIEW"]) &&
+  isLiveTestEnabled(["NOVA_LIVE_SKILL_EXPERIENCE_REVIEW"]) &&
   Boolean(process.env.OPENAI_API_KEY?.trim());
 const describeLive = LIVE ? describe : describe.skip;
 const tempDirs = createTrackedTempDirs();
@@ -18,7 +18,7 @@ let testState: OpenClawTestState;
 let workspaceDir = "";
 
 function candidate(runId: string, messages: unknown[]): ExperienceReviewCandidate {
-  const modelId = process.env.OPENCLAW_LIVE_SKILL_EXPERIENCE_MODEL ?? "gpt-5.6-luna";
+  const modelId = process.env.NOVA_LIVE_SKILL_EXPERIENCE_MODEL ?? "gpt-5.6-luna";
   return {
     ctx: {
       agentId: "main",

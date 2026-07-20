@@ -421,7 +421,7 @@ describe("Codex app-server binding store", () => {
       const state = createPluginStateSyncKeyedStoreForTests<StoredCodexAppServerBinding>("codex", {
         namespace: "app-server-thread-bindings-json-test",
         maxEntries: CODEX_APP_SERVER_BINDING_MAX_ENTRIES,
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       });
       const store = createCodexAppServerBindingStore(state);
       const identity = { kind: "conversation" as const, bindingId: "binding-json" };
@@ -507,7 +507,7 @@ describe("Codex app-server binding store", () => {
       const state = createPluginStateSyncKeyedStoreForTests<StoredCodexAppServerBinding>("codex", {
         namespace: "app-server-thread-bindings-clear-test",
         maxEntries: CODEX_APP_SERVER_BINDING_MAX_ENTRIES,
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       });
       const store = createCodexAppServerBindingStore(state);
       const normal = { kind: "conversation" as const, bindingId: "normal" };
@@ -677,7 +677,7 @@ describe("Codex app-server binding store", () => {
         namespace: "app-server-thread-bindings-retirement-test",
         maxEntries: CODEX_APP_SERVER_BINDING_MAX_ENTRIES,
         overflowPolicy: "reject-new",
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       });
       const store = createCodexAppServerBindingStore(state);
       const physical = {

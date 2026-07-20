@@ -59,7 +59,7 @@ describe("run-opengrep.sh", () => {
       env: {
         ...process.env,
         PATH: `${binDir}${path.delimiter}${process.env.PATH ?? ""}`,
-        OPENCLAW_OPENGREP_BASE_REF: "HEAD",
+        NOVA_OPENGREP_BASE_REF: "HEAD",
       },
       encoding: "utf8",
     });
@@ -103,7 +103,7 @@ describe("run-opengrep.sh", () => {
       env: {
         ...process.env,
         PATH: `${binDir}${path.delimiter}${process.env.PATH ?? ""}`,
-        OPENCLAW_OPENGREP_BASE_REF: "HEAD",
+        NOVA_OPENGREP_BASE_REF: "HEAD",
       },
       encoding: "utf8",
     });
@@ -161,8 +161,8 @@ describe("run-opengrep.sh", () => {
       env: {
         ...process.env,
         PATH: `${binDir}${path.delimiter}${process.env.PATH ?? ""}`,
-        OPENCLAW_OPENGREP_BASE_REF: `${staleBase}...HEAD`,
-        OPENCLAW_OPENGREP_MERGE_HEAD_FIRST_PARENT: "1",
+        NOVA_OPENGREP_BASE_REF: `${staleBase}...HEAD`,
+        NOVA_OPENGREP_MERGE_HEAD_FIRST_PARENT: "1",
       },
       encoding: "utf8",
     });

@@ -773,28 +773,28 @@ describeCacheLive("embedded agent runner prompt caching (live)", () => {
     liveCacheTraceFile = path.join(liveRunnerRootDir, "cache-trace.jsonl");
     liveTestPngBase64 = (await fs.readFile(LIVE_TEST_PNG_URL)).toString("base64");
     previousCacheTraceEnv = {
-      enabled: process.env.OPENCLAW_CACHE_TRACE,
-      file: process.env.OPENCLAW_CACHE_TRACE_FILE,
-      messages: process.env.OPENCLAW_CACHE_TRACE_MESSAGES,
-      prompt: process.env.OPENCLAW_CACHE_TRACE_PROMPT,
-      system: process.env.OPENCLAW_CACHE_TRACE_SYSTEM,
+      enabled: process.env.NOVA_CACHE_TRACE,
+      file: process.env.NOVA_CACHE_TRACE_FILE,
+      messages: process.env.NOVA_CACHE_TRACE_MESSAGES,
+      prompt: process.env.NOVA_CACHE_TRACE_PROMPT,
+      system: process.env.NOVA_CACHE_TRACE_SYSTEM,
     };
-    setTestEnvValue("OPENCLAW_CACHE_TRACE", "1");
-    setTestEnvValue("OPENCLAW_CACHE_TRACE_FILE", liveCacheTraceFile);
-    setTestEnvValue("OPENCLAW_CACHE_TRACE_MESSAGES", "0");
-    setTestEnvValue("OPENCLAW_CACHE_TRACE_PROMPT", "0");
-    setTestEnvValue("OPENCLAW_CACHE_TRACE_SYSTEM", "0");
+    setTestEnvValue("NOVA_CACHE_TRACE", "1");
+    setTestEnvValue("NOVA_CACHE_TRACE_FILE", liveCacheTraceFile);
+    setTestEnvValue("NOVA_CACHE_TRACE_MESSAGES", "0");
+    setTestEnvValue("NOVA_CACHE_TRACE_PROMPT", "0");
+    setTestEnvValue("NOVA_CACHE_TRACE_SYSTEM", "0");
   }, 120_000);
 
   afterAll(async () => {
     if (previousCacheTraceEnv) {
       const restore = (
         key:
-          | "OPENCLAW_CACHE_TRACE"
-          | "OPENCLAW_CACHE_TRACE_FILE"
-          | "OPENCLAW_CACHE_TRACE_MESSAGES"
-          | "OPENCLAW_CACHE_TRACE_PROMPT"
-          | "OPENCLAW_CACHE_TRACE_SYSTEM",
+          | "NOVA_CACHE_TRACE"
+          | "NOVA_CACHE_TRACE_FILE"
+          | "NOVA_CACHE_TRACE_MESSAGES"
+          | "NOVA_CACHE_TRACE_PROMPT"
+          | "NOVA_CACHE_TRACE_SYSTEM",
         value: string | undefined,
       ) => {
         if (value === undefined) {
@@ -803,11 +803,11 @@ describeCacheLive("embedded agent runner prompt caching (live)", () => {
           setTestEnvValue(key, value);
         }
       };
-      restore("OPENCLAW_CACHE_TRACE", previousCacheTraceEnv.enabled);
-      restore("OPENCLAW_CACHE_TRACE_FILE", previousCacheTraceEnv.file);
-      restore("OPENCLAW_CACHE_TRACE_MESSAGES", previousCacheTraceEnv.messages);
-      restore("OPENCLAW_CACHE_TRACE_PROMPT", previousCacheTraceEnv.prompt);
-      restore("OPENCLAW_CACHE_TRACE_SYSTEM", previousCacheTraceEnv.system);
+      restore("NOVA_CACHE_TRACE", previousCacheTraceEnv.enabled);
+      restore("NOVA_CACHE_TRACE_FILE", previousCacheTraceEnv.file);
+      restore("NOVA_CACHE_TRACE_MESSAGES", previousCacheTraceEnv.messages);
+      restore("NOVA_CACHE_TRACE_PROMPT", previousCacheTraceEnv.prompt);
+      restore("NOVA_CACHE_TRACE_SYSTEM", previousCacheTraceEnv.system);
     }
     previousCacheTraceEnv = null;
     liveCacheTraceFile = undefined;
@@ -824,7 +824,7 @@ describeCacheLive("embedded agent runner prompt caching (live)", () => {
       fixture = await resolveLiveDirectModel({
         provider: "openai",
         api: "openai-responses",
-        envVar: "OPENCLAW_LIVE_OPENAI_CACHE_MODEL",
+        envVar: "NOVA_LIVE_OPENAI_CACHE_MODEL",
         preferredModelIds: ["gpt-5.6-luna", "gpt-5.5", "gpt-5.4-mini", "gpt-5.4"],
       });
       logLiveCache(`openai model=${fixture.model.provider}/${fixture.model.id}`);
@@ -1114,7 +1114,7 @@ describeCacheLive("embedded agent runner prompt caching (live)", () => {
       fixture = await resolveLiveDirectModel({
         provider: "anthropic",
         api: "anthropic-messages",
-        envVar: "OPENCLAW_LIVE_ANTHROPIC_CACHE_MODEL",
+        envVar: "NOVA_LIVE_ANTHROPIC_CACHE_MODEL",
         preferredModelIds: ["claude-sonnet-4-6", "claude-sonnet-4-6", "claude-haiku-3-5"],
       });
       logLiveCache(`anthropic model=${fixture.model.provider}/${fixture.model.id}`);

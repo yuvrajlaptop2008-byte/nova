@@ -114,18 +114,17 @@ const DEFAULT_CREDENTIAL_SOURCE = "convex";
 const DEFAULT_CREDENTIAL_ROLE = "maintainer";
 const DEFAULT_HYDRATE_MODE: MantisTelegramDesktopHydrateMode = "source";
 const DEFAULT_TELEGRAM_PROFILE_DIR = "$HOME/.local/share/TelegramDesktop";
-const CRABBOX_BIN_ENV = "OPENCLAW_MANTIS_CRABBOX_BIN";
-const CRABBOX_PROVIDER_ENV = "OPENCLAW_MANTIS_CRABBOX_PROVIDER";
-const CRABBOX_CLASS_ENV = "OPENCLAW_MANTIS_CRABBOX_CLASS";
-const CRABBOX_LEASE_ID_ENV = "OPENCLAW_MANTIS_CRABBOX_LEASE_ID";
-const CRABBOX_KEEP_ENV = "OPENCLAW_MANTIS_KEEP_VM";
-const CRABBOX_IDLE_TIMEOUT_ENV = "OPENCLAW_MANTIS_CRABBOX_IDLE_TIMEOUT";
-const CRABBOX_TTL_ENV = "OPENCLAW_MANTIS_CRABBOX_TTL";
-const HYDRATE_MODE_ENV = "OPENCLAW_MANTIS_HYDRATE_MODE";
-const TELEGRAM_PROFILE_ARCHIVE_ENV = "OPENCLAW_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64";
-const TELEGRAM_PROFILE_ARCHIVE_ENV_NAME_ENV =
-  "OPENCLAW_MANTIS_TELEGRAM_DESKTOP_PROFILE_ARCHIVE_ENV";
-const TELEGRAM_PROFILE_DIR_ENV = "OPENCLAW_MANTIS_TELEGRAM_DESKTOP_PROFILE_DIR";
+const CRABBOX_BIN_ENV = "NOVA_MANTIS_CRABBOX_BIN";
+const CRABBOX_PROVIDER_ENV = "NOVA_MANTIS_CRABBOX_PROVIDER";
+const CRABBOX_CLASS_ENV = "NOVA_MANTIS_CRABBOX_CLASS";
+const CRABBOX_LEASE_ID_ENV = "NOVA_MANTIS_CRABBOX_LEASE_ID";
+const CRABBOX_KEEP_ENV = "NOVA_MANTIS_KEEP_VM";
+const CRABBOX_IDLE_TIMEOUT_ENV = "NOVA_MANTIS_CRABBOX_IDLE_TIMEOUT";
+const CRABBOX_TTL_ENV = "NOVA_MANTIS_CRABBOX_TTL";
+const HYDRATE_MODE_ENV = "NOVA_MANTIS_HYDRATE_MODE";
+const TELEGRAM_PROFILE_ARCHIVE_ENV = "NOVA_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64";
+const TELEGRAM_PROFILE_ARCHIVE_ENV_NAME_ENV = "NOVA_MANTIS_TELEGRAM_DESKTOP_PROFILE_ARCHIVE_ENV";
+const TELEGRAM_PROFILE_DIR_ENV = "NOVA_MANTIS_TELEGRAM_DESKTOP_PROFILE_DIR";
 
 function normalizeHydrateMode(
   value: string | undefined,
@@ -147,21 +146,19 @@ function defaultOutputDir(repoRoot: string, startedAt: Date) {
 
 function buildCrabboxEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   const next = { ...env };
-  if (!trimToValue(next.OPENCLAW_LIVE_OPENAI_KEY) && trimToValue(next.OPENAI_API_KEY)) {
-    next.OPENCLAW_LIVE_OPENAI_KEY = next.OPENAI_API_KEY;
+  if (!trimToValue(next.NOVA_LIVE_OPENAI_KEY) && trimToValue(next.OPENAI_API_KEY)) {
+    next.NOVA_LIVE_OPENAI_KEY = next.OPENAI_API_KEY;
   }
-  if (!trimToValue(next.OPENCLAW_MANTIS_TELEGRAM_GROUP_ID)) {
-    next.OPENCLAW_MANTIS_TELEGRAM_GROUP_ID = trimToValue(next.OPENCLAW_QA_TELEGRAM_GROUP_ID);
+  if (!trimToValue(next.NOVA_MANTIS_TELEGRAM_GROUP_ID)) {
+    next.NOVA_MANTIS_TELEGRAM_GROUP_ID = trimToValue(next.NOVA_QA_TELEGRAM_GROUP_ID);
   }
-  if (!trimToValue(next.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN)) {
-    next.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN = trimToValue(
-      next.OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN,
+  if (!trimToValue(next.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN)) {
+    next.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN = trimToValue(
+      next.NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN,
     );
   }
-  if (!trimToValue(next.OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN)) {
-    next.OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN = trimToValue(
-      next.OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN,
-    );
+  if (!trimToValue(next.NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN)) {
+    next.NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN = trimToValue(next.NOVA_QA_TELEGRAM_SUT_BOT_TOKEN);
   }
   return next;
 }
@@ -169,12 +166,12 @@ function buildCrabboxEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
 function resolveTelegramGatewayEnvPayload(
   env: NodeJS.ProcessEnv,
 ): TelegramGatewayCredentialPayload {
-  const groupId = trimToValue(env.OPENCLAW_QA_TELEGRAM_GROUP_ID);
-  const driverToken = trimToValue(env.OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN);
-  const sutToken = trimToValue(env.OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN);
+  const groupId = trimToValue(env.NOVA_QA_TELEGRAM_GROUP_ID);
+  const driverToken = trimToValue(env.NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN);
+  const sutToken = trimToValue(env.NOVA_QA_TELEGRAM_SUT_BOT_TOKEN);
   if (!groupId || !driverToken || !sutToken) {
     throw new Error(
-      "Telegram desktop builder requires OPENCLAW_QA_TELEGRAM_GROUP_ID, OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN, and OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN when using --credential-source env.",
+      "Telegram desktop builder requires NOVA_QA_TELEGRAM_GROUP_ID, NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN, and NOVA_QA_TELEGRAM_SUT_BOT_TOKEN when using --credential-source env.",
     );
   }
   return { driverToken, groupId, sutToken };
@@ -209,9 +206,9 @@ async function prepareGatewayCredentialEnv(params: {
     return {};
   }
   if (
-    trimToValue(params.env.OPENCLAW_MANTIS_TELEGRAM_GROUP_ID) &&
-    trimToValue(params.env.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN) &&
-    trimToValue(params.env.OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN)
+    trimToValue(params.env.NOVA_MANTIS_TELEGRAM_GROUP_ID) &&
+    trimToValue(params.env.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN) &&
+    trimToValue(params.env.NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN)
   ) {
     return {};
   }
@@ -225,15 +222,15 @@ async function prepareGatewayCredentialEnv(params: {
   });
   const leaseHeartbeat = startQaCredentialLeaseHeartbeat(credentialLease);
   const payload = credentialLease.payload;
-  params.env.OPENCLAW_MANTIS_TELEGRAM_GROUP_ID = payload.groupId;
-  params.env.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN = payload.driverToken;
-  params.env.OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN = payload.sutToken;
-  params.env.OPENCLAW_QA_TELEGRAM_GROUP_ID =
-    trimToValue(params.env.OPENCLAW_QA_TELEGRAM_GROUP_ID) ?? payload.groupId;
-  params.env.OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN =
-    trimToValue(params.env.OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN) ?? payload.driverToken;
-  params.env.OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN =
-    trimToValue(params.env.OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN) ?? payload.sutToken;
+  params.env.NOVA_MANTIS_TELEGRAM_GROUP_ID = payload.groupId;
+  params.env.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN = payload.driverToken;
+  params.env.NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN = payload.sutToken;
+  params.env.NOVA_QA_TELEGRAM_GROUP_ID =
+    trimToValue(params.env.NOVA_QA_TELEGRAM_GROUP_ID) ?? payload.groupId;
+  params.env.NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN =
+    trimToValue(params.env.NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN) ?? payload.driverToken;
+  params.env.NOVA_QA_TELEGRAM_SUT_BOT_TOKEN =
+    trimToValue(params.env.NOVA_QA_TELEGRAM_SUT_BOT_TOKEN) ?? payload.sutToken;
   return {
     credentialLease,
     leaseHeartbeat,
@@ -309,8 +306,8 @@ telegram_profile_dir=${telegramProfileDir}
 rm -rf "$out"
 mkdir -p "$out"
 export DISPLAY="\${DISPLAY:-:99}"
-if [ -n "\${OPENCLAW_LIVE_OPENAI_KEY:-}" ] && [ -z "\${OPENAI_API_KEY:-}" ]; then
-  export OPENAI_API_KEY="$OPENCLAW_LIVE_OPENAI_KEY"
+if [ -n "\${NOVA_LIVE_OPENAI_KEY:-}" ] && [ -z "\${OPENAI_API_KEY:-}" ]; then
+  export OPENAI_API_KEY="$NOVA_LIVE_OPENAI_KEY"
 fi
 if ! command -v node >/dev/null 2>&1; then
   sudo apt-get update -y >"$out/node-apt.log" 2>&1
@@ -339,8 +336,8 @@ if [ -z "$telegram_profile_dir" ] || [ "$telegram_profile_dir" = "\\$HOME/.local
 fi
 mkdir -p "$telegram_profile_dir"
 telegram_profile_restored=false
-if [ -n "\${OPENCLAW_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64:-}" ]; then
-  printf '%s' "$OPENCLAW_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64" | base64 -d >"$out/telegram-profile.tgz"
+if [ -n "\${NOVA_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64:-}" ]; then
+  printf '%s' "$NOVA_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64" | base64 -d >"$out/telegram-profile.tgz"
   tar -xzf "$out/telegram-profile.tgz" -C "$telegram_profile_dir"
   telegram_profile_restored=true
 fi
@@ -390,15 +387,15 @@ qa_status=0
     exit 3
   fi
   if [ "$setup_gateway" = "1" ]; then
-    export TELEGRAM_BOT_TOKEN="\${OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN:-\${TELEGRAM_BOT_TOKEN:-}}"
-    telegram_group_id="\${OPENCLAW_MANTIS_TELEGRAM_GROUP_ID:-}"
-    driver_token="\${OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN:-}"
+    export TELEGRAM_BOT_TOKEN="\${NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN:-\${TELEGRAM_BOT_TOKEN:-}}"
+    telegram_group_id="\${NOVA_MANTIS_TELEGRAM_GROUP_ID:-}"
+    driver_token="\${NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN:-}"
     if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$telegram_group_id" ] || [ -z "$driver_token" ]; then
-      echo "Gateway setup requires OPENCLAW_MANTIS_TELEGRAM_GROUP_ID, OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN, and OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN." >&2
+      echo "Gateway setup requires NOVA_MANTIS_TELEGRAM_GROUP_ID, NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN, and NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN." >&2
       exit 2
     fi
     driver_user_id="$(node --input-type=module >"$out/telegram-driver-getme.json" 2>"$out/telegram-driver-getme.err" <<'MANTIS_TELEGRAM_GETME'
-const token = process.env.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN;
+const token = process.env.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN;
 const response = await fetch(\`https://api.telegram.org/bot\${token}/getMe\`, {
   signal: AbortSignal.timeout(15_000),
 });
@@ -407,8 +404,8 @@ process.stdout.write(JSON.stringify({ ok: body.ok, id: body.result?.id, username
 if (!body.ok || !body.result?.id) process.exit(1);
 MANTIS_TELEGRAM_GETME
 node --input-type=module -e 'import fs from "node:fs"; const value = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); process.stdout.write(String(value.id || ""));' "$out/telegram-driver-getme.json")"
-    export OPENCLAW_HOME="$HOME/.openclaw-mantis/telegram-openclaw"
-    mkdir -p "$OPENCLAW_HOME"
+    export NOVA_HOME="$HOME/.openclaw-mantis/telegram-openclaw"
+    mkdir -p "$NOVA_HOME"
     cat >"$out/telegram.patch.json5" <<MANTIS_TELEGRAM_PATCH
 {
   gateway: {
@@ -435,8 +432,8 @@ MANTIS_TELEGRAM_PATCH
     pnpm openclaw config patch --file "$out/telegram.patch.json5" --dry-run
     pnpm openclaw config patch --file "$out/telegram.patch.json5"
     node --input-type=module >"$out/telegram-ready-message.json" 2>"$out/telegram-ready-message.err" <<'MANTIS_TELEGRAM_READY'
-const token = process.env.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN;
-const chatId = process.env.OPENCLAW_MANTIS_TELEGRAM_GROUP_ID;
+const token = process.env.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN;
+const chatId = process.env.NOVA_MANTIS_TELEGRAM_GROUP_ID;
 const text = \`Mantis Telegram desktop builder ready: \${new Date().toISOString()}\`;
 const response = await fetch(\`https://api.telegram.org/bot\${token}/sendMessage\`, {
   method: "POST",

@@ -1365,14 +1365,14 @@ export async function createContextEngineAttemptRunner(params: {
     return { session };
   });
 
-  const previousTrajectoryEnv = process.env.OPENCLAW_TRAJECTORY;
-  const previousTrajectoryDirEnv = process.env.OPENCLAW_TRAJECTORY_DIR;
+  const previousTrajectoryEnv = process.env.NOVA_TRAJECTORY;
+  const previousTrajectoryDirEnv = process.env.NOVA_TRAJECTORY_DIR;
   if (params.trajectory !== true) {
-    process.env.OPENCLAW_TRAJECTORY = "0";
-    delete process.env.OPENCLAW_TRAJECTORY_DIR;
+    process.env.NOVA_TRAJECTORY = "0";
+    delete process.env.NOVA_TRAJECTORY_DIR;
   } else {
-    delete process.env.OPENCLAW_TRAJECTORY;
-    process.env.OPENCLAW_TRAJECTORY_DIR = workspaceDir;
+    delete process.env.NOVA_TRAJECTORY;
+    process.env.NOVA_TRAJECTORY_DIR = workspaceDir;
   }
   try {
     return await (
@@ -1423,14 +1423,14 @@ export async function createContextEngineAttemptRunner(params: {
     });
   } finally {
     if (previousTrajectoryEnv === undefined) {
-      delete process.env.OPENCLAW_TRAJECTORY;
+      delete process.env.NOVA_TRAJECTORY;
     } else {
-      process.env.OPENCLAW_TRAJECTORY = previousTrajectoryEnv;
+      process.env.NOVA_TRAJECTORY = previousTrajectoryEnv;
     }
     if (previousTrajectoryDirEnv === undefined) {
-      delete process.env.OPENCLAW_TRAJECTORY_DIR;
+      delete process.env.NOVA_TRAJECTORY_DIR;
     } else {
-      process.env.OPENCLAW_TRAJECTORY_DIR = previousTrajectoryDirEnv;
+      process.env.NOVA_TRAJECTORY_DIR = previousTrajectoryDirEnv;
     }
   }
 }

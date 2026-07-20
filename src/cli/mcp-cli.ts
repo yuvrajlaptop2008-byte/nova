@@ -597,7 +597,7 @@ async function probeMcpServersOrFail(params: {
   }
 }
 
-const OPENCLAW_MCP_REGISTRY_SCOPE_NOTE =
+const NOVA_MCP_REGISTRY_SCOPE_NOTE =
   "Note: this command only shows Nova-managed mcp.servers entries and does not include mcporter servers from config/mcporter.json.";
 
 export function registerMcpCli(program: Command) {
@@ -665,7 +665,7 @@ export function registerMcpCli(program: Command) {
         defaultRuntime.log(
           `No Nova-managed MCP servers configured in ${loaded.path}. Add one with ${formatCliCommand('openclaw mcp set <name> \'{"command":"uvx","args":["context7-mcp"]}\'')}.`,
         );
-        defaultRuntime.log(OPENCLAW_MCP_REGISTRY_SCOPE_NOTE);
+        defaultRuntime.log(NOVA_MCP_REGISTRY_SCOPE_NOTE);
         return;
       }
       defaultRuntime.log(`Nova-managed MCP servers (${loaded.path}):`);
@@ -673,7 +673,7 @@ export function registerMcpCli(program: Command) {
         defaultRuntime.log(`- ${name}`);
       }
       defaultRuntime.log("");
-      defaultRuntime.log(OPENCLAW_MCP_REGISTRY_SCOPE_NOTE);
+      defaultRuntime.log(NOVA_MCP_REGISTRY_SCOPE_NOTE);
     });
 
   mcp

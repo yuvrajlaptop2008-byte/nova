@@ -7,16 +7,16 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-npm-onboard-channel-agent-e2e" OPENCLAW_NPM_ONBOARD_E2E_IMAGE)"
-DOCKER_TARGET="${OPENCLAW_NPM_ONBOARD_DOCKER_TARGET:-bare}"
-HOST_BUILD="${OPENCLAW_NPM_ONBOARD_HOST_BUILD:-1}"
-PACKAGE_TGZ="${OPENCLAW_CURRENT_PACKAGE_TGZ:-}"
-CHANNEL="${OPENCLAW_NPM_ONBOARD_CHANNEL:-telegram}"
+IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-npm-onboard-channel-agent-e2e" NOVA_NPM_ONBOARD_E2E_IMAGE)"
+DOCKER_TARGET="${NOVA_NPM_ONBOARD_DOCKER_TARGET:-bare}"
+HOST_BUILD="${NOVA_NPM_ONBOARD_HOST_BUILD:-1}"
+PACKAGE_TGZ="${NOVA_CURRENT_PACKAGE_TGZ:-}"
+CHANNEL="${NOVA_NPM_ONBOARD_CHANNEL:-telegram}"
 JSON_ARTIFACT_MAX_BYTES="$(
-  docker_e2e_read_positive_int_env OPENCLAW_NPM_ONBOARD_JSON_ARTIFACT_MAX_BYTES 1048576
+  docker_e2e_read_positive_int_env NOVA_NPM_ONBOARD_JSON_ARTIFACT_MAX_BYTES 1048576
 )"
 STATUS_TEXT_MAX_BYTES="$(
-  docker_e2e_read_positive_int_env OPENCLAW_NPM_ONBOARD_STATUS_TEXT_MAX_BYTES 1048576
+  docker_e2e_read_positive_int_env NOVA_NPM_ONBOARD_STATUS_TEXT_MAX_BYTES 1048576
 )"
 run_log=""
 
@@ -33,7 +33,7 @@ trap cleanup EXIT
 case "$CHANNEL" in
 telegram | discord | slack) ;;
 *)
-  echo "OPENCLAW_NPM_ONBOARD_CHANNEL must be telegram, discord, or slack, got: $CHANNEL" >&2
+  echo "NOVA_NPM_ONBOARD_CHANNEL must be telegram, discord, or slack, got: $CHANNEL" >&2
   exit 1
   ;;
 esac
@@ -45,8 +45,8 @@ prepare_package_tgz() {
     PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz npm-onboard-channel-agent "$PACKAGE_TGZ")"
     return 0
   fi
-  if [ "$HOST_BUILD" = "0" ] && [ -z "${OPENCLAW_CURRENT_PACKAGE_TGZ:-}" ]; then
-    echo "OPENCLAW_NPM_ONBOARD_HOST_BUILD=0 requires OPENCLAW_CURRENT_PACKAGE_TGZ" >&2
+  if [ "$HOST_BUILD" = "0" ] && [ -z "${NOVA_CURRENT_PACKAGE_TGZ:-}" ]; then
+    echo "NOVA_NPM_ONBOARD_HOST_BUILD=0 requires NOVA_CURRENT_PACKAGE_TGZ" >&2
     exit 1
   fi
   PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz npm-onboard-channel-agent)"
@@ -56,30 +56,30 @@ prepare_package_tgz
 
 docker_e2e_package_mount_args "$PACKAGE_TGZ"
 run_log="$(docker_e2e_run_log npm-onboard-channel-agent)"
-OPENCLAW_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 npm-onboard-channel-agent empty)"
+NOVA_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 npm-onboard-channel-agent empty)"
 
 echo "Running npm tarball onboard/channel/agent Docker E2E ($CHANNEL)..."
 if ! docker_e2e_run_with_harness \
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
-  -e OPENCLAW_NPM_ONBOARD_CHANNEL="$CHANNEL" \
-  -e "OPENCLAW_NPM_ONBOARD_JSON_ARTIFACT_MAX_BYTES=$JSON_ARTIFACT_MAX_BYTES" \
-  -e "OPENCLAW_NPM_ONBOARD_STATUS_TEXT_MAX_BYTES=$STATUS_TEXT_MAX_BYTES" \
-  -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$OPENCLAW_TEST_STATE_SCRIPT_B64" \
+  -e NOVA_NPM_ONBOARD_CHANNEL="$CHANNEL" \
+  -e "NOVA_NPM_ONBOARD_JSON_ARTIFACT_MAX_BYTES=$JSON_ARTIFACT_MAX_BYTES" \
+  -e "NOVA_NPM_ONBOARD_STATUS_TEXT_MAX_BYTES=$STATUS_TEXT_MAX_BYTES" \
+  -e "NOVA_TEST_STATE_SCRIPT_B64=$NOVA_TEST_STATE_SCRIPT_B64" \
   "${DOCKER_E2E_PACKAGE_ARGS[@]}" \
   -i "$IMAGE_NAME" bash -s >"$run_log" 2>&1 <<'EOF'; then
 set -Eeuo pipefail
 
 source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
 export OPENAI_API_KEY="sk-openclaw-npm-onboard-e2e"
-export OPENCLAW_GATEWAY_TOKEN="npm-onboard-channel-agent-token"
+export NOVA_GATEWAY_TOKEN="npm-onboard-channel-agent-token"
 
-CHANNEL="${OPENCLAW_NPM_ONBOARD_CHANNEL:?missing OPENCLAW_NPM_ONBOARD_CHANNEL}"
+CHANNEL="${NOVA_NPM_ONBOARD_CHANNEL:?missing NOVA_NPM_ONBOARD_CHANNEL}"
 PORT="18789"
 MOCK_PORT="44080"
-SUCCESS_MARKER="OPENCLAW_AGENT_E2E_OK_ASSISTANT"
+SUCCESS_MARKER="NOVA_AGENT_E2E_OK_ASSISTANT"
 scenario_tmp="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-npm-onboard-channel-agent.XXXXXX")"
 MOCK_REQUEST_LOG="$scenario_tmp/mock-openai-requests.jsonl"
 export SUCCESS_MARKER MOCK_REQUEST_LOG
@@ -134,8 +134,8 @@ dump_debug_logs() {
     /tmp/openclaw-agent.json \
     /tmp/openclaw-mock-openai.log \
     "$MOCK_REQUEST_LOG" \
-    "$OPENCLAW_HOME/.openclaw/openclaw.json" \
-    "$OPENCLAW_HOME/.openclaw/agents/main/agent/auth-profiles.json"
+    "$NOVA_HOME/.openclaw/openclaw.json" \
+    "$NOVA_HOME/.openclaw/agents/main/agent/auth-profiles.json"
 }
 trap 'status=$?; dump_debug_logs "$status"; exit "$status"' ERR
 

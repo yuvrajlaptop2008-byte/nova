@@ -71,7 +71,7 @@ function writeFixtureServerShims(binDir: string, pidPath: string): void {
     path.join(binDir, "node"),
     [
       "#!/bin/bash",
-      'printf "%s\\n" "$$" >"$OPENCLAW_TEST_FIXTURE_SERVER_PID"',
+      'printf "%s\\n" "$$" >"$NOVA_TEST_FIXTURE_SERVER_PID"',
       "trap 'exit 0' TERM",
       "while true; do /bin/sleep 1; done",
       "",
@@ -89,7 +89,7 @@ function writeStubbornFixtureServerShims(binDir: string, pidPath: string): void 
     path.join(binDir, "node"),
     [
       "#!/bin/bash",
-      'printf "%s\\n" "$$" >"$OPENCLAW_TEST_FIXTURE_SERVER_PID"',
+      'printf "%s\\n" "$$" >"$NOVA_TEST_FIXTURE_SERVER_PID"',
       "trap ':' TERM",
       "while true; do /bin/sleep 1; done",
       "",
@@ -197,12 +197,12 @@ describe("plugins Docker assertions", () => {
       env: {
         ...process.env,
         CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
-        OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1e3",
+        NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1e3",
       },
     });
     expect(timeoutResult.status).not.toBe(0);
     expect(timeoutResult.stderr).toContain(
-      "invalid OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: 1e3",
+      "invalid NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: 1e3",
     );
 
     const bodyLimitResult = spawnSync(process.execPath, [ASSERTIONS_SCRIPT, "clawhub-preflight"], {
@@ -210,12 +210,12 @@ describe("plugins Docker assertions", () => {
       env: {
         ...process.env,
         CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
-        OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: "1000bytes",
+        NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: "1000bytes",
       },
     });
     expect(bodyLimitResult.status).not.toBe(0);
     expect(bodyLimitResult.stderr).toContain(
-      "invalid OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: 1000bytes",
+      "invalid NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: 1000bytes",
     );
   });
 
@@ -241,7 +241,7 @@ describe("plugins Docker assertions", () => {
         'mktemp -d "/tmp/openclaw-plugins.XXXXXX"',
         "",
       );
-      expect(script).toContain("OPENCLAW_PLUGINS_TMP_DIR");
+      expect(script).toContain("NOVA_PLUGINS_TMP_DIR");
       expect(scriptWithoutDefaultScratch).not.toMatch(
         /\/tmp\/(?:plugins|marketplace|demo-plugin|is-number|openclaw-plugin|openclaw-clawhub)/,
       );
@@ -255,12 +255,12 @@ describe("plugins Docker assertions", () => {
       const result = runPluginsSweepShell(
         `
 set -euo pipefail
-export OPENCLAW_PLUGINS_SWEEP_SOURCE_ONLY=1
+export NOVA_PLUGINS_SWEEP_SOURCE_ONLY=1
 source scripts/e2e/lib/plugins/sweep.sh
-printf '%s\\n' "$OPENCLAW_PLUGINS_TMP_DIR" > "$MARKER"
-test -d "$OPENCLAW_PLUGINS_TMP_DIR"
+printf '%s\\n' "$NOVA_PLUGINS_TMP_DIR" > "$MARKER"
+test -d "$NOVA_PLUGINS_TMP_DIR"
 cleanup_openclaw_plugins_sweep
-test ! -e "$OPENCLAW_PLUGINS_TMP_DIR"
+test ! -e "$NOVA_PLUGINS_TMP_DIR"
 `,
         { MARKER: marker },
       );
@@ -283,12 +283,12 @@ test ! -e "$OPENCLAW_PLUGINS_TMP_DIR"
       const result = runPluginsSweepShell(
         `
 set -euo pipefail
-export OPENCLAW_PLUGINS_SWEEP_SOURCE_ONLY=1
-export OPENCLAW_PLUGINS_TMP_DIR="$SCRATCH_ROOT"
+export NOVA_PLUGINS_SWEEP_SOURCE_ONLY=1
+export NOVA_PLUGINS_TMP_DIR="$SCRATCH_ROOT"
 source scripts/e2e/lib/plugins/sweep.sh
-test -d "$OPENCLAW_PLUGINS_TMP_DIR"
+test -d "$NOVA_PLUGINS_TMP_DIR"
 cleanup_openclaw_plugins_sweep
-test -d "$OPENCLAW_PLUGINS_TMP_DIR"
+test -d "$NOVA_PLUGINS_TMP_DIR"
 `,
         { SCRATCH_ROOT: scratchRoot },
       );
@@ -313,7 +313,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         "utf8",
       );
       const pass = await runAssertionAsync(["plugin-dir-update-skipped"], {
-        OPENCLAW_PLUGINS_TMP_DIR: passRoot,
+        NOVA_PLUGINS_TMP_DIR: passRoot,
       });
       expect(pass.status).toBe(0);
 
@@ -325,7 +325,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         "utf8",
       );
       const fail = await runAssertionAsync(["plugin-dir-update-skipped"], {
-        OPENCLAW_PLUGINS_TMP_DIR: failRoot,
+        NOVA_PLUGINS_TMP_DIR: failRoot,
       });
       expect(fail.status).toBe(1);
       expect(fail.stderr).toContain("Output tail:");
@@ -346,7 +346,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
       });
       const invalid = await runAssertionAsync(["invalid-openclaw-extensions"], {
         HOME: invalidHome,
-        OPENCLAW_PLUGINS_TMP_DIR: invalidRoot,
+        NOVA_PLUGINS_TMP_DIR: invalidRoot,
       });
       expect(invalid.status).toBe(1);
       expect(invalid.stderr).toContain("malformed metadata install output");
@@ -386,7 +386,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_TEST_FIXTURE_SERVER_PID: pidPath,
+            NOVA_TEST_FIXTURE_SERVER_PID: pidPath,
             PATH: `${binDir}${path.delimiter}/usr/bin${path.delimiter}/bin`,
           },
         },
@@ -430,9 +430,9 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_PLUGINS_FIXTURE_STOP_ATTEMPTS: "2",
-            OPENCLAW_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS: "0.05",
-            OPENCLAW_TEST_FIXTURE_SERVER_PID: pidPath,
+            NOVA_PLUGINS_FIXTURE_STOP_ATTEMPTS: "2",
+            NOVA_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS: "0.05",
+            NOVA_TEST_FIXTURE_SERVER_PID: pidPath,
             PATH: `${binDir}${path.delimiter}/usr/bin${path.delimiter}/bin`,
           },
         },
@@ -469,13 +469,13 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_PLUGINS_FIXTURE_STOP_ATTEMPTS: "2x",
+          NOVA_PLUGINS_FIXTURE_STOP_ATTEMPTS: "2x",
         },
       },
     );
 
     expect(result.status).toBe(2);
-    expect(result.stderr).toContain("invalid OPENCLAW_PLUGINS_FIXTURE_STOP_ATTEMPTS: 2x");
+    expect(result.stderr).toContain("invalid NOVA_PLUGINS_FIXTURE_STOP_ATTEMPTS: 2x");
     expect(result.stdout).not.toContain("signal");
     expect(result.stdout).not.toContain("probe");
   });
@@ -502,14 +502,14 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_PLUGINS_FIXTURE_STOP_ATTEMPTS: "2",
-          OPENCLAW_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS: "soon",
+          NOVA_PLUGINS_FIXTURE_STOP_ATTEMPTS: "2",
+          NOVA_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS: "soon",
         },
       },
     );
 
     expect(result.status).toBe(2);
-    expect(result.stderr).toContain("invalid OPENCLAW_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS: soon");
+    expect(result.stderr).toContain("invalid NOVA_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS: soon");
     expect(result.stdout).not.toContain("signal");
     expect(result.stdout).not.toContain("probe");
   });
@@ -542,7 +542,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES: "80",
+            NOVA_DOCKER_E2E_LOG_PRINT_BYTES: "80",
             PATH: `${binDir}${path.delimiter}/usr/bin${path.delimiter}/bin`,
           },
         },
@@ -710,7 +710,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         cwd: process.cwd(),
         env: {
           ...process.env,
-          OPENCLAW_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${upstreamAddress.port}`,
+          NOVA_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${upstreamAddress.port}`,
         },
         stdio: ["ignore", "pipe", "pipe"],
       },
@@ -770,7 +770,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         cwd: process.cwd(),
         env: {
           ...process.env,
-          OPENCLAW_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${upstreamAddress.port}`,
+          NOVA_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${upstreamAddress.port}`,
         },
         stdio: ["ignore", "pipe", "pipe"],
       },
@@ -880,7 +880,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         cwd: process.cwd(),
         env: {
           ...process.env,
-          OPENCLAW_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${upstreamAddress.port}`,
+          NOVA_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${upstreamAddress.port}`,
         },
         stdio: ["ignore", "pipe", "pipe"],
       },
@@ -969,7 +969,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         cwd: process.cwd(),
         env: {
           ...process.env,
-          OPENCLAW_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${configuredAddress.port}`,
+          NOVA_NPM_REGISTRY_UPSTREAM: `http://127.0.0.1:${configuredAddress.port}`,
         },
         stdio: ["ignore", "pipe", "pipe"],
       },
@@ -1044,14 +1044,14 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES: "64kb",
+            NOVA_DOCKER_E2E_LOG_PRINT_BYTES: "64kb",
             PATH: `${binDir}${path.delimiter}/usr/bin${path.delimiter}/bin`,
           },
         },
       );
 
       expect(result.status).toBe(2);
-      expect(result.stderr).toContain("invalid OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES: 64kb");
+      expect(result.stderr).toContain("invalid NOVA_DOCKER_E2E_LOG_PRINT_BYTES: 64kb");
       expect(result.stderr).not.toContain("node should not run");
     } finally {
       rmSync(root, { force: true, recursive: true });
@@ -1088,9 +1088,9 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_PLUGINS_E2E_LIVE_CLAWHUB: "0",
-            OPENCLAW_PLUGINS_TMP_DIR: tmpDir,
-            OPENCLAW_TEST_FIXTURE_SERVER_PID: pidPath,
+            NOVA_PLUGINS_E2E_LIVE_CLAWHUB: "0",
+            NOVA_PLUGINS_TMP_DIR: tmpDir,
+            NOVA_TEST_FIXTURE_SERVER_PID: pidPath,
             PATH: `${binDir}${path.delimiter}/usr/bin${path.delimiter}/bin`,
           },
         },
@@ -1139,16 +1139,16 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES: "64kb",
-            OPENCLAW_PLUGINS_E2E_LIVE_CLAWHUB: "0",
-            OPENCLAW_PLUGINS_TMP_DIR: tmpDir,
+            NOVA_DOCKER_E2E_LOG_PRINT_BYTES: "64kb",
+            NOVA_PLUGINS_E2E_LIVE_CLAWHUB: "0",
+            NOVA_PLUGINS_TMP_DIR: tmpDir,
             PATH: `${binDir}${path.delimiter}/usr/bin${path.delimiter}/bin`,
           },
         },
       );
 
       expect(result.status).toBe(2);
-      expect(result.stderr).toContain("invalid OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES: 64kb");
+      expect(result.stderr).toContain("invalid NOVA_DOCKER_E2E_LOG_PRINT_BYTES: 64kb");
       expect(result.stderr).not.toContain("node should not run");
     } finally {
       rmSync(root, { force: true, recursive: true });
@@ -1184,9 +1184,9 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES: "80",
-            OPENCLAW_PLUGINS_E2E_LIVE_CLAWHUB: "0",
-            OPENCLAW_PLUGINS_TMP_DIR: tmpDir,
+            NOVA_DOCKER_E2E_LOG_PRINT_BYTES: "80",
+            NOVA_PLUGINS_E2E_LIVE_CLAWHUB: "0",
+            NOVA_PLUGINS_TMP_DIR: tmpDir,
             PATH: `${binDir}${path.delimiter}/usr/bin${path.delimiter}/bin`,
           },
         },
@@ -1229,8 +1229,8 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         env: {
           ...process.env,
           HOME: home,
-          OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1e3",
-          OPENCLAW_PLUGINS_TMP_DIR: scratchRoot,
+          NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1e3",
+          NOVA_PLUGINS_TMP_DIR: scratchRoot,
         },
       });
 
@@ -1273,7 +1273,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         env: {
           ...process.env,
           HOME: home,
-          OPENCLAW_PLUGINS_TMP_DIR: scratchRoot,
+          NOVA_PLUGINS_TMP_DIR: scratchRoot,
         },
       });
 
@@ -1302,7 +1302,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         env: {
           ...process.env,
           HOME: home,
-          OPENCLAW_PLUGINS_TMP_DIR: scratchRoot,
+          NOVA_PLUGINS_TMP_DIR: scratchRoot,
         },
       });
 
@@ -1336,7 +1336,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         env: {
           ...process.env,
           HOME: home,
-          OPENCLAW_PLUGINS_TMP_DIR: scratchRoot,
+          NOVA_PLUGINS_TMP_DIR: scratchRoot,
         },
       });
 
@@ -1383,7 +1383,7 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
         CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
         HOME: home,
-        OPENCLAW_PLUGINS_TMP_DIR: scratchRoot,
+        NOVA_PLUGINS_TMP_DIR: scratchRoot,
       },
     });
 
@@ -1405,8 +1405,8 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
       const result = await runAssertionAsync(["clawhub-preflight"], {
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
         CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
-        OPENCLAW_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
-        OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "25",
+        NOVA_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
+        NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "25",
       });
 
       expect(result.status).not.toBe(0);
@@ -1438,8 +1438,8 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
       const result = await runAssertionAsync(["clawhub-preflight"], {
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
         CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
-        OPENCLAW_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
-        OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "75",
+        NOVA_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
+        NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "75",
       });
 
       expect(result.status).not.toBe(0);
@@ -1470,9 +1470,9 @@ test -d "$OPENCLAW_PLUGINS_TMP_DIR"
       const result = await runAssertionAsync(["clawhub-preflight"], {
         CLAWHUB_PLUGIN_ID: "openclaw-kitchen-sink-fixture",
         CLAWHUB_PLUGIN_SPEC: "clawhub:@openclaw/kitchen-sink",
-        OPENCLAW_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
-        OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: "16",
-        OPENCLAW_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1000",
+        NOVA_CLAWHUB_URL: `http://127.0.0.1:${address.port}`,
+        NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_BODY_MAX_BYTES: "16",
+        NOVA_PLUGINS_E2E_CLAWHUB_PREFLIGHT_TIMEOUT_MS: "1000",
       });
 
       expect(result.status).not.toBe(0);

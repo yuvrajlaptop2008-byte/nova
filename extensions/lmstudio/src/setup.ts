@@ -78,13 +78,13 @@ function isTruthyEnvValue(value: string | undefined): boolean {
 }
 
 function resolveLmstudioSetupDefaultBaseUrl(env: NodeJS.ProcessEnv = process.env): string {
-  return isTruthyEnvValue(env.OPENCLAW_DOCKER_SETUP)
+  return isTruthyEnvValue(env.NOVA_DOCKER_SETUP)
     ? LMSTUDIO_DOCKER_HOST_BASE_URL
     : LMSTUDIO_DEFAULT_BASE_URL;
 }
 
 function resolveLmstudioSetupDefaultInferenceBaseUrl(env: NodeJS.ProcessEnv = process.env): string {
-  return isTruthyEnvValue(env.OPENCLAW_DOCKER_SETUP)
+  return isTruthyEnvValue(env.NOVA_DOCKER_SETUP)
     ? LMSTUDIO_DOCKER_HOST_INFERENCE_BASE_URL
     : LMSTUDIO_DEFAULT_INFERENCE_BASE_URL;
 }

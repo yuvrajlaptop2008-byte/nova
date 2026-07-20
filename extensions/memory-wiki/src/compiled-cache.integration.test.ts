@@ -164,7 +164,7 @@ describe("Memory Wiki compiled cache lifecycle", () => {
     resetPluginBlobStoreForTests();
     configureMemoryWikiCompiledCacheStore(undefined);
     blobStateDir = await createTempDir("memory-wiki-compiled-cache-state-");
-    blobStoreEnv = { ...process.env, OPENCLAW_STATE_DIR: blobStateDir };
+    blobStoreEnv = { ...process.env, NOVA_STATE_DIR: blobStateDir };
     configureMemoryWikiCompiledCacheStore(createCacheStore());
   });
 

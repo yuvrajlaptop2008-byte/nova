@@ -67,8 +67,8 @@ type QaSessionTranscriptSummaryOptions = {
 function isSessionStoreLockTimeout(error: unknown) {
   const text = formatErrorMessage(error);
   return (
-    text.includes("OPENCLAW_SESSION_WRITE_LOCK_TIMEOUT") ||
-    text.includes("OPENCLAW_SESSION_WRITE_LOCK_STALE") ||
+    text.includes("NOVA_SESSION_WRITE_LOCK_TIMEOUT") ||
+    text.includes("NOVA_SESSION_WRITE_LOCK_STALE") ||
     text.includes("SessionWriteLockTimeoutError") ||
     text.includes("SessionWriteLockStaleError") ||
     text.includes("session file locked") ||
@@ -290,7 +290,7 @@ async function readSkillStatus(env: QaGatewayCallEnv, agentId = "qa") {
 function qaSessionRuntimeEnv(tempRoot: string): NodeJS.ProcessEnv {
   return {
     ...process.env,
-    OPENCLAW_STATE_DIR: path.join(tempRoot, "state"),
+    NOVA_STATE_DIR: path.join(tempRoot, "state"),
   };
 }
 

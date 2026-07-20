@@ -113,7 +113,7 @@ describe("install smoke no-push root image transport", () => {
     expect(workflowIdentity.run).toContain("job.workflow_sha must be a full lowercase commit SHA");
     const manifest = step(preflight, "Build install-smoke CI manifest");
     expect(manifest.env).toEqual({
-      OPENCLAW_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE:
+      NOVA_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE:
         "${{ inputs.run_bun_global_install_smoke || 'false' }}",
     });
     expect(manifest.run).toContain(
@@ -204,7 +204,7 @@ describe("install smoke no-push root image transport", () => {
     ]) {
       const consumer = job(workflow, jobName);
       expect(consumer.needs, jobName).toContain("root_dockerfile_image_ready");
-      expect(consumer.env?.OPENCLAW_DOCKER_E2E_REQUIRE_LOCAL_IMAGE, jobName).toBe("1");
+      expect(consumer.env?.NOVA_DOCKER_E2E_REQUIRE_LOCAL_IMAGE, jobName).toBe("1");
       expect(step(consumer, "Checkout trusted image artifact helper").if, jobName).toBeUndefined();
       expect(
         consumer.steps?.find((candidate) => candidate.name === "Log in to GHCR"),
@@ -279,14 +279,13 @@ describe("install smoke no-push root image transport", () => {
   it("passes package changelog intent only to current-tree smoke scripts", () => {
     const workflow = readWorkflow(INSTALL_SMOKE_REUSABLE);
     expect(step(job(workflow, "installer_smoke"), "Run installer docker tests").env).toMatchObject({
-      OPENCLAW_INSTALL_SMOKE_ALLOW_UNRELEASED_CHANGELOG: "${{ inputs.allow_unreleased_changelog }}",
+      NOVA_INSTALL_SMOKE_ALLOW_UNRELEASED_CHANGELOG: "${{ inputs.allow_unreleased_changelog }}",
     });
     expect(
       step(job(workflow, "bun_global_install_smoke"), "Run Bun global install image-provider smoke")
         .env,
     ).toMatchObject({
-      OPENCLAW_BUN_GLOBAL_SMOKE_ALLOW_UNRELEASED_CHANGELOG:
-        "${{ inputs.allow_unreleased_changelog }}",
+      NOVA_BUN_GLOBAL_SMOKE_ALLOW_UNRELEASED_CHANGELOG: "${{ inputs.allow_unreleased_changelog }}",
     });
   });
 });

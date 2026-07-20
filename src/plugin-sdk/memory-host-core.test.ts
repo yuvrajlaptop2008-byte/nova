@@ -95,7 +95,7 @@ describe("memory-host-core helpers", () => {
     const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "memory-host-readonly-workspace-"));
     const workspaceDir = path.join(fixtureRoot, "workspace");
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", path.join(fixtureRoot, "state"));
+      vi.stubEnv("NOVA_STATE_DIR", path.join(fixtureRoot, "state"));
       await fs.mkdir(workspaceDir);
       await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), "# Read-only memory\n", "utf8");
       await appendMemoryHostEvent(workspaceDir, {
@@ -137,7 +137,7 @@ describe("memory-host-core helpers", () => {
       const workspaceDir = path.join(fixtureRoot, "workspace");
       let eventExportPath: string | undefined;
       try {
-        vi.stubEnv("OPENCLAW_STATE_DIR", path.join(fixtureRoot, "state"));
+        vi.stubEnv("NOVA_STATE_DIR", path.join(fixtureRoot, "state"));
         await fs.mkdir(workspaceDir);
         await appendMemoryHostEvent(workspaceDir, {
           type: "memory.recall.recorded",
@@ -187,7 +187,7 @@ describe("memory-host-core helpers", () => {
       const externalMemoryDir = path.join(fixtureRoot, "external-memory");
       const stateDir = path.join(fixtureRoot, "state");
       try {
-        vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+        vi.stubEnv("NOVA_STATE_DIR", stateDir);
         await fs.mkdir(workspaceDir);
         await fs.mkdir(stateDir);
         const stateHash = createHash("sha256")
@@ -230,7 +230,7 @@ describe("memory-host-core helpers", () => {
     const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "memory-host-unowned-export-"));
     const workspaceDir = path.join(fixtureRoot, "workspace");
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+      vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
       await fs.mkdir(workspaceDir);
       await appendMemoryHostEvent(workspaceDir, {
         type: "memory.recall.recorded",
@@ -262,7 +262,7 @@ describe("memory-host-core helpers", () => {
       await createPluginStateKeyedStore("memory-core", {
         namespace: "memory-host.events",
         maxEntries: 10_000,
-        env: { ...process.env, OPENCLAW_STATE_DIR: fixtureRoot },
+        env: { ...process.env, NOVA_STATE_DIR: fixtureRoot },
       }).clear();
       await listMemoryHostPublicArtifacts({
         cfg: { agents: { list: [{ id: "main", default: true, workspace: workspaceDir }] } },
@@ -278,7 +278,7 @@ describe("memory-host-core helpers", () => {
     const stateDir = path.join(fixtureRoot, "state");
     const workspaceDir = path.join(fixtureRoot, "workspace");
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+      vi.stubEnv("NOVA_STATE_DIR", stateDir);
       await fs.mkdir(workspaceDir);
       await appendMemoryHostEvent(workspaceDir, {
         type: "memory.recall.recorded",
@@ -347,7 +347,7 @@ describe("memory-host-core helpers", () => {
     const originalOpen = fs.open.bind(fs);
     let exportOpenCount = 0;
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+      vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
       await fs.mkdir(workspaceDir, { recursive: true });
       await appendMemoryHostEvent(workspaceDir, event);
       const stateHash = createHash("sha256")
@@ -404,7 +404,7 @@ describe("memory-host-core helpers", () => {
       results: [],
     };
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+      vi.stubEnv("NOVA_STATE_DIR", stateDir);
       await fs.mkdir(workspaceDir);
       await appendMemoryHostEvent(workspaceDir, firstEvent);
       const stateHash = createHash("sha256")
@@ -467,7 +467,7 @@ describe("memory-host-core helpers", () => {
     const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "memory-host-blocked-export-"));
     const workspaceDir = path.join(fixtureRoot, "workspace");
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", path.join(fixtureRoot, "state"));
+      vi.stubEnv("NOVA_STATE_DIR", path.join(fixtureRoot, "state"));
       await fs.mkdir(workspaceDir);
       await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), "# Still visible\n", "utf8");
       await fs.writeFile(path.join(workspaceDir, "memory"), "user file\n", "utf8");
@@ -497,7 +497,7 @@ describe("memory-host-core helpers", () => {
   it("lists shared public artifacts from memory workspaces", async () => {
     const fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "memory-host-public-artifacts-"));
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+      vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
       const workspaceDir = path.join(fixtureRoot, "workspace");
       await fs.mkdir(path.join(workspaceDir, "memory", "dreaming"), { recursive: true });
       await fs.writeFile(path.join(workspaceDir, "MEMORY.md"), "# Durable Memory\n", "utf8");
@@ -601,7 +601,7 @@ describe("memory-host-core helpers", () => {
       await createPluginStateKeyedStore("memory-core", {
         namespace: "memory-host.events",
         maxEntries: 10_000,
-        env: { ...process.env, OPENCLAW_STATE_DIR: fixtureRoot },
+        env: { ...process.env, NOVA_STATE_DIR: fixtureRoot },
       }).clear();
       const afterRetention = await listMemoryHostPublicArtifacts({
         cfg: {
@@ -656,7 +656,7 @@ describe("memory-host-core helpers", () => {
         });
 
       try {
-        vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+        vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
         await fs.mkdir(workspaceDir, { recursive: true });
         await fs.symlink(workspaceDir, workspaceAlias);
         await appendMemoryHostEvent(workspaceAlias, {
@@ -720,7 +720,7 @@ describe("memory-host-core helpers", () => {
     let exportOpenCount = 0;
     let eventExportPath: string | undefined;
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+      vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
       await fs.mkdir(workspaceDir, { recursive: true });
       await appendMemoryHostEvent(workspaceDir, {
         type: "memory.recall.recorded",
@@ -739,7 +739,7 @@ describe("memory-host-core helpers", () => {
         await createPluginStateKeyedStore("memory-core", {
           namespace: "memory-host.events",
           maxEntries: 10_000,
-          env: { ...process.env, OPENCLAW_STATE_DIR: fixtureRoot },
+          env: { ...process.env, NOVA_STATE_DIR: fixtureRoot },
         }).clear();
       } else {
         await appendMemoryHostEvent(workspaceDir, {
@@ -784,7 +784,7 @@ describe("memory-host-core helpers", () => {
     const originalOpen = fs.open.bind(fs);
     let exportOpenCount = 0;
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+      vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
       await fs.mkdir(workspaceDir, { recursive: true });
       await appendMemoryHostEvent(workspaceDir, {
         type: "memory.recall.recorded",
@@ -803,7 +803,7 @@ describe("memory-host-core helpers", () => {
         await createPluginStateKeyedStore("memory-core", {
           namespace: "memory-host.events",
           maxEntries: 10_000,
-          env: { ...process.env, OPENCLAW_STATE_DIR: fixtureRoot },
+          env: { ...process.env, NOVA_STATE_DIR: fixtureRoot },
         }).clear();
       } else {
         await appendMemoryHostEvent(workspaceDir, {
@@ -856,7 +856,7 @@ describe("memory-host-core helpers", () => {
     const originalOpen = fs.open.bind(fs);
     let exportOpenCount = 0;
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+      vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
       await fs.mkdir(workspaceDir, { recursive: true });
       await appendMemoryHostEvent(workspaceDir, {
         type: "memory.recall.recorded",
@@ -917,7 +917,7 @@ describe("memory-host-core helpers", () => {
       agents: { list: [{ id: "main", default: true, workspace: workspaceDir }] },
     };
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", fixtureRoot);
+      vi.stubEnv("NOVA_STATE_DIR", fixtureRoot);
       await fs.mkdir(workspaceDir, { recursive: true });
       await appendMemoryHostEvent(workspaceDir, {
         type: "memory.recall.recorded",
@@ -963,7 +963,7 @@ describe("memory-host-core helpers", () => {
 
       const exports: string[] = [];
       for (const profile of ["profile-a", "profile-b"]) {
-        vi.stubEnv("OPENCLAW_STATE_DIR", path.join(fixtureRoot, profile));
+        vi.stubEnv("NOVA_STATE_DIR", path.join(fixtureRoot, profile));
         await appendMemoryHostEvent(workspaceDir, {
           type: "memory.recall.recorded",
           timestamp: "2026-05-18T12:00:00.000Z",

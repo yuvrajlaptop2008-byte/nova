@@ -4835,19 +4835,19 @@ describe("deliverOutboundPayloads", () => {
         {
           text: [
             "visible",
-            "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>",
             "Nova runtime context (internal):",
             "<<<BEGIN_UNTRUSTED_CHILD_RESULT>>>",
             "raw child output",
             "<<<END_UNTRUSTED_CHILD_RESULT>>>",
-            "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "<<<END_NOVA_INTERNAL_CONTEXT>>>",
             "after",
           ].join("\n"),
           channelData: {
             internal: [
-              "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+              "<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>",
               "internal metadata",
-              "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+              "<<<END_NOVA_INTERNAL_CONTEXT>>>",
             ].join("\n"),
           },
         },
@@ -4927,7 +4927,7 @@ describe("deliverOutboundPayloads", () => {
     const stateDir = await fsPromises.realpath(
       await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-deliver-spool-state-")),
     );
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.NOVA_STATE_DIR;
     // Real MPEG-1 Layer III frames: host-local media sends are buffer-verified,
     // so placeholder text would be rejected before staging is even exercised.
     const source = path.join(sourceDir, "voice.mp3");
@@ -4943,7 +4943,7 @@ describe("deliverOutboundPayloads", () => {
     const payload = { mediaUrl: source, audioAsVoice: true };
 
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.NOVA_STATE_DIR = stateDir;
       await deliverOutboundPayloads({
         cfg: matrixChunkConfig,
         channel: "matrix",
@@ -4966,9 +4966,9 @@ describe("deliverOutboundPayloads", () => {
       expect(sendMatrix.mock.calls[0]?.[0]?.mediaUrl ?? source).toBe(source);
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.NOVA_STATE_DIR = previousStateDir;
       }
       await fsPromises.rm(sourceDir, { recursive: true, force: true });
       await fsPromises.rm(stateDir, { recursive: true, force: true });
@@ -4995,7 +4995,7 @@ describe("deliverOutboundPayloads", () => {
     const stateDir = await fsPromises.realpath(
       await fsPromises.mkdtemp(path.join(os.tmpdir(), "openclaw-deliver-ws-")),
     );
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.NOVA_STATE_DIR;
     const workspaceDir = path.join(stateDir, "workspace-proofagent");
     // Host-local sends are buffer-verified, so the fixture needs real audio.
     const source = path.join(workspaceDir, "voice.mp3");
@@ -5010,7 +5010,7 @@ describe("deliverOutboundPayloads", () => {
     const payload = { mediaUrl: source, audioAsVoice: true };
 
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.NOVA_STATE_DIR = stateDir;
       await fsPromises.mkdir(workspaceDir, { recursive: true });
       await fsPromises.writeFile(source, mp3);
       await deliverOutboundPayloads({
@@ -5038,9 +5038,9 @@ describe("deliverOutboundPayloads", () => {
       expect(sendMatrix).toHaveBeenCalled();
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.NOVA_STATE_DIR = previousStateDir;
       }
       await fsPromises.rm(stateDir, { recursive: true, force: true });
     }

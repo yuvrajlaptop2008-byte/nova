@@ -229,7 +229,7 @@ describe("docs-link-audit", () => {
 
     const exitCode = runDocsLinkAuditCli({
       args: ["--anchors"],
-      env: { ...process.env, OPENCLAW_DOCS_LINK_SENTINEL: "1" },
+      env: { ...process.env, NOVA_DOCS_LINK_SENTINEL: "1" },
       nodeExecPath: "/opt/node/bin/node",
       nodeVersion: "22.21.1",
       prepareAnchorAuditDocsDirImpl() {
@@ -258,7 +258,7 @@ describe("docs-link-audit", () => {
       ],
       options: expect.objectContaining({
         cwd: anchorDocsDir,
-        env: expect.objectContaining({ OPENCLAW_DOCS_LINK_SENTINEL: "1" }),
+        env: expect.objectContaining({ NOVA_DOCS_LINK_SENTINEL: "1" }),
         shell: false,
         stdio: "inherit",
       }),

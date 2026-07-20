@@ -208,9 +208,9 @@ async function runHooksRelay(params: { event: "post_tool_use" | "pre_tool_use"; 
     env: {
       LINGER_MARKER: fixture.markerPath,
       NODE_OPTIONS: `--import=${pathToFileURL(fixture.preloadPath).href}`,
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-      OPENCLAW_NO_RESPAWN: "1",
-      OPENCLAW_STATE_DIR: fixture.stateDir,
+      NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+      NOVA_NO_RESPAWN: "1",
+      NOVA_STATE_DIR: fixture.stateDir,
     },
     stdin: params.stdin,
   });
@@ -253,9 +253,9 @@ describe("hooks CLI process lifecycle", () => {
       completion: "exit",
       label: "hooks relay explicit state database",
       env: {
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-        OPENCLAW_NO_RESPAWN: "1",
-        OPENCLAW_STATE_DIR: childStateDir,
+        NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+        NOVA_NO_RESPAWN: "1",
+        NOVA_STATE_DIR: childStateDir,
       },
       stdin: JSON.stringify({ hook_event_name: "PostToolUse" }),
     });
@@ -276,9 +276,9 @@ describe("hooks CLI process lifecycle", () => {
       label: "hooks list",
       env: {
         LINGER_MARKER: fixture.markerPath,
-        OPENCLAW_CONFIG_PATH: fixture.configPath,
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-        OPENCLAW_STATE_DIR: fixture.stateDir,
+        NOVA_CONFIG_PATH: fixture.configPath,
+        NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+        NOVA_STATE_DIR: fixture.stateDir,
       },
     });
     const relayResult = await runHooksRelay({ event: "pre_tool_use", stdin: "{}" });

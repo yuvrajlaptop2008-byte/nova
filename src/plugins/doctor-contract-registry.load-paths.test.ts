@@ -28,10 +28,10 @@ function makeHermeticDoctorEnv(stateDir: string): NodeJS.ProcessEnv {
   return {
     ...process.env,
     HOME: stateDir,
-    OPENCLAW_HOME: stateDir,
-    OPENCLAW_STATE_DIR: stateDir,
-    OPENCLAW_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
-    OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
+    NOVA_HOME: stateDir,
+    NOVA_STATE_DIR: stateDir,
+    NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+    NOVA_DISABLE_BUNDLED_PLUGINS: "1",
   };
 }
 

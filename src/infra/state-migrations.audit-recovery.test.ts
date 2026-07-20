@@ -133,7 +133,7 @@ describe("legacy audit recovery byte handling", () => {
       expect(recovered.warnings).toEqual([]);
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).map((entry) => entry.value.summary),
       ).toEqual(["�", "later"]);
     });
@@ -235,7 +235,7 @@ describe("legacy audit recovery byte handling", () => {
         expect(result.warnings).toEqual([]);
         expect(
           listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+            env: { ...process.env, NOVA_STATE_DIR: stateDir },
           }).map((entry) => entry.value.summary),
         ).toEqual(["original", "later"]);
         await expect(fs.access(restorePath)).rejects.toMatchObject({ code: "ENOENT" });
@@ -339,7 +339,7 @@ describe("legacy audit recovery byte handling", () => {
       expect(result.warnings).toEqual([]);
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).map((entry) => entry.value.summary),
       ).toEqual(["restore after restart"]);
       await expect(fs.access(restorePath)).rejects.toMatchObject({ code: "ENOENT" });
@@ -412,7 +412,7 @@ describe("legacy audit recovery byte handling", () => {
         expect(recovered.warnings).toEqual([]);
         expect(
           listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+            env: { ...process.env, NOVA_STATE_DIR: stateDir },
           }).map((entry) => entry.value.summary),
         ).toEqual(["before archive", "later row"]);
         const sanitizedRows = (await fs.readFile(`${sourcePath}.migrated`, "utf8"))
@@ -463,7 +463,7 @@ describe("legacy audit recovery byte handling", () => {
         expect(recovered.warnings).toEqual([]);
         expect(
           listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+            env: { ...process.env, NOVA_STATE_DIR: stateDir },
           }).map((entry) => entry.value.summary),
         ).toEqual(["before archive", "first later row", "second later row"]);
         const sanitizedRows = (await fs.readFile(sanitizedPath, "utf8"))
@@ -504,7 +504,7 @@ describe("legacy audit recovery byte handling", () => {
       expect(recovered.warnings).toEqual([]);
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).map((entry) => entry.value.summary),
       ).toEqual(["Repeated operation", "Repeated operation", "Repeated operation"]);
       const sanitizedRows = (await fs.readFile(`${sourcePath}.migrated`, "utf8"))
@@ -518,7 +518,7 @@ describe("legacy audit recovery byte handling", () => {
             .prepare("DELETE FROM diagnostic_events WHERE scope = ?")
             .run("migration.legacy-audit-raw");
         },
-        { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } },
+        { env: { ...process.env, NOVA_STATE_DIR: stateDir } },
       );
       await fs.appendFile(rawPath, `${JSON.stringify(event)}\n`);
       const ambiguous = await migrateLegacyAuditLogs({
@@ -531,7 +531,7 @@ describe("legacy audit recovery byte handling", () => {
       ]);
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }),
       ).toHaveLength(3);
       expect((await fs.readFile(`${sourcePath}.migrated`, "utf8")).trim().split("\n")).toHaveLength(

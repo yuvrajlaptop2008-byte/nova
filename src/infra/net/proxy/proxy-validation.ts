@@ -95,7 +95,7 @@ type ProxyValidationApnsCheck = (
 /** Inputs used to resolve proxy validation config before network probes run. */
 type ResolveProxyValidationConfigOptions = {
   config?: ProxyConfig;
-  env?: NodeJS.ProcessEnv | Partial<Record<"OPENCLAW_PROXY_URL", string | undefined>>;
+  env?: NodeJS.ProcessEnv | Partial<Record<"NOVA_PROXY_URL", string | undefined>>;
   proxyUrlOverride?: string;
   proxyCaFileOverride?: string;
 };
@@ -118,7 +118,7 @@ function normalizeProxyUrl(value: string | undefined): string | undefined {
 
 function validateProxyUrl(value: string | undefined): string[] {
   if (!value) {
-    return ["proxy validation requires proxy.proxyUrl, --proxy-url, or OPENCLAW_PROXY_URL"];
+    return ["proxy validation requires proxy.proxyUrl, --proxy-url, or NOVA_PROXY_URL"];
   }
   if (!isHttpUrl(value)) {
     return ["proxyUrl must use http:// or https://"];
@@ -131,7 +131,7 @@ function validateProxyEnabled(source: ProxyValidationConfigSource, enabled: bool
     return [];
   }
   if (source === "env") {
-    return ["proxy validation requires proxy.enabled to be true for OPENCLAW_PROXY_URL"];
+    return ["proxy validation requires proxy.enabled to be true for NOVA_PROXY_URL"];
   }
   return ["proxy validation requires proxy.enabled to be true for configured proxy URLs"];
 }
@@ -179,7 +179,7 @@ function resolveProxyValidationConfig(
     };
   }
 
-  const envUrl = normalizeProxyUrl(options.env?.OPENCLAW_PROXY_URL);
+  const envUrl = normalizeProxyUrl(options.env?.NOVA_PROXY_URL);
   if (envUrl) {
     const proxyCaFile = resolveManagedProxyCaFileForUrl({
       proxyUrl: envUrl,
@@ -207,7 +207,7 @@ function resolveProxyValidationConfig(
     enabled: false,
     source: "disabled",
     errors: [
-      "proxy validation requires proxy.enabled=true with proxy.proxyUrl or OPENCLAW_PROXY_URL, or --proxy-url",
+      "proxy validation requires proxy.enabled=true with proxy.proxyUrl or NOVA_PROXY_URL, or --proxy-url",
     ],
   };
 }

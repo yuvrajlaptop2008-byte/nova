@@ -8,8 +8,8 @@ import { captureEnv, deleteTestEnvValue, setTestEnvValue } from "../test-utils/e
 let envSnapshot: ReturnType<typeof captureEnv>;
 
 beforeAll(() => {
-  envSnapshot = captureEnv(["OPENCLAW_PROFILE"]);
-  process.env.OPENCLAW_PROFILE = "isolated";
+  envSnapshot = captureEnv(["NOVA_PROFILE"]);
+  process.env.NOVA_PROFILE = "isolated";
 });
 
 afterAll(() => {
@@ -211,7 +211,7 @@ async function createStatusServiceSummary(
     loadedText: service.loadedText,
     runtime,
     runtimeShort: runtime?.pid ? `pid ${runtime.pid}` : null,
-    wrapperPath: command?.environment?.OPENCLAW_WRAPPER?.trim() || undefined,
+    wrapperPath: command?.environment?.NOVA_WRAPPER?.trim() || undefined,
   };
 }
 
@@ -355,8 +355,8 @@ async function createMockStatusScanResult(params: { includePluginCompatibility?:
     gatewayConnection: { url: "ws://127.0.0.1:18789" },
     remoteUrlMissing: false,
     gatewayMode: "local" as const,
-    gatewayProbeAuth: process.env.OPENCLAW_GATEWAY_TOKEN
-      ? { token: process.env.OPENCLAW_GATEWAY_TOKEN }
+    gatewayProbeAuth: process.env.NOVA_GATEWAY_TOKEN
+      ? { token: process.env.NOVA_GATEWAY_TOKEN }
       : {},
     gatewayProbeAuthWarning: gatewayAuthWarning,
     gatewayProbe,
@@ -684,7 +684,7 @@ vi.mock("../gateway/call.js", () => ({
           path: "gateway.auth.token",
         });
       }
-      const envToken = process.env.OPENCLAW_GATEWAY_TOKEN?.trim();
+      const envToken = process.env.NOVA_GATEWAY_TOKEN?.trim();
       return envToken ? { token: envToken } : {};
     },
   ),
@@ -1291,7 +1291,7 @@ describe("statusCommand", () => {
       session: {},
       channels: { whatsapp: { allowFrom: ["*"] } },
     });
-    await withEnvVar("OPENCLAW_GATEWAY_TOKEN", "abcd1234", async () => {
+    await withEnvVar("NOVA_GATEWAY_TOKEN", "abcd1234", async () => {
       mockProbeGatewayResult({
         ok: true,
         connectLatencyMs: 123,
@@ -1342,7 +1342,7 @@ describe("statusCommand", () => {
       ...service,
       readCommand: async () => ({
         programArguments: [wrapperPath, "node", "dist/entry.js", "gateway"],
-        environment: { OPENCLAW_WRAPPER: wrapperPath },
+        environment: { NOVA_WRAPPER: wrapperPath },
         sourcePath: "/tmp/Library/LaunchAgents/ai.openclaw.gateway.plist",
       }),
     });
@@ -1361,15 +1361,15 @@ describe("statusCommand", () => {
       },
     });
 
-    await withOptionalEnvVar("OPENCLAW_WRAPPER", undefined, async () => {
+    await withOptionalEnvVar("NOVA_WRAPPER", undefined, async () => {
       const logs = await runStatusAndGetLogs();
       expectLogsInclude(logs, "Secret diagnostics:");
-      expectLogsInclude(logs, "installed gateway service uses OPENCLAW_WRAPPER");
+      expectLogsInclude(logs, "installed gateway service uses NOVA_WRAPPER");
       expectLogsInclude(logs, "not running with that same wrapper");
       expectLogsInclude(logs, "current CLI process rather than the installed gateway service");
     });
 
-    await withEnvVar("OPENCLAW_WRAPPER", wrapperPath, async () => {
+    await withEnvVar("NOVA_WRAPPER", wrapperPath, async () => {
       const logs = await runStatusAndGetLogs();
       expectLogsInclude(logs, "Secret diagnostics:");
       expectLogsExclude(logs, "not running with that same wrapper");

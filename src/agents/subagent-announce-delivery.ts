@@ -240,7 +240,7 @@ function resolveRequesterSessionActivity(requesterSessionKey: string) {
 }
 
 function resolveDirectAnnounceTransientRetryDelaysMs() {
-  return process.env.OPENCLAW_TEST_FAST === "1"
+  return process.env.NOVA_TEST_FAST === "1"
     ? ([8, 16, 32] as const)
     : ([5_000, 10_000, 20_000] as const);
 }
@@ -250,7 +250,7 @@ function resolveDirectAnnounceTransientRetryDelaysMs() {
 // schedule is used than for transient delivery errors. Total wait stays well
 // within the announce delivery timeout, and the loop also stops on cancellation.
 function resolveCompactionSteerRetryDelaysMs() {
-  return process.env.OPENCLAW_TEST_FAST === "1"
+  return process.env.NOVA_TEST_FAST === "1"
     ? ([8, 16, 32, 64] as const)
     : ([1_000, 2_000, 4_000, 8_000] as const);
 }

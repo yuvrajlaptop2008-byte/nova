@@ -27,12 +27,12 @@ import {
 
 const TEST_ENV_KEYS = [
   "HOME",
-  "OPENCLAW_STATE_DIR",
-  "OPENCLAW_CONFIG_PATH",
-  "OPENCLAW_GATEWAY_URL",
-  "OPENCLAW_GATEWAY_TOKEN",
-  "OPENCLAW_GATEWAY_PASSWORD",
-  "OPENCLAW_GATEWAY_PORT",
+  "NOVA_STATE_DIR",
+  "NOVA_CONFIG_PATH",
+  "NOVA_GATEWAY_URL",
+  "NOVA_GATEWAY_TOKEN",
+  "NOVA_GATEWAY_PASSWORD",
+  "NOVA_GATEWAY_PORT",
 ];
 
 type Cleanup = () => Promise<void> | void;
@@ -75,10 +75,10 @@ describe("operator approval gateway client e2e", () => {
   it("uses runtime authority only for generated local gateway URLs", async () => {
     const envSnapshot = captureEnv(TEST_ENV_KEYS);
     cleanup.push(() => envSnapshot.restore());
-    deleteTestEnvValue("OPENCLAW_CONFIG_PATH");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_URL");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_TOKEN");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_PASSWORD");
+    deleteTestEnvValue("NOVA_CONFIG_PATH");
+    deleteTestEnvValue("NOVA_GATEWAY_URL");
+    deleteTestEnvValue("NOVA_GATEWAY_TOKEN");
+    deleteTestEnvValue("NOVA_GATEWAY_PASSWORD");
 
     const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-approval-client-e2e-"));
     cleanup.push(() => fs.rm(tempHome, { recursive: true, force: true, maxRetries: 5 }));
@@ -86,12 +86,12 @@ describe("operator approval gateway client e2e", () => {
     const stateDir = path.join(tempHome, ".openclaw");
     await fs.mkdir(stateDir, { recursive: true });
     setTestEnvValue("HOME", tempHome);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
 
     const port = await getFreeGatewayPort();
     const token = "approval-client-e2e-token";
     const url = `ws://127.0.0.1:${port}`;
-    setTestEnvValue("OPENCLAW_GATEWAY_PORT", String(port));
+    setTestEnvValue("NOVA_GATEWAY_PORT", String(port));
 
     const server = await startGatewayServer(port, {
       bind: "loopback",
@@ -179,10 +179,10 @@ describe("operator approval gateway client e2e", () => {
   it("resolves one approval from distinct devices with first-answer-wins semantics", async () => {
     const envSnapshot = captureEnv(TEST_ENV_KEYS);
     cleanup.push(() => envSnapshot.restore());
-    deleteTestEnvValue("OPENCLAW_CONFIG_PATH");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_URL");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_TOKEN");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_PASSWORD");
+    deleteTestEnvValue("NOVA_CONFIG_PATH");
+    deleteTestEnvValue("NOVA_GATEWAY_URL");
+    deleteTestEnvValue("NOVA_GATEWAY_TOKEN");
+    deleteTestEnvValue("NOVA_GATEWAY_PASSWORD");
 
     const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-approval-surfaces-e2e-"));
     cleanup.push(() => fs.rm(tempHome, { recursive: true, force: true, maxRetries: 5 }));
@@ -190,7 +190,7 @@ describe("operator approval gateway client e2e", () => {
     const stateDir = path.join(tempHome, ".openclaw");
     await fs.mkdir(stateDir, { recursive: true });
     setTestEnvValue("HOME", tempHome);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
 
     const requesterIdentity = loadOrCreateDeviceIdentity({
       path: path.join(stateDir, "test-device-identities", "approval-requester.sqlite"),
@@ -206,7 +206,7 @@ describe("operator approval gateway client e2e", () => {
     const port = await getFreeGatewayPort();
     const token = "approval-surfaces-e2e-token";
     const url = `ws://127.0.0.1:${port}`;
-    setTestEnvValue("OPENCLAW_GATEWAY_PORT", String(port));
+    setTestEnvValue("NOVA_GATEWAY_PORT", String(port));
 
     const server = await startGatewayServer(port, {
       bind: "loopback",

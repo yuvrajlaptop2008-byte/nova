@@ -13,7 +13,7 @@ const MIN_NODE_24 = { major: 24, minor: 15, patch: 0 };
 const MIN_NODE_25 = { major: 25, minor: 9, patch: 0 };
 const RECOMMENDED_NODE_MAJOR = 24;
 const SUPPORTED_NODE_RANGE = ">=22.22.3 <23, >=24.15.0 <25, or >=25.9.0";
-const COMPILE_CACHE_DISABLED_RESPAWNED_ENV = "OPENCLAW_COMPILE_CACHE_DISABLED_RESPAWNED";
+const COMPILE_CACHE_DISABLED_RESPAWNED_ENV = "NOVA_COMPILE_CACHE_DISABLED_RESPAWNED";
 
 const parseNodeVersion = (rawVersion) => {
   const [majorRaw = "0", minorRaw = "0", patchRaw = "0"] = rawVersion.split(".");
@@ -250,7 +250,7 @@ const respawnWithPackagedCompileCacheIfNeeded = () => {
   if (isSourceCheckoutLauncher() || isNodeCompileCacheDisabled()) {
     return false;
   }
-  if (process.env.OPENCLAW_PACKAGED_COMPILE_CACHE_RESPAWNED === "1") {
+  if (process.env.NOVA_PACKAGED_COMPILE_CACHE_RESPAWNED === "1") {
     return false;
   }
   const currentDirectory = module.getCompileCacheDir?.();
@@ -264,7 +264,7 @@ const respawnWithPackagedCompileCacheIfNeeded = () => {
   const env = {
     ...process.env,
     NODE_COMPILE_CACHE: desiredDirectory,
-    OPENCLAW_PACKAGED_COMPILE_CACHE_RESPAWNED: "1",
+    NOVA_PACKAGED_COMPILE_CACHE_RESPAWNED: "1",
   };
   return runRespawnedChild(
     process.execPath,
@@ -432,7 +432,7 @@ const consumeLauncherRootOptionToken = (args, index) => {
 };
 
 const hasLauncherContainerTarget = (argv) => {
-  if (normalizeLauncherMetadataValue(process.env.OPENCLAW_CONTAINER)) {
+  if (normalizeLauncherMetadataValue(process.env.NOVA_CONTAINER)) {
     return true;
   }
   const args = argv.slice(2);
@@ -497,8 +497,7 @@ const resolvePrecomputedCommandHelp = (argv) => {
   return commandHelp && sawHelp ? commandHelp : null;
 };
 
-const isHelpFastPathDisabled = () =>
-  process.env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1";
+const isHelpFastPathDisabled = () => process.env.NOVA_DISABLE_CLI_STARTUP_HELP_FAST_PATH === "1";
 
 const normalizeLauncherHomeValue = (value) => {
   const trimmed = value?.trim();
@@ -511,7 +510,7 @@ const resolveLauncherOsHomeDir = () =>
   os.homedir();
 
 const resolveLauncherHomeDir = () => {
-  const explicit = normalizeLauncherHomeValue(process.env.OPENCLAW_HOME);
+  const explicit = normalizeLauncherHomeValue(process.env.NOVA_HOME);
   const rawHome =
     explicit && (explicit === "~" || explicit.startsWith("~/") || explicit.startsWith("~\\"))
       ? explicit.replace(/^~(?=$|[\\/])/, resolveLauncherOsHomeDir())
@@ -530,11 +529,11 @@ const resolveLauncherUserPath = (input) => {
 };
 
 const resolveLauncherConfigPaths = () => {
-  const explicit = process.env.OPENCLAW_CONFIG_PATH?.trim();
+  const explicit = process.env.NOVA_CONFIG_PATH?.trim();
   if (explicit) {
     return [resolveLauncherUserPath(explicit)];
   }
-  const stateOverride = process.env.OPENCLAW_STATE_DIR?.trim();
+  const stateOverride = process.env.NOVA_STATE_DIR?.trim();
   if (stateOverride) {
     const stateDir = resolveLauncherUserPath(stateOverride);
     return [path.join(stateDir, "openclaw.json"), path.join(stateDir, "clawdbot.json")];
@@ -550,8 +549,8 @@ const resolveLauncherConfigPaths = () => {
 
 const shouldDeferRootHelpToRuntimeEntry = () => {
   if (
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR?.trim() ||
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS?.trim()
+    process.env.NOVA_BUNDLED_PLUGINS_DIR?.trim() ||
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS?.trim()
   ) {
     return true;
   }
@@ -579,7 +578,7 @@ const loadPrecomputedHelpText = (key, subkey) => {
 
 function tryOutputLauncherVersion(argv) {
   try {
-    if (normalizeLauncherMetadataValue(process.env.OPENCLAW_CONTAINER)) {
+    if (normalizeLauncherMetadataValue(process.env.NOVA_CONTAINER)) {
       return false;
     }
     if (!isLauncherVersionFastPathArgv(argv)) {
@@ -622,7 +621,7 @@ function resolveLauncherVersion() {
   if (buildVersion) {
     return buildVersion;
   }
-  return normalizeLauncherMetadataValue(process.env.OPENCLAW_BUNDLED_VERSION) ?? "0.0.0";
+  return normalizeLauncherMetadataValue(process.env.NOVA_BUNDLED_VERSION) ?? "0.0.0";
 }
 
 function resolveLauncherCommit() {

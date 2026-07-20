@@ -190,7 +190,7 @@ describe("package-mac-dist plist validation", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'printf "global|%s|%s\\n" "$PWD" "$*" >> "$OPENCLAW_TEST_LOG"',
+        'printf "global|%s|%s\\n" "$PWD" "$*" >> "$NOVA_TEST_LOG"',
         'if [[ "${1:-}" == "--version" ]]; then echo "11.8.0"; fi',
         "",
       ].join("\n"),
@@ -201,7 +201,7 @@ describe("package-mac-dist plist validation", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'printf "corepack|%s|%s\\n" "$PWD" "$*" >> "$OPENCLAW_TEST_LOG"',
+        'printf "corepack|%s|%s\\n" "$PWD" "$*" >> "$NOVA_TEST_LOG"',
         'if [[ "${1:-}" == "pnpm" && "${2:-}" == "--version" ]]; then',
         '  if grep -q "pnpm@11.2.2" package.json 2>/dev/null; then echo "11.2.2"; else echo "11.8.0"; fi',
         "fi",
@@ -215,8 +215,8 @@ describe("package-mac-dist plist validation", () => {
     const result = runHelper(`
       set -euo pipefail
       ROOT_DIR=${JSON.stringify(tempRoot)}
-      OPENCLAW_TEST_LOG=${JSON.stringify(logPath)}
-      export OPENCLAW_TEST_LOG
+      NOVA_TEST_LOG=${JSON.stringify(logPath)}
+      export NOVA_TEST_LOG
       PATH=${JSON.stringify(`${toolsDir}:/usr/bin:/bin`)}
       cd ${JSON.stringify(outerRoot)}
       ${helperBlock}
@@ -250,11 +250,11 @@ describe("package-mac-dist plist validation", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'if [[ "$PWD" != "$OPENCLAW_ROOT" ]]; then',
+        'if [[ "$PWD" != "$NOVA_ROOT" ]]; then',
         '  echo "node ran outside repo root: $PWD" >&2',
         "  exit 1",
         "fi",
-        'if [[ ! -f "$OPENCLAW_MARKER" ]]; then',
+        'if [[ ! -f "$NOVA_MARKER" ]]; then',
         '  echo "Cannot find package tsx" >&2',
         "  exit 1",
         "fi",
@@ -271,7 +271,7 @@ describe("package-mac-dist plist validation", () => {
         "#!/usr/bin/env bash",
         "set -euo pipefail",
         "echo 'Already up to date'",
-        'touch "$OPENCLAW_MARKER"',
+        'touch "$NOVA_MARKER"',
         "",
       ].join("\n"),
       "utf8",
@@ -281,10 +281,10 @@ describe("package-mac-dist plist validation", () => {
     const result = runHelper(`
       set -euo pipefail
       ROOT_DIR=${JSON.stringify(process.cwd())}
-      OPENCLAW_ROOT=${JSON.stringify(process.cwd())}
-      OPENCLAW_MARKER=${JSON.stringify(marker)}
+      NOVA_ROOT=${JSON.stringify(process.cwd())}
+      NOVA_MARKER=${JSON.stringify(marker)}
       PATH=${JSON.stringify(tools)}:/usr/bin:/bin
-      export OPENCLAW_MARKER OPENCLAW_ROOT PATH
+      export NOVA_MARKER NOVA_ROOT PATH
       ${helpers}
       require_canonical_sparkle_build 2026.6.2
     `);
@@ -315,11 +315,11 @@ describe("package-mac-dist plist validation", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'if [[ "$PWD" != "$OPENCLAW_ROOT" ]]; then',
+        'if [[ "$PWD" != "$NOVA_ROOT" ]]; then',
         '  echo "node ran outside repo root: $PWD" >&2',
         "  exit 1",
         "fi",
-        'if [[ ! -f "$OPENCLAW_MARKER" ]]; then',
+        'if [[ ! -f "$NOVA_MARKER" ]]; then',
         '  echo "Cannot find package tsx" >&2',
         "  exit 1",
         "fi",
@@ -335,7 +335,7 @@ describe("package-mac-dist plist validation", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'touch "$OPENCLAW_MARKER"',
+        'touch "$NOVA_MARKER"',
         'echo "pnpm failed" >&2',
         "exit 42",
         "",
@@ -347,10 +347,10 @@ describe("package-mac-dist plist validation", () => {
     const result = runHelper(`
       set -euo pipefail
       ROOT_DIR=${JSON.stringify(process.cwd())}
-      OPENCLAW_ROOT=${JSON.stringify(process.cwd())}
-      OPENCLAW_MARKER=${JSON.stringify(marker)}
+      NOVA_ROOT=${JSON.stringify(process.cwd())}
+      NOVA_MARKER=${JSON.stringify(marker)}
       PATH=${JSON.stringify(tools)}:/usr/bin:/bin
-      export OPENCLAW_MARKER OPENCLAW_ROOT PATH
+      export NOVA_MARKER NOVA_ROOT PATH
       ${helpers}
       require_canonical_sparkle_build 2026.6.2
     `);

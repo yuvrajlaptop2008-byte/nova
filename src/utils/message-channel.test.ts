@@ -103,10 +103,10 @@ describe("message-channel", () => {
   });
 
   it("reads native approval behavior from bundled channel manifests", async () => {
-    const previousBundledPluginsDir = process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-    const previousTrust = process.env.OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR;
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = path.resolve("extensions");
-    process.env.OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR = "1";
+    const previousBundledPluginsDir = process.env.NOVA_BUNDLED_PLUGINS_DIR;
+    const previousTrust = process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = path.resolve("extensions");
+    process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR = "1";
     vi.resetModules();
     try {
       const channelModule = await import("./message-channel.js");
@@ -120,14 +120,14 @@ describe("message-channel", () => {
       }
     } finally {
       if (previousBundledPluginsDir === undefined) {
-        delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+        delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
       } else {
-        process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = previousBundledPluginsDir;
+        process.env.NOVA_BUNDLED_PLUGINS_DIR = previousBundledPluginsDir;
       }
       if (previousTrust === undefined) {
-        delete process.env.OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR;
+        delete process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR;
       } else {
-        process.env.OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR = previousTrust;
+        process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR = previousTrust;
       }
       vi.resetModules();
     }
@@ -145,17 +145,17 @@ describe("message-channel", () => {
   });
 
   it("reads Matrix markdown capability from bundled channel catalog metadata", async () => {
-    const previousBundledPluginsDir = process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = path.resolve("extensions");
+    const previousBundledPluginsDir = process.env.NOVA_BUNDLED_PLUGINS_DIR;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = path.resolve("extensions");
     vi.resetModules();
     try {
       const module = await import("./message-channel.js");
       expect(module.isMarkdownCapableMessageChannel("matrix")).toBe(true);
     } finally {
       if (previousBundledPluginsDir === undefined) {
-        delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+        delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
       } else {
-        process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = previousBundledPluginsDir;
+        process.env.NOVA_BUNDLED_PLUGINS_DIR = previousBundledPluginsDir;
       }
       vi.resetModules();
     }

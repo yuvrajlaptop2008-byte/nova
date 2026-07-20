@@ -116,7 +116,7 @@ export function resolveCacheRetention(
   if (cacheRetention === "short" || cacheRetention === "long" || cacheRetention === "none") {
     return cacheRetention;
   }
-  if (typeof process !== "undefined" && process.env.OPENCLAW_CACHE_RETENTION === "long") {
+  if (typeof process !== "undefined" && process.env.NOVA_CACHE_RETENTION === "long") {
     return "long";
   }
   return "short";

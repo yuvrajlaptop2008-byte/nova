@@ -74,7 +74,7 @@ function createPartialSendFailure() {
 }
 
 async function deliverPartialMatrixBatch(sendMatrix: ReturnType<typeof vi.fn>, tmpDir: string) {
-  process.env.OPENCLAW_STATE_DIR = tmpDir;
+  process.env.NOVA_STATE_DIR = tmpDir;
   await expect(
     deliverOutboundPayloads({
       cfg: {} as OpenClawConfig,
@@ -166,7 +166,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
   it("does not retain a pre-send suppression across an ambiguous crash boundary", async () => {
     const auditEvents: TrustedMessageAuditEvent[] = [];
     const unsubscribe = onTrustedMessageAuditEvent((event) => auditEvents.push(event));
-    process.env.OPENCLAW_STATE_DIR = tmpDir;
+    process.env.NOVA_STATE_DIR = tmpDir;
     const sendMatrix = vi.fn().mockRejectedValueOnce(new Error("ambiguous provider failure"));
 
     await expect(
@@ -194,7 +194,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
   });
 
   it("retains retryable send-attempt state when an adapter fails before returning a result", async () => {
-    process.env.OPENCLAW_STATE_DIR = tmpDir;
+    process.env.NOVA_STATE_DIR = tmpDir;
     const sendMatrix = vi.fn().mockRejectedValueOnce(new Error("first payload send failed"));
 
     await expect(
@@ -219,7 +219,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
   });
 
   it("replays an entry after a proven pre-connect failure clears send evidence", async () => {
-    process.env.OPENCLAW_STATE_DIR = tmpDir;
+    process.env.NOVA_STATE_DIR = tmpDir;
     const connectError = Object.assign(new Error("connect ECONNREFUSED"), {
       code: "ECONNREFUSED",
       syscall: "connect",
@@ -273,7 +273,7 @@ describe("deliverOutboundPayloads queue integration: mid-batch failure with send
   });
 
   it("replays an entry after the provider proves no platform message was dispatched", async () => {
-    process.env.OPENCLAW_STATE_DIR = tmpDir;
+    process.env.NOVA_STATE_DIR = tmpDir;
     const notDispatchedError = new PlatformMessageNotDispatchedError(
       "upload timed out before completion dispatch",
       { cause: new Error("request timed out") },

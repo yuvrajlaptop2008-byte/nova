@@ -30,7 +30,7 @@ function runInstallShell(script: string, env: NodeJS.ProcessEnv = {}) {
         ...env,
         BASH_ENV: "",
         ENV: "",
-        OPENCLAW_INSTALL_SH_NO_RUN: "1",
+        NOVA_INSTALL_SH_NO_RUN: "1",
       },
     });
   } finally {
@@ -44,10 +44,10 @@ describe("install.sh", () => {
   it("runs installer snippets without inherited shell startup files", () => {
     const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-shell-env-"));
     const bashEnvPath = join(tmp, "bash_env");
-    writeFileSync(bashEnvPath, "export OPENCLAW_BASH_ENV_LEAKED=1\n");
+    writeFileSync(bashEnvPath, "export NOVA_BASH_ENV_LEAKED=1\n");
 
     try {
-      const result = runInstallShell('printf "leaked=%s\\n" "${OPENCLAW_BASH_ENV_LEAKED:-0}"', {
+      const result = runInstallShell('printf "leaked=%s\\n" "${NOVA_BASH_ENV_LEAKED:-0}"', {
         BASH_ENV: bashEnvPath,
       });
 
@@ -773,7 +773,7 @@ NODE
     }
   });
 
-  it("uses OPENCLAW_HOME for git defaults", () => {
+  it("uses NOVA_HOME for git defaults", () => {
     const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-home-"));
     const osHome = join(tmp, "os-home");
     const openclawHome = join(tmp, "openclaw-home");
@@ -790,8 +790,8 @@ NODE
         ].join("\n"),
         {
           HOME: osHome,
-          OPENCLAW_HOME: openclawHome,
-          OPENCLAW_GIT_DIR: undefined,
+          NOVA_HOME: openclawHome,
+          NOVA_GIT_DIR: undefined,
           TERM: "dumb",
         },
       );
@@ -811,7 +811,7 @@ NODE
     expect(mkdirParentIndex).toBeLessThan(cloneIndex);
   });
 
-  it("does not treat OS HOME config as active when OPENCLAW_HOME is set", () => {
+  it("does not treat OS HOME config as active when NOVA_HOME is set", () => {
     const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-legacy-config-"));
     const osHome = join(tmp, "os-home");
     const openclawHome = join(tmp, "openclaw-home");
@@ -830,8 +830,8 @@ NODE
         ].join("\n"),
         {
           HOME: osHome,
-          OPENCLAW_HOME: openclawHome,
-          OPENCLAW_CONFIG_PATH: undefined,
+          NOVA_HOME: openclawHome,
+          NOVA_CONFIG_PATH: undefined,
           TERM: "dumb",
         },
       );
@@ -844,39 +844,36 @@ NODE
     expect(result?.stderr ?? "").toBe("");
   });
 
-  it.each(["openclaw.json", "clawdbot.json"])(
-    "detects %s under OPENCLAW_STATE_DIR",
-    (configName) => {
-      const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-state-config-"));
-      const stateDir = join(tmp, "state");
-      mkdirSync(stateDir, { recursive: true });
-      writeFileSync(join(stateDir, configName), "{}\n");
+  it.each(["openclaw.json", "clawdbot.json"])("detects %s under NOVA_STATE_DIR", (configName) => {
+    const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-state-config-"));
+    const stateDir = join(tmp, "state");
+    mkdirSync(stateDir, { recursive: true });
+    writeFileSync(join(stateDir, configName), "{}\n");
 
-      let result: ReturnType<typeof runInstallShell> | undefined;
-      try {
-        result = runInstallShell(
-          [
-            `cd ${JSON.stringify(process.cwd())}`,
-            `source ${JSON.stringify(SCRIPT_PATH)}`,
-            'if has_openclaw_config; then printf "configured=1\\n"; else printf "configured=0\\n"; fi',
-          ].join("\n"),
-          {
-            OPENCLAW_CONFIG_PATH: undefined,
-            OPENCLAW_STATE_DIR: stateDir,
-            TERM: "dumb",
-          },
-        );
-      } finally {
-        rmSync(tmp, { force: true, recursive: true });
-      }
+    let result: ReturnType<typeof runInstallShell> | undefined;
+    try {
+      result = runInstallShell(
+        [
+          `cd ${JSON.stringify(process.cwd())}`,
+          `source ${JSON.stringify(SCRIPT_PATH)}`,
+          'if has_openclaw_config; then printf "configured=1\\n"; else printf "configured=0\\n"; fi',
+        ].join("\n"),
+        {
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: stateDir,
+          TERM: "dumb",
+        },
+      );
+    } finally {
+      rmSync(tmp, { force: true, recursive: true });
+    }
 
-      expect(result?.status).toBe(0);
-      expect(result?.stdout).toContain("configured=1");
-      expect(result?.stderr ?? "").toBe("");
-    },
-  );
+    expect(result?.status).toBe(0);
+    expect(result?.stdout).toContain("configured=1");
+    expect(result?.stderr ?? "").toBe("");
+  });
 
-  it("does not fall back to home config when OPENCLAW_STATE_DIR is set", () => {
+  it("does not fall back to home config when NOVA_STATE_DIR is set", () => {
     const tmp = mkdtempSync(join(tmpdir(), "openclaw-install-state-override-"));
     const home = join(tmp, "home");
     const stateDir = join(tmp, "state");
@@ -894,9 +891,9 @@ NODE
         ].join("\n"),
         {
           HOME: home,
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_HOME: undefined,
-          OPENCLAW_STATE_DIR: stateDir,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_HOME: undefined,
+          NOVA_STATE_DIR: stateDir,
           TERM: "dumb",
         },
       );
@@ -1083,7 +1080,7 @@ NODE
       set -euo pipefail
       source "${SCRIPT_PATH}"
       set +e
-      OPENCLAW_VERSION=main
+      NOVA_VERSION=main
       USE_BETA=0
       install_openclaw
       status=$?
@@ -1221,7 +1218,7 @@ NODE
       const result = runInstallShell(
         [`source ${JSON.stringify(SCRIPT_PATH)}`, "npm_global_bin_dir"].join("\n"),
         {
-          OPENCLAW_INSTALL_PROBE_TIMEOUT_SECONDS: "0.1",
+          NOVA_INSTALL_PROBE_TIMEOUT_SECONDS: "0.1",
           PATH: `${tmp}:${process.env.PATH ?? ""}`,
         },
       );
@@ -1262,7 +1259,7 @@ NODE
           '  printf "not-loaded\\n"',
           "fi",
         ].join("\n"),
-        { OPENCLAW_INSTALL_PROBE_TIMEOUT_SECONDS: "0.01" },
+        { NOVA_INSTALL_PROBE_TIMEOUT_SECONDS: "0.01" },
       );
 
       expect(result.status).toBe(0);
@@ -1756,7 +1753,7 @@ NODE
       result = runInstallShell(`
         set -euo pipefail
         source "${SCRIPT_PATH}"
-        OPENCLAW_BIN=${JSON.stringify(openclawBin)}
+        NOVA_BIN=${JSON.stringify(openclawBin)}
         ORIGINAL_PATH=${JSON.stringify(`${staleBin}:${currentBin}:/usr/bin:/bin`)}
         VERIFY_INSTALL=1
         is_gateway_daemon_loaded() { return 0; }
@@ -1804,13 +1801,13 @@ NODE
         fi
         return 1
       }
-      OPENCLAW_VERSION=v2026.5.12-beta.3
+      NOVA_VERSION=v2026.5.12-beta.3
       printf 'tag=%s\\n' "$(resolve_git_openclaw_ref)"
-      OPENCLAW_VERSION=2026.5.12-beta.3
+      NOVA_VERSION=2026.5.12-beta.3
       printf 'semver=%s\\n' "$(resolve_git_openclaw_ref)"
-      OPENCLAW_VERSION=beta
+      NOVA_VERSION=beta
       printf 'beta=%s\\n' "$(resolve_git_openclaw_ref)"
-      OPENCLAW_VERSION=main
+      NOVA_VERSION=main
       printf 'main=%s\\n' "$(resolve_git_openclaw_ref)"
     `);
 
@@ -2140,7 +2137,7 @@ describe("install.sh duplicate Nova install detection", () => {
       printf '{"version":"2026.3.7"}\\n' > "$root/brew/openclaw/package.json"
       printf '{"version":"2026.3.1"}\\n' > "$root/fnm/openclaw/package.json"
       collect_openclaw_npm_root_candidates() { printf '%s\\n' "$root/brew" "$root/fnm"; }
-      OPENCLAW_BIN="$root/fnm/.bin/openclaw"
+      NOVA_BIN="$root/fnm/.bin/openclaw"
       ui_warn() { echo "WARN: $*"; }
       warn_duplicate_openclaw_global_installs
     `);
@@ -2185,7 +2182,7 @@ describe("install.sh duplicate Nova install detection", () => {
         env: {
           ...process.env,
           HOME: tmpdir(),
-          OPENCLAW_INSTALL_SH_NO_RUN: "1",
+          NOVA_INSTALL_SH_NO_RUN: "1",
           BASH_ENV: "",
           ENV: "",
         },
@@ -2279,7 +2276,7 @@ describe("install.sh duplicate Nova install detection", () => {
             ...process.env,
             HOME: tmpdir(),
             NO_PROMPT: "1",
-            OPENCLAW_INSTALL_SH_NO_RUN: "1",
+            NOVA_INSTALL_SH_NO_RUN: "1",
             BASH_ENV: "",
             ENV: "",
           },
@@ -2315,7 +2312,7 @@ describe("install.sh duplicate Nova install detection", () => {
           env: {
             ...process.env,
             HOME: tmpdir(),
-            OPENCLAW_INSTALL_SH_NO_RUN: "1",
+            NOVA_INSTALL_SH_NO_RUN: "1",
             BASH_ENV: "",
             ENV: "",
           },
@@ -2350,7 +2347,7 @@ describe("install.sh duplicate Nova install detection", () => {
             ...process.env,
             HOME: tmpdir(),
             NO_PROMPT: "1",
-            OPENCLAW_INSTALL_SH_NO_RUN: "1",
+            NOVA_INSTALL_SH_NO_RUN: "1",
             BASH_ENV: "",
             ENV: "",
           },
@@ -2375,7 +2372,7 @@ describe("install.sh doctor cancellation and dashboard guard", () => {
 
   it("preserves plugin update stdin for direct interactive upgrades", () => {
     expect(script).toContain(
-      'OPENCLAW_UPDATE_IN_PROGRESS=1 run_with_safe_stdin "$claw" plugins update --all || true',
+      'NOVA_UPDATE_IN_PROGRESS=1 run_with_safe_stdin "$claw" plugins update --all || true',
     );
   });
 

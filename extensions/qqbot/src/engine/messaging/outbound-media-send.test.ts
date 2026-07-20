@@ -102,13 +102,13 @@ function makeCtx() {
 
 beforeEach(async () => {
   vi.clearAllMocks();
-  originalOpenClawHome = process.env.OPENCLAW_HOME;
+  originalOpenClawHome = process.env.NOVA_HOME;
   // realpath: macOS tmpdir is a /var -> /private/var symlink and trusted-root
   // resolution returns canonicalized paths that assertions compare against.
   openclawHome = await fs.realpath(
     await fs.mkdtemp(path.join(os.tmpdir(), "qqbot-host-read-voice-")),
   );
-  process.env.OPENCLAW_HOME = openclawHome;
+  process.env.NOVA_HOME = openclawHome;
   audioPortMock.audioFileToSilkBase64.mockResolvedValue(undefined);
   audioPortMock.isAudioFile.mockReturnValue(true);
   audioPortMock.shouldTranscodeVoice.mockReturnValue(false);
@@ -117,9 +117,9 @@ beforeEach(async () => {
 
 afterEach(async () => {
   if (originalOpenClawHome === undefined) {
-    delete process.env.OPENCLAW_HOME;
+    delete process.env.NOVA_HOME;
   } else {
-    process.env.OPENCLAW_HOME = originalOpenClawHome;
+    process.env.NOVA_HOME = originalOpenClawHome;
   }
   if (openclawHome) {
     await fs.rm(openclawHome, { recursive: true, force: true });

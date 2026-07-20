@@ -389,7 +389,7 @@ function rollbackImportedRecords(params: {
           );
         }
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, NOVA_STATE_DIR: params.stateDir } },
     );
     return null;
   } catch (error) {
@@ -480,7 +480,7 @@ export function migrateLegacyManagedOutgoingImages(params: {
           insertedRecords.push(parsed);
         }
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, NOVA_STATE_DIR: params.stateDir } },
     );
   } catch (error) {
     warnings.push(
@@ -492,7 +492,7 @@ export function migrateLegacyManagedOutgoingImages(params: {
   try {
     params.beforeVerify?.();
     const database = openOpenClawStateDatabase({
-      env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir },
+      env: { ...process.env, NOVA_STATE_DIR: params.stateDir },
     });
     const stateDb = getNodeSqliteKysely<ManagedImageRecordDatabase>(database.db);
     for (const parsed of parsedRecords) {

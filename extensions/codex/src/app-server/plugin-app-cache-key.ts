@@ -4,7 +4,7 @@
  */
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
-import { OPENCLAW_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { NOVA_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
 import { readPluginPackageVersion } from "openclaw/plugin-sdk/extension-shared";
 import {
   buildCodexAppInventoryCacheKey,
@@ -45,7 +45,7 @@ export function buildCodexPluginAppCacheKey(params: CodexPluginAppCacheKeyParams
       appServerVersion: params.appServerVersion ?? params.runtimeIdentity?.serverVersion,
       runtimeIdentity: params.runtimeIdentity,
     },
-    OPENCLAW_VERSION,
+    NOVA_VERSION,
     CODEX_PLUGIN_VERSION,
   );
 }

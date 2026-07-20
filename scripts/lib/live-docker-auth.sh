@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-OPENCLAW_DOCKER_LIVE_AUTH_ALL=(.factory .gemini .minimax)
-OPENCLAW_DOCKER_LIVE_AUTH_FILES_ALL=(
+NOVA_DOCKER_LIVE_AUTH_ALL=(.factory .gemini .minimax)
+NOVA_DOCKER_LIVE_AUTH_FILES_ALL=(
   .codex/auth.json
   .codex/config.toml
   .claude.json
@@ -46,18 +46,18 @@ openclaw_live_read_positive_int_env() {
 openclaw_live_is_ci() {
   openclaw_live_truthy "${CI:-}" \
     || openclaw_live_truthy "${GITHUB_ACTIONS:-}" \
-    || openclaw_live_truthy "${OPENCLAW_TESTBOX:-}"
+    || openclaw_live_truthy "${NOVA_TESTBOX:-}"
 }
 
 openclaw_live_uses_managed_bind_dirs() {
   openclaw_live_is_ci \
-    || [[ -n "${OPENCLAW_DOCKER_CACHE_HOME_DIR:-}" ]] \
-    || [[ -n "${OPENCLAW_DOCKER_CLI_TOOLS_DIR:-}" ]]
+    || [[ -n "${NOVA_DOCKER_CACHE_HOME_DIR:-}" ]] \
+    || [[ -n "${NOVA_DOCKER_CLI_TOOLS_DIR:-}" ]]
 }
 
 openclaw_live_default_profile_file() {
-  if [[ -n "${OPENCLAW_PROFILE_FILE:-}" ]]; then
-    printf '%s\n' "$OPENCLAW_PROFILE_FILE"
+  if [[ -n "${NOVA_PROFILE_FILE:-}" ]]; then
+    printf '%s\n' "$NOVA_PROFILE_FILE"
     return 0
   fi
   local testbox_profile="$HOME/.openclaw-testbox-live.profile"
@@ -142,11 +142,11 @@ openclaw_live_collect_auth_dirs_from_csv() {
 
 openclaw_live_collect_auth_dirs_from_override() {
   local raw token normalized
-  raw="$(openclaw_live_trim "${OPENCLAW_DOCKER_AUTH_DIRS:-}")"
+  raw="$(openclaw_live_trim "${NOVA_DOCKER_AUTH_DIRS:-}")"
   [[ -n "$raw" ]] || return 1
   case "$raw" in
     all)
-      printf '%s\n' "${OPENCLAW_DOCKER_LIVE_AUTH_ALL[@]}"
+      printf '%s\n' "${NOVA_DOCKER_LIVE_AUTH_ALL[@]}"
       return 0
       ;;
     none)
@@ -165,7 +165,7 @@ openclaw_live_collect_auth_dirs() {
   if openclaw_live_collect_auth_dirs_from_override; then
     return 0
   fi
-  printf '%s\n' "${OPENCLAW_DOCKER_LIVE_AUTH_ALL[@]}"
+  printf '%s\n' "${NOVA_DOCKER_LIVE_AUTH_ALL[@]}"
 }
 
 openclaw_live_collect_auth_files_from_csv() {
@@ -182,11 +182,11 @@ openclaw_live_collect_auth_files_from_csv() {
 
 openclaw_live_collect_auth_files_from_override() {
   local raw
-  raw="$(openclaw_live_trim "${OPENCLAW_DOCKER_AUTH_DIRS:-}")"
+  raw="$(openclaw_live_trim "${NOVA_DOCKER_AUTH_DIRS:-}")"
   [[ -n "$raw" ]] || return 1
   case "$raw" in
     all)
-      printf '%s\n' "${OPENCLAW_DOCKER_LIVE_AUTH_FILES_ALL[@]}"
+      printf '%s\n' "${NOVA_DOCKER_LIVE_AUTH_FILES_ALL[@]}"
       return 0
       ;;
     none)
@@ -200,7 +200,7 @@ openclaw_live_collect_auth_files() {
   if openclaw_live_collect_auth_files_from_override; then
     return 0
   fi
-  printf '%s\n' "${OPENCLAW_DOCKER_LIVE_AUTH_FILES_ALL[@]}"
+  printf '%s\n' "${NOVA_DOCKER_LIVE_AUTH_FILES_ALL[@]}"
 }
 
 openclaw_live_join_csv() {
@@ -244,7 +244,7 @@ openclaw_live_timeout_supports_kill_after() {
 }
 
 openclaw_live_resource_limits_disabled() {
-  case "${OPENCLAW_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS:-${OPENCLAW_DOCKER_E2E_DISABLE_RESOURCE_LIMITS:-}}" in
+  case "${NOVA_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS:-${NOVA_DOCKER_E2E_DISABLE_RESOURCE_LIMITS:-}}" in
     1 | true | TRUE | yes | YES | on | ON)
       return 0
       ;;
@@ -272,8 +272,8 @@ openclaw_live_resolve_pids_limit() {
 }
 
 openclaw_live_detect_available_cpus() {
-  if [ -n "${OPENCLAW_LIVE_DOCKER_AVAILABLE_CPUS:-${OPENCLAW_DOCKER_E2E_AVAILABLE_CPUS:-}}" ]; then
-    printf '%s\n' "${OPENCLAW_LIVE_DOCKER_AVAILABLE_CPUS:-${OPENCLAW_DOCKER_E2E_AVAILABLE_CPUS:-}}"
+  if [ -n "${NOVA_LIVE_DOCKER_AVAILABLE_CPUS:-${NOVA_DOCKER_E2E_AVAILABLE_CPUS:-}}" ]; then
+    printf '%s\n' "${NOVA_LIVE_DOCKER_AVAILABLE_CPUS:-${NOVA_DOCKER_E2E_AVAILABLE_CPUS:-}}"
     return 0
   fi
   if command -v nproc >/dev/null 2>&1; then
@@ -305,12 +305,12 @@ openclaw_live_docker_run_resource_args() {
     return 0
   fi
 
-  local memory="${OPENCLAW_LIVE_DOCKER_MEMORY:-${OPENCLAW_DOCKER_E2E_MEMORY:-8g}}"
-  local cpus="${OPENCLAW_LIVE_DOCKER_CPUS:-${OPENCLAW_DOCKER_E2E_CPUS:-16}}"
-  local pids_limit="${OPENCLAW_LIVE_DOCKER_PIDS_LIMIT:-${OPENCLAW_DOCKER_E2E_PIDS_LIMIT:-2048}}"
-  local pids_limit_env="OPENCLAW_LIVE_DOCKER_PIDS_LIMIT"
-  if [ -z "${OPENCLAW_LIVE_DOCKER_PIDS_LIMIT:-}" ]; then
-    pids_limit_env="OPENCLAW_DOCKER_E2E_PIDS_LIMIT"
+  local memory="${NOVA_LIVE_DOCKER_MEMORY:-${NOVA_DOCKER_E2E_MEMORY:-8g}}"
+  local cpus="${NOVA_LIVE_DOCKER_CPUS:-${NOVA_DOCKER_E2E_CPUS:-16}}"
+  local pids_limit="${NOVA_LIVE_DOCKER_PIDS_LIMIT:-${NOVA_DOCKER_E2E_PIDS_LIMIT:-2048}}"
+  local pids_limit_env="NOVA_LIVE_DOCKER_PIDS_LIMIT"
+  if [ -z "${NOVA_LIVE_DOCKER_PIDS_LIMIT:-}" ]; then
+    pids_limit_env="NOVA_DOCKER_E2E_PIDS_LIMIT"
   fi
   cpus="$(openclaw_live_resolve_cpus "$cpus")"
 
@@ -328,7 +328,7 @@ openclaw_live_docker_run_resource_args() {
 
 openclaw_live_init_docker_run_args() {
   local target_array="${1:?target array required}"
-  local timeout_value="${2:-${OPENCLAW_LIVE_DOCKER_RUN_TIMEOUT:-2700s}}"
+  local timeout_value="${2:-${NOVA_LIVE_DOCKER_RUN_TIMEOUT:-2700s}}"
   local resource_args=()
   local timeout_bin
   local quoted_timeout
@@ -349,7 +349,7 @@ openclaw_live_init_docker_run_args() {
 
 openclaw_live_container_node_options() {
   local value
-  value="$(openclaw_live_trim "${OPENCLAW_DOCKER_NODE_OPTIONS:-${NODE_OPTIONS:-}}")"
+  value="$(openclaw_live_trim "${NOVA_DOCKER_NODE_OPTIONS:-${NODE_OPTIONS:-}}")"
   if [[ -z "$value" ]]; then
     value="--max-old-space-size=4096"
   fi
@@ -454,8 +454,8 @@ openclaw_live_chown_bind_dirs_for_container_user() {
     "${resource_args[@]}" \
     -u 0:0 \
     --entrypoint sh \
-    -e OPENCLAW_BIND_DIR_USER="$container_user" \
+    -e NOVA_BIND_DIR_USER="$container_user" \
     "${mount_args[@]}" \
     "$image_name" \
-    -c 'for dir in /openclaw-bind-dir-*; do chown -R "$OPENCLAW_BIND_DIR_USER" "$dir"; done'
+    -c 'for dir in /openclaw-bind-dir-*; do chown -R "$NOVA_BIND_DIR_USER" "$dir"; done'
 }

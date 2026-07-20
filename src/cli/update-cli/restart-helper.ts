@@ -38,27 +38,27 @@ function powerShellSingleQuote(value: string): string {
 }
 
 function resolveSystemdUnit(env: NodeJS.ProcessEnv): string {
-  const override = normalizeOptionalString(env.OPENCLAW_SYSTEMD_UNIT);
+  const override = normalizeOptionalString(env.NOVA_SYSTEMD_UNIT);
   if (override) {
     return override.endsWith(".service") ? override : `${override}.service`;
   }
-  return `${resolveGatewaySystemdServiceName(env.OPENCLAW_PROFILE)}.service`;
+  return `${resolveGatewaySystemdServiceName(env.NOVA_PROFILE)}.service`;
 }
 
 function resolveLaunchdLabel(env: NodeJS.ProcessEnv): string {
-  const override = normalizeOptionalString(env.OPENCLAW_LAUNCHD_LABEL);
+  const override = normalizeOptionalString(env.NOVA_LAUNCHD_LABEL);
   if (override) {
     return override;
   }
-  return resolveGatewayLaunchAgentLabel(env.OPENCLAW_PROFILE);
+  return resolveGatewayLaunchAgentLabel(env.NOVA_PROFILE);
 }
 
 function resolveWindowsTaskName(env: NodeJS.ProcessEnv): string {
-  const override = env.OPENCLAW_WINDOWS_TASK_NAME?.trim();
+  const override = env.NOVA_WINDOWS_TASK_NAME?.trim();
   if (override) {
     return override;
   }
-  return resolveGatewayWindowsTaskName(env.OPENCLAW_PROFILE);
+  return resolveGatewayWindowsTaskName(env.NOVA_PROFILE);
 }
 
 /**
@@ -186,12 +186,12 @@ REM Standalone restart script - survives parent process termination.
 REM Keep this as a cmd wrapper so Group Policy script execution policies
 REM cannot block the update restart handoff before schtasks.exe runs.
 setlocal
-set "OPENCLAW_RESTART_SCRIPT=%~f0"
-set "OPENCLAW_RESTART_SCRIPT_DIR=%~dp0."
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$p=$env:OPENCLAW_RESTART_SCRIPT; $s=Get-Content -Raw -LiteralPath $p; $m='# POWERSHELL'; $i=$s.IndexOf($m); if ($i -lt 0) { exit 1 }; Invoke-Expression $s.Substring($i)"
+set "NOVA_RESTART_SCRIPT=%~f0"
+set "NOVA_RESTART_SCRIPT_DIR=%~dp0."
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p=$env:NOVA_RESTART_SCRIPT; $s=Get-Content -Raw -LiteralPath $p; $m='# POWERSHELL'; $i=$s.IndexOf($m); if ($i -lt 0) { exit 1 }; Invoke-Expression $s.Substring($i)"
 set "status=%ERRORLEVEL%"
 del "%~f0" >nul 2>&1
-rmdir "%OPENCLAW_RESTART_SCRIPT_DIR%" >nul 2>&1
+rmdir "%NOVA_RESTART_SCRIPT_DIR%" >nul 2>&1
 exit /b %status%
 # POWERSHELL
 # Wait briefly to ensure file locks are released after update.
@@ -403,7 +403,7 @@ try {
   Write-RestartLog "openclaw restart native ownership helper unavailable source=update error=$($_.Exception.Message)"
 }
 
-# OPENCLAW_RESTART_KILL_POLICY_BEGIN
+# NOVA_RESTART_KILL_POLICY_BEGIN
 function Get-OpenClawListenerSnapshot {
   param([int]$Port)
 
@@ -610,7 +610,7 @@ function Invoke-OpenClawVerifiedListenerKill {
     }
   }
 }
-# OPENCLAW_RESTART_KILL_POLICY_END
+# NOVA_RESTART_KILL_POLICY_END
 
 function Invoke-OpenClawStartupLauncher {
   param([string]$LauncherPath)

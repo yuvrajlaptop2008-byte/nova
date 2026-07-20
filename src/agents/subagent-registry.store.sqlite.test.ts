@@ -77,7 +77,7 @@ describe("subagent registry sqlite store", () => {
     if (!tempStateDir) {
       throw new Error("expected temp state dir");
     }
-    return await withEnvAsync({ OPENCLAW_STATE_DIR: tempStateDir }, fn);
+    return await withEnvAsync({ NOVA_STATE_DIR: tempStateDir }, fn);
   }
 
   it("persists subagent runs in the shared sqlite state database", async () => {

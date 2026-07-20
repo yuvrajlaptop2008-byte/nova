@@ -18,17 +18,17 @@ const createEmbeddingProviderMock = vi.hoisted(() =>
     providerUnavailableReason: "No embeddings provider available.",
   })),
 );
-const originalFtsOnlyStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalFtsOnlyStateDir = process.env.NOVA_STATE_DIR;
 
 function setFtsOnlyStateDir(stateDir: string): void {
-  Reflect.set(process.env, "OPENCLAW_STATE_DIR", stateDir);
+  Reflect.set(process.env, "NOVA_STATE_DIR", stateDir);
 }
 
 function restoreFtsOnlyStateDir(): void {
   if (originalFtsOnlyStateDir === undefined) {
-    Reflect.deleteProperty(process.env, "OPENCLAW_STATE_DIR");
+    Reflect.deleteProperty(process.env, "NOVA_STATE_DIR");
   } else {
-    Reflect.set(process.env, "OPENCLAW_STATE_DIR", originalFtsOnlyStateDir);
+    Reflect.set(process.env, "NOVA_STATE_DIR", originalFtsOnlyStateDir);
   }
 }
 

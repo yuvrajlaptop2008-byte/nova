@@ -847,7 +847,7 @@ describe("config schema", () => {
             env: {
               POLICY_MODE: "strict",
             },
-            passEnv: ["OPENCLAW_STATE_DIR"],
+            passEnv: ["NOVA_STATE_DIR"],
             trustedDirs: ["/usr/local/bin"],
             allowInsecurePath: false,
             allowSymlinkCommand: false,

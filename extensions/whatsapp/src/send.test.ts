@@ -335,7 +335,7 @@ describe("web outbound", () => {
 
     expect(error).toBeInstanceOf(PlatformMessageNotDispatchedError);
     expect(error).toMatchObject({
-      code: "OPENCLAW_PLATFORM_MESSAGE_NOT_DISPATCHED",
+      code: "NOVA_PLATFORM_MESSAGE_NOT_DISPATCHED",
       message: expect.stringMatching(
         /No active WhatsApp Web listener.*channels login.*account work/,
       ),

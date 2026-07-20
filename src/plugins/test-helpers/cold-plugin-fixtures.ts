@@ -115,9 +115,9 @@ export function createColdPluginHermeticEnv(
 ): NodeJS.ProcessEnv {
   return {
     ...process.env,
-    OPENCLAW_HOME: path.join(homeDir, "home"),
-    OPENCLAW_BUNDLED_PLUGINS_DIR: options.bundledPluginsDir,
-    OPENCLAW_VERSION: "2026.4.25",
+    NOVA_HOME: path.join(homeDir, "home"),
+    NOVA_BUNDLED_PLUGINS_DIR: options.bundledPluginsDir,
+    NOVA_VERSION: "2026.4.25",
     VITEST: "true",
   };
 }

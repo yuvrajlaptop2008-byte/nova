@@ -36,21 +36,21 @@ async function runConcurrentImplicitConfigures(
   const moduleUrl = new URL("./config.ts", import.meta.url).href;
   const workerSource = `
     import fs from "node:fs";
-    const { configureNodeHost } = await import(process.env.OPENCLAW_NODE_HOST_CONFIG_MODULE);
-    fs.writeFileSync(process.env.OPENCLAW_NODE_HOST_READY_PATH, "ready");
+    const { configureNodeHost } = await import(process.env.NOVA_NODE_HOST_CONFIG_MODULE);
+    fs.writeFileSync(process.env.NOVA_NODE_HOST_READY_PATH, "ready");
     const deadline = Date.now() + 15_000;
-    while (!fs.existsSync(process.env.OPENCLAW_NODE_HOST_START_PATH)) {
+    while (!fs.existsSync(process.env.NOVA_NODE_HOST_START_PATH)) {
       if (Date.now() >= deadline) {
         throw new Error("timed out waiting for concurrent node-host configure start");
       }
       await new Promise((resolve) => setTimeout(resolve, 2));
     }
     const config = await configureNodeHost({
-      candidateNodeId: process.env.OPENCLAW_NODE_HOST_CANDIDATE,
+      candidateNodeId: process.env.NOVA_NODE_HOST_CANDIDATE,
       fallbackDisplayName: "node",
       gateway: {},
-      env: { ...process.env, OPENCLAW_STATE_DIR: process.env.OPENCLAW_NODE_HOST_STATE_DIR },
-      nowMs: Number(process.env.OPENCLAW_NODE_HOST_NOW_MS),
+      env: { ...process.env, NOVA_STATE_DIR: process.env.NOVA_NODE_HOST_STATE_DIR },
+      nowMs: Number(process.env.NOVA_NODE_HOST_NOW_MS),
     });
     console.log(JSON.stringify(config));
   `;
@@ -62,12 +62,12 @@ async function runConcurrentImplicitConfigures(
       {
         env: {
           ...process.env,
-          OPENCLAW_NODE_HOST_CANDIDATE: candidate,
-          OPENCLAW_NODE_HOST_CONFIG_MODULE: moduleUrl,
-          OPENCLAW_NODE_HOST_NOW_MS: String(index + 1),
-          OPENCLAW_NODE_HOST_READY_PATH: readyPath,
-          OPENCLAW_NODE_HOST_START_PATH: startPath,
-          OPENCLAW_NODE_HOST_STATE_DIR: stateDir,
+          NOVA_NODE_HOST_CANDIDATE: candidate,
+          NOVA_NODE_HOST_CONFIG_MODULE: moduleUrl,
+          NOVA_NODE_HOST_NOW_MS: String(index + 1),
+          NOVA_NODE_HOST_READY_PATH: readyPath,
+          NOVA_NODE_HOST_START_PATH: startPath,
+          NOVA_NODE_HOST_STATE_DIR: stateDir,
         },
         stdio: ["ignore", "pipe", "pipe"],
       },
@@ -145,7 +145,7 @@ describe("node-host SQLite config", () => {
 
   function makeTestEnv(): { env: NodeJS.ProcessEnv; stateDir: string } {
     const stateDir = tempDirs.make("openclaw-node-host-config-");
-    return { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir }, stateDir };
+    return { env: { ...process.env, NOVA_STATE_DIR: stateDir }, stateDir };
   }
 
   it("round-trips the complete gateway snapshot across database reopen", async () => {

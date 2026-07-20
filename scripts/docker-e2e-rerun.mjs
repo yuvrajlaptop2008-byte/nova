@@ -213,7 +213,7 @@ function groupByReuseInputs(entries) {
 }
 
 function ghWorkflowCommand(lanes, ref, workflow, reuseInputs = {}) {
-  const workflowRef = process.env.OPENCLAW_DOCKER_E2E_WORKFLOW_REF;
+  const workflowRef = process.env.NOVA_DOCKER_E2E_WORKFLOW_REF;
   const releasePath = lanes.some(laneNeedsReleasePath);
   const fields = [
     "gh workflow run",

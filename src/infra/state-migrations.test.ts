@@ -13,7 +13,7 @@ import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-
 import {
   closeOpenClawStateDatabaseForTest,
   openOpenClawStateDatabase,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
 } from "../state/openclaw-state-db.js";
 import { createTrackedTempDirs } from "../test-utils/tracked-temp-dirs.js";
 import { acquireGatewayLock } from "./gateway-lock.js";
@@ -366,7 +366,7 @@ function createEnv(stateDir: string): NodeJS.ProcessEnv {
   return {
     ...process.env,
     HOME: path.dirname(stateDir),
-    OPENCLAW_STATE_DIR: stateDir,
+    NOVA_STATE_DIR: stateDir,
   };
 }
 
@@ -516,7 +516,7 @@ describe("state migrations", () => {
     const root = await createTempDir();
     const stateDir = path.join(root, "custom-state");
     const customHome = path.join(root, "custom-home");
-    const env = { ...process.env, HOME: customHome, OPENCLAW_STATE_DIR: stateDir };
+    const env = { ...process.env, HOME: customHome, NOVA_STATE_DIR: stateDir };
     const observed: string[] = [];
     pluginDoctorStateMigrationEntries.entries = [
       {
@@ -1974,7 +1974,7 @@ describe("state migrations", () => {
         schema_version: 1,
       });
       expect(db.prepare("PRAGMA user_version").get()).toEqual({
-        user_version: OPENCLAW_STATE_SCHEMA_VERSION,
+        user_version: NOVA_STATE_SCHEMA_VERSION,
       });
     } finally {
       db.close();
@@ -1995,7 +1995,7 @@ describe("state migrations", () => {
     await fs.mkdir(path.dirname(stateDbPath), { recursive: true });
     const db = new DatabaseSync(stateDbPath);
     try {
-      db.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION + 1};`);
+      db.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION + 1};`);
     } finally {
       db.close();
     }
@@ -2041,7 +2041,7 @@ describe("state migrations", () => {
     await fs.writeFile(voiceWakePath, JSON.stringify({ triggers: ["leave-me"] }), "utf8");
     const db = new DatabaseSync(stateDbPath);
     try {
-      db.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION + 1};`);
+      db.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION + 1};`);
     } finally {
       db.close();
     }
@@ -2231,7 +2231,7 @@ describe("state migrations", () => {
     await fs.mkdir(legacyStateDir, { recursive: true });
     await fs.writeFile(path.join(legacyStateDir, "legacy.txt"), "legacy", "utf8");
     const env: NodeJS.ProcessEnv = { ...process.env, HOME: root };
-    delete env.OPENCLAW_STATE_DIR;
+    delete env.NOVA_STATE_DIR;
     const cfg = createConfig();
     const detectedStateDirs: string[] = [];
     const migratedStateDirs: string[] = [];
@@ -2950,7 +2950,7 @@ describe("state migrations", () => {
   it("never imports default-profile approvals into a named profile", async () => {
     const root = await createTempDir();
     const stateDir = path.join(root, ".openclaw-work");
-    const env = { ...createEnv(stateDir), OPENCLAW_PROFILE: "work" };
+    const env = { ...createEnv(stateDir), NOVA_PROFILE: "work" };
     const cfg = createConfig();
     const defaultStateDir = path.join(root, ".openclaw");
     const execApprovalsPath = path.join(defaultStateDir, "exec-approvals.json");

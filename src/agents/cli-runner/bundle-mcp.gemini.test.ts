@@ -22,20 +22,20 @@ describe("prepareCliBundleMcpConfig gemini", () => {
             type: "http",
             url: "http://127.0.0.1:23119/mcp",
             headers: {
-              Authorization: "Bearer ${OPENCLAW_MCP_TOKEN}",
-              "x-openclaw-client-caps": "${OPENCLAW_MCP_CLIENT_CAPS}",
+              Authorization: "Bearer ${NOVA_MCP_TOKEN}",
+              "x-openclaw-client-caps": "${NOVA_MCP_CLIENT_CAPS}",
             },
           },
         },
       },
       env: {
-        OPENCLAW_MCP_TOKEN: "lb-tk-123",
-        OPENCLAW_MCP_CLIENT_CAPS: "tool-events,inline-widgets",
+        NOVA_MCP_TOKEN: "lb-tk-123",
+        NOVA_MCP_CLIENT_CAPS: "tool-events,inline-widgets",
       },
     });
 
     expect(prepared.backend.args).toEqual(["--prompt", "{prompt}"]);
-    expect(prepared.env?.OPENCLAW_MCP_TOKEN).toBe("lb-tk-123");
+    expect(prepared.env?.NOVA_MCP_TOKEN).toBe("lb-tk-123");
     expect(typeof prepared.env?.GEMINI_CLI_SYSTEM_SETTINGS_PATH).toBe("string");
     // Gemini reads MCP servers from a generated system settings JSON file.
     const raw = JSON.parse(
@@ -119,13 +119,13 @@ describe("prepareCliBundleMcpConfig gemini", () => {
             type: "http",
             url: "http://127.0.0.1:23119/mcp",
             headers: {
-              "x-openclaw-cli-capture-key": "${OPENCLAW_MCP_CLI_CAPTURE_KEY}",
+              "x-openclaw-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
             },
           },
         },
       },
       env: {
-        OPENCLAW_MCP_CLI_CAPTURE_KEY: "",
+        NOVA_MCP_CLI_CAPTURE_KEY: "",
       },
     });
     const attempt = await prepareCliBundleMcpCaptureAttempt({

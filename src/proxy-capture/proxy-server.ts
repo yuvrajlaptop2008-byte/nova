@@ -13,7 +13,7 @@ import type { CaptureEventRecord } from "./types.js";
 
 const TRUTHY_ENV = new Set(["1", "true", "yes", "on"]);
 const DEBUG_PROXY_DIRECT_CONNECT_OVERRIDE =
-  "OPENCLAW_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY";
+  "NOVA_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY";
 const CAPTURE_BODY_PREVIEW_BYTES = 8192;
 const BAD_GATEWAY_BODY = "Bad Gateway\n";
 
@@ -29,7 +29,7 @@ function isTruthyEnvValue(value: string | undefined): boolean {
 }
 
 function isManagedProxyActive(env: NodeJS.ProcessEnv = process.env): boolean {
-  return isTruthyEnvValue(env["OPENCLAW_PROXY_ACTIVE"]);
+  return isTruthyEnvValue(env["NOVA_PROXY_ACTIVE"]);
 }
 
 function allowsDirectConnectWithManagedProxy(env: NodeJS.ProcessEnv = process.env): boolean {

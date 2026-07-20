@@ -187,7 +187,7 @@ describe("scripts/plan-release-workflow-matrix.mjs", () => {
       required: false,
       type: "boolean",
     });
-    expect(definition.env.OPENCLAW_DOCKER_E2E_ALLOW_UNRELEASED_CHANGELOG).toBe(
+    expect(definition.env.NOVA_DOCKER_E2E_ALLOW_UNRELEASED_CHANGELOG).toBe(
       "${{ inputs.allow_unreleased_changelog }}",
     );
     const packageStep = requiredJob(definition, "prepare_docker_e2e_image").steps.find(
@@ -343,8 +343,8 @@ describe("scripts/plan-release-workflow-matrix.mjs", () => {
     expect(liveModels.strategy.matrix).toBe(
       "${{ fromJson(needs.plan_release_workflow_matrices.outputs.live_models_matrix) }}",
     );
-    expect(liveModels.env.OPENCLAW_LIVE_MODELS).toBe("${{ matrix.models || 'modern' }}");
-    expect(liveModels.env.OPENCLAW_LIVE_MAX_MODELS).toBe("${{ matrix.max_models || '6' }}");
+    expect(liveModels.env.NOVA_LIVE_MODELS).toBe("${{ matrix.models || 'modern' }}");
+    expect(liveModels.env.NOVA_LIVE_MAX_MODELS).toBe("${{ matrix.max_models || '6' }}");
   });
 
   it("requires new release-profile matrices to use a planner or an explicit allowlist", () => {

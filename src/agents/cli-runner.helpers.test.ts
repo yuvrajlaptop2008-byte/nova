@@ -537,8 +537,8 @@ describe("writeCliImages", () => {
     await fs.mkdir(inboundDir, { recursive: true });
     await fs.writeFile(path.join(inboundDir, mediaId), offloadedImage);
     await fs.writeFile(historyImagePath, historyImage);
-    const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
     const currentTurn = `compare these\n[media attached: media://inbound/${mediaId}]`;
 
     try {

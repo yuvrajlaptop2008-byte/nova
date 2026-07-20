@@ -18,10 +18,10 @@ async function createTimelineEnv() {
   tempDirs.push(dir);
   return {
     env: {
-      OPENCLAW_DIAGNOSTICS: "timeline",
-      OPENCLAW_DIAGNOSTICS_RUN_ID: "run-1",
-      OPENCLAW_DIAGNOSTICS_ENV: "env-1",
-      OPENCLAW_DIAGNOSTICS_TIMELINE_PATH: join(dir, "nested", "timeline.jsonl"),
+      NOVA_DIAGNOSTICS: "timeline",
+      NOVA_DIAGNOSTICS_RUN_ID: "run-1",
+      NOVA_DIAGNOSTICS_ENV: "env-1",
+      NOVA_DIAGNOSTICS_TIMELINE_PATH: join(dir, "nested", "timeline.jsonl"),
     } as NodeJS.ProcessEnv,
     path: join(dir, "nested", "timeline.jsonl"),
   };
@@ -63,31 +63,23 @@ describe("diagnostics timeline", () => {
     const { env } = await createTimelineEnv();
 
     expect(isDiagnosticsTimelineEnabled({ env })).toBe(true);
-    expect(isDiagnosticsTimelineEnabled({ env: { ...env, OPENCLAW_DIAGNOSTICS: "1" } })).toBe(true);
-    expect(isDiagnosticsTimelineEnabled({ env: { ...env, OPENCLAW_DIAGNOSTICS: "yes" } })).toBe(
-      true,
-    );
-    expect(isDiagnosticsTimelineEnabled({ env: { ...env, OPENCLAW_DIAGNOSTICS: "on" } })).toBe(
-      true,
-    );
-    expect(isDiagnosticsTimelineEnabled({ env: { ...env, OPENCLAW_DIAGNOSTICS: "all" } })).toBe(
-      true,
-    );
-    expect(isDiagnosticsTimelineEnabled({ env: { ...env, OPENCLAW_DIAGNOSTICS: "*" } })).toBe(true);
+    expect(isDiagnosticsTimelineEnabled({ env: { ...env, NOVA_DIAGNOSTICS: "1" } })).toBe(true);
+    expect(isDiagnosticsTimelineEnabled({ env: { ...env, NOVA_DIAGNOSTICS: "yes" } })).toBe(true);
+    expect(isDiagnosticsTimelineEnabled({ env: { ...env, NOVA_DIAGNOSTICS: "on" } })).toBe(true);
+    expect(isDiagnosticsTimelineEnabled({ env: { ...env, NOVA_DIAGNOSTICS: "all" } })).toBe(true);
+    expect(isDiagnosticsTimelineEnabled({ env: { ...env, NOVA_DIAGNOSTICS: "*" } })).toBe(true);
     expect(
       isDiagnosticsTimelineEnabled({
-        env: { ...env, OPENCLAW_DIAGNOSTICS: "diagnostics.timeline" },
+        env: { ...env, NOVA_DIAGNOSTICS: "diagnostics.timeline" },
       }),
     ).toBe(true);
     expect(
-      isDiagnosticsTimelineEnabled({ env: { ...env, OPENCLAW_DIAGNOSTICS: "telegram.http" } }),
+      isDiagnosticsTimelineEnabled({ env: { ...env, NOVA_DIAGNOSTICS: "telegram.http" } }),
     ).toBe(false);
-    expect(isDiagnosticsTimelineEnabled({ env: { ...env, OPENCLAW_DIAGNOSTICS: "0" } })).toBe(
-      false,
-    );
+    expect(isDiagnosticsTimelineEnabled({ env: { ...env, NOVA_DIAGNOSTICS: "0" } })).toBe(false);
     expect(
       isDiagnosticsTimelineEnabled({
-        env: { ...env, OPENCLAW_DIAGNOSTICS_TIMELINE_PATH: "" },
+        env: { ...env, NOVA_DIAGNOSTICS_TIMELINE_PATH: "" },
       }),
     ).toBe(false);
   });
@@ -95,7 +87,7 @@ describe("diagnostics timeline", () => {
   it("honors config diagnostics flags after config is available", async () => {
     const { env } = await createTimelineEnv();
     const envWithoutFlag = { ...env };
-    delete envWithoutFlag.OPENCLAW_DIAGNOSTICS;
+    delete envWithoutFlag.NOVA_DIAGNOSTICS;
     const configWithTimeline = { diagnostics: { flags: ["timeline"] } } as OpenClawConfig;
     const configWithWildcard = { diagnostics: { flags: ["*"] } } as OpenClawConfig;
     const configWithoutTimeline = { diagnostics: { flags: ["telegram.http"] } } as OpenClawConfig;
@@ -118,7 +110,7 @@ describe("diagnostics timeline", () => {
     expect(
       isDiagnosticsTimelineEnabled({
         config: configWithTimeline,
-        env: { ...env, OPENCLAW_DIAGNOSTICS: "0" },
+        env: { ...env, NOVA_DIAGNOSTICS: "0" },
       }),
     ).toBe(false);
   });
@@ -158,7 +150,7 @@ describe("diagnostics timeline", () => {
   it("records span start and end events around successful work", async () => {
     const { env, path } = await createTimelineEnv();
     const configOnlyEnv = { ...env };
-    delete configOnlyEnv.OPENCLAW_DIAGNOSTICS;
+    delete configOnlyEnv.NOVA_DIAGNOSTICS;
 
     await expect(
       measureDiagnosticsTimelineSpan("runtimeDeps.stage", () => "ok", {

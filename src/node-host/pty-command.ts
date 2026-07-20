@@ -115,7 +115,7 @@ export async function runNodePtyCommand(
     ),
   );
   env.TERM ??= "xterm-256color";
-  env.OPENCLAW_TERMINAL = "1";
+  env.NOVA_TERMINAL = "1";
   if (params.pathEnv) {
     env.PATH = params.pathEnv;
   }

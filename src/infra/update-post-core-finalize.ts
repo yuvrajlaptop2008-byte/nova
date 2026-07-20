@@ -2,7 +2,7 @@
 // update.
 //
 // `runGatewayUpdate` (git mode) runs `openclaw doctor --fix` with
-// `OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE=1`, which makes the doctor
+// `NOVA_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE=1`, which makes the doctor
 // pass DEFER configured-plugin repair to a later convergence step (see
 // `shouldDeferConfiguredPluginInstallRepair`). The `openclaw update` CLI resumes
 // that deferred work in a fresh post-core process; the gateway `update.run` RPC
@@ -59,18 +59,18 @@ function buildFinalizeEnv(
   serviceRepairPolicy?: "external",
 ): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = { ...baseEnv };
-  delete env.OPENCLAW_SERVICE_MARKER;
-  delete env.OPENCLAW_SERVICE_KIND;
+  delete env.NOVA_SERVICE_MARKER;
+  delete env.NOVA_SERVICE_KIND;
   delete env[GATEWAY_SERVICE_RUNTIME_PID_ENV];
   env[UPDATE_EFFECTIVE_CHANNEL_ENV] = effectiveChannel;
   if (compatHostVersion) {
-    env.OPENCLAW_COMPATIBILITY_HOST_VERSION = compatHostVersion;
+    env.NOVA_COMPATIBILITY_HOST_VERSION = compatHostVersion;
   }
   if (sourceConfigPath) {
     env[POST_CORE_UPDATE_SOURCE_CONFIG_PATH_ENV] = sourceConfigPath;
   }
   if (serviceRepairPolicy) {
-    env.OPENCLAW_SERVICE_REPAIR_POLICY = serviceRepairPolicy;
+    env.NOVA_SERVICE_REPAIR_POLICY = serviceRepairPolicy;
   }
   return env;
 }

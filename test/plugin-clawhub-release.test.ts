@@ -28,7 +28,7 @@ import {
 } from "../scripts/lib/plugin-clawhub-release.ts";
 import {
   collectPublishablePluginPackages,
-  OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+  NOVA_PLUGIN_NPM_REPOSITORY_URL,
 } from "../scripts/lib/plugin-npm-release.ts";
 import { runPluginClawHubReleaseCheck } from "../scripts/plugin-clawhub-release-check.ts";
 import { cleanupTempDirs, makeTempRepoRoot } from "./helpers/temp-repo.js";
@@ -324,7 +324,7 @@ describe("collectClawHubVersionGateErrors", () => {
           type: "module",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
           openclaw: {
             extensions: ["./index.ts"],
@@ -1813,7 +1813,7 @@ exit 0
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_CLAWHUB_MANUAL_OVERRIDE_REASON:
+          NOVA_CLAWHUB_MANUAL_OVERRIDE_REASON:
             "GitHub Actions trusted publisher repair before OIDC migration",
           PATH: `${binDir}${delimiter}${process.env.PATH ?? ""}`,
         },
@@ -1877,7 +1877,7 @@ exit 0
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_CLAWHUB_PACK_OUTPUT_DIR: outputDir,
+          NOVA_CLAWHUB_PACK_OUTPUT_DIR: outputDir,
           PATH: `${binDir}${delimiter}${process.env.PATH ?? ""}`,
         },
       },
@@ -1987,8 +1987,8 @@ exit 0
           EXPECTED_CLAWHUB_ARTIFACT_SIZE: String(tgzBytes.byteLength),
           EXPECTED_CLAWHUB_PACKAGE_NAME: "@openclaw/demo-plugin",
           EXPECTED_CLAWHUB_PACKAGE_VERSION: "2026.4.1",
-          OPENCLAW_CLAWHUB_PUBLISH_ATTEMPTS: "2",
-          OPENCLAW_CLAWHUB_PUBLISH_RETRY_DELAY_SECONDS: "1",
+          NOVA_CLAWHUB_PUBLISH_ATTEMPTS: "2",
+          NOVA_CLAWHUB_PUBLISH_RETRY_DELAY_SECONDS: "1",
           PACKAGE_DIR: "extensions/demo-plugin",
           PATH: `${binDir}${delimiter}${process.env.PATH ?? ""}`,
         },
@@ -2047,9 +2047,9 @@ exit 0
           EXPECTED_CLAWHUB_ARTIFACT_SIZE: String(tgzBytes.byteLength),
           EXPECTED_CLAWHUB_PACKAGE_NAME: "@openclaw/demo-plugin",
           EXPECTED_CLAWHUB_PACKAGE_VERSION: "2026.4.1",
-          OPENCLAW_CLAWHUB_PUBLISH_ATTEMPTS: "2",
-          OPENCLAW_CLAWHUB_PUBLISH_ATTEMPT_TIMEOUT_SECONDS: "1",
-          OPENCLAW_CLAWHUB_PUBLISH_RETRY_DELAY_SECONDS: "1",
+          NOVA_CLAWHUB_PUBLISH_ATTEMPTS: "2",
+          NOVA_CLAWHUB_PUBLISH_ATTEMPT_TIMEOUT_SECONDS: "1",
+          NOVA_CLAWHUB_PUBLISH_RETRY_DELAY_SECONDS: "1",
           PACKAGE_DIR: "extensions/demo-plugin",
           PATH: `${binDir}${delimiter}${process.env.PATH ?? ""}`,
         },
@@ -2107,7 +2107,7 @@ function createTempPluginRepo(
           type: "module",
           repository: {
             type: "git",
-            url: OPENCLAW_PLUGIN_NPM_REPOSITORY_URL,
+            url: NOVA_PLUGIN_NPM_REPOSITORY_URL,
           },
           ...(options.requiredLatestDependencyVersion
             ? {

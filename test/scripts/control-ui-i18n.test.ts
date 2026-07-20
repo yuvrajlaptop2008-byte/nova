@@ -89,7 +89,7 @@ describe("control-ui-i18n generated ownership", () => {
   it("allows generated release output on trusted release and main runs only", () => {
     const trustedActions = {
       GITHUB_ACTIONS: "true",
-      OPENCLAW_ALLOW_RELEASE_GENERATED_MIX: "true",
+      NOVA_ALLOW_RELEASE_GENERATED_MIX: "true",
     };
 
     expect(

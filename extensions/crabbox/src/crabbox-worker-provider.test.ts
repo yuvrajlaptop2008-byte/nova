@@ -11,8 +11,8 @@ const TESTBOX_LEASE_ID = "tbx_Test-123";
 const HOST_KEY = [["ssh", "ed25519"].join("-"), "AAAA"].join(" ");
 const HOST_KEY_ERROR =
   "Crabbox inspect does not expose the SSH host key required by the worker provider contract";
-const OPENCLAW_ROOT = path.resolve(path.sep, "workspace", "openclaw");
-const SIBLING_BINARY = path.resolve(OPENCLAW_ROOT, "../crabbox/bin/crabbox");
+const NOVA_ROOT = path.resolve(path.sep, "workspace", "openclaw");
+const SIBLING_BINARY = path.resolve(NOVA_ROOT, "../crabbox/bin/crabbox");
 const INSPECT_FAILURE_PREFIX = "Crabbox inspect failed with exit code 2: ";
 const PROFILE = {
   provider: "aws",
@@ -65,7 +65,7 @@ function providerWithRunner(runCommand: CrabboxCommandRunner) {
       }
       return runCommand(argv, options);
     },
-    openclawRoot: OPENCLAW_ROOT,
+    openclawRoot: NOVA_ROOT,
     pathEnv: "",
     isExecutable: (candidate) => candidate === SIBLING_BINARY,
     sleep: async () => {},
@@ -232,7 +232,7 @@ describe("Crabbox worker provider", () => {
           stdout: JSON.stringify({ aws: { instanceProfile: "worker-role" } }),
         });
       },
-      openclawRoot: OPENCLAW_ROOT,
+      openclawRoot: NOVA_ROOT,
       pathEnv: "",
       isExecutable: (candidate) => candidate === SIBLING_BINARY,
     });
@@ -259,7 +259,7 @@ describe("Crabbox worker provider", () => {
           stdout: JSON.stringify({ aws: { instanceProfile: "worker-role" } }),
         });
       },
-      openclawRoot: OPENCLAW_ROOT,
+      openclawRoot: NOVA_ROOT,
       pathEnv: "",
       isExecutable: (candidate) => candidate === SIBLING_BINARY,
     });
@@ -289,7 +289,7 @@ describe("Crabbox worker provider", () => {
         }
         return commandResult();
       },
-      openclawRoot: OPENCLAW_ROOT,
+      openclawRoot: NOVA_ROOT,
       pathEnv: "",
       isExecutable: (candidate) => candidate === SIBLING_BINARY,
     });
@@ -330,7 +330,7 @@ describe("Crabbox worker provider", () => {
         }
         return commandResult();
       },
-      openclawRoot: OPENCLAW_ROOT,
+      openclawRoot: NOVA_ROOT,
       pathEnv: "",
       isExecutable: (candidate) => candidate === SIBLING_BINARY,
       sleep: async () => {},
@@ -806,7 +806,7 @@ describe("Crabbox worker provider", () => {
         }
         return commandResult();
       },
-      openclawRoot: OPENCLAW_ROOT,
+      openclawRoot: NOVA_ROOT,
       pathEnv: "",
       isExecutable: (candidate) => candidate === SIBLING_BINARY,
       sleep: async () => {
@@ -970,7 +970,7 @@ describe("Crabbox worker provider", () => {
         calls.push(argv);
         return argv[1] === "inspect" ? commandResult({ stdout: inspectJson() }) : commandResult();
       },
-      openclawRoot: OPENCLAW_ROOT,
+      openclawRoot: NOVA_ROOT,
       pathEnv: "",
       isExecutable: () => false,
     });
@@ -1188,34 +1188,34 @@ describe("Crabbox binary resolution", () => {
     expect(
       resolveCrabboxBinary({
         explicit: explicitBinary,
-        openclawRoot: OPENCLAW_ROOT,
+        openclawRoot: NOVA_ROOT,
         isExecutable: () => false,
       }),
     ).toBe(explicitBinary);
     expect(
       resolveCrabboxBinary({
-        openclawRoot: OPENCLAW_ROOT,
+        openclawRoot: NOVA_ROOT,
         pathEnv: toolsDir,
         isExecutable: (candidate) => candidate === SIBLING_BINARY || candidate === pathBinary,
       }),
     ).toBe(SIBLING_BINARY);
     expect(
       resolveCrabboxBinary({
-        openclawRoot: OPENCLAW_ROOT,
+        openclawRoot: NOVA_ROOT,
         pathEnv: [path.resolve(path.sep, "not-executable"), toolsDir].join(path.delimiter),
         isExecutable: (candidate) => candidate === pathBinary,
       }),
     ).toBe(pathBinary);
     expect(
       resolveCrabboxBinary({
-        openclawRoot: OPENCLAW_ROOT,
+        openclawRoot: NOVA_ROOT,
         pathEnv: "relative-tools",
         isExecutable: (candidate) => candidate === relativePathBinary,
       }),
     ).toBe(relativePathBinary);
     expect(
       resolveCrabboxBinary({
-        openclawRoot: OPENCLAW_ROOT,
+        openclawRoot: NOVA_ROOT,
         pathEnv: path.resolve(path.sep, "not-executable"),
         isExecutable: () => false,
       }),
@@ -1223,11 +1223,9 @@ describe("Crabbox binary resolution", () => {
   });
 
   it("derives the package root from source and bundled plugin roots", () => {
-    expect(resolveOpenClawRoot(path.join(OPENCLAW_ROOT, "extensions", "crabbox"))).toBe(
-      OPENCLAW_ROOT,
-    );
-    expect(resolveOpenClawRoot(path.join(OPENCLAW_ROOT, "dist", "extensions", "crabbox"))).toBe(
-      OPENCLAW_ROOT,
+    expect(resolveOpenClawRoot(path.join(NOVA_ROOT, "extensions", "crabbox"))).toBe(NOVA_ROOT);
+    expect(resolveOpenClawRoot(path.join(NOVA_ROOT, "dist", "extensions", "crabbox"))).toBe(
+      NOVA_ROOT,
     );
   });
 });

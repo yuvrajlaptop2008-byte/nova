@@ -556,14 +556,14 @@ async function startLocalModeTui(
     cwd: process.cwd(),
     env: {
       HOME: homeDir,
-      OPENCLAW_HOME: homeDir,
-      OPENCLAW_CONFIG_PATH: configPath,
-      OPENCLAW_STATE_DIR: stateDir,
+      NOVA_HOME: homeDir,
+      NOVA_CONFIG_PATH: configPath,
+      NOVA_STATE_DIR: stateDir,
       XDG_CONFIG_HOME: xdgConfigHome,
       XDG_DATA_HOME: xdgDataHome,
       XDG_CACHE_HOME: xdgCacheHome,
-      OPENCLAW_THEME: "dark",
-      OPENCLAW_CODEX_DISCOVERY_LIVE: "0",
+      NOVA_THEME: "dark",
+      NOVA_CODEX_DISCOVERY_LIVE: "0",
       NO_COLOR: undefined,
     },
     exitTimeoutMs: LOCAL_EXIT_TIMEOUT_MS,
@@ -674,8 +674,8 @@ async function startSharedGatewayFixture(): Promise<SharedGatewayFixture> {
       gatewayToken: "tui-pty-local",
       config: buildGatewayModeConfig({ tempDir, providerBaseUrl: mockModel.baseUrl }),
       env: {
-        OPENCLAW_CODEX_DISCOVERY_LIVE: "0",
-        OPENCLAW_SKIP_PROVIDERS: undefined,
+        NOVA_CODEX_DISCOVERY_LIVE: "0",
+        NOVA_SKIP_PROVIDERS: undefined,
       },
     });
     await gateway.startGateway();
@@ -767,7 +767,7 @@ async function startGatewayModeTui(
     cwd: process.cwd(),
     env: {
       ...shared.gateway.env,
-      OPENCLAW_THEME: "dark",
+      NOVA_THEME: "dark",
       NO_COLOR: undefined,
     },
     exitTimeoutMs: LOCAL_EXIT_TIMEOUT_MS,
@@ -925,7 +925,7 @@ describe("TUI PTY real backends", () => {
           "steer the active local turn",
         );
         await fixture.run.waitForOutput("LOCAL_STEER_COMPLETE");
-        if (process.env.OPENCLAW_BEHAVIOR_EVIDENCE === "1") {
+        if (process.env.NOVA_BEHAVIOR_EVIDENCE === "1") {
           console.info(
             "[behavior-evidence] local-steer",
             JSON.stringify({

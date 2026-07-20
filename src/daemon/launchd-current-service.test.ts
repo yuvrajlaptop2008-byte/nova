@@ -15,9 +15,9 @@ describe("isCurrentProcessLaunchdServiceLabel", () => {
     expect(
       isCurrentProcessLaunchdServiceLabel("ai.openclaw.gateway", {
         XPC_SERVICE_NAME: "0",
-        OPENCLAW_SERVICE_MARKER: "openclaw",
-        OPENCLAW_SERVICE_KIND: "gateway",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_SERVICE_MARKER: "openclaw",
+        NOVA_SERVICE_KIND: "gateway",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
       }),
     ).toBe(true);
   });
@@ -25,7 +25,7 @@ describe("isCurrentProcessLaunchdServiceLabel", () => {
   it("preserves label-only fallback when launchd exposes no label variables", () => {
     expect(
       isCurrentProcessLaunchdServiceLabel("ai.openclaw.gateway", {
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
       }),
     ).toBe(true);
   });
@@ -35,7 +35,7 @@ describe("isCurrentProcessLaunchdServiceLabel", () => {
       isCurrentProcessLaunchdServiceLabel(
         "ai.openclaw.gateway",
         {
-          OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
+          NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
         },
         { allowConfiguredLabelFallback: false },
       ),
@@ -46,7 +46,7 @@ describe("isCurrentProcessLaunchdServiceLabel", () => {
     expect(
       isCurrentProcessLaunchdServiceLabel("ai.openclaw.gateway", {
         XPC_SERVICE_NAME: "0",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
       }),
     ).toBe(false);
   });

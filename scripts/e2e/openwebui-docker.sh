@@ -6,26 +6,26 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-openwebui-e2e" OPENCLAW_OPENWEBUI_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-openwebui-e2e" NOVA_OPENWEBUI_E2E_IMAGE)"
 OPENWEBUI_IMAGE="${OPENWEBUI_IMAGE:-ghcr.io/open-webui/open-webui:v0.8.10}"
-MAX_MEMORY_MIB="$(docker_e2e_read_nonnegative_decimal_env OPENCLAW_OPENWEBUI_MAX_MEMORY_MIB 8192)"
-MAX_CPU_PERCENT="$(docker_e2e_read_nonnegative_decimal_env OPENCLAW_OPENWEBUI_MAX_CPU_PERCENT 1600)"
+MAX_MEMORY_MIB="$(docker_e2e_read_nonnegative_decimal_env NOVA_OPENWEBUI_MAX_MEMORY_MIB 8192)"
+MAX_CPU_PERCENT="$(docker_e2e_read_nonnegative_decimal_env NOVA_OPENWEBUI_MAX_CPU_PERCENT 1600)"
 # Keep the default on the preferred GPT-5 OpenAI model for Open WebUI
 # compatibility smoke. Callers can still override this explicitly.
-MODEL="${OPENCLAW_OPENWEBUI_MODEL:-openai/gpt-5.6-luna}"
+MODEL="${NOVA_OPENWEBUI_MODEL:-openai/gpt-5.6-luna}"
 PROMPT_NONCE="OPENWEBUI_DOCKER_E2E_$(date +%s)_$$"
-PROMPT="${OPENCLAW_OPENWEBUI_PROMPT:-Reply with exactly this token and nothing else: ${PROMPT_NONCE}}"
-PORT="$(docker_e2e_read_tcp_port_env OPENCLAW_OPENWEBUI_GATEWAY_PORT 18789)"
-WEBUI_PORT="$(docker_e2e_read_tcp_port_env OPENCLAW_OPENWEBUI_PORT 8080)"
+PROMPT="${NOVA_OPENWEBUI_PROMPT:-Reply with exactly this token and nothing else: ${PROMPT_NONCE}}"
+PORT="$(docker_e2e_read_tcp_port_env NOVA_OPENWEBUI_GATEWAY_PORT 18789)"
+WEBUI_PORT="$(docker_e2e_read_tcp_port_env NOVA_OPENWEBUI_PORT 8080)"
 TOKEN="openwebui-e2e-$(date +%s)-$$"
-ADMIN_EMAIL="${OPENCLAW_OPENWEBUI_ADMIN_EMAIL:-openwebui-e2e@example.com}"
-ADMIN_PASSWORD="${OPENCLAW_OPENWEBUI_ADMIN_PASSWORD:-OpenWebUI-E2E-Password-$(date +%s)-$$}"
+ADMIN_EMAIL="${NOVA_OPENWEBUI_ADMIN_EMAIL:-openwebui-e2e@example.com}"
+ADMIN_PASSWORD="${NOVA_OPENWEBUI_ADMIN_PASSWORD:-OpenWebUI-E2E-Password-$(date +%s)-$$}"
 NET_NAME="openclaw-openwebui-e2e-$$"
 GW_NAME="openclaw-openwebui-gateway-$$"
 OW_NAME="openclaw-openwebui-$$"
-PROVIDER_TIMEOUT_SECONDS="${OPENCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS:-900}"
-DOCKER_PULL_TIMEOUT="${OPENCLAW_OPENWEBUI_DOCKER_PULL_TIMEOUT:-600s}"
-SMOKE_MODE="${OPENWEBUI_SMOKE_MODE:-${OPENCLAW_OPENWEBUI_SMOKE_MODE:-chat}}"
+PROVIDER_TIMEOUT_SECONDS="${NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS:-900}"
+DOCKER_PULL_TIMEOUT="${NOVA_OPENWEBUI_DOCKER_PULL_TIMEOUT:-600s}"
+SMOKE_MODE="${OPENWEBUI_SMOKE_MODE:-${NOVA_OPENWEBUI_SMOKE_MODE:-chat}}"
 
 validate_positive_int() {
   local label="$1"
@@ -36,11 +36,11 @@ validate_positive_int() {
   fi
 }
 
-validate_positive_int OPENCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS "$PROVIDER_TIMEOUT_SECONDS"
+validate_positive_int NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS "$PROVIDER_TIMEOUT_SECONDS"
 PROVIDER_TIMEOUT_SECONDS_DECIMAL=$((10#$PROVIDER_TIMEOUT_SECONDS))
-PROBE_FETCH_TIMEOUT_MS="${OPENCLAW_OPENWEBUI_FETCH_TIMEOUT_MS:-$((PROVIDER_TIMEOUT_SECONDS_DECIMAL * 1000 + 60000))}"
-validate_positive_int OPENCLAW_OPENWEBUI_FETCH_TIMEOUT_MS "$PROBE_FETCH_TIMEOUT_MS"
-DOCKER_COMMAND_TIMEOUT="${OPENCLAW_OPENWEBUI_DOCKER_COMMAND_TIMEOUT:-$((PROVIDER_TIMEOUT_SECONDS_DECIMAL + 90))s}"
+PROBE_FETCH_TIMEOUT_MS="${NOVA_OPENWEBUI_FETCH_TIMEOUT_MS:-$((PROVIDER_TIMEOUT_SECONDS_DECIMAL * 1000 + 60000))}"
+validate_positive_int NOVA_OPENWEBUI_FETCH_TIMEOUT_MS "$PROBE_FETCH_TIMEOUT_MS"
+DOCKER_COMMAND_TIMEOUT="${NOVA_OPENWEBUI_DOCKER_COMMAND_TIMEOUT:-$((PROVIDER_TIMEOUT_SECONDS_DECIMAL + 90))s}"
 
 case "$SMOKE_MODE" in
   chat | models) ;;
@@ -50,7 +50,7 @@ case "$SMOKE_MODE" in
     ;;
 esac
 
-PROFILE_FILE="${OPENCLAW_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}"
+PROFILE_FILE="${NOVA_TESTBOX_PROFILE_FILE:-$HOME/.openclaw-testbox-live.profile}"
 if [[ -f "$PROFILE_FILE" && -r "$PROFILE_FILE" ]]; then
   set -a
   # shellcheck disable=SC1090
@@ -138,13 +138,13 @@ docker_e2e_docker_cmd run -d \
   "${DOCKER_E2E_HARNESS_ARGS[@]}" \
   --name "$GW_NAME" \
   --network "$NET_NAME" \
-  -e "OPENCLAW_GATEWAY_TOKEN=$TOKEN" \
-  -e "OPENCLAW_OPENWEBUI_MODEL=$MODEL" \
-  -e "OPENCLAW_SKIP_CHANNELS=1" \
-  -e "OPENCLAW_SKIP_GMAIL_WATCHER=1" \
-  -e "OPENCLAW_SKIP_CRON=1" \
-  -e "OPENCLAW_SKIP_CANVAS_HOST=1" \
-  -e "OPENCLAW_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS=$PROVIDER_TIMEOUT_SECONDS" \
+  -e "NOVA_GATEWAY_TOKEN=$TOKEN" \
+  -e "NOVA_OPENWEBUI_MODEL=$MODEL" \
+  -e "NOVA_SKIP_CHANNELS=1" \
+  -e "NOVA_SKIP_GMAIL_WATCHER=1" \
+  -e "NOVA_SKIP_CRON=1" \
+  -e "NOVA_SKIP_CANVAS_HOST=1" \
+  -e "NOVA_OPENWEBUI_PROVIDER_TIMEOUT_SECONDS=$PROVIDER_TIMEOUT_SECONDS" \
   -e OPENAI_API_KEY \
   ${OPENAI_BASE_URL_VALUE:+-e OPENAI_BASE_URL} \
   "$IMAGE_NAME" \
@@ -155,7 +155,7 @@ docker_e2e_docker_cmd run -d \
 
     openai_api_key="${OPENAI_API_KEY:?OPENAI_API_KEY required}"
     batch_file="$(mktemp /tmp/openclaw-openwebui-config.XXXXXX.json)"
-    OPENCLAW_CONFIG_BATCH_PATH="$batch_file" node scripts/e2e/lib/fixture.mjs openwebui-config "$openai_api_key"
+    NOVA_CONFIG_BATCH_PATH="$batch_file" node scripts/e2e/lib/fixture.mjs openwebui-config "$openai_api_key"
     node "$entry" config set --batch-file "$batch_file" >/dev/null
     rm -f "$batch_file"
     node scripts/e2e/lib/fixture.mjs openwebui-workspace
@@ -165,7 +165,7 @@ docker_e2e_docker_cmd run -d \
 start_openwebui_stats_sampler
 
 echo "Waiting for gateway HTTP surface..."
-if ! docker_e2e_wait_container_bash "$GW_NAME" 240 1 "OPENCLAW_HTTP_PROBE_BEARER='$TOKEN' node scripts/e2e/lib/openwebui/http-probe.mjs 'http://127.0.0.1:$PORT/v1/models' 200"; then
+if ! docker_e2e_wait_container_bash "$GW_NAME" 240 1 "NOVA_HTTP_PROBE_BEARER='$TOKEN' node scripts/e2e/lib/openwebui/http-probe.mjs 'http://127.0.0.1:$PORT/v1/models' 200"; then
   echo "Gateway failed to start"
   docker_e2e_docker_cmd inspect "$GW_NAME" --format '{{json .State}}' 2>/dev/null || true
   docker_e2e_tail_container_file_if_running "$GW_NAME" /tmp/openwebui-gateway.log 200
@@ -205,7 +205,7 @@ fi
 sample_openwebui_stats_once
 
 echo "Waiting for gateway model endpoint after Open WebUI startup..."
-if ! docker_e2e_wait_container_bash "$GW_NAME" 90 5 "OPENCLAW_HTTP_PROBE_BEARER='$TOKEN' OPENCLAW_HTTP_PROBE_TIMEOUT_MS=8000 node scripts/e2e/lib/openwebui/http-probe.mjs 'http://$GW_NAME:$PORT/v1/models' 200"; then
+if ! docker_e2e_wait_container_bash "$GW_NAME" 90 5 "NOVA_HTTP_PROBE_BEARER='$TOKEN' NOVA_HTTP_PROBE_TIMEOUT_MS=8000 node scripts/e2e/lib/openwebui/http-probe.mjs 'http://$GW_NAME:$PORT/v1/models' 200"; then
   echo "Gateway model endpoint did not stay reachable after Open WebUI startup"
   docker_e2e_docker_cmd inspect "$GW_NAME" --format '{{json .State}}' 2>/dev/null || true
   docker_e2e_tail_container_file_if_running "$GW_NAME" /tmp/openwebui-gateway.log 200

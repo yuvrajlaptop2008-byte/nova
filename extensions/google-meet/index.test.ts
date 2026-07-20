@@ -310,19 +310,19 @@ function setup(
 }
 
 const GOOGLE_MEET_ENV_KEYS = [
-  "OPENCLAW_GOOGLE_MEET_CLIENT_ID",
+  "NOVA_GOOGLE_MEET_CLIENT_ID",
   "GOOGLE_MEET_CLIENT_ID",
-  "OPENCLAW_GOOGLE_MEET_CLIENT_SECRET",
+  "NOVA_GOOGLE_MEET_CLIENT_SECRET",
   "GOOGLE_MEET_CLIENT_SECRET",
-  "OPENCLAW_GOOGLE_MEET_REFRESH_TOKEN",
+  "NOVA_GOOGLE_MEET_REFRESH_TOKEN",
   "GOOGLE_MEET_REFRESH_TOKEN",
-  "OPENCLAW_GOOGLE_MEET_ACCESS_TOKEN",
+  "NOVA_GOOGLE_MEET_ACCESS_TOKEN",
   "GOOGLE_MEET_ACCESS_TOKEN",
-  "OPENCLAW_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT",
+  "NOVA_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT",
   "GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT",
-  "OPENCLAW_GOOGLE_MEET_DEFAULT_MEETING",
+  "NOVA_GOOGLE_MEET_DEFAULT_MEETING",
   "GOOGLE_MEET_DEFAULT_MEETING",
-  "OPENCLAW_GOOGLE_MEET_PREVIEW_ACK",
+  "NOVA_GOOGLE_MEET_PREVIEW_ACK",
   "GOOGLE_MEET_PREVIEW_ACK",
 ] as const;
 
@@ -1279,13 +1279,13 @@ describe("google-meet plugin", () => {
 
   it("uses env fallbacks for OAuth, preview, and default meeting values", () => {
     const config = resolveGoogleMeetConfigFromTestEnv({
-      OPENCLAW_GOOGLE_MEET_CLIENT_ID: "client-id",
+      NOVA_GOOGLE_MEET_CLIENT_ID: "client-id",
       GOOGLE_MEET_CLIENT_SECRET: "client-secret",
-      OPENCLAW_GOOGLE_MEET_REFRESH_TOKEN: "refresh-token",
+      NOVA_GOOGLE_MEET_REFRESH_TOKEN: "refresh-token",
       GOOGLE_MEET_ACCESS_TOKEN: "access-token",
-      OPENCLAW_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT: "123456",
+      NOVA_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT: "123456",
       GOOGLE_MEET_DEFAULT_MEETING: "https://meet.google.com/abc-defg-hij",
-      OPENCLAW_GOOGLE_MEET_PREVIEW_ACK: "true",
+      NOVA_GOOGLE_MEET_PREVIEW_ACK: "true",
     });
     expect(config.defaults).toEqual({ meeting: "https://meet.google.com/abc-defg-hij" });
     expect(config.preview).toEqual({ enrollmentAcknowledged: true });
@@ -1300,8 +1300,8 @@ describe("google-meet plugin", () => {
 
   it.each(["0x10", "1e3"])("ignores non-decimal env numeric fallbacks: %s", (expiresAt) => {
     const config = resolveGoogleMeetConfigFromTestEnv({
-      OPENCLAW_GOOGLE_MEET_ACCESS_TOKEN: "access-token",
-      OPENCLAW_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT: expiresAt,
+      NOVA_GOOGLE_MEET_ACCESS_TOKEN: "access-token",
+      NOVA_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT: expiresAt,
     });
 
     expect(config.oauth).toEqual({ accessToken: "access-token" });

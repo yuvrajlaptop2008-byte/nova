@@ -216,14 +216,14 @@ describe("update-startup", () => {
       layout: "state-only",
       prefix: "openclaw-update-check-suite-",
       env: {
-        OPENCLAW_NO_AUTO_UPDATE: undefined,
-        OPENCLAW_SUPERVISOR_MODE: undefined,
-        OPENCLAW_SERVICE_KIND: undefined,
-        OPENCLAW_SERVICE_MARKER: undefined,
-        OPENCLAW_GATEWAY_SERVICE_PID: undefined,
-        OPENCLAW_LAUNCHD_LABEL: undefined,
-        OPENCLAW_SYSTEMD_UNIT: undefined,
-        OPENCLAW_WINDOWS_TASK_NAME: undefined,
+        NOVA_NO_AUTO_UPDATE: undefined,
+        NOVA_SUPERVISOR_MODE: undefined,
+        NOVA_SERVICE_KIND: undefined,
+        NOVA_SERVICE_MARKER: undefined,
+        NOVA_GATEWAY_SERVICE_PID: undefined,
+        NOVA_LAUNCHD_LABEL: undefined,
+        NOVA_SYSTEMD_UNIT: undefined,
+        NOVA_WINDOWS_TASK_NAME: undefined,
         INVOCATION_ID: undefined,
         NODE_ENV: "test",
         VITEST: undefined,
@@ -973,9 +973,9 @@ describe("update-startup", () => {
     expect(runAutoUpdate).toHaveBeenCalledTimes(1);
   });
 
-  it("honors OPENCLAW_NO_AUTO_UPDATE for configured auto-updates", async () => {
+  it("honors NOVA_NO_AUTO_UPDATE for configured auto-updates", async () => {
     mockPackageUpdateStatus("beta", "2.0.0-beta.1");
-    process.env.OPENCLAW_NO_AUTO_UPDATE = "1";
+    process.env.NOVA_NO_AUTO_UPDATE = "1";
     const log = { info: vi.fn() };
     const runAutoUpdate = createAutoUpdateSuccessMock();
 
@@ -989,10 +989,10 @@ describe("update-startup", () => {
 
     expect(runAutoUpdate).not.toHaveBeenCalled();
     const disabledLogCall = log.info.mock.calls.find(
-      ([message]) => message === "auto-update disabled by OPENCLAW_NO_AUTO_UPDATE",
+      ([message]) => message === "auto-update disabled by NOVA_NO_AUTO_UPDATE",
     );
     expect(disabledLogCall).toEqual([
-      "auto-update disabled by OPENCLAW_NO_AUTO_UPDATE",
+      "auto-update disabled by NOVA_NO_AUTO_UPDATE",
       {
         version: "2.0.0-beta.1",
         tag: "beta",
@@ -1002,7 +1002,7 @@ describe("update-startup", () => {
 
   it("delegates configured auto-updates to an external supervisor", async () => {
     mockPackageUpdateStatus("beta", "2.0.0-beta.1");
-    process.env.OPENCLAW_SUPERVISOR_MODE = "external";
+    process.env.NOVA_SUPERVISOR_MODE = "external";
     const log = { info: vi.fn() };
     const runAutoUpdate = createAutoUpdateSuccessMock();
 

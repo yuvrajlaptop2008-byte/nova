@@ -44,7 +44,7 @@ describe("qqbot storage laziness", () => {
     const homeDir = makeHome();
     const stateDir = makeHome();
     await useMockHome(homeDir);
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("NOVA_STATE_DIR", stateDir);
     installQQBotRuntimeForStateTests(stateDir);
 
     const qqbotRoot = path.join(homeDir, ".openclaw", "qqbot");
@@ -62,7 +62,7 @@ describe("qqbot storage laziness", () => {
     const homeDir = makeHome();
     const stateDir = makeHome();
     await useMockHome(homeDir);
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("NOVA_STATE_DIR", stateDir);
     installQQBotRuntimeForStateTests(stateDir);
 
     const qqbotRoot = path.join(homeDir, ".openclaw", "qqbot");

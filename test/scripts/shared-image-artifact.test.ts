@@ -221,7 +221,7 @@ esac
     GITHUB_RUN_ID: "123456",
     PATH: `${bin}:${process.env.PATH ?? ""}`,
     RUNNER_TEMP: root,
-    OPENCLAW_SHARED_IMAGE_PACKAGE_SHA256: PACKAGE_SHA256,
+    NOVA_SHARED_IMAGE_PACKAGE_SHA256: PACKAGE_SHA256,
   };
   return { artifactDir, dockerLog, env, ghLog, root };
 }
@@ -232,9 +232,9 @@ function expectedArchiveEnv(fixture: ReturnType<typeof createFixture>): NodeJS.P
   );
   return {
     ...fixture.env,
-    OPENCLAW_SHARED_IMAGE_ARCHIVE_SHA256: manifest.archive.sha256,
-    OPENCLAW_SHARED_IMAGE_RUN_ATTEMPT: String(manifest.runAttempt),
-    OPENCLAW_SHARED_IMAGE_RUN_ID: String(manifest.runId),
+    NOVA_SHARED_IMAGE_ARCHIVE_SHA256: manifest.archive.sha256,
+    NOVA_SHARED_IMAGE_RUN_ATTEMPT: String(manifest.runAttempt),
+    NOVA_SHARED_IMAGE_RUN_ID: String(manifest.runId),
   };
 }
 
@@ -336,7 +336,7 @@ describe("shared Docker image artifacts", () => {
         {
           env: {
             ...expectedArchiveEnv(fixture),
-            OPENCLAW_SHARED_IMAGE_RUN_ID: "654321",
+            NOVA_SHARED_IMAGE_RUN_ID: "654321",
           },
           imageRefs: IMAGE_REFS,
           expected: "run ID",
@@ -352,7 +352,7 @@ describe("shared Docker image artifacts", () => {
         {
           env: {
             ...expectedArchiveEnv(fixture),
-            OPENCLAW_SHARED_IMAGE_PACKAGE_SHA256: "d".repeat(64),
+            NOVA_SHARED_IMAGE_PACKAGE_SHA256: "d".repeat(64),
           },
           imageRefs: IMAGE_REFS,
           expected: "package SHA-256",
@@ -429,15 +429,15 @@ describe("shared Docker image artifacts", () => {
       expect(packed.status, packed.stderr).toBe(0);
 
       const missingRunEnv = expectedArchiveEnv(fixture);
-      delete missingRunEnv.OPENCLAW_SHARED_IMAGE_RUN_ID;
-      delete missingRunEnv.OPENCLAW_SHARED_IMAGE_RUN_ATTEMPT;
+      delete missingRunEnv.NOVA_SHARED_IMAGE_RUN_ID;
+      delete missingRunEnv.NOVA_SHARED_IMAGE_RUN_ATTEMPT;
       const missingRun = runHelper({
         artifactDir: fixture.artifactDir,
         command: "load",
         env: missingRunEnv,
       });
       expect(missingRun.status).not.toBe(0);
-      expect(missingRun.stderr).toContain("OPENCLAW_SHARED_IMAGE_RUN_ID");
+      expect(missingRun.stderr).toContain("NOVA_SHARED_IMAGE_RUN_ID");
       expect(readFileSync(fixture.dockerLog, "utf8")).not.toContain("image load");
 
       const missing = runHelper({
@@ -445,8 +445,8 @@ describe("shared Docker image artifacts", () => {
         command: "load",
         env: {
           ...fixture.env,
-          OPENCLAW_SHARED_IMAGE_RUN_ATTEMPT: "2",
-          OPENCLAW_SHARED_IMAGE_RUN_ID: "123456",
+          NOVA_SHARED_IMAGE_RUN_ATTEMPT: "2",
+          NOVA_SHARED_IMAGE_RUN_ID: "123456",
         },
       });
       expect(missing.status).not.toBe(0);
@@ -458,7 +458,7 @@ describe("shared Docker image artifacts", () => {
         command: "load",
         env: {
           ...expectedArchiveEnv(fixture),
-          OPENCLAW_SHARED_IMAGE_ARCHIVE_SHA256: "d".repeat(64),
+          NOVA_SHARED_IMAGE_ARCHIVE_SHA256: "d".repeat(64),
         },
       });
       expect(mismatched.status).not.toBe(0);

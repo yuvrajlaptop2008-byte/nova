@@ -135,7 +135,7 @@ function resolveVoiceCallStateDatabaseEnv(
 ): NodeJS.ProcessEnv {
   return {
     ...params.env,
-    OPENCLAW_STATE_DIR: resolveVoiceCallStorePath(params),
+    NOVA_STATE_DIR: resolveVoiceCallStorePath(params),
   };
 }
 

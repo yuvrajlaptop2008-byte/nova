@@ -143,8 +143,8 @@ function readCompatBoolean(
   return asBoolean((compat as Record<string, unknown>)[key]);
 }
 
-const OPENCLAW_ATTRIBUTION_PRODUCT = "Nova";
-const OPENCLAW_ATTRIBUTION_ORIGINATOR = "openclaw";
+const NOVA_ATTRIBUTION_PRODUCT = "Nova";
+const NOVA_ATTRIBUTION_ORIGINATOR = "openclaw";
 const OPENROUTER_ATTRIBUTION_CATEGORIES =
   "cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent";
 
@@ -196,7 +196,7 @@ let manifestProviderEndpointCache: ManifestProviderEndpointCacheEntry[] | null =
 let manifestProviderRequestCache: Map<string, ManifestProviderRequestCacheEntry> | null = null;
 
 function formatOpenClawUserAgent(version: string): string {
-  return `${OPENCLAW_ATTRIBUTION_ORIGINATOR}/${version}`;
+  return `${NOVA_ATTRIBUTION_ORIGINATOR}/${version}`;
 }
 
 function tryParseHostname(value: string): string | undefined {
@@ -481,7 +481,7 @@ function resolveProviderAttributionIdentity(
   env: RuntimeVersionEnv = process.env as RuntimeVersionEnv,
 ): ProviderAttributionIdentity {
   return {
-    product: OPENCLAW_ATTRIBUTION_PRODUCT,
+    product: NOVA_ATTRIBUTION_PRODUCT,
     version: resolveRuntimeServiceVersion(env),
   };
 }
@@ -518,7 +518,7 @@ function buildNvidiaAttributionPolicy(
       "NVIDIA NIM billing invoke-origin attribution header. Applied only on verified NVIDIA routes.",
     ...resolveProviderAttributionIdentity(env),
     headers: {
-      "X-BILLING-INVOKE-ORIGIN": OPENCLAW_ATTRIBUTION_PRODUCT,
+      "X-BILLING-INVOKE-ORIGIN": NOVA_ATTRIBUTION_PRODUCT,
     },
   };
 }
@@ -537,7 +537,7 @@ function buildGoogleAttributionPolicy(
       "Gemini API partner integration guidance requires x-goog-api-client on partner and library traffic.",
     ...identity,
     headers: {
-      "x-goog-api-client": `${OPENCLAW_ATTRIBUTION_ORIGINATOR}/${identity.version}`,
+      "x-goog-api-client": `${NOVA_ATTRIBUTION_ORIGINATOR}/${identity.version}`,
     },
   };
 }
@@ -555,7 +555,7 @@ function buildOpenAIAttributionPolicy(
       "OpenAI native traffic supports hidden originator/User-Agent attribution. Verified against the Codex wire contract.",
     ...identity,
     headers: {
-      originator: OPENCLAW_ATTRIBUTION_ORIGINATOR,
+      originator: NOVA_ATTRIBUTION_ORIGINATOR,
       version: identity.version,
       "User-Agent": formatOpenClawUserAgent(identity.version),
     },
@@ -575,7 +575,7 @@ function buildXaiAttributionPolicy(
       "xAI api.x.ai accepts a standard openclaw User-Agent. Companion originator/version headers mirror the OpenAI attribution shape for consistency; they are not validated against an xAI-specific spec and are expected to be ignored by xAI's OpenAI-compatible surface.",
     ...identity,
     headers: {
-      originator: OPENCLAW_ATTRIBUTION_ORIGINATOR,
+      originator: NOVA_ATTRIBUTION_ORIGINATOR,
       version: identity.version,
       "User-Agent": formatOpenClawUserAgent(identity.version),
     },

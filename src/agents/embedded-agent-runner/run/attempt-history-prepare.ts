@@ -8,7 +8,7 @@ import {
   listSessionEntries,
   updateSessionEntry,
 } from "../../../config/sessions/session-accessor.js";
-import { OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../../context-engine/host-compat.js";
+import { NOVA_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../../context-engine/host-compat.js";
 import type { AssembleResult } from "../../../context-engine/types.js";
 import { resolveHeartbeatSummaryForAgent } from "../../../infra/heartbeat-summary.js";
 import type { createPreparedEmbeddedAgentSettingsManager } from "../../agent-project-settings.js";
@@ -229,7 +229,7 @@ export async function prepareEmbeddedAttemptHistory(input: {
         sandboxed: input.sandboxed,
         modelId: attempt.modelId,
         maxOutputTokens: reserveTokens,
-        contextEngineHostSupport: OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST,
+        contextEngineHostSupport: NOVA_EMBEDDED_CONTEXT_ENGINE_HOST,
         providerId: attempt.provider,
         requestedModelId: attempt.requestedModelId,
         fallbackReason: attempt.fallbackReason,

@@ -102,7 +102,7 @@ describe("qqbot doctor state migration", () => {
   beforeEach(async () => {
     resetPluginStateStoreForTests();
     stateDir = await createTempDir("qqbot-state-");
-    env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    env = { ...process.env, NOVA_STATE_DIR: stateDir };
   });
 
   afterEach(async () => {

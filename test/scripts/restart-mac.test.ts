@@ -79,7 +79,7 @@ function runCleanupFunction(fakePs: string) {
       'LOCAL_PROCESS_PATTERN="/worktree/apps/macos/.build-local/debug/Nova"',
       'RELEASE_PROCESS_PATTERN="/worktree/apps/macos/.build/release/Nova"',
       "kill() {",
-      '  printf "%s\\n" "$*" >> "$OPENCLAW_TEST_KILL_CALLS"',
+      '  printf "%s\\n" "$*" >> "$NOVA_TEST_KILL_CALLS"',
       "  return 0",
       "}",
       "kill_all_openclaw",
@@ -91,7 +91,7 @@ function runCleanupFunction(fakePs: string) {
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_TEST_KILL_CALLS: killCallsPath,
+      NOVA_TEST_KILL_CALLS: killCallsPath,
       PATH: `${binDir}:${process.env.PATH ?? ""}`,
     },
   });
@@ -128,11 +128,11 @@ function runManagedSupervisorClassifier(
       "set -euo pipefail",
       classifierFunctions,
       "loaded_launch_jobs() {",
-      '  [[ "${OPENCLAW_TEST_FAIL_ENUMERATION:-0}" != "1" ]] || return 1',
-      "  cut -d'|' -f1,2 \"$OPENCLAW_TEST_LOADED_JOBS\"",
+      '  [[ "${NOVA_TEST_FAIL_ENUMERATION:-0}" != "1" ]] || return 1',
+      "  cut -d'|' -f1,2 \"$NOVA_TEST_LOADED_JOBS\"",
       "}",
       "launch_job_snapshot() {",
-      '  grep "^$1|$2|" "$OPENCLAW_TEST_LOADED_JOBS" |',
+      '  grep "^$1|$2|" "$NOVA_TEST_LOADED_JOBS" |',
       "    awk -F'|' '{ print \"program = \" $3; print \"properties = \" $4 }'",
       "}",
       'TARGET_EXECUTABLE="/worktree/dist/Nova.app/Contents/MacOS/Nova"',
@@ -145,8 +145,8 @@ function runManagedSupervisorClassifier(
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_TEST_FAIL_ENUMERATION: options.failEnumeration ? "1" : "0",
-      OPENCLAW_TEST_LOADED_JOBS: recordsPath,
+      NOVA_TEST_FAIL_ENUMERATION: options.failEnumeration ? "1" : "0",
+      NOVA_TEST_LOADED_JOBS: recordsPath,
     },
   });
 }
@@ -352,9 +352,9 @@ describe("scripts/restart-mac.sh", () => {
     const script = readFileSync(restartScriptPath, "utf8");
 
     expect(script).toContain(
-      'LOG_PATH="${OPENCLAW_RESTART_LOG:-${TMPDIR:-/tmp}/openclaw-restart-${LOCK_KEY}.log}"',
+      'LOG_PATH="${NOVA_RESTART_LOG:-${TMPDIR:-/tmp}/openclaw-restart-${LOCK_KEY}.log}"',
     );
-    expect(script).not.toContain('LOG_PATH="${OPENCLAW_RESTART_LOG:-/tmp/openclaw-restart.log}"');
+    expect(script).not.toContain('LOG_PATH="${NOVA_RESTART_LOG:-/tmp/openclaw-restart.log}"');
   });
 
   it("does not remove a live restart lock it did not acquire", () => {
@@ -395,7 +395,7 @@ describe("scripts/restart-mac.sh", () => {
       script.indexOf("choose_app_bundle", script.indexOf("choose_app_bundle()") + 1),
     );
 
-    expect(script).toContain('fail "OPENCLAW_APP_BUNDLE does not exist: ${APP_BUNDLE}"');
+    expect(script).toContain('fail "NOVA_APP_BUNDLE does not exist: ${APP_BUNDLE}"');
     expect(chooseBlock).toContain("canonicalize_app_bundle");
     expect(chooseBlock.indexOf("${ROOT_DIR}/dist/Nova.app")).toBeGreaterThan(-1);
     expect(chooseBlock.indexOf("/Applications/Nova.app")).toBeGreaterThan(-1);
@@ -521,7 +521,7 @@ describe("scripts/restart-mac.sh", () => {
     const launchIndex = script.indexOf('run_step "launch app"');
 
     expect(packageIndex).toBeGreaterThan(-1);
-    expect(script).toContain('OPENCLAW_PACKAGE_APP_ROOT="${STAGED_APP_BUNDLE}"');
+    expect(script).toContain('NOVA_PACKAGE_APP_ROOT="${STAGED_APP_BUNDLE}"');
     expect(verifyIndex).toBeGreaterThan(packageIndex);
     expect(switchIndex).toBeGreaterThan(packageIndex);
     expect(installIndex).toBeGreaterThan(switchIndex);
@@ -622,7 +622,7 @@ describe("scripts/restart-mac.sh", () => {
     const { killCalls, result } = runCleanupFunction(
       [
         "#!/usr/bin/env bash",
-        'kill_count="$(wc -l < "$OPENCLAW_TEST_KILL_CALLS" 2>/dev/null || echo 0)"',
+        'kill_count="$(wc -l < "$NOVA_TEST_KILL_CALLS" 2>/dev/null || echo 0)"',
         'if [[ "$kill_count" -lt 10 ]]; then',
         "  printf '%s\\n' '  321 /worktree/dist/Nova.app/Contents/MacOS/Nova --attach-only'",
         "fi",

@@ -63,11 +63,11 @@ function validateChangelogEntry(repo: string, contrib: string): string {
     "bash",
     [
       "-c",
-      'source "$OPENCLAW_PR_CHANGELOG_SH"; validate_changelog_entry_for_pr 123 "$OPENCLAW_TEST_CONTRIB"',
+      'source "$NOVA_PR_CHANGELOG_SH"; validate_changelog_entry_for_pr 123 "$NOVA_TEST_CONTRIB"',
     ],
     {
-      OPENCLAW_PR_CHANGELOG_SH: changelogScriptPath,
-      OPENCLAW_TEST_CONTRIB: contrib,
+      NOVA_PR_CHANGELOG_SH: changelogScriptPath,
+      NOVA_TEST_CONTRIB: contrib,
     },
   );
 }
@@ -76,9 +76,9 @@ function validateChangelogAttributionPolicy(repo: string): string {
   return run(
     repo,
     "bash",
-    ["-c", 'source "$OPENCLAW_PR_CHANGELOG_SH"; validate_changelog_attribution_policy'],
+    ["-c", 'source "$NOVA_PR_CHANGELOG_SH"; validate_changelog_attribution_policy'],
     {
-      OPENCLAW_PR_CHANGELOG_SH: changelogScriptPath,
+      NOVA_PR_CHANGELOG_SH: changelogScriptPath,
     },
   );
 }
@@ -232,29 +232,29 @@ describe("check-changelog-attributions", () => {
             "-c",
             `
 set -euo pipefail
-source "$OPENCLAW_PR_COMMON_SH"
-source "$OPENCLAW_PR_CHANGELOG_SH"
-source "$OPENCLAW_PR_GATES_SH"
+source "$NOVA_PR_COMMON_SH"
+source "$NOVA_PR_CHANGELOG_SH"
+source "$NOVA_PR_GATES_SH"
 
 enter_worktree() { :; }
 checkout_prep_branch() { :; }
 bootstrap_deps_if_needed() { :; }
 require_artifact() { [ -s "$1" ]; }
-normalize_pr_changelog_entries() { printf 'normalize\\n' >>"$OPENCLAW_TEST_CALLS"; }
-validate_changelog_attribution_policy() { printf 'policy\\n' >>"$OPENCLAW_TEST_CALLS"; }
-validate_changelog_merge_hygiene() { printf 'merge-hygiene\\n' >>"$OPENCLAW_TEST_CALLS"; }
-validate_changelog_entry_for_pr() { printf 'entry:%s:%s\\n' "$1" "$2" >>"$OPENCLAW_TEST_CALLS"; }
-run_quiet_logged() { printf 'gate:%s\\n' "$1" >>"$OPENCLAW_TEST_CALLS"; }
+normalize_pr_changelog_entries() { printf 'normalize\\n' >>"$NOVA_TEST_CALLS"; }
+validate_changelog_attribution_policy() { printf 'policy\\n' >>"$NOVA_TEST_CALLS"; }
+validate_changelog_merge_hygiene() { printf 'merge-hygiene\\n' >>"$NOVA_TEST_CALLS"; }
+validate_changelog_entry_for_pr() { printf 'entry:%s:%s\\n' "$1" "$2" >>"$NOVA_TEST_CALLS"; }
+run_quiet_logged() { printf 'gate:%s\\n' "$1" >>"$NOVA_TEST_CALLS"; }
 
 prepare_gates 123
 `,
           ],
           {
-            OPENCLAW_PR_COMMON_SH: commonScriptPath,
-            OPENCLAW_PR_CHANGELOG_SH: changelogScriptPath,
-            OPENCLAW_PR_GATES_SH: gatesScriptPath,
-            OPENCLAW_TEST_CALLS: callsPath,
-            OPENCLAW_TESTBOX: "0",
+            NOVA_PR_COMMON_SH: commonScriptPath,
+            NOVA_PR_CHANGELOG_SH: changelogScriptPath,
+            NOVA_PR_GATES_SH: gatesScriptPath,
+            NOVA_TEST_CALLS: callsPath,
+            NOVA_TESTBOX: "0",
           },
         );
       } catch (error) {
@@ -283,30 +283,30 @@ prepare_gates 123
           "-c",
           `
 set -euo pipefail
-source "$OPENCLAW_PR_COMMON_SH"
-source "$OPENCLAW_PR_CHANGELOG_SH"
-source "$OPENCLAW_PR_GATES_SH"
+source "$NOVA_PR_COMMON_SH"
+source "$NOVA_PR_CHANGELOG_SH"
+source "$NOVA_PR_GATES_SH"
 
 enter_worktree() { :; }
 checkout_prep_branch() { :; }
 bootstrap_deps_if_needed() { :; }
 require_artifact() { [ -s "$1" ]; }
-normalize_pr_changelog_entries() { printf 'normalize\\n' >>"$OPENCLAW_TEST_CALLS"; }
-validate_changelog_attribution_policy() { printf 'policy\\n' >>"$OPENCLAW_TEST_CALLS"; }
-validate_changelog_merge_hygiene() { printf 'merge-hygiene\\n' >>"$OPENCLAW_TEST_CALLS"; }
-validate_changelog_entry_for_pr() { printf 'entry:%s:%s\\n' "$1" "$2" >>"$OPENCLAW_TEST_CALLS"; }
-run_quiet_logged() { printf 'gate:%s\\n' "$1" >>"$OPENCLAW_TEST_CALLS"; }
+normalize_pr_changelog_entries() { printf 'normalize\\n' >>"$NOVA_TEST_CALLS"; }
+validate_changelog_attribution_policy() { printf 'policy\\n' >>"$NOVA_TEST_CALLS"; }
+validate_changelog_merge_hygiene() { printf 'merge-hygiene\\n' >>"$NOVA_TEST_CALLS"; }
+validate_changelog_entry_for_pr() { printf 'entry:%s:%s\\n' "$1" "$2" >>"$NOVA_TEST_CALLS"; }
+run_quiet_logged() { printf 'gate:%s\\n' "$1" >>"$NOVA_TEST_CALLS"; }
 
 prepare_gates 123
 `,
         ],
         {
-          OPENCLAW_ALLOW_ROOT_CHANGELOG_PR: "1",
-          OPENCLAW_PR_COMMON_SH: commonScriptPath,
-          OPENCLAW_PR_CHANGELOG_SH: changelogScriptPath,
-          OPENCLAW_PR_GATES_SH: gatesScriptPath,
-          OPENCLAW_TEST_CALLS: callsPath,
-          OPENCLAW_TESTBOX: "0",
+          NOVA_ALLOW_ROOT_CHANGELOG_PR: "1",
+          NOVA_PR_COMMON_SH: commonScriptPath,
+          NOVA_PR_CHANGELOG_SH: changelogScriptPath,
+          NOVA_PR_GATES_SH: gatesScriptPath,
+          NOVA_TEST_CALLS: callsPath,
+          NOVA_TESTBOX: "0",
         },
       );
       const calls = readFileSync(callsPath, "utf8");

@@ -21,7 +21,7 @@ function readOutputDirValue(argv, index) {
 export function parseArgs(argv) {
   const args = {
     mode: "",
-    outputDir: process.env.OPENCLAW_VITEST_PROFILE_DIR?.trim() || "",
+    outputDir: process.env.NOVA_VITEST_PROFILE_DIR?.trim() || "",
     vitestArgs: [],
   };
 

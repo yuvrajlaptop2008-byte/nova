@@ -24,7 +24,7 @@ function addStartupActivation(pluginDir: string, onStartup: boolean): void {
 
 function buildSnapshotCompatibilityNoticeCodes(plugin: { dir: string; file: string; id: string }) {
   const stateDir = makeTempDir();
-  return withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+  return withEnv({ NOVA_STATE_DIR: stateDir }, () => {
     useNoBundledPlugins();
     return buildPluginCompatibilitySnapshotNotices({
       config: {

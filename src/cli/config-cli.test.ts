@@ -1074,7 +1074,7 @@ describe("config cli", () => {
 
       await runConfigCommand(["config", "get", "gateway.auth.token"]);
 
-      expect(mockLog).toHaveBeenCalledWith("__OPENCLAW_REDACTED__");
+      expect(mockLog).toHaveBeenCalledWith("__NOVA_REDACTED__");
     });
 
     it("prints materialized subagent archive default", async () => {
@@ -2413,7 +2413,7 @@ describe("config cli", () => {
       const snapshot = buildSnapshot({ resolved, config: resolved });
       snapshot.path = configPath;
       mockReadConfigFileSnapshot.mockResolvedValueOnce(snapshot);
-      vi.stubEnv("OPENCLAW_HOME", home);
+      vi.stubEnv("NOVA_HOME", home);
 
       const patch = writeTempJson5File("openclaw-config-patch-resolved-path", {
         gateway: { port: 18790 },
@@ -2428,7 +2428,7 @@ describe("config cli", () => {
       const payload = lastMockArg(defaultRuntime.writeJson) as { configPath: string };
       expect(payload.configPath).toBe(configPath);
       expect(path.isAbsolute(payload.configPath)).toBe(true);
-      expect(payload.configPath).not.toContain("$OPENCLAW_HOME");
+      expect(payload.configPath).not.toContain("$NOVA_HOME");
       expect(payload.configPath).not.toContain("~");
     });
 
@@ -3954,11 +3954,11 @@ describe("config cli", () => {
       const profile = "configfile-probe";
       const stateDir = path.join(home, `.openclaw-${profile}`);
       const configPath = path.join(stateDir, "openclaw.json");
-      vi.stubEnv("OPENCLAW_HOME", home);
-      vi.stubEnv("OPENCLAW_CONFIG_PATH", "");
-      vi.stubEnv("OPENCLAW_PROFILE", "");
-      vi.stubEnv("OPENCLAW_STATE_DIR", "");
-      vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+      vi.stubEnv("NOVA_HOME", home);
+      vi.stubEnv("NOVA_CONFIG_PATH", "");
+      vi.stubEnv("NOVA_PROFILE", "");
+      vi.stubEnv("NOVA_STATE_DIR", "");
+      vi.stubEnv("NOVA_TEST_FAST", "1");
       applyCliProfileEnv({ profile });
       mockReadConfigFileSnapshot.mockImplementationOnce(async () => {
         fs.mkdirSync(path.join(stateDir, "state"), { recursive: true });
@@ -3973,7 +3973,7 @@ describe("config cli", () => {
         const output = String(lastMockArg(mockLog));
         expect(output).toBe(configPath);
         expect(path.isAbsolute(output)).toBe(true);
-        expect(output).not.toContain("$OPENCLAW_HOME");
+        expect(output).not.toContain("$NOVA_HOME");
         expect(output).not.toContain("~");
         expect(mockReadConfigFileSnapshot).not.toHaveBeenCalled();
         expect(fs.existsSync(stateDir)).toBe(false);

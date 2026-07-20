@@ -40,7 +40,7 @@ let saveExecApprovals: ExecApprovalsModule["saveExecApprovals"];
 let updateExecApprovals: ExecApprovalsModule["updateExecApprovals"];
 
 const tempDirs: string[] = [];
-const testEnvSnapshot = captureEnv(["OPENCLAW_HOME", "OPENCLAW_PROFILE", "OPENCLAW_STATE_DIR"]);
+const testEnvSnapshot = captureEnv(["NOVA_HOME", "NOVA_PROFILE", "NOVA_STATE_DIR"]);
 
 beforeAll(async () => {
   const module = await import("./exec-approvals.js");
@@ -82,9 +82,9 @@ afterEach(() => {
 function createHomeDir(): string {
   const dir = makeTempDir();
   tempDirs.push(dir);
-  setTestEnvValue("OPENCLAW_HOME", dir);
-  deleteTestEnvValue("OPENCLAW_PROFILE");
-  deleteTestEnvValue("OPENCLAW_STATE_DIR");
+  setTestEnvValue("NOVA_HOME", dir);
+  deleteTestEnvValue("NOVA_PROFILE");
+  deleteTestEnvValue("NOVA_STATE_DIR");
   return dir;
 }
 
@@ -142,10 +142,10 @@ describe("exec approvals store helpers", () => {
     expect(resolveExecApprovalsDisplayPath()).toBe("~/.openclaw/exec-approvals.json");
   });
 
-  it("uses OPENCLAW_STATE_DIR for default file and socket paths", () => {
+  it("uses NOVA_STATE_DIR for default file and socket paths", () => {
     const dir = createHomeDir();
     const stateDir = path.join(dir, "custom-state");
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
 
     expect(path.normalize(resolveExecApprovalsPath())).toBe(
       path.normalize(stateApprovalsFilePath(stateDir)),
@@ -154,7 +154,7 @@ describe("exec approvals store helpers", () => {
       path.normalize(path.join(stateDir, "exec-approvals.sock")),
     );
     expect(resolveExecApprovalsDisplayPath()).toBe(stateApprovalsFilePath(stateDir));
-    expect(resolveExecApprovalsTranscriptPath()).toBe("$OPENCLAW_STATE_DIR/exec-approvals.json");
+    expect(resolveExecApprovalsTranscriptPath()).toBe("$NOVA_STATE_DIR/exec-approvals.json");
 
     const ensured = ensureExecApprovals();
 
@@ -313,7 +313,7 @@ describe("exec approvals store helpers", () => {
       "utf8",
     );
     const defaultBefore = fs.readFileSync(approvalsFilePath(dir), "utf8");
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
 
     const resolved = await resolveExecApprovals("main", {
       security: "full",
@@ -357,8 +357,8 @@ describe("exec approvals store helpers", () => {
       "utf8",
     );
     const defaultBefore = fs.readFileSync(defaultPath, "utf8");
-    setTestEnvValue("OPENCLAW_PROFILE", "work");
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_PROFILE", "work");
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
 
     const ensured = ensureExecApprovals();
 
@@ -1179,12 +1179,12 @@ describe("exec approvals store helpers", () => {
     expect(fs.readFileSync(targetPath, "utf8")).toBe('{"sentinel":true}\n');
   });
 
-  it("accepts a symlinked OPENCLAW_HOME as the trusted approvals root", () => {
+  it("accepts a symlinked NOVA_HOME as the trusted approvals root", () => {
     const realHome = makeTempDir();
     const linkedHome = `${realHome}-link`;
     tempDirs.push(realHome, linkedHome);
     fs.symlinkSync(realHome, linkedHome, "dir");
-    setTestEnvValue("OPENCLAW_HOME", linkedHome);
+    setTestEnvValue("NOVA_HOME", linkedHome);
 
     saveExecApprovals({ version: 1, defaults: { security: "full" }, agents: {} });
 
@@ -1201,7 +1201,7 @@ describe("exec approvals store helpers", () => {
     fs.mkdirSync(linkedStateTarget, { recursive: true });
     fs.symlinkSync(realHome, linkedHome, "dir");
     fs.symlinkSync(linkedStateTarget, path.join(realHome, ".openclaw"), "dir");
-    setTestEnvValue("OPENCLAW_HOME", linkedHome);
+    setTestEnvValue("NOVA_HOME", linkedHome);
 
     expect(() =>
       saveExecApprovals({ version: 1, defaults: { security: "full" }, agents: {} }),
@@ -1220,7 +1220,7 @@ describe("exec approvals store helpers", () => {
       fs.mkdirSync(linkedStateTarget, { recursive: true });
       fs.symlinkSync(realHome, linkedHome, "dir");
       fs.symlinkSync(linkedStateTarget, path.join(realHome, ".openclaw"), "dir");
-      setTestEnvValue("OPENCLAW_HOME", linkedHome);
+      setTestEnvValue("NOVA_HOME", linkedHome);
 
       await expect(
         updateExecApprovals({

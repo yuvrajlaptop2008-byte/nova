@@ -38,22 +38,20 @@ export function resolveProviderAuth(input: {
       authKeyFlag: "anthropic-api-key",
       modelId:
         input.modelId ||
-        process.env.OPENCLAW_PARALLELS_ANTHROPIC_MODEL ||
+        process.env.NOVA_PARALLELS_ANTHROPIC_MODEL ||
         "anthropic/claude-sonnet-4-6",
     },
     minimax: {
       apiKeyEnv: input.apiKeyEnv || "MINIMAX_API_KEY",
       authChoice: "minimax-global-api",
       authKeyFlag: "minimax-api-key",
-      modelId:
-        input.modelId || process.env.OPENCLAW_PARALLELS_MINIMAX_MODEL || "minimax/MiniMax-M2.7",
+      modelId: input.modelId || process.env.NOVA_PARALLELS_MINIMAX_MODEL || "minimax/MiniMax-M2.7",
     },
     openai: {
       apiKeyEnv: input.apiKeyEnv || "OPENAI_API_KEY",
       authChoice: "openai-api-key",
       authKeyFlag: "openai-api-key",
-      modelId:
-        input.modelId || process.env.OPENCLAW_PARALLELS_OPENAI_MODEL || "openai/gpt-5.6-luna",
+      modelId: input.modelId || process.env.NOVA_PARALLELS_OPENAI_MODEL || "openai/gpt-5.6-luna",
     },
   };
   const resolved = providerDefaults[input.provider];
@@ -73,11 +71,11 @@ export function resolveWindowsProviderAuth(input: {
   if (input.provider !== "openai" || input.modelId) {
     return auth;
   }
-  const windowsModel = process.env.OPENCLAW_PARALLELS_WINDOWS_OPENAI_MODEL?.trim();
+  const windowsModel = process.env.NOVA_PARALLELS_WINDOWS_OPENAI_MODEL?.trim();
   if (windowsModel) {
     return { ...auth, modelId: windowsModel };
   }
-  if (process.env.OPENCLAW_PARALLELS_OPENAI_MODEL?.trim()) {
+  if (process.env.NOVA_PARALLELS_OPENAI_MODEL?.trim()) {
     return auth;
   }
   return { ...auth, modelId: "openai/gpt-5.6-luna" };
@@ -90,15 +88,13 @@ export function providerIdFromModelId(modelId: string): string {
 
 export function resolveParallelsModelTimeoutSeconds(platform?: Platform): number {
   const platformEnvName =
-    platform === undefined
-      ? undefined
-      : `OPENCLAW_PARALLELS_${platform.toUpperCase()}_MODEL_TIMEOUT_S`;
+    platform === undefined ? undefined : `NOVA_PARALLELS_${platform.toUpperCase()}_MODEL_TIMEOUT_S`;
   const platformEnv = platformEnvName === undefined ? undefined : process.env[platformEnvName];
   const defaultSeconds = platform === "macos" || platform === "windows" ? 1800 : 900;
   if (platformEnvName && platformEnv?.trim()) {
     return parsePositiveInt(platformEnv, platformEnvName);
   }
-  return readPositiveIntEnv("OPENCLAW_PARALLELS_MODEL_TIMEOUT_S", defaultSeconds);
+  return readPositiveIntEnv("NOVA_PARALLELS_MODEL_TIMEOUT_S", defaultSeconds);
 }
 
 function providerTimeoutConfigJson(

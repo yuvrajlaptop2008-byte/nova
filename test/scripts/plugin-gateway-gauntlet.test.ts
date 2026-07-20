@@ -144,7 +144,7 @@ describe("plugin gateway gauntlet helpers", () => {
       ]),
     ).toThrow("Duplicate --qa-scenario value: channel-chat-baseline");
 
-    vi.stubEnv("OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_IDS", "telegram,discord");
+    vi.stubEnv("NOVA_PLUGIN_GATEWAY_GAUNTLET_IDS", "telegram,discord");
     expect(() => parseArgs(["--plugin", "telegram"])).toThrow("Duplicate --plugin value: telegram");
   });
 
@@ -254,7 +254,7 @@ describe("plugin gateway gauntlet helpers", () => {
     ]);
     const kimi = expectDefined(matrix[0], "Kimi bundled plugin manifest");
     expect(buildGauntletPrebuildEnv({}, { buildIds: [kimi.buildId] })).toEqual({
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "kimi-coding",
+      NOVA_BUNDLED_PLUGIN_BUILD_IDS: "kimi-coding",
       PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
     });
   });
@@ -488,9 +488,9 @@ describe("plugin gateway gauntlet helpers", () => {
   it("prebuilds private QA dist when QA chunks are enabled", () => {
     expect(buildGauntletPrebuildEnv({ EXISTING: "1" }, { includePrivateQa: true })).toEqual({
       EXISTING: "1",
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "qa-channel,qa-lab",
-      OPENCLAW_ENABLE_PRIVATE_QA_CLI: "1",
+      NOVA_BUILD_PRIVATE_QA: "1",
+      NOVA_BUNDLED_PLUGIN_BUILD_IDS: "qa-channel,qa-lab",
+      NOVA_ENABLE_PRIVATE_QA_CLI: "1",
       PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
     });
     const env = { EXISTING: "1" };
@@ -508,8 +508,8 @@ describe("plugin gateway gauntlet helpers", () => {
       ),
     ).toEqual({
       EXISTING: "1",
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "acpx",
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
+      NOVA_BUNDLED_PLUGIN_BUILD_IDS: "acpx",
+      NOVA_RUN_NODE_SKIP_DTS_BUILD: "1",
       PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
     });
   });
@@ -525,9 +525,9 @@ describe("plugin gateway gauntlet helpers", () => {
       ),
     ).toEqual({
       EXISTING: "1",
-      OPENCLAW_BUILD_PRIVATE_QA: "1",
-      OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS: "acpx,active-memory,qa-channel,qa-lab",
-      OPENCLAW_ENABLE_PRIVATE_QA_CLI: "1",
+      NOVA_BUILD_PRIVATE_QA: "1",
+      NOVA_BUNDLED_PLUGIN_BUILD_IDS: "acpx,active-memory,qa-channel,qa-lab",
+      NOVA_ENABLE_PRIVATE_QA_CLI: "1",
       PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
     });
   });
@@ -1149,12 +1149,12 @@ process.exit(7);
       "--command-timeout-ms",
       "--build-timeout-ms",
       "--qa-timeout-ms",
-      "OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_IDS",
-      "OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_TOTAL",
-      "OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_INDEX",
-      "OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_FAIL_ON_OBSERVATION",
-      "OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_KEEP_RUN_ROOT",
-      "OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_QA_SUMMARY_MAX_BYTES",
+      "NOVA_PLUGIN_GATEWAY_GAUNTLET_IDS",
+      "NOVA_PLUGIN_GATEWAY_GAUNTLET_TOTAL",
+      "NOVA_PLUGIN_GATEWAY_GAUNTLET_INDEX",
+      "NOVA_PLUGIN_GATEWAY_GAUNTLET_FAIL_ON_OBSERVATION",
+      "NOVA_PLUGIN_GATEWAY_GAUNTLET_KEEP_RUN_ROOT",
+      "NOVA_PLUGIN_GATEWAY_GAUNTLET_QA_SUMMARY_MAX_BYTES",
     ]) {
       expect(result.stdout).toContain(text);
     }
@@ -1243,7 +1243,7 @@ process.exit(7);
       failOnObservation: true,
     });
 
-    vi.stubEnv("OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_FAIL_ON_OBSERVATION", "1");
+    vi.stubEnv("NOVA_PLUGIN_GATEWAY_GAUNTLET_FAIL_ON_OBSERVATION", "1");
     expect(parseArgs(["--allow-empty"])).toMatchObject({
       allowEmpty: true,
       failOnObservation: true,
@@ -1344,7 +1344,7 @@ process.exit(7);
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_QA_SUMMARY_MAX_BYTES: "not-a-number",
+          NOVA_PLUGIN_GATEWAY_GAUNTLET_QA_SUMMARY_MAX_BYTES: "not-a-number",
         },
       },
     );
@@ -1385,7 +1385,7 @@ process.exit(7);
       [
         'const fs = require("node:fs");',
         'const path = require("node:path");',
-        "const stateDir = process.env.OPENCLAW_STATE_DIR ?? process.cwd();",
+        "const stateDir = process.env.NOVA_STATE_DIR ?? process.cwd();",
         'const marker = path.join(stateDir, "workboard-enabled");',
         "const args = process.argv.slice(2);",
         'if (args[0] === "plugins") {',
@@ -1501,7 +1501,7 @@ process.exit(7);
         'const outputArgIndex = process.argv.indexOf("--output-dir");',
         "const outputDir = path.resolve(process.cwd(), process.argv[outputArgIndex + 1]);",
         "fs.mkdirSync(outputDir, { recursive: true });",
-        'fs.writeFileSync(path.join(outputDir, "env.txt"), process.env.OPENCLAW_BUNDLED_PLUGIN_BUILD_IDS ?? "", "utf8");',
+        'fs.writeFileSync(path.join(outputDir, "env.txt"), process.env.NOVA_BUNDLED_PLUGIN_BUILD_IDS ?? "", "utf8");',
         'fs.writeFileSync(path.join(outputDir, "args.txt"), process.argv.slice(2).join("\\n"), "utf8");',
         `fs.writeFileSync(path.join(outputDir, "qa-suite-summary.json"), ${JSON.stringify(qaSummaryJson)}, "utf8");`,
       ].join("\n"),
@@ -1992,7 +1992,7 @@ process.exit(7);
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_PLUGIN_GATEWAY_GAUNTLET_QA_SUMMARY_MAX_BYTES: "64",
+          NOVA_PLUGIN_GATEWAY_GAUNTLET_QA_SUMMARY_MAX_BYTES: "64",
         },
       },
     );

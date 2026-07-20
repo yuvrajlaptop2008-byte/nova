@@ -58,9 +58,9 @@ vi.mock("openclaw/plugin-sdk/agent-harness", async (importOriginal) => {
   };
 });
 
-const LIVE = isLiveTestEnabled(["OPENCLAW_COPILOT_AGENT_LIVE_TEST"]);
+const LIVE = isLiveTestEnabled(["NOVA_COPILOT_AGENT_LIVE_TEST"]);
 const TOKEN =
-  process.env.OPENCLAW_COPILOT_AGENT_LIVE_TOKEN ||
+  process.env.NOVA_COPILOT_AGENT_LIVE_TOKEN ||
   process.env.GITHUB_TOKEN ||
   process.env.GH_TOKEN ||
   "";

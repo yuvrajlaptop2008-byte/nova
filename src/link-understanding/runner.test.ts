@@ -91,8 +91,8 @@ describe("runLinkUnderstanding", () => {
     );
     expect(runCommandWithTimeout).toHaveBeenCalledWith(["summarize", "--source"], {
       env: {
-        OPENCLAW_LINK_FINAL_URL: "https://example.com/final",
-        OPENCLAW_LINK_URL: "https://example.com/page",
+        NOVA_LINK_FINAL_URL: "https://example.com/final",
+        NOVA_LINK_URL: "https://example.com/page",
       },
       input: "page body",
       timeoutMs: 30000,

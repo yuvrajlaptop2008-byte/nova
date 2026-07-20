@@ -36,7 +36,7 @@ export function resolveGatewayStartupSourceConfig(
   env: NodeJS.ProcessEnv,
 ): OpenClawConfig {
   const skipChannels =
-    isTruthyEnvValue(env.OPENCLAW_SKIP_CHANNELS) || isTruthyEnvValue(env.OPENCLAW_SKIP_PROVIDERS);
+    isTruthyEnvValue(env.NOVA_SKIP_CHANNELS) || isTruthyEnvValue(env.NOVA_SKIP_PROVIDERS);
   if (!skipChannels || !config.channels) {
     return config;
   }

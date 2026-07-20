@@ -346,12 +346,12 @@ describe("plugin cron registry ownership e2e", () => {
         port: customPort,
         config,
         env: {
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
-          OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-          OPENCLAW_SKIP_CRON: undefined,
-          OPENCLAW_SKIP_PROVIDERS: undefined,
-          OPENCLAW_TEST_MINIMAL_GATEWAY: undefined,
+          NOVA_BUNDLED_PLUGINS_DIR: bundledRoot,
+          NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+          NOVA_SKIP_CRON: undefined,
+          NOVA_SKIP_PROVIDERS: undefined,
+          NOVA_TEST_MINIMAL_GATEWAY: undefined,
         },
       });
       instances.push(instance);

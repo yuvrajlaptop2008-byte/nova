@@ -84,7 +84,7 @@ if (isMain) {
       planTargetedDockerLaneGroups({
         groupSize: process.env.GROUP_SIZE,
         lanes: process.env.LANES,
-        upgradeSurvivorBaselines: process.env.OPENCLAW_UPGRADE_SURVIVOR_BASELINE_SPECS,
+        upgradeSurvivorBaselines: process.env.NOVA_UPGRADE_SURVIVOR_BASELINE_SPECS,
       }),
     ),
   );

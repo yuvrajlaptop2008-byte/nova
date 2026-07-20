@@ -17,10 +17,10 @@ const requiredPreparedPathGroups = [
 const requiredControlUiAssetPrefix = "dist/control-ui/assets/";
 const requiredControlUiCompressionSuffixes = [".br", ".gz"] as const;
 const DEFAULT_PREPACK_COMMAND_TIMEOUT_MS = 30 * 60 * 1000;
-const ALLOW_UNRELEASED_CHANGELOG_ENV = "OPENCLAW_PREPACK_ALLOW_UNRELEASED_CHANGELOG";
-const PREPARED_RELEASE_ENV = "OPENCLAW_PREPACK_PREPARED";
+const ALLOW_UNRELEASED_CHANGELOG_ENV = "NOVA_PREPACK_ALLOW_UNRELEASED_CHANGELOG";
+const PREPARED_RELEASE_ENV = "NOVA_PREPACK_PREPARED";
 const OCM_INTERNAL_NPM_BIN_ENV = "OCM_INTERNAL_NPM_BIN";
-const OCM_WORKSPACE_DIRS_ENV = "OPENCLAW_OCM_WORKSPACE_DEPENDENCY_DIRS";
+const OCM_WORKSPACE_DIRS_ENV = "NOVA_OCM_WORKSPACE_DEPENDENCY_DIRS";
 const OCM_ADAPTER_BASENAME = "ocm-npm-workspace-deps.mjs";
 const NPM_COMMAND_ENV = "npm_command";
 const SELF_CONTAINED_SOURCE_PACK_COMMAND =
@@ -191,11 +191,7 @@ function positiveEnvInt(name: string, env: NodeJS.ProcessEnv, fallback: number):
 }
 
 export function resolvePrepackCommandTimeoutMs(env: NodeJS.ProcessEnv = process.env): number {
-  return positiveEnvInt(
-    "OPENCLAW_PREPACK_COMMAND_TIMEOUT_MS",
-    env,
-    DEFAULT_PREPACK_COMMAND_TIMEOUT_MS,
-  );
+  return positiveEnvInt("NOVA_PREPACK_COMMAND_TIMEOUT_MS", env, DEFAULT_PREPACK_COMMAND_TIMEOUT_MS);
 }
 
 export function resolvePrepackAllowUnreleasedChangelog(
@@ -260,7 +256,7 @@ export function resolvePrepackBuildEnvironment(
     return result.status === 0 ? result.stdout.trim() : null;
   },
 ): NodeJS.ProcessEnv {
-  const explicitTimestamp = env.OPENCLAW_BUILD_TIMESTAMP?.trim();
+  const explicitTimestamp = env.NOVA_BUILD_TIMESTAMP?.trim();
   const explicitCommit = env.GIT_COMMIT?.trim() || env.GIT_SHA?.trim();
   const checkedOutCommit = explicitCommit ? null : readGitCommit()?.trim();
   // GITHUB_SHA names the workflow invocation and can differ from a checked-out tag.
@@ -270,7 +266,7 @@ export function resolvePrepackBuildEnvironment(
   }
   const buildEnv: NodeJS.ProcessEnv = {
     ...env,
-    OPENCLAW_BUILD_TIMESTAMP: explicitTimestamp || now().toISOString(),
+    NOVA_BUILD_TIMESTAMP: explicitTimestamp || now().toISOString(),
   };
   if (commit) {
     buildEnv.GIT_COMMIT = commit.toLowerCase();

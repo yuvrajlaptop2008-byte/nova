@@ -1595,7 +1595,7 @@ describe("resolveApiKeyForProvider", () => {
 
   it("preserves token mode for an env-backed provider SecretRef", async () => {
     await withEnv(
-      "OPENCLAW_TEST_PROVIDER_SUBSCRIPTION_TOKEN",
+      "NOVA_TEST_PROVIDER_SUBSCRIPTION_TOKEN",
       "env-subscription-credential",
       async () => {
         const resolved = await getApiKeyForModel({
@@ -1612,7 +1612,7 @@ describe("resolveApiKeyForProvider", () => {
                   apiKey: {
                     source: "env",
                     provider: "default",
-                    id: "OPENCLAW_TEST_PROVIDER_SUBSCRIPTION_TOKEN",
+                    id: "NOVA_TEST_PROVIDER_SUBSCRIPTION_TOKEN",
                   },
                   baseUrl: "https://subscription.example/v1",
                   models: [],
@@ -1627,7 +1627,7 @@ describe("resolveApiKeyForProvider", () => {
           apiKey: "env-subscription-credential",
           mode: "token",
         });
-        expect(resolved.source).toContain("OPENCLAW_TEST_PROVIDER_SUBSCRIPTION_TOKEN");
+        expect(resolved.source).toContain("NOVA_TEST_PROVIDER_SUBSCRIPTION_TOKEN");
       },
     );
   });

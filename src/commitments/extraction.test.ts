@@ -33,8 +33,8 @@ describe("commitment extraction", () => {
   async function createConfig(): Promise<OpenClawConfig> {
     const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-commitments-"));
     tmpDirs.push(tmpDir);
-    stateDirEnvSnapshot ??= captureEnv(["OPENCLAW_STATE_DIR"]);
-    setTestEnvValue("OPENCLAW_STATE_DIR", tmpDir);
+    stateDirEnvSnapshot ??= captureEnv(["NOVA_STATE_DIR"]);
+    setTestEnvValue("NOVA_STATE_DIR", tmpDir);
     return {
       commitments: {
         enabled: true,

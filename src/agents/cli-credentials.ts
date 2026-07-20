@@ -169,7 +169,7 @@ function parseClaudeCliOauthCredential(claudeOauth: unknown): ClaudeCliCredentia
 function resolveCodexHomePath(codexHome?: string) {
   const configured = codexHome ?? process.env.CODEX_HOME;
   // External CLI state belongs to the OS user, not Nova's relocatable
-  // home. Otherwise an isolated OPENCLAW_HOME hides an already logged-in CLI.
+  // home. Otherwise an isolated NOVA_HOME hides an already logged-in CLI.
   const home = resolveOsHomeRelativePath(configured || "~/.codex");
   try {
     return fs.realpathSync.native(home);

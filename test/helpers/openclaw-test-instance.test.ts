@@ -74,7 +74,7 @@ describe("openclaw test instance", () => {
         },
       },
       env: {
-        OPENCLAW_SKIP_CRON: "0",
+        NOVA_SKIP_CRON: "0",
       },
     });
 
@@ -84,9 +84,9 @@ describe("openclaw test instance", () => {
       expect(inst.stateDir).toBe(path.join(inst.homeDir, ".openclaw"));
       expect(inst.configPath).toBe(path.join(inst.stateDir, "openclaw.json"));
       expect(inst.env.HOME).toBe(inst.homeDir);
-      expect(inst.env.OPENCLAW_STATE_DIR).toBe(inst.stateDir);
-      expect(inst.env.OPENCLAW_CONFIG_PATH).toBe(inst.configPath);
-      expect(inst.env.OPENCLAW_SKIP_CRON).toBe("0");
+      expect(inst.env.NOVA_STATE_DIR).toBe(inst.stateDir);
+      expect(inst.env.NOVA_CONFIG_PATH).toBe(inst.configPath);
+      expect(inst.env.NOVA_SKIP_CRON).toBe("0");
 
       const config = JSON.parse(await fs.readFile(inst.configPath, "utf8"));
       expect(config).toStrictEqual({

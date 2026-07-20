@@ -469,7 +469,7 @@ describe("resolveExtendedStablePackage", () => {
         timeoutMs: 1000,
         packageName: "@kevins8/openclaw",
         env: {
-          OPENCLAW_UPDATE_PACKAGE_SPEC: "@kevins8/openclaw",
+          NOVA_UPDATE_PACKAGE_SPEC: "@kevins8/openclaw",
           NPM_CONFIG_REGISTRY: "http://127.0.0.1:4873/",
         },
       }),
@@ -497,7 +497,7 @@ describe("resolveExtendedStablePackage", () => {
         timeoutMs: 1000,
         packageName: "@kevins8/openclaw",
         env: {
-          OPENCLAW_UPDATE_PACKAGE_SPEC: "@kevins8/openclaw",
+          NOVA_UPDATE_PACKAGE_SPEC: "@kevins8/openclaw",
           NPM_CONFIG_REGISTRY: "https://registry.example.com/",
         },
       }),

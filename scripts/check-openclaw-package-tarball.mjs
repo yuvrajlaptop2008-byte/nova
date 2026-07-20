@@ -257,7 +257,7 @@ function collectRequiredBundledWorkspaceDependencyErrors(
   return errors;
 }
 
-const phaseTimingsEnabled = process.env.OPENCLAW_PACKAGE_TARBALL_CHECK_TIMINGS !== "0";
+const phaseTimingsEnabled = process.env.NOVA_PACKAGE_TARBALL_CHECK_TIMINGS !== "0";
 function runPhase(label, action) {
   const startedAt = performance.now();
   try {

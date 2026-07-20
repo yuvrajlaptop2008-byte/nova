@@ -77,7 +77,7 @@ async function withProjectionSessionStore(
   const tempConfig = { session: { store: storePath } };
   try {
     return await withEnvAsync(
-      { OPENCLAW_STATE_DIR: stateDir },
+      { NOVA_STATE_DIR: stateDir },
       async () =>
         await withTempConfig({
           cfg: tempConfig,

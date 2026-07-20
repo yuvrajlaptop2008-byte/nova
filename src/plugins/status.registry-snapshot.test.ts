@@ -73,8 +73,8 @@ describe("buildPluginRegistrySnapshotReport", () => {
       ...createColdPluginHermeticEnv(tempRoot, {
         bundledPluginsDir: makeTempDir(),
       }),
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-      OPENCLAW_STATE_DIR: stateDir,
+      NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+      NOVA_STATE_DIR: stateDir,
     };
     const config = {
       plugins: {

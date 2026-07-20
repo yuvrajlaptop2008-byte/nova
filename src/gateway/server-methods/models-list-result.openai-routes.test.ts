@@ -16,7 +16,7 @@ const WITHOUT_OPENAI_ENV_AUTH = {
   CHATGPT_OAUTH_TOKEN: undefined,
 } as const;
 const IMPLICIT_CODEX_RUNTIME = { id: "codex", source: "implicit" } as const;
-const IMPLICIT_OPENCLAW_RUNTIME = { id: "openclaw", source: "implicit" } as const;
+const IMPLICIT_NOVA_RUNTIME = { id: "openclaw", source: "implicit" } as const;
 
 function catalogEntry(id: string, api: ModelCatalogEntry["api"]): ModelCatalogEntry {
   return { id, name: id, provider: "openai", api };
@@ -207,7 +207,7 @@ describe("models.list OpenAI routes", () => {
             id: "gpt-5.4-nano",
             name: "GPT-5.4 Nano",
             provider: "openai",
-            agentRuntime: IMPLICIT_OPENCLAW_RUNTIME,
+            agentRuntime: IMPLICIT_NOVA_RUNTIME,
             contextWindow: 1_000_000,
             reasoning: true,
             available: true,
@@ -246,14 +246,14 @@ describe("models.list OpenAI routes", () => {
           id: "chat-latest",
           name: "chat-latest",
           provider: "openai",
-          agentRuntime: IMPLICIT_OPENCLAW_RUNTIME,
+          agentRuntime: IMPLICIT_NOVA_RUNTIME,
           available: false,
         },
         {
           id: "gpt-5.6",
           name: "GPT-5.6",
           provider: "openai",
-          agentRuntime: IMPLICIT_OPENCLAW_RUNTIME,
+          agentRuntime: IMPLICIT_NOVA_RUNTIME,
           available: false,
         },
       ],
@@ -271,7 +271,7 @@ describe("models.list OpenAI routes", () => {
           id: "gpt-5.6",
           name: "GPT-5.6",
           provider: "openai",
-          agentRuntime: IMPLICIT_OPENCLAW_RUNTIME,
+          agentRuntime: IMPLICIT_NOVA_RUNTIME,
           available: false,
         },
       ],
@@ -438,7 +438,7 @@ describe("models.list OpenAI routes", () => {
             id: "gpt-5.6",
             name: "GPT-5.6",
             provider: "openai",
-            agentRuntime: IMPLICIT_OPENCLAW_RUNTIME,
+            agentRuntime: IMPLICIT_NOVA_RUNTIME,
             available: false,
           },
         ],
@@ -484,7 +484,7 @@ describe("models.list OpenAI routes", () => {
             id: "chat-latest",
             name: "chat-latest",
             provider: "openai",
-            agentRuntime: IMPLICIT_OPENCLAW_RUNTIME,
+            agentRuntime: IMPLICIT_NOVA_RUNTIME,
             available: false,
           });
         },
@@ -530,7 +530,7 @@ describe("models.list OpenAI routes", () => {
             name: "chat-latest",
             provider: "openai",
             alias: "fast",
-            agentRuntime: IMPLICIT_OPENCLAW_RUNTIME,
+            agentRuntime: IMPLICIT_NOVA_RUNTIME,
             available: false,
           },
         ],

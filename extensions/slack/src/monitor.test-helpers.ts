@@ -320,7 +320,7 @@ export function resetSlackTestState(config: Record<string, unknown> = defaultSla
   lastSlackTestStateDir = fs.realpathSync(
     fs.mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-slack-monitor-state-")),
   );
-  process.env.OPENCLAW_STATE_DIR = lastSlackTestStateDir;
+  process.env.NOVA_STATE_DIR = lastSlackTestStateDir;
   slackTestState.config = config;
   slackTestState.appConstructorArgs = undefined;
   slackTestState.socketModeLogger = undefined;

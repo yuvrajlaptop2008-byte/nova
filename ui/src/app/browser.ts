@@ -9,9 +9,7 @@ type WindowWithControlUiBasePath = Window &
 
 export function resolveControlUiBasePath(pathname: string): string {
   if (typeof window !== "undefined") {
-    const windowValue = (window as WindowWithControlUiBasePath)[
-      "__OPENCLAW_CONTROL_UI_BASE_PATH__"
-    ];
+    const windowValue = (window as WindowWithControlUiBasePath)["__NOVA_CONTROL_UI_BASE_PATH__"];
     if (typeof windowValue === "string") {
       return normalizeBasePath(windowValue);
     }

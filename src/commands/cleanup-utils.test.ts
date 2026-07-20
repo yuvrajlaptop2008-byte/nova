@@ -67,8 +67,8 @@ describe("buildCleanupPlan", () => {
     return withEnvAsync(
       {
         HOME: home,
-        OPENCLAW_STATE_DIR: stateDir,
-        OPENCLAW_WORKSPACE_DIR: undefined,
+        NOVA_STATE_DIR: stateDir,
+        NOVA_WORKSPACE_DIR: undefined,
       },
       async () => {
         const plan = buildCleanupPlan({

@@ -114,7 +114,7 @@ async function runScheduler(options: ProducerOptions, appendLog: (chunk: unknown
   const dockerRunDir = path.join(options.artifactBase, "docker-run");
   const identityPath = path.join(options.artifactBase, "artifact-identities.json");
   await fs.mkdir(dockerRunDir, { recursive: true });
-  let packageTgz = process.env.OPENCLAW_CURRENT_PACKAGE_TGZ;
+  let packageTgz = process.env.NOVA_CURRENT_PACKAGE_TGZ;
   if (packageTgz) {
     const packageDir = path.join(dockerRunDir, "openclaw-package");
     const evidencePackageTgz = path.join(packageDir, "openclaw-current.tgz");
@@ -134,15 +134,15 @@ async function runScheduler(options: ProducerOptions, appendLog: (chunk: unknown
       cwd: options.repoRoot,
       env: {
         ...process.env,
-        OPENCLAW_DOCKER_ALL_BUILD: "1",
-        OPENCLAW_DOCKER_ALL_DRY_RUN: "0",
-        OPENCLAW_DOCKER_ALL_LANES: options.lane,
-        OPENCLAW_DOCKER_ALL_LOG_DIR: dockerRunDir,
-        OPENCLAW_DOCKER_ALL_PARALLELISM: "1",
-        OPENCLAW_DOCKER_ALL_PREFLIGHT: "1",
-        OPENCLAW_DOCKER_ALL_TIMINGS_FILE: path.join(dockerRunDir, "lane-timings.json"),
-        OPENCLAW_DOCKER_ARTIFACT_IDENTITY_PATH: identityPath,
-        ...(packageTgz ? { OPENCLAW_CURRENT_PACKAGE_TGZ: packageTgz } : {}),
+        NOVA_DOCKER_ALL_BUILD: "1",
+        NOVA_DOCKER_ALL_DRY_RUN: "0",
+        NOVA_DOCKER_ALL_LANES: options.lane,
+        NOVA_DOCKER_ALL_LOG_DIR: dockerRunDir,
+        NOVA_DOCKER_ALL_PARALLELISM: "1",
+        NOVA_DOCKER_ALL_PREFLIGHT: "1",
+        NOVA_DOCKER_ALL_TIMINGS_FILE: path.join(dockerRunDir, "lane-timings.json"),
+        NOVA_DOCKER_ARTIFACT_IDENTITY_PATH: identityPath,
+        ...(packageTgz ? { NOVA_CURRENT_PACKAGE_TGZ: packageTgz } : {}),
       },
       stdio: ["ignore", "pipe", "pipe"],
     });

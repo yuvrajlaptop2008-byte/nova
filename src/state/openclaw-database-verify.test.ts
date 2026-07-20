@@ -73,7 +73,7 @@ function quarantineStorePath(stateDir: string): string {
 describe("Nova database integrity verifier", () => {
   it("detects corruption off-thread, quarantines it, and latches later opens", async () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const agentPath = openOpenClawAgentDatabase({ agentId: "worker-1", env }).path;
     closeOpenClawAgentDatabasesForTest();
     closeOpenClawStateDatabaseForTest();
@@ -128,7 +128,7 @@ describe("Nova database integrity verifier", () => {
 
   it("reports an uncleared quarantine row instead of claiming repair success", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-clear-failure-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const agentPath = openOpenClawAgentDatabase({ agentId: "worker-1", env }).path;
     openOpenClawStateDatabase({ env });
     closeOpenClawAgentDatabasesForTest();
@@ -163,7 +163,7 @@ describe("Nova database integrity verifier", () => {
 
   it("keeps healthy opens on the missing-store fast path", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-clean-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
 
     openOpenClawStateDatabase({ env });
     openOpenClawAgentDatabase({ agentId: "worker-1", env });
@@ -173,7 +173,7 @@ describe("Nova database integrity verifier", () => {
 
   it("records and clears dedicated quarantine rows with rollback journaling", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-store-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const databasePath = path.join(stateDir, "agent.sqlite");
     const storePath = quarantineStorePath(stateDir);
 
@@ -212,7 +212,7 @@ describe("Nova database integrity verifier", () => {
 
   it("recovers an interrupted empty quarantine-store initialization", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-empty-store-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const databasePath = path.join(stateDir, "agent.sqlite");
     const storePath = quarantineStorePath(stateDir);
     fs.mkdirSync(path.dirname(storePath), { recursive: true });
@@ -234,7 +234,7 @@ describe("Nova database integrity verifier", () => {
     "recovers a hot rollback journal before reading quarantine",
     () => {
       const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-hot-journal-");
-      const env = { OPENCLAW_STATE_DIR: stateDir };
+      const env = { NOVA_STATE_DIR: stateDir };
       const databasePath = path.join(stateDir, "agent.sqlite");
       const storePath = quarantineStorePath(stateDir);
       expect(
@@ -254,13 +254,13 @@ describe("Nova database integrity verifier", () => {
           "-e",
           `
             import { DatabaseSync } from "node:sqlite";
-            const database = new DatabaseSync(process.env.OPENCLAW_QUARANTINE_TEST_PATH);
+            const database = new DatabaseSync(process.env.NOVA_QUARANTINE_TEST_PATH);
             database.exec("PRAGMA journal_mode = DELETE; PRAGMA synchronous = FULL; BEGIN IMMEDIATE;");
             database.prepare("UPDATE quarantined_databases SET reason = 'uncommitted reason'").run();
             process.kill(process.pid, "SIGKILL");
           `,
         ],
-        { env: { ...process.env, OPENCLAW_QUARANTINE_TEST_PATH: storePath } },
+        { env: { ...process.env, NOVA_QUARANTINE_TEST_PATH: storePath } },
       );
       expect(crashed.signal).toBe("SIGKILL");
       expect(fs.existsSync(`${storePath}-journal`)).toBe(true);
@@ -273,7 +273,7 @@ describe("Nova database integrity verifier", () => {
 
   it("does not latch transient verifier errors", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-transient-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const agentPath = openOpenClawAgentDatabase({ agentId: "worker-1", env }).path;
     closeOpenClawAgentDatabasesForTest();
     closeOpenClawStateDatabaseForTest();
@@ -292,7 +292,7 @@ describe("Nova database integrity verifier", () => {
 
   it("persists state failure quarantine across restart until doctor repair", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-verify-state-failure-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const statePath = openOpenClawStateDatabase({ env }).path;
     closeOpenClawStateDatabaseForTest();
     const targets: OpenClawDatabaseVerifyTarget[] = [

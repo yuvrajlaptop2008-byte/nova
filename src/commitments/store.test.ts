@@ -35,8 +35,8 @@ describe("commitment SQLite store", () => {
   async function useTempStateDir(): Promise<string> {
     const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-commitments-store-"));
     tmpDirs.push(tmpDir);
-    stateDirEnvSnapshot ??= captureEnv(["OPENCLAW_STATE_DIR"]);
-    setTestEnvValue("OPENCLAW_STATE_DIR", tmpDir);
+    stateDirEnvSnapshot ??= captureEnv(["NOVA_STATE_DIR"]);
+    setTestEnvValue("NOVA_STATE_DIR", tmpDir);
     return tmpDir;
   }
 

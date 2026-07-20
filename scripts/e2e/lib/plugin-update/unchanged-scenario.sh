@@ -3,15 +3,15 @@ set -euo pipefail
 
 source scripts/lib/openclaw-e2e-instance.sh
 
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 openclaw_e2e_install_package /tmp/openclaw-install.log "mounted OpenClaw package" /tmp/npm-prefix
 
 package_root="$(openclaw_e2e_package_root /tmp/npm-prefix)"
 entry="$(openclaw_e2e_package_entrypoint "$package_root")"
 probe="scripts/e2e/lib/plugin-update/probe.mjs"
 package_version="$(node -p "require('$package_root/package.json').version")"
-OPENCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT="$(node "$probe" legacy-compat "$package_version")"
-export OPENCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT
+NOVA_PACKAGE_ACCEPTANCE_LEGACY_COMPAT="$(node "$probe" legacy-compat "$package_version")"
+export NOVA_PACKAGE_ACCEPTANCE_LEGACY_COMPAT
 export PATH="/tmp/npm-prefix/bin:$PATH"
 
 node "$probe" seed
@@ -42,10 +42,10 @@ if ! node "$probe" wait-registry; then
 fi
 
 before_config_hash=""
-if [ "$OPENCLAW_PACKAGE_ACCEPTANCE_LEGACY_COMPAT" != "1" ]; then
-  before_config_hash="$(sha256sum "$OPENCLAW_CONFIG_PATH" | awk '{print $1}')"
+if [ "$NOVA_PACKAGE_ACCEPTANCE_LEGACY_COMPAT" != "1" ]; then
+  before_config_hash="$(sha256sum "$NOVA_CONFIG_PATH" | awk '{print $1}')"
 fi
-plugin_update_timeout_seconds="$(openclaw_e2e_read_positive_int_env OPENCLAW_PLUGIN_UPDATE_TIMEOUT_SECONDS 180)"
+plugin_update_timeout_seconds="$(openclaw_e2e_read_positive_int_env NOVA_PLUGIN_UPDATE_TIMEOUT_SECONDS 180)"
 
 node "$probe" snapshot > /tmp/plugin-update-before.json
 
@@ -63,7 +63,7 @@ if [ "$plugin_update_status" -ne 0 ]; then
 fi
 
 if [ -n "$before_config_hash" ]; then
-  after_config_hash="$(sha256sum "$OPENCLAW_CONFIG_PATH" | awk '{print $1}')"
+  after_config_hash="$(sha256sum "$NOVA_CONFIG_PATH" | awk '{print $1}')"
   if [ "$before_config_hash" != "$after_config_hash" ]; then
     echo "Config changed unexpectedly for modern package $package_version"
     openclaw_e2e_print_log /tmp/plugin-update-output.log

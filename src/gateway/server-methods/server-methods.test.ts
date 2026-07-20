@@ -5319,8 +5319,8 @@ describe("gateway healthHandlers.health cache freshness", () => {
 
   it("merges live dead-lettered delivery queue counts into cached health responses", async () => {
     const tmpStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-health-cached-dq-"));
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = tmpStateDir;
+    const previousStateDir = process.env.NOVA_STATE_DIR;
+    process.env.NOVA_STATE_DIR = tmpStateDir;
     try {
       const { moveDeliveryQueueEntryToFailed, upsertDeliveryQueueEntry } =
         await import("../../infra/delivery-queue-sqlite.js");
@@ -5379,9 +5379,9 @@ describe("gateway healthHandlers.health cache freshness", () => {
       expect(mockCallArg(respond, 0, 3)).toEqual({ cached: true });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.NOVA_STATE_DIR = previousStateDir;
       }
       fs.rmSync(tmpStateDir, { recursive: true, force: true });
     }

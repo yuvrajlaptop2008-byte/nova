@@ -48,7 +48,7 @@ const defaultSubagentAnnounceOutputDeps: SubagentAnnounceOutputDeps = {
 let subagentAnnounceOutputDeps: SubagentAnnounceOutputDeps = defaultSubagentAnnounceOutputDeps;
 
 function isFastTestMode() {
-  return process.env.OPENCLAW_TEST_FAST === "1";
+  return process.env.NOVA_TEST_FAST === "1";
 }
 
 type SubagentOutputSnapshot = {

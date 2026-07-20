@@ -203,9 +203,9 @@ describe("runNodeDaemonStatus", () => {
     mocks.service.readCommand.mockResolvedValue({
       programArguments: ["node", "node-host"],
       environment: {
-        OPENCLAW_PROFILE: "work",
-        OPENCLAW_GATEWAY_TOKEN: "gateway-token",
-        OPENCLAW_GATEWAY_PASSWORD: "gateway-password",
+        NOVA_PROFILE: "work",
+        NOVA_GATEWAY_TOKEN: "gateway-token",
+        NOVA_GATEWAY_PASSWORD: "gateway-password",
       },
     });
 
@@ -214,7 +214,7 @@ describe("runNodeDaemonStatus", () => {
     expect(mocks.runtime.writeJson).toHaveBeenCalledWith({
       service: expect.objectContaining({
         command: expect.objectContaining({
-          environment: { OPENCLAW_PROFILE: "work" },
+          environment: { NOVA_PROFILE: "work" },
         }),
       }),
     });

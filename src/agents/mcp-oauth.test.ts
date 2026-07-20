@@ -36,17 +36,17 @@ async function withTempHome<T>(
   options: Parameters<typeof withBaseTempHome>[1],
 ): Promise<T> {
   return withBaseTempHome(async (home) => {
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = path.join(home, ".openclaw");
+    const previousStateDir = process.env.NOVA_STATE_DIR;
+    process.env.NOVA_STATE_DIR = path.join(home, ".openclaw");
     closeOpenClawStateDatabaseForTest();
     try {
       return await run(home);
     } finally {
       closeOpenClawStateDatabaseForTest();
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.NOVA_STATE_DIR = previousStateDir;
       }
     }
   }, options);
@@ -178,7 +178,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-insufficient-scope-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -228,7 +228,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-terminal-rejection-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -293,7 +293,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-rejected-token-challenge-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -341,7 +341,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-doctor-challenge-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -397,8 +397,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-legacy-token-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );
@@ -419,8 +419,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-missing-token-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );
@@ -447,7 +447,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-challenge-provenance-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -500,7 +500,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-challenge-bootstrap-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -536,8 +536,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );
@@ -566,7 +566,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-status-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -601,7 +601,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-atomic-fields-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -624,7 +624,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-corrupt-row-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -647,7 +647,7 @@ describe("MCP OAuth provider", () => {
       {
         prefix: "openclaw-mcp-oauth-orphan-expiry-",
         skipSessionCleanup: true,
-        env: { OPENCLAW_CONFIG_PATH: undefined, OPENCLAW_STATE_DIR: undefined },
+        env: { NOVA_CONFIG_PATH: undefined, NOVA_STATE_DIR: undefined },
       },
     );
   });
@@ -671,8 +671,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-url-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );
@@ -744,8 +744,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-localhost-failure-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );
@@ -791,8 +791,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-localhost-persist-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );
@@ -820,8 +820,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-noninteractive-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );
@@ -851,8 +851,8 @@ describe("MCP OAuth provider", () => {
         prefix: "openclaw-mcp-oauth-clear-",
         skipSessionCleanup: true,
         env: {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_STATE_DIR: undefined,
         },
       },
     );

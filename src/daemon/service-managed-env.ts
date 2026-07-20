@@ -3,7 +3,7 @@ import { sortUniqueStrings } from "@openclaw/normalization-core/string-normaliza
 import { normalizeEnvVarKey } from "../infra/host-env-security.js";
 import type { GatewayServiceEnvironmentValueSource } from "./service-types.js";
 
-const MANAGED_SERVICE_ENV_KEYS_VAR = "OPENCLAW_SERVICE_MANAGED_ENV_KEYS";
+const MANAGED_SERVICE_ENV_KEYS_VAR = "NOVA_SERVICE_MANAGED_ENV_KEYS";
 
 // Tracks which service environment keys Nova owns across reinstall/start flows.
 type ServiceEnvCommand = {

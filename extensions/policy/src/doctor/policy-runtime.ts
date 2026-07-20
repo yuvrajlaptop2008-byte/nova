@@ -83,7 +83,7 @@ function resolvePolicyArtifactPath(ctx: HealthCheckContext, fileName: string): s
 }
 
 function resolvePolicyArtifactHomeDir(): string | undefined {
-  const explicitHome = normalizedEnvValue(process.env.OPENCLAW_HOME);
+  const explicitHome = normalizedEnvValue(process.env.NOVA_HOME);
   if (explicitHome !== undefined) {
     if (explicitHome === "~" || explicitHome.startsWith("~/") || explicitHome.startsWith("~\\")) {
       return resolvePolicyHomeRelativePath(explicitHome);
@@ -389,7 +389,7 @@ function execApprovalsArtifactLocation(ctx: HealthCheckContext): {
   readonly path: string;
   readonly displayName: string;
 } {
-  const stateDir = normalizedEnvValue(process.env.OPENCLAW_STATE_DIR);
+  const stateDir = normalizedEnvValue(process.env.NOVA_STATE_DIR);
   if (stateDir !== undefined) {
     const path = resolve(resolvePolicyStateDir(stateDir), "exec-approvals.json");
     return { path, displayName: path };
@@ -401,7 +401,7 @@ function execApprovalsArtifactLocation(ctx: HealthCheckContext): {
 }
 
 export function execApprovalsDisplayName(): string {
-  const stateDir = normalizedEnvValue(process.env.OPENCLAW_STATE_DIR);
+  const stateDir = normalizedEnvValue(process.env.NOVA_STATE_DIR);
   if (stateDir === undefined) {
     return canonicalExecApprovalsPath();
   }

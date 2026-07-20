@@ -9,7 +9,7 @@
 // @slack/web-api ChatStreamer so the SDK's buffered-ack contract is captured as-is:
 // append() returns null and issues NO network call until its local buffer crosses
 // buffer_size (256 chars), and stop() can be the first network call for short replies.
-// Refresh goldens with OPENCLAW_TRACE_UPDATE=1 (see delivery-trace harness docs).
+// Refresh goldens with NOVA_TRACE_UPDATE=1 (see delivery-trace harness docs).
 import { ChatStreamer } from "@slack/web-api/dist/chat-stream.js";
 import {
   expectDeliveryTraceMatchesGolden,

@@ -50,7 +50,7 @@ function createDatabaseOptions(): OpenClawStateDatabaseOptions {
     fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-approval-handler-")),
   );
   tempDirs.push(stateDir);
-  return { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } };
+  return { env: { ...process.env, NOVA_STATE_DIR: stateDir } };
 }
 
 function createManagers(databaseOptions: OpenClawStateDatabaseOptions) {

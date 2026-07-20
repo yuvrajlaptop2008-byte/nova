@@ -77,8 +77,7 @@ async function resolveLiveModel(
     providerDiscoveryProviderIds: ["anthropic"],
   });
   const modelRegistry = discoverModels(authStorage, agentDir, { providerFilter: "anthropic" });
-  const requestedModelId =
-    process.env.OPENCLAW_LIVE_AGENT_SESSION_MODEL?.trim() || DEFAULT_MODEL_ID;
+  const requestedModelId = process.env.NOVA_LIVE_AGENT_SESSION_MODEL?.trim() || DEFAULT_MODEL_ID;
   const model =
     modelRegistry.find("anthropic", requestedModelId) ??
     modelRegistry

@@ -425,7 +425,7 @@ async function readSessionTranscriptBytes(
     agentId: "qa",
     env: {
       ...process.env,
-      OPENCLAW_STATE_DIR: path.join(env.gateway.tempRoot, "state"),
+      NOVA_STATE_DIR: path.join(env.gateway.tempRoot, "state"),
     },
     sessionId,
     sessionKey,
@@ -636,7 +636,7 @@ export async function runRuntimeToolFixture(
     config,
   });
   const dynamicExposureIntentionallyExcluded =
-    env.gateway.runtimeEnv.OPENCLAW_QA_FORCE_RUNTIME === "codex" &&
+    env.gateway.runtimeEnv.NOVA_QA_FORCE_RUNTIME === "codex" &&
     metadata.expectedLayer === "codex-native-workspace";
   const expectedAvailable = readBoolean(config.expectedAvailable, true);
   if (!tools.has(toolName) && !dynamicExposureIntentionallyExcluded) {

@@ -223,12 +223,12 @@ function resolveRawOsHomeDir(env: NodeJS.ProcessEnv, homedir: () => string): str
   );
 }
 
-/** Resolve OPENCLAW_HOME or the OS home, falling back to cwd for hermetic tests. */
+/** Resolve NOVA_HOME or the OS home, falling back to cwd for hermetic tests. */
 function resolveRequiredHomeDir(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = os.homedir,
 ): string {
-  const explicitHome = normalizeHomeValue(env.OPENCLAW_HOME);
+  const explicitHome = normalizeHomeValue(env.NOVA_HOME);
   const rawHome = explicitHome
     ? explicitHome.replace(/^~(?=$|[\\/])/, resolveRawOsHomeDir(env, homedir) ?? "")
     : resolveRawOsHomeDir(env, homedir);
@@ -261,13 +261,13 @@ function resolveStateDir(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = os.homedir,
 ): string {
-  const override = env.OPENCLAW_STATE_DIR?.trim();
+  const override = env.NOVA_STATE_DIR?.trim();
   if (override) {
     return resolveMemoryHostUserPath(override, env, homedir);
   }
   const effectiveHome = () => resolveRequiredHomeDir(env, homedir);
   const nextDir = path.join(effectiveHome(), NEW_STATE_DIRNAME);
-  if (env.OPENCLAW_TEST_FAST === "1" || fs.existsSync(nextDir)) {
+  if (env.NOVA_TEST_FAST === "1" || fs.existsSync(nextDir)) {
     return nextDir;
   }
   // Existing legacy state remains authoritative until an explicit migration creates .openclaw.
@@ -281,10 +281,10 @@ function resolveStateDir(
   return existingLegacy ?? nextDir;
 }
 
-/** Resolve the default agent workspace, partitioned by OPENCLAW_PROFILE when set. */
+/** Resolve the default agent workspace, partitioned by NOVA_PROFILE when set. */
 function resolveDefaultAgentWorkspaceDir(env: NodeJS.ProcessEnv = process.env): string {
   const home = resolveRequiredHomeDir(env, os.homedir);
-  const profile = env.OPENCLAW_PROFILE?.trim();
+  const profile = env.NOVA_PROFILE?.trim();
   if (profile && normalizeLowercaseStringOrEmpty(profile) !== "default") {
     return path.join(home, ".openclaw", `workspace-${profile}`);
   }

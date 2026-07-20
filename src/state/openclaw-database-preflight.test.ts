@@ -4,13 +4,13 @@ import { cleanupTempDirs, makeTempDir } from "../../test/helpers/temp-dir.js";
 import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import {
   closeOpenClawAgentDatabasesForTest,
-  OPENCLAW_AGENT_SCHEMA_VERSION,
+  NOVA_AGENT_SCHEMA_VERSION,
   openOpenClawAgentDatabase,
 } from "./openclaw-agent-db.js";
 import { preflightOpenClawDatabaseSchemas } from "./openclaw-database-preflight.js";
 import {
   closeOpenClawStateDatabaseForTest,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
   openOpenClawStateDatabase,
 } from "./openclaw-state-db.js";
 
@@ -26,14 +26,14 @@ afterAll(() => cleanupTempDirs(tempDirs));
 describe("Nova database schema preflight", () => {
   it("keeps package schema support metadata aligned", () => {
     expect(packageJson.openclaw.schemaVersions).toEqual({
-      state: OPENCLAW_STATE_SCHEMA_VERSION,
-      agent: OPENCLAW_AGENT_SCHEMA_VERSION,
+      state: NOVA_STATE_SCHEMA_VERSION,
+      agent: NOVA_AGENT_SCHEMA_VERSION,
     });
   });
 
   it("collects newer state and registered agent schemas with writer builds", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-preflight-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const statePath = openOpenClawStateDatabase({ env }).path;
     const agentPath = openOpenClawAgentDatabase({ agentId: "worker-1", env }).path;
     closeOpenClawAgentDatabasesForTest();
@@ -42,7 +42,7 @@ describe("Nova database schema preflight", () => {
     const { DatabaseSync } = requireNodeSqlite();
     const state = new DatabaseSync(statePath);
     try {
-      state.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION + 1};`);
+      state.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION + 1};`);
       state
         .prepare("UPDATE schema_meta SET app_version = ? WHERE meta_key = 'primary'")
         .run("state-writer-build");
@@ -51,7 +51,7 @@ describe("Nova database schema preflight", () => {
     }
     const agent = new DatabaseSync(agentPath);
     try {
-      agent.exec(`PRAGMA user_version = ${OPENCLAW_AGENT_SCHEMA_VERSION + 1};`);
+      agent.exec(`PRAGMA user_version = ${NOVA_AGENT_SCHEMA_VERSION + 1};`);
       agent
         .prepare("UPDATE schema_meta SET app_version = ? WHERE meta_key = 'primary'")
         .run("agent-writer-build");
@@ -63,8 +63,8 @@ describe("Nova database schema preflight", () => {
       preflightOpenClawDatabaseSchemas({
         env,
         supportedVersions: {
-          state: OPENCLAW_STATE_SCHEMA_VERSION,
-          agent: OPENCLAW_AGENT_SCHEMA_VERSION,
+          state: NOVA_STATE_SCHEMA_VERSION,
+          agent: NOVA_AGENT_SCHEMA_VERSION,
         },
       }),
     ).toEqual({
@@ -72,16 +72,16 @@ describe("Nova database schema preflight", () => {
         {
           kind: "state",
           path: statePath,
-          foundVersion: OPENCLAW_STATE_SCHEMA_VERSION + 1,
-          supportedVersion: OPENCLAW_STATE_SCHEMA_VERSION,
+          foundVersion: NOVA_STATE_SCHEMA_VERSION + 1,
+          supportedVersion: NOVA_STATE_SCHEMA_VERSION,
           writerAppVersion: "state-writer-build",
         },
         {
           kind: "agent",
           path: agentPath,
           agentId: "worker-1",
-          foundVersion: OPENCLAW_AGENT_SCHEMA_VERSION + 1,
-          supportedVersion: OPENCLAW_AGENT_SCHEMA_VERSION,
+          foundVersion: NOVA_AGENT_SCHEMA_VERSION + 1,
+          supportedVersion: NOVA_AGENT_SCHEMA_VERSION,
           writerAppVersion: "agent-writer-build",
         },
       ],
@@ -91,7 +91,7 @@ describe("Nova database schema preflight", () => {
 
   it("reports an existing unreadable state database as indeterminate", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-preflight-unreadable-state-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const statePath = openOpenClawStateDatabase({ env }).path;
     closeOpenClawStateDatabaseForTest();
     fs.writeFileSync(statePath, "not a sqlite database");
@@ -100,8 +100,8 @@ describe("Nova database schema preflight", () => {
       preflightOpenClawDatabaseSchemas({
         env,
         supportedVersions: {
-          state: OPENCLAW_STATE_SCHEMA_VERSION,
-          agent: OPENCLAW_AGENT_SCHEMA_VERSION,
+          state: NOVA_STATE_SCHEMA_VERSION,
+          agent: NOVA_AGENT_SCHEMA_VERSION,
         },
       }),
     ).toEqual({
@@ -114,7 +114,7 @@ describe("Nova database schema preflight", () => {
 
   it("reports a failed agent registry query as indeterminate", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-preflight-registry-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const statePath = openOpenClawStateDatabase({ env }).path;
     closeOpenClawStateDatabaseForTest();
     const { DatabaseSync } = requireNodeSqlite();
@@ -129,8 +129,8 @@ describe("Nova database schema preflight", () => {
       preflightOpenClawDatabaseSchemas({
         env,
         supportedVersions: {
-          state: OPENCLAW_STATE_SCHEMA_VERSION,
-          agent: OPENCLAW_AGENT_SCHEMA_VERSION,
+          state: NOVA_STATE_SCHEMA_VERSION,
+          agent: NOVA_AGENT_SCHEMA_VERSION,
         },
       }),
     ).toEqual({
@@ -147,7 +147,7 @@ describe("Nova database schema preflight", () => {
 
   it("reports an existing unreadable registered agent database as indeterminate", () => {
     const stateDir = makeTempDir(tempDirs, "openclaw-database-preflight-unreadable-agent-");
-    const env = { OPENCLAW_STATE_DIR: stateDir };
+    const env = { NOVA_STATE_DIR: stateDir };
     const agentPath = openOpenClawAgentDatabase({ agentId: "worker-1", env }).path;
     closeOpenClawAgentDatabasesForTest();
     closeOpenClawStateDatabaseForTest();
@@ -157,8 +157,8 @@ describe("Nova database schema preflight", () => {
       preflightOpenClawDatabaseSchemas({
         env,
         supportedVersions: {
-          state: OPENCLAW_STATE_SCHEMA_VERSION,
-          agent: OPENCLAW_AGENT_SCHEMA_VERSION,
+          state: NOVA_STATE_SCHEMA_VERSION,
+          agent: NOVA_AGENT_SCHEMA_VERSION,
         },
       }),
     ).toEqual({

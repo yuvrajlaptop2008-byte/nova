@@ -23,7 +23,7 @@ import { routeLogsToStderr } from "../logging/console.js";
 import { ensureStandalonePluginToolRegistryLoaded, resolvePluginTools } from "../plugins/tools.js";
 import { parseAgentSessionKey } from "../routing/session-key.js";
 import {
-  OPENCLAW_TOOLS_MCP_AGENT_SESSION_KEY_ENV,
+  NOVA_TOOLS_MCP_AGENT_SESSION_KEY_ENV,
   resolveToolsMcpAgentSessionKey,
 } from "./agent-session-env.js";
 import { connectToolsMcpServerToStdio, createToolsMcpServer } from "./tools-stdio-server.js";
@@ -53,7 +53,7 @@ export function resolvePluginToolsForMcp(params: {
   const parsedSession = agentSessionKey ? parseAgentSessionKey(agentSessionKey) : undefined;
   if (agentSessionKey && !parsedSession) {
     throw new Error(
-      `${OPENCLAW_TOOLS_MCP_AGENT_SESSION_KEY_ENV} must be a canonical agent session key`,
+      `${NOVA_TOOLS_MCP_AGENT_SESSION_KEY_ENV} must be a canonical agent session key`,
     );
   }
   const context = {

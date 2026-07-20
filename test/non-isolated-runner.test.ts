@@ -20,7 +20,7 @@ function childEnv(): NodeJS.ProcessEnv {
     // ::error annotations that the parent CI job renders as its own failures.
     if (
       key.startsWith("VITEST") ||
-      key.startsWith("OPENCLAW_VITEST") ||
+      key.startsWith("NOVA_VITEST") ||
       key === "GITHUB_ACTIONS" ||
       key === "FORCE_COLOR"
     ) {

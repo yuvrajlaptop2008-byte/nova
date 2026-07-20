@@ -10,9 +10,9 @@ import {
   extractFirstTextBlock,
 } from "../../shared/chat-message-content.js";
 import {
-  OPENCLAW_DELIVERY_MIRROR_MODEL,
-  OPENCLAW_TRANSCRIPT_ARTIFACT_API,
-  OPENCLAW_TRANSCRIPT_ARTIFACT_PROVIDER,
+  NOVA_DELIVERY_MIRROR_MODEL,
+  NOVA_TRANSCRIPT_ARTIFACT_API,
+  NOVA_TRANSCRIPT_ARTIFACT_PROVIDER,
   isTranscriptOnlyOpenClawAssistantModel,
 } from "../../shared/transcript-only-openclaw-assistant.js";
 import type { OpenClawConfig } from "../types.openclaw.js";
@@ -479,9 +479,9 @@ export async function appendAssistantMessageToSessionTranscript(params: {
     message: {
       role: "assistant" as const,
       content: [{ type: "text", text: mirrorText }],
-      api: OPENCLAW_TRANSCRIPT_ARTIFACT_API,
-      provider: OPENCLAW_TRANSCRIPT_ARTIFACT_PROVIDER,
-      model: OPENCLAW_DELIVERY_MIRROR_MODEL,
+      api: NOVA_TRANSCRIPT_ARTIFACT_API,
+      provider: NOVA_TRANSCRIPT_ARTIFACT_PROVIDER,
+      model: NOVA_DELIVERY_MIRROR_MODEL,
       usage: {
         input: 0,
         output: 0,
@@ -726,8 +726,8 @@ async function touchSqliteAssistantAppendSessionEntry(params: {
 
 function isRedundantDeliveryMirror(message: SessionTranscriptAssistantMessage): boolean {
   return (
-    message.provider === OPENCLAW_TRANSCRIPT_ARTIFACT_PROVIDER &&
-    message.model === OPENCLAW_DELIVERY_MIRROR_MODEL
+    message.provider === NOVA_TRANSCRIPT_ARTIFACT_PROVIDER &&
+    message.model === NOVA_DELIVERY_MIRROR_MODEL
   );
 }
 

@@ -364,9 +364,9 @@ function agentRuntimeClient(sessionKey: string, agentId = "main") {
 }
 
 async function withTempOpenClawStateDir<T>(test: (stateDir: string) => Promise<T>): Promise<T> {
-  const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+  const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
   const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "gateway-send-state-"));
-  setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+  setTestEnvValue("NOVA_STATE_DIR", stateDir);
   try {
     return await test(stateDir);
   } finally {

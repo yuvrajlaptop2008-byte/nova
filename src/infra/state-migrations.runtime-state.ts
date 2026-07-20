@@ -140,7 +140,7 @@ export function migrateLegacyVoiceWakeSettings(params: {
 }): { changes: string[]; warnings: string[] } {
   const changes: string[] = [];
   const warnings: string[] = [];
-  const env = { ...process.env, OPENCLAW_STATE_DIR: params.stateDir };
+  const env = { ...process.env, NOVA_STATE_DIR: params.stateDir };
   if (fileExists(params.detected.triggersPath)) {
     let triggers: string[];
     try {
@@ -508,7 +508,7 @@ export function migrateLegacyConfigHealth(params: {
           reconciledCount: transactionReconciledCount,
         };
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, NOVA_STATE_DIR: params.stateDir } },
     );
     importedCount = result.importedCount;
     reconciledCount = result.reconciledCount;
@@ -732,7 +732,7 @@ export function migrateLegacyPluginBindingApprovals(params: {
           );
         }
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, NOVA_STATE_DIR: params.stateDir } },
     );
   } catch (err) {
     warnings.push(`Failed migrating legacy plugin binding approvals: ${String(err)}`);
@@ -939,7 +939,7 @@ export function migrateLegacyCurrentConversationBindings(params: {
           );
         }
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, NOVA_STATE_DIR: params.stateDir } },
     );
   } catch (err) {
     warnings.push(`Failed migrating legacy current-conversation bindings: ${String(err)}`);

@@ -72,8 +72,8 @@ describe("listOpenClawPluginManifestMetadata", () => {
     );
 
     const records = listOpenClawPluginManifestMetadata({
-      OPENCLAW_HOME: home,
-      OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
+      NOVA_HOME: home,
+      NOVA_BUNDLED_PLUGINS_DIR: bundledRoot,
     });
 
     const openai = records.find((record) => record.manifest.id === "openai");
@@ -94,8 +94,8 @@ describe("listOpenClawPluginManifestMetadata", () => {
     });
 
     const records = listOpenClawPluginManifestMetadata({
-      OPENCLAW_HOME: home,
-      OPENCLAW_BUNDLED_PLUGINS_DIR: partialBundledRoot,
+      NOVA_HOME: home,
+      NOVA_BUNDLED_PLUGINS_DIR: partialBundledRoot,
     });
 
     const openai = records.find((record) => record.manifest.id === "openai");
@@ -115,9 +115,9 @@ describe("listOpenClawPluginManifestMetadata", () => {
     writeJson(path.join(pluginDir, "openclaw.plugin.json"), { id: "example" });
 
     const records = listOpenClawPluginManifestMetadata({
-      OPENCLAW_HOME: "   ",
+      NOVA_HOME: "   ",
       HOME: home,
-      OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(root, "bundled"),
+      NOVA_BUNDLED_PLUGINS_DIR: path.join(root, "bundled"),
     });
 
     expect(records).toContainEqual({
@@ -145,8 +145,8 @@ describe("listOpenClawPluginManifestMetadata", () => {
     expect(fs.statSync(oversizedPath).size).toBeGreaterThan(256 * 1024);
 
     const records = listOpenClawPluginManifestMetadata({
-      OPENCLAW_HOME: home,
-      OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(root, "empty-bundled"),
+      NOVA_HOME: home,
+      NOVA_BUNDLED_PLUGINS_DIR: path.join(root, "empty-bundled"),
     });
 
     // "good-plugin" is present; "big-plugin" is skipped due to oversized manifest.
@@ -171,8 +171,8 @@ describe("listOpenClawPluginManifestMetadata", () => {
     expect(Buffer.byteLength(fs.readFileSync(exactPath), "utf8")).toBe(256 * 1024);
 
     const records = listOpenClawPluginManifestMetadata({
-      OPENCLAW_HOME: home,
-      OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(root, "empty-bundled"),
+      NOVA_HOME: home,
+      NOVA_BUNDLED_PLUGINS_DIR: path.join(root, "empty-bundled"),
     });
 
     expect(records.find((record) => record.manifest.id === "exact-plugin")).toBeTruthy();

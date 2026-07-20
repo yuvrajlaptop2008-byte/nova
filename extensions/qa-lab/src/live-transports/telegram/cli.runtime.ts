@@ -12,14 +12,14 @@ import { createTelegramQaTransportAdapter } from "./adapter.runtime.js";
 import { listTelegramQaScenarios, resolveTelegramQaScenarioIds } from "./profiles.js";
 import { resolveTelegramQaRunOptions } from "./run-options.runtime.js";
 
-const TELEGRAM_QA_SUT_OPENCLAW_COMMAND_ENV = "OPENCLAW_QA_TELEGRAM_SUT_OPENCLAW_COMMAND";
-const TELEGRAM_QA_SUT_UID_ENV = "OPENCLAW_QA_TELEGRAM_SUT_UID";
-const TELEGRAM_QA_SUT_GID_ENV = "OPENCLAW_QA_TELEGRAM_SUT_GID";
-const TELEGRAM_QA_SUT_BOUNDARY_DIR_ENV = "OPENCLAW_QA_TELEGRAM_SUT_PROCESS_BOUNDARY_DIR";
-const TELEGRAM_QA_SUT_CLEANUP_TIMEOUT_ENV = "OPENCLAW_QA_TELEGRAM_SUT_CLEANUP_TIMEOUT_MS";
-const TELEGRAM_QA_SUT_RUNTIME_EXECUTABLE_ENV = "OPENCLAW_QA_TELEGRAM_SUT_RUNTIME_EXECUTABLE";
-const TELEGRAM_QA_SUT_PRELOAD_PATH_ENV = "OPENCLAW_QA_TELEGRAM_SUT_PRELOAD_PATH";
-const TELEGRAM_QA_SUT_FORWARDED_ENV_KEYS_ENV = "OPENCLAW_QA_TELEGRAM_SUT_FORWARDED_ENV_KEYS";
+const TELEGRAM_QA_SUT_NOVA_COMMAND_ENV = "NOVA_QA_TELEGRAM_SUT_NOVA_COMMAND";
+const TELEGRAM_QA_SUT_UID_ENV = "NOVA_QA_TELEGRAM_SUT_UID";
+const TELEGRAM_QA_SUT_GID_ENV = "NOVA_QA_TELEGRAM_SUT_GID";
+const TELEGRAM_QA_SUT_BOUNDARY_DIR_ENV = "NOVA_QA_TELEGRAM_SUT_PROCESS_BOUNDARY_DIR";
+const TELEGRAM_QA_SUT_CLEANUP_TIMEOUT_ENV = "NOVA_QA_TELEGRAM_SUT_CLEANUP_TIMEOUT_MS";
+const TELEGRAM_QA_SUT_RUNTIME_EXECUTABLE_ENV = "NOVA_QA_TELEGRAM_SUT_RUNTIME_EXECUTABLE";
+const TELEGRAM_QA_SUT_PRELOAD_PATH_ENV = "NOVA_QA_TELEGRAM_SUT_PRELOAD_PATH";
+const TELEGRAM_QA_SUT_FORWARDED_ENV_KEYS_ENV = "NOVA_QA_TELEGRAM_SUT_FORWARDED_ENV_KEYS";
 
 function parseSutId(env: NodeJS.ProcessEnv, key: string) {
   const value = env[key]?.trim();
@@ -78,13 +78,13 @@ async function resolveTelegramQaSutOpenClawCommand(
   repoRoot: string,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<QaGatewayChildCommand | undefined> {
-  const configuredCommand = env[TELEGRAM_QA_SUT_OPENCLAW_COMMAND_ENV];
+  const configuredCommand = env[TELEGRAM_QA_SUT_NOVA_COMMAND_ENV];
   if (configuredCommand === undefined) {
     return undefined;
   }
   const command = await resolveRegularPath({
     env,
-    key: TELEGRAM_QA_SUT_OPENCLAW_COMMAND_ENV,
+    key: TELEGRAM_QA_SUT_NOVA_COMMAND_ENV,
     executable: true,
   });
   const runtimeExecutablePath = await resolveRegularPath({

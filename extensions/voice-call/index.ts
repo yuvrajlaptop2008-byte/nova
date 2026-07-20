@@ -236,7 +236,7 @@ function asParamRecord(params: unknown): Record<string, unknown> {
 }
 
 function isCliOnlyProcess(): boolean {
-  return process.env.OPENCLAW_CLI === "1" && !process.argv.slice(2).includes("gateway");
+  return process.env.NOVA_CLI === "1" && !process.argv.slice(2).includes("gateway");
 }
 
 type VoiceCallStatus = Pick<

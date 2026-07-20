@@ -119,7 +119,7 @@ describe("openclaw npm publish wrapper", () => {
     const result = runPublishWrapper(
       ["--publish", tarball],
       {
-        OPENCLAW_NPM_PUBLISH_TAG: distTag,
+        NOVA_NPM_PUBLISH_TAG: distTag,
         PATH: `${binDir}:${process.env.PATH}`,
       },
       checkout,
@@ -138,7 +138,7 @@ describe("openclaw npm publish wrapper", () => {
     const tarballVersion = `${packageVersion}-mismatch`;
     const tarball = makePackageTarball(tempRoot, JSON.stringify({ version: tarballVersion }));
     const result = runPublishWrapper(["--publish", tarball], {
-      OPENCLAW_NPM_PUBLISH_TAG: "beta",
+      NOVA_NPM_PUBLISH_TAG: "beta",
     });
 
     expect(result.status).toBe(2);
@@ -155,7 +155,7 @@ describe("openclaw npm publish wrapper", () => {
     const tempRoot = makeTempDir("openclaw-npm-publish-");
     const tarball = makePackageTarball(tempRoot, packageJson);
     const result = runPublishWrapper(["--publish", tarball], {
-      OPENCLAW_NPM_PUBLISH_TAG: "beta",
+      NOVA_NPM_PUBLISH_TAG: "beta",
     });
 
     expect(result.status).toBe(2);
@@ -168,7 +168,7 @@ describe("openclaw npm publish wrapper", () => {
     const result = runPublishWrapper(
       ["--publish"],
       {
-        OPENCLAW_NPM_PUBLISH_TAG: "extended-stable",
+        NOVA_NPM_PUBLISH_TAG: "extended-stable",
       },
       checkout,
     );
@@ -193,7 +193,7 @@ describe("openclaw npm publish wrapper", () => {
       ["--publish"],
       {
         BYPASS_EXTENDED_STABLE_GUARD: "true",
-        OPENCLAW_NPM_PUBLISH_TAG: "extended-stable",
+        NOVA_NPM_PUBLISH_TAG: "extended-stable",
         PATH: `${binDir}:${process.env.PATH}`,
       },
       checkout,
@@ -217,7 +217,7 @@ describe("openclaw npm publish wrapper", () => {
   ])("rejects %s before npm publish", (_label, distTag, bypass, expectedError) => {
     const result = runPublishWrapper(["--publish"], {
       BYPASS_EXTENDED_STABLE_GUARD: bypass,
-      OPENCLAW_NPM_PUBLISH_TAG: distTag,
+      NOVA_NPM_PUBLISH_TAG: distTag,
     });
 
     expect(result.status).not.toBe(0);
@@ -226,7 +226,7 @@ describe("openclaw npm publish wrapper", () => {
 
   it("rejects unknown requested dist-tags instead of falling back to beta", () => {
     const result = runPublishWrapper(["--publish"], {
-      OPENCLAW_NPM_PUBLISH_TAG: "nightly",
+      NOVA_NPM_PUBLISH_TAG: "nightly",
     });
 
     expect(result.status).not.toBe(0);

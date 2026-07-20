@@ -1451,7 +1451,7 @@ describe("devices cli local fallback", () => {
     summarizeDeviceTokens.mockReturnValue(undefined);
 
     await expect(runDevicesCommand(["list"])).rejects.toThrow(
-      "different OPENCLAW_PROFILE or OPENCLAW_STATE_DIR",
+      "different NOVA_PROFILE or NOVA_STATE_DIR",
     );
     expect(readRuntimeOutput()).not.toContain(fallbackNotice);
   });

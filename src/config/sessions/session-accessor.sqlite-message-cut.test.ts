@@ -27,7 +27,7 @@ afterEach(() => {
 
 async function createSession(options: { activeLeafTarget?: string } = {}) {
   const stateDir = tempDirs.make("openclaw-message-cut-");
-  const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+  const env = { ...process.env, NOVA_STATE_DIR: stateDir };
   const sessionId = "message-cut-source";
   const scope = { agentId, env, sessionId, sessionKey };
   await upsertSessionEntry(scope, {

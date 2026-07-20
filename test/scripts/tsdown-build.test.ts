@@ -175,7 +175,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it.each([
-    ["environment", [], { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" }],
+    ["environment", [], { NOVA_RUN_NODE_SKIP_DTS_BUILD: "1" }],
     ["CLI", ["--no-dts"], {}],
   ])("keeps %s no-DTS builds in one main invocation", (_source, args, env) => {
     const results = resolveTsdownBuildInvocations({
@@ -198,7 +198,7 @@ describe("resolveTsdownBuildInvocation", () => {
       platform: "linux",
       nodeExecPath: "/usr/bin/node",
       npmExecPath: "/tmp/pnpm.cjs",
-      env: { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" },
+      env: { NOVA_RUN_NODE_SKIP_DTS_BUILD: "1" },
       ...NO_MEMORY_LIMIT,
     });
 
@@ -363,36 +363,36 @@ describe("resolveTsdownBuildInvocation", () => {
     expect(result.options.env.NODE_OPTIONS).toBe("--trace-warnings --max-old-space-size=6400");
   });
 
-  it("honors OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB over platform and memory defaults", () => {
+  it("honors NOVA_TSDOWN_MAX_OLD_SPACE_MB over platform and memory defaults", () => {
     const result = resolveTsdownBuildInvocation({
       nodeExecPath: "/usr/bin/node",
       npmExecPath: "/tmp/pnpm.cjs",
-      env: { OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB: "3072" },
+      env: { NOVA_TSDOWN_MAX_OLD_SPACE_MB: "3072" },
       cgroupMemoryLimitBytes: 7 * 1024 * 1024 * 1024,
     });
 
     expect(result.options.env.NODE_OPTIONS).toBe("--max-old-space-size=3072");
   });
 
-  it("keeps memory detection when OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB is blank", () => {
+  it("keeps memory detection when NOVA_TSDOWN_MAX_OLD_SPACE_MB is blank", () => {
     const result = resolveTsdownBuildInvocation({
       nodeExecPath: "/usr/bin/node",
       npmExecPath: "/tmp/pnpm.cjs",
-      env: { OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB: "  " },
+      env: { NOVA_TSDOWN_MAX_OLD_SPACE_MB: "  " },
       cgroupMemoryLimitBytes: 7 * 1024 * 1024 * 1024,
     });
 
     expect(result.options.env.NODE_OPTIONS).toBe("--max-old-space-size=6400");
   });
 
-  it("uses OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB to normalize inherited NODE_OPTIONS", () => {
+  it("uses NOVA_TSDOWN_MAX_OLD_SPACE_MB to normalize inherited NODE_OPTIONS", () => {
     const result = resolveTsdownBuildInvocation({
       platform: "win32",
       nodeExecPath: "C:\\Program Files\\nodejs\\node.exe",
       npmExecPath: "C:\\repo\\pnpm.cjs",
       env: {
         NODE_OPTIONS: "--trace-warnings --max-old-space-size=12288",
-        OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB: "4096",
+        NOVA_TSDOWN_MAX_OLD_SPACE_MB: "4096",
       },
       ...NO_MEMORY_LIMIT,
     });
@@ -400,16 +400,16 @@ describe("resolveTsdownBuildInvocation", () => {
     expect(result.options.env.NODE_OPTIONS).toBe("--trace-warnings --max-old-space-size=4096");
   });
 
-  it("rejects malformed OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB values", () => {
+  it("rejects malformed NOVA_TSDOWN_MAX_OLD_SPACE_MB values", () => {
     for (const value of ["0", "-1", "1.5", "1e3", "4096mb", "9007199254740992"]) {
       expect(() =>
         resolveTsdownBuildInvocation({
           nodeExecPath: "/usr/bin/node",
           npmExecPath: "/tmp/pnpm.cjs",
-          env: { OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB: value },
+          env: { NOVA_TSDOWN_MAX_OLD_SPACE_MB: value },
           ...NO_MEMORY_LIMIT,
         }),
-      ).toThrow("OPENCLAW_TSDOWN_MAX_OLD_SPACE_MB must be");
+      ).toThrow("NOVA_TSDOWN_MAX_OLD_SPACE_MB must be");
     }
   });
 
@@ -441,7 +441,7 @@ describe("resolveTsdownBuildInvocation", () => {
     const result = resolveTsdownBuildInvocation({
       platform: "linux",
       nodeExecPath: "/usr/bin/node",
-      env: { OPENCLAW_BUILD_ALL_NO_PNPM: "1" },
+      env: { NOVA_BUILD_ALL_NO_PNPM: "1" },
       ...NO_MEMORY_LIMIT,
     });
 
@@ -461,7 +461,7 @@ describe("resolveTsdownBuildInvocation", () => {
         windowsVerbatimArguments: undefined,
         env: {
           NODE_OPTIONS: "--max-old-space-size=12288",
-          OPENCLAW_BUILD_ALL_NO_PNPM: "1",
+          NOVA_BUILD_ALL_NO_PNPM: "1",
         },
       },
     });
@@ -638,7 +638,7 @@ describe("resolveTsdownBuildInvocation", () => {
 
     cleanTsdownOutputRoots({
       cwd: rootDir,
-      env: { OPENCLAW_PRESERVE_CLI_STARTUP_METADATA: "1" },
+      env: { NOVA_PRESERVE_CLI_STARTUP_METADATA: "1" },
     });
 
     await expect(fsPromises.readFile(metadataFile, "utf8")).resolves.toBe(
@@ -693,7 +693,7 @@ describe("resolveTsdownBuildInvocation", () => {
 
     cleanTsdownOutputRoots({
       cwd: rootDir,
-      env: { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" },
+      env: { NOVA_RUN_NODE_SKIP_DTS_BUILD: "1" },
     });
 
     await expect(fsPromises.readFile(declarationFile, "utf8")).resolves.toBe("export {};\n");
@@ -795,7 +795,7 @@ describe("runTsdownBuildInvocation", () => {
       {
         stdout: output.sink,
         stderr: output.sink,
-        env: { ...process.env, OPENCLAW_TSDOWN_HEARTBEAT_MS: "0" },
+        env: { ...process.env, NOVA_TSDOWN_HEARTBEAT_MS: "0" },
       },
     );
 
@@ -804,7 +804,7 @@ describe("runTsdownBuildInvocation", () => {
     expect(output.chunks.join("")).toContain("stdout-ok");
   });
 
-  it("rejects malformed OPENCLAW_TSDOWN_TIMEOUT_MS values", async () => {
+  it("rejects malformed NOVA_TSDOWN_TIMEOUT_MS values", async () => {
     const invocation = {
       command: process.execPath,
       args: ["-e", "process.exit(0)"],
@@ -820,14 +820,14 @@ describe("runTsdownBuildInvocation", () => {
         runTsdownBuildInvocation(invocation, {
           env: {
             ...process.env,
-            OPENCLAW_TSDOWN_TIMEOUT_MS: value,
+            NOVA_TSDOWN_TIMEOUT_MS: value,
           },
         }),
-      ).rejects.toThrow("OPENCLAW_TSDOWN_TIMEOUT_MS must be");
+      ).rejects.toThrow("NOVA_TSDOWN_TIMEOUT_MS must be");
     }
   });
 
-  it("rejects malformed OPENCLAW_TSDOWN_HEARTBEAT_MS values", async () => {
+  it("rejects malformed NOVA_TSDOWN_HEARTBEAT_MS values", async () => {
     const invocation = {
       command: process.execPath,
       args: ["-e", "process.exit(0)"],
@@ -843,14 +843,14 @@ describe("runTsdownBuildInvocation", () => {
         runTsdownBuildInvocation(invocation, {
           env: {
             ...process.env,
-            OPENCLAW_TSDOWN_HEARTBEAT_MS: value,
+            NOVA_TSDOWN_HEARTBEAT_MS: value,
           },
         }),
-      ).rejects.toThrow("OPENCLAW_TSDOWN_HEARTBEAT_MS must be");
+      ).rejects.toThrow("NOVA_TSDOWN_HEARTBEAT_MS must be");
     }
   });
 
-  it("terminates the child when OPENCLAW_TSDOWN_TIMEOUT_MS elapses", async () => {
+  it("terminates the child when NOVA_TSDOWN_TIMEOUT_MS elapses", async () => {
     const output = createWriteSink();
     const result = await runTsdownBuildInvocation(
       {
@@ -867,8 +867,8 @@ describe("runTsdownBuildInvocation", () => {
         stderr: output.sink,
         env: {
           ...process.env,
-          OPENCLAW_TSDOWN_HEARTBEAT_MS: "0",
-          OPENCLAW_TSDOWN_TIMEOUT_MS: "50",
+          NOVA_TSDOWN_HEARTBEAT_MS: "0",
+          NOVA_TSDOWN_TIMEOUT_MS: "50",
         },
       },
     );
@@ -966,8 +966,8 @@ describe("runTsdownBuildInvocation", () => {
             stderr: output.sink,
             env: {
               ...process.env,
-              OPENCLAW_TSDOWN_HEARTBEAT_MS: "0",
-              OPENCLAW_TSDOWN_TIMEOUT_MS: String(timeoutMs),
+              NOVA_TSDOWN_HEARTBEAT_MS: "0",
+              NOVA_TSDOWN_TIMEOUT_MS: String(timeoutMs),
             },
           },
         );
@@ -1031,8 +1031,8 @@ describe("runTsdownBuildInvocation", () => {
             stderr: output.sink,
             env: {
               ...process.env,
-              OPENCLAW_TSDOWN_HEARTBEAT_MS: "0",
-              OPENCLAW_TSDOWN_TIMEOUT_MS: "250",
+              NOVA_TSDOWN_HEARTBEAT_MS: "0",
+              NOVA_TSDOWN_TIMEOUT_MS: "250",
             },
           },
         );
@@ -1081,7 +1081,7 @@ describe("runTsdownBuildInvocation", () => {
           `import { runTsdownBuildInvocation } from ${JSON.stringify(scriptUrl)};`,
           "await runTsdownBuildInvocation(",
           `  { command: process.execPath, args: ['-e', ${JSON.stringify(parentScript)}], options: { stdio: ['ignore', 'pipe', 'pipe'], shell: false, env: process.env } },`,
-          "  { env: { ...process.env, OPENCLAW_TSDOWN_HEARTBEAT_MS: '0' } },",
+          "  { env: { ...process.env, NOVA_TSDOWN_HEARTBEAT_MS: '0' } },",
           ");",
         ].join("\n");
 

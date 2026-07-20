@@ -29,7 +29,7 @@ describe("worker session placement gate", () => {
 
   beforeEach(async () => {
     root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-worker-gate-"));
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerSessionPlacementStore({ database });
   });
 

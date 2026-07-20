@@ -10,11 +10,11 @@ function runSourceCli(tempHome: string, args: string[], envOverrides: NodeJS.Pro
     ...process.env,
     HOME: tempHome,
     USERPROFILE: tempHome,
-    OPENCLAW_TEST_FAST: "1",
+    NOVA_TEST_FAST: "1",
   };
-  delete env.OPENCLAW_HOME;
-  delete env.OPENCLAW_STATE_DIR;
-  delete env.OPENCLAW_CONFIG_PATH;
+  delete env.NOVA_HOME;
+  delete env.NOVA_STATE_DIR;
+  delete env.NOVA_CONFIG_PATH;
   delete env.VITEST;
   Object.assign(env, envOverrides);
 
@@ -61,7 +61,7 @@ describe("cli json stdout contract", () => {
     await withTempHome(
       async (tempHome) => {
         const result = runSourceCli(tempHome, ["config", "schema"], {
-          OPENCLAW_LOG_LEVEL: "debug",
+          NOVA_LOG_LEVEL: "debug",
         });
 
         expect(result.status).toBe(0);
@@ -82,8 +82,8 @@ describe("cli json stdout contract", () => {
         const configPath = path.join(tempHome, "openclaw.json");
         await fs.writeFile(configPath, "{}", "utf8");
         const result = runSourceCli(tempHome, ["config", "validate", "--json"], {
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_LOG_LEVEL: "debug",
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_LOG_LEVEL: "debug",
         });
 
         expect(result.status).toBe(0);

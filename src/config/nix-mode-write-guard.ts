@@ -2,13 +2,13 @@
 import { resolveIsNixMode } from "./paths.js";
 
 /** Agent-first Nix install docs shown when runtime config writes are blocked. */
-const NIX_OPENCLAW_AGENT_FIRST_URL = "https://github.com/openclaw/nix-openclaw#quick-start";
+const NIX_NOVA_AGENT_FIRST_URL = "https://github.com/openclaw/nix-openclaw#quick-start";
 /** Public Nova Nix overview shown with immutable-config errors. */
-const OPENCLAW_NIX_OVERVIEW_URL = "https://docs.openclaw.ai/install/nix";
+const NOVA_NIX_OVERVIEW_URL = "https://docs.openclaw.ai/install/nix";
 
 /** Error thrown when a mutating config path is attempted while Nix owns config state. */
 export class NixModeConfigMutationError extends Error {
-  readonly code = "OPENCLAW_NIX_MODE_CONFIG_IMMUTABLE";
+  readonly code = "NOVA_NIX_MODE_CONFIG_IMMUTABLE";
 
   constructor(params: { configPath?: string } = {}) {
     super(formatNixModeConfigMutationMessage(params));
@@ -19,13 +19,13 @@ export class NixModeConfigMutationError extends Error {
 /** Build the operator-facing immutable-config message for Nix-managed installs. */
 function formatNixModeConfigMutationMessage(params: { configPath?: string } = {}): string {
   return [
-    "Config is managed by Nix (`OPENCLAW_NIX_MODE=1`), so Nova treats openclaw.json as immutable.",
+    "Config is managed by Nix (`NOVA_NIX_MODE=1`), so Nova treats openclaw.json as immutable.",
     "This usually means nix-openclaw, the first-party Nix distribution, or another Nix-managed package set this mode.",
     ...(params.configPath ? [`Config path: ${params.configPath}`] : []),
     "Do not run setup, onboarding, openclaw update, plugin install/update/uninstall/enable, doctor repair/token-generation, or config set against this file.",
     "Edit the Nix source for this install instead. For nix-openclaw, edit `programs.openclaw.config` or `instances.<name>.config`, then rebuild with Home Manager or NixOS.",
-    `Agent-first Nix setup: ${NIX_OPENCLAW_AGENT_FIRST_URL}`,
-    `Nova Nix overview: ${OPENCLAW_NIX_OVERVIEW_URL}`,
+    `Agent-first Nix setup: ${NIX_NOVA_AGENT_FIRST_URL}`,
+    `Nova Nix overview: ${NOVA_NIX_OVERVIEW_URL}`,
   ].join("\n");
 }
 

@@ -39,10 +39,8 @@ const selected = {
 };
 
 const buildInfo = readJson("/app/dist/build-info.json");
-const expectedCommit = process.env.OPENCLAW_E2E_EXPECTED_GIT_COMMIT?.toLowerCase();
-const expectedBuiltAt = new Date(
-  process.env.OPENCLAW_E2E_EXPECTED_BUILD_TIMESTAMP ?? "",
-).toISOString();
+const expectedCommit = process.env.NOVA_E2E_EXPECTED_GIT_COMMIT?.toLowerCase();
+const expectedBuiltAt = new Date(process.env.NOVA_E2E_EXPECTED_BUILD_TIMESTAMP ?? "").toISOString();
 assert(buildInfo.commit === expectedCommit, `unexpected build commit: ${buildInfo.commit}`);
 assert(buildInfo.builtAt === expectedBuiltAt, `unexpected build timestamp: ${buildInfo.builtAt}`);
 

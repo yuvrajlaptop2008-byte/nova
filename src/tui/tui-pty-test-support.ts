@@ -69,12 +69,12 @@ async function writePtyInput(
   data: string,
   opts: { delay?: boolean } = {},
 ): Promise<void> {
-  const delayMs = readPositiveIntegerEnv("OPENCLAW_TUI_PTY_TYPE_DELAY_MS");
+  const delayMs = readPositiveIntegerEnv("NOVA_TUI_PTY_TYPE_DELAY_MS");
   if (!delayMs || opts.delay === false) {
     pty.write(data);
     return;
   }
-  const chunkSize = readPositiveIntegerEnv("OPENCLAW_TUI_PTY_TYPE_CHUNK_SIZE") ?? 1;
+  const chunkSize = readPositiveIntegerEnv("NOVA_TUI_PTY_TYPE_CHUNK_SIZE") ?? 1;
   // Chunked writes reproduce paste/type races without making every PTY test slow by default.
   for (let idx = 0; idx < data.length; idx += chunkSize) {
     pty.write(data.slice(idx, idx + chunkSize));
@@ -85,7 +85,7 @@ async function writePtyInput(
 }
 
 function mirrorPtyOutput(data: string) {
-  const mirrorPath = process.env.OPENCLAW_TUI_PTY_MIRROR_PATH;
+  const mirrorPath = process.env.NOVA_TUI_PTY_MIRROR_PATH;
   if (!mirrorPath) {
     return;
   }
@@ -108,8 +108,8 @@ export function startPty(
   let exitEvent: PtyExitEvent | null = null;
   const pty = nodePty.spawn(command, args, {
     name: "xterm-256color",
-    cols: readPtyDimensionEnv("OPENCLAW_TUI_PTY_COLS", 100),
-    rows: readPtyDimensionEnv("OPENCLAW_TUI_PTY_ROWS", 30),
+    cols: readPtyDimensionEnv("NOVA_TUI_PTY_COLS", 100),
+    rows: readPtyDimensionEnv("NOVA_TUI_PTY_ROWS", 30),
     cwd: opts.cwd,
     env: {
       ...process.env,

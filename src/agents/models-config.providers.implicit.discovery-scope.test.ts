@@ -230,16 +230,16 @@ describe("resolveImplicitProviders startup discovery scope", () => {
 
     const providers = await withEnvAsync(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: BUNDLED_PLUGINS_DIR,
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: BUNDLED_PLUGINS_DIR,
+        NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       async () =>
         await resolveImplicitProviders({
           agentDir: "/tmp/openclaw-agent",
           config: {},
           env: {
-            OPENCLAW_BUNDLED_PLUGINS_DIR: BUNDLED_PLUGINS_DIR,
-            OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+            NOVA_BUNDLED_PLUGINS_DIR: BUNDLED_PLUGINS_DIR,
+            NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
             GOOGLE_APPLICATION_CREDENTIALS: credentialsPath,
             GOOGLE_CLOUD_PROJECT: "vertex-project",
             GOOGLE_CLOUD_LOCATION: "global",

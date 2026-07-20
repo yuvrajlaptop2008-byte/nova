@@ -4,7 +4,7 @@
  */
 import { randomUUID } from "node:crypto";
 import { createInterface, type Interface as ReadlineInterface } from "node:readline";
-import { embeddedAgentLog, OPENCLAW_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { embeddedAgentLog, NOVA_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
 import { sliceUtf16Safe, truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
 import { parse as parseSemver } from "semver";
 import { resolveCodexAppServerRuntimeOptions, type CodexAppServerStartOptions } from "./config.js";
@@ -325,7 +325,7 @@ export class CodexAppServerClient {
       clientInfo: {
         name: "openclaw",
         title: "Nova",
-        version: OPENCLAW_VERSION,
+        version: NOVA_VERSION,
       },
       capabilities: {
         experimentalApi: true,

@@ -110,8 +110,8 @@ describe("installOpenClawPluginSdkNativeResolver", () => {
     fs.mkdirSync(path.join(devRoot, "src"), { recursive: true });
     fs.mkdirSync(path.join(devRoot, "extensions"), { recursive: true });
     const externalPluginEntry = writeExternalPluginEntry(path.join(stableRoot, "external-plugin"));
-    const previousDevSourceRoot = process.env.OPENCLAW_DEV_SOURCE_ROOT;
-    process.env.OPENCLAW_DEV_SOURCE_ROOT = devRoot;
+    const previousDevSourceRoot = process.env.NOVA_DEV_SOURCE_ROOT;
+    process.env.NOVA_DEV_SOURCE_ROOT = devRoot;
 
     try {
       const installedAliases = installOpenClawPluginSdkNativeResolver({
@@ -126,9 +126,9 @@ describe("installOpenClawPluginSdkNativeResolver", () => {
       );
     } finally {
       if (previousDevSourceRoot === undefined) {
-        delete process.env.OPENCLAW_DEV_SOURCE_ROOT;
+        delete process.env.NOVA_DEV_SOURCE_ROOT;
       } else {
-        process.env.OPENCLAW_DEV_SOURCE_ROOT = previousDevSourceRoot;
+        process.env.NOVA_DEV_SOURCE_ROOT = previousDevSourceRoot;
       }
     }
   });

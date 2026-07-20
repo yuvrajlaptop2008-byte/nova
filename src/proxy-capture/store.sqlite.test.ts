@@ -24,12 +24,12 @@ afterEach(() => {
 
 function makeStore() {
   const root = makeTempDir(cleanupDirs, "openclaw-proxy-capture-");
-  return new DebugProxyCaptureStore({ env: { OPENCLAW_STATE_DIR: root } });
+  return new DebugProxyCaptureStore({ env: { NOVA_STATE_DIR: root } });
 }
 
 function makeStateEnv(prefix: string): NodeJS.ProcessEnv {
   const root = makeTempDir(cleanupDirs, prefix);
-  return { OPENCLAW_STATE_DIR: root };
+  return { NOVA_STATE_DIR: root };
 }
 
 function readMode(target: string): number {
@@ -189,7 +189,7 @@ describe("DebugProxyCaptureStore", () => {
     "stores capture blobs in the private shared state database",
     () => {
       const env = makeStateEnv("openclaw-proxy-capture-permissions-");
-      const root = env.OPENCLAW_STATE_DIR!;
+      const root = env.NOVA_STATE_DIR!;
       const store = new DebugProxyCaptureStore({ env });
       const blob = store.persistPayload(Buffer.from("authorization: Bearer secret"));
       const row = store.db

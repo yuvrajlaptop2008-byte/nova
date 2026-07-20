@@ -9,27 +9,27 @@ import {
 describe("SUPERVISOR_HINT_ENV_VARS", () => {
   it("includes the cross-platform supervisor hint env vars", () => {
     const envVars = new Set(SUPERVISOR_HINT_ENV_VARS);
-    expect(envVars.has("OPENCLAW_SUPERVISOR_MODE")).toBe(true);
+    expect(envVars.has("NOVA_SUPERVISOR_MODE")).toBe(true);
     expect(envVars.has("LAUNCH_JOB_LABEL")).toBe(true);
     expect(envVars.has("INVOCATION_ID")).toBe(true);
-    expect(envVars.has("OPENCLAW_WINDOWS_TASK_NAME")).toBe(true);
-    expect(envVars.has("OPENCLAW_SERVICE_MARKER")).toBe(true);
-    expect(envVars.has("OPENCLAW_SERVICE_KIND")).toBe(true);
+    expect(envVars.has("NOVA_WINDOWS_TASK_NAME")).toBe(true);
+    expect(envVars.has("NOVA_SERVICE_MARKER")).toBe(true);
+    expect(envVars.has("NOVA_SERVICE_KIND")).toBe(true);
   });
 });
 
 describe("detectRespawnSupervisor", () => {
   it("detects launchd from Nova's explicit marker or current gateway launchd job", () => {
-    expect(
-      detectRespawnSupervisor({ OPENCLAW_LAUNCHD_LABEL: " ai.openclaw.gateway " }, "darwin"),
-    ).toBe("launchd");
-    expect(detectRespawnSupervisor({ OPENCLAW_LAUNCHD_LABEL: "   " }, "darwin")).toBeNull();
+    expect(detectRespawnSupervisor({ NOVA_LAUNCHD_LABEL: " ai.openclaw.gateway " }, "darwin")).toBe(
+      "launchd",
+    );
+    expect(detectRespawnSupervisor({ NOVA_LAUNCHD_LABEL: "   " }, "darwin")).toBeNull();
     expect(detectRespawnSupervisor({ LAUNCH_JOB_LABEL: "ai.openclaw.gateway" }, "darwin")).toBe(
       "launchd",
     );
     expect(
       detectRespawnSupervisor(
-        { LAUNCH_JOB_NAME: "ai.openclaw.work", OPENCLAW_PROFILE: "work" },
+        { LAUNCH_JOB_NAME: "ai.openclaw.work", NOVA_PROFILE: "work" },
         "darwin",
       ),
     ).toBe("launchd");
@@ -37,7 +37,7 @@ describe("detectRespawnSupervisor", () => {
     expect(detectRespawnSupervisor({ XPC_SERVICE_NAME: "ai.openclaw.mac" }, "darwin")).toBeNull();
     expect(
       detectRespawnSupervisor(
-        { XPC_SERVICE_NAME: "ai.openclaw.mac", OPENCLAW_PROFILE: "mac" },
+        { XPC_SERVICE_NAME: "ai.openclaw.mac", NOVA_PROFILE: "mac" },
         "darwin",
       ),
     ).toBeNull();
@@ -53,8 +53,8 @@ describe("detectRespawnSupervisor", () => {
 
   it("detects Linux Nova gateway service markers only for opt-in callers", () => {
     const gatewayServiceEnv = {
-      OPENCLAW_SERVICE_MARKER: " openclaw ",
-      OPENCLAW_SERVICE_KIND: " gateway ",
+      NOVA_SERVICE_MARKER: " openclaw ",
+      NOVA_SERVICE_KIND: " gateway ",
     };
     expect(detectRespawnSupervisor(gatewayServiceEnv, "linux")).toBeNull();
     expect(
@@ -65,8 +65,8 @@ describe("detectRespawnSupervisor", () => {
     expect(
       detectRespawnSupervisor(
         {
-          OPENCLAW_SERVICE_MARKER: "openclaw",
-          OPENCLAW_SERVICE_KIND: "worker",
+          NOVA_SERVICE_MARKER: "openclaw",
+          NOVA_SERVICE_KIND: "worker",
         },
         "linux",
         { includeLinuxOpenClawGatewayServiceMarker: true },
@@ -75,8 +75,8 @@ describe("detectRespawnSupervisor", () => {
     expect(
       detectRespawnSupervisor(
         {
-          OPENCLAW_SERVICE_MARKER: "other",
-          OPENCLAW_SERVICE_KIND: "gateway",
+          NOVA_SERVICE_MARKER: "other",
+          NOVA_SERVICE_KIND: "gateway",
         },
         "linux",
         { includeLinuxOpenClawGatewayServiceMarker: true },
@@ -85,14 +85,14 @@ describe("detectRespawnSupervisor", () => {
   });
 
   it("detects scheduled-task supervision on Windows from either hint family", () => {
-    expect(detectRespawnSupervisor({ OPENCLAW_WINDOWS_TASK_NAME: "Nova Gateway" }, "win32")).toBe(
+    expect(detectRespawnSupervisor({ NOVA_WINDOWS_TASK_NAME: "Nova Gateway" }, "win32")).toBe(
       "schtasks",
     );
     expect(
       detectRespawnSupervisor(
         {
-          OPENCLAW_SERVICE_MARKER: "openclaw",
-          OPENCLAW_SERVICE_KIND: "gateway",
+          NOVA_SERVICE_MARKER: "openclaw",
+          NOVA_SERVICE_KIND: "gateway",
         },
         "win32",
       ),
@@ -100,8 +100,8 @@ describe("detectRespawnSupervisor", () => {
     expect(
       detectRespawnSupervisor(
         {
-          OPENCLAW_SERVICE_MARKER: "openclaw",
-          OPENCLAW_SERVICE_KIND: "worker",
+          NOVA_SERVICE_MARKER: "openclaw",
+          NOVA_SERVICE_KIND: "worker",
         },
         "win32",
       ),
@@ -112,8 +112,8 @@ describe("detectRespawnSupervisor", () => {
     expect(
       detectRespawnSupervisor(
         {
-          OPENCLAW_SERVICE_MARKER: "openclaw",
-          OPENCLAW_SERVICE_KIND: "gateway",
+          NOVA_SERVICE_MARKER: "openclaw",
+          NOVA_SERVICE_KIND: "gateway",
         },
         "linux",
       ),
@@ -127,8 +127,8 @@ describe("detectRespawnSupervisor", () => {
 describe("detectGatewayRespawnSupervisor", () => {
   it("keeps external ownership separate from native supervisor detection", () => {
     const env = {
-      OPENCLAW_SUPERVISOR_MODE: "external",
-      OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
+      NOVA_SUPERVISOR_MODE: "external",
+      NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
     };
 
     expect(detectGatewayRespawnSupervisor(env, "darwin")).toBe("external");

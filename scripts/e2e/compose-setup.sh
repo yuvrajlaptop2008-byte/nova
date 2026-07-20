@@ -5,8 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
 IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-docker-e2e-functional:local")"
-PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz compose-setup "${OPENCLAW_CURRENT_PACKAGE_TGZ:-}")"
-IDENTITY_PATH="${OPENCLAW_DOCKER_ARTIFACT_IDENTITY_PATH:-$ROOT_DIR/.artifacts/docker-tests/compose-setup-identities.json}"
+PACKAGE_TGZ="$(docker_e2e_prepare_package_tgz compose-setup "${NOVA_CURRENT_PACKAGE_TGZ:-}")"
+IDENTITY_PATH="${NOVA_DOCKER_ARTIFACT_IDENTITY_PATH:-$ROOT_DIR/.artifacts/docker-tests/compose-setup-identities.json}"
 PROJECT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-compose-proof.XXXXXX")"
 PROJECT_NAME="openclaw-compose-proof-$$"
 CLI_NAME="$PROJECT_NAME-cli-proof"
@@ -33,16 +33,16 @@ cat >"$PROJECT_DIR/config/openclaw.json" <<EOF
 }
 EOF
 
-export OPENCLAW_IMAGE="$IMAGE_NAME"
-export OPENCLAW_CONFIG_DIR="$PROJECT_DIR/config"
-export OPENCLAW_WORKSPACE_DIR="$PROJECT_DIR/config/workspace"
-export OPENCLAW_AUTH_PROFILE_SECRET_DIR="$PROJECT_DIR/auth-profile"
-export OPENCLAW_GATEWAY_TOKEN="$TOKEN"
-export OPENCLAW_GATEWAY_PORT=0
-export OPENCLAW_BRIDGE_PORT=0
-export OPENCLAW_MSTEAMS_PORT=0
-export OPENCLAW_DISABLE_BONJOUR=1
-export OPENCLAW_CURRENT_PACKAGE_TGZ="$PACKAGE_TGZ"
+export NOVA_IMAGE="$IMAGE_NAME"
+export NOVA_CONFIG_DIR="$PROJECT_DIR/config"
+export NOVA_WORKSPACE_DIR="$PROJECT_DIR/config/workspace"
+export NOVA_AUTH_PROFILE_SECRET_DIR="$PROJECT_DIR/auth-profile"
+export NOVA_GATEWAY_TOKEN="$TOKEN"
+export NOVA_GATEWAY_PORT=0
+export NOVA_BRIDGE_PORT=0
+export NOVA_MSTEAMS_PORT=0
+export NOVA_DISABLE_BONJOUR=1
+export NOVA_CURRENT_PACKAGE_TGZ="$PACKAGE_TGZ"
 
 docker_e2e_build_or_reuse "$IMAGE_NAME" compose-setup "$ROOT_DIR/scripts/e2e/Dockerfile" "$ROOT_DIR" functional
 

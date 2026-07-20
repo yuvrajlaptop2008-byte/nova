@@ -14,7 +14,7 @@ type WebKitNotificationsMessageHandler = {
 };
 
 type NativeNotificationsWindow = Window & {
-  __OPENCLAW_NATIVE_NOTIFICATIONS__?: unknown;
+  __NOVA_NATIVE_NOTIFICATIONS__?: unknown;
   webkit?: {
     messageHandlers?: {
       openclawNotifications?: WebKitNotificationsMessageHandler;
@@ -64,7 +64,7 @@ export function createNativeNotificationsCapability(): NativeNotificationsCapabi
   }
 
   const nativeWindow = window as NativeNotificationsWindow;
-  let snapshot = snapshotFrom(nativeWindow["__OPENCLAW_NATIVE_NOTIFICATIONS__"]) ?? {
+  let snapshot = snapshotFrom(nativeWindow["__NOVA_NATIVE_NOTIFICATIONS__"]) ?? {
     permission: "unknown" as const,
   };
   const listeners = new Set<(snapshot: NativeNotificationsSnapshot) => void>();

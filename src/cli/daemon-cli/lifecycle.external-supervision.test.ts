@@ -133,8 +133,8 @@ describe("external gateway supervision lifecycle", () => {
   });
 
   beforeEach(() => {
-    envSnapshot = captureEnv(["OPENCLAW_SUPERVISOR_MODE"]);
-    process.env.OPENCLAW_SUPERVISOR_MODE = "external";
+    envSnapshot = captureEnv(["NOVA_SUPERVISOR_MODE"]);
+    process.env.NOVA_SUPERVISOR_MODE = "external";
 
     for (const mock of [
       service.readCommand,

@@ -602,10 +602,10 @@ describe("exec approvals policy helpers", () => {
     });
   });
 
-  it("uses OPENCLAW_STATE_DIR when reporting default host sources", () => {
-    const originalOpenClawStateDir = process.env.OPENCLAW_STATE_DIR;
+  it("uses NOVA_STATE_DIR when reporting default host sources", () => {
+    const originalOpenClawStateDir = process.env.NOVA_STATE_DIR;
     const stateDir = path.join(process.cwd(), ".tmp-openclaw-state");
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.NOVA_STATE_DIR = stateDir;
     try {
       const summary = summarizeExecPolicyScopeSnapshot({
         approvals: {
@@ -626,9 +626,9 @@ describe("exec approvals policy helpers", () => {
       );
     } finally {
       if (originalOpenClawStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = originalOpenClawStateDir;
+        process.env.NOVA_STATE_DIR = originalOpenClawStateDir;
       }
     }
   });

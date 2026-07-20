@@ -37,10 +37,10 @@ import {
 } from "./openclaw-quarantine-store.js";
 import { repairAuditEventsSchema } from "./openclaw-state-db-audit-migration.js";
 import {
-  OPENCLAW_DATABASE_SCHEMA_DOCS_URL,
-  OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
-  OPENCLAW_STATE_SCHEMA_VERSION,
-  OPENCLAW_STATE_STRICT_SCHEMA_VERSION,
+  NOVA_DATABASE_SCHEMA_DOCS_URL,
+  NOVA_SQLITE_BUSY_TIMEOUT_MS,
+  NOVA_STATE_SCHEMA_VERSION,
+  NOVA_STATE_STRICT_SCHEMA_VERSION,
   type OpenClawStateDatabase,
   type OpenClawStateDatabaseOptions,
 } from "./openclaw-state-db-contract.js";
@@ -62,13 +62,9 @@ import {
 } from "./openclaw-state-db-schema-repair.js";
 import * as sessionWatchMigration from "./openclaw-state-db-session-watch-migration.js";
 import type { DB as OpenClawStateKyselyDatabase } from "./openclaw-state-db.generated.js";
-import { OPENCLAW_STATE_SCHEMA_SQL } from "./openclaw-state-schema.generated.js";
+import { NOVA_STATE_SCHEMA_SQL } from "./openclaw-state-schema.generated.js";
 
-export {
-  OPENCLAW_DATABASE_SCHEMA_DOCS_URL,
-  OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
-  OPENCLAW_STATE_SCHEMA_VERSION,
-};
+export { NOVA_DATABASE_SCHEMA_DOCS_URL, NOVA_SQLITE_BUSY_TIMEOUT_MS, NOVA_STATE_SCHEMA_VERSION };
 export type {
   OpenClawStateDatabase,
   OpenClawStateDatabaseOptions,
@@ -89,7 +85,7 @@ export { withOpenClawStateStartupMigrationCheckpointDatabase } from "./openclaw-
  * tables, private file permissions, cached handles, and audit rows for
  * migrations/backups that operate on local state.
  */
-const OPENCLAW_STATE_CANONICAL_UNIQUE_INDEXES = [
+const NOVA_STATE_CANONICAL_UNIQUE_INDEXES = [
   {
     name: "idx_operator_approvals_resolution_ref",
     definition: "ON operator_approvals(resolution_ref)",
@@ -174,13 +170,13 @@ export function repairOpenClawStateDatabaseSchema(options: OpenClawStateDatabase
         assertCanonicalStateSchemaShape(db, pathname);
         if (tableExists(db, "audit_events")) {
           ensureAdditiveStateColumns(db);
-          db.exec(OPENCLAW_STATE_SCHEMA_SQL);
-          if (previousVersion < OPENCLAW_STATE_STRICT_SCHEMA_VERSION) {
+          db.exec(NOVA_STATE_SCHEMA_SQL);
+          if (previousVersion < NOVA_STATE_STRICT_SCHEMA_VERSION) {
             repairLegacyGatewayRestartHandoffsForStrictMigration(db);
           }
           const strictMigration = migrateSqliteSchemaToStrictInTransaction(
             db,
-            OPENCLAW_STATE_SCHEMA_SQL,
+            NOVA_STATE_SCHEMA_SQL,
             { databaseLabel: pathname },
           );
           if (strictMigration.migratedTables.length > 0) {
@@ -193,7 +189,7 @@ export function repairOpenClawStateDatabaseSchema(options: OpenClawStateDatabase
         return applied;
       },
       {
-        busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+        busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
         databaseLabel: pathname,
         operationLabel: "state.schema.repair",
       },
@@ -243,16 +239,16 @@ function ensureSchema(db: DatabaseSync, pathname: string): void {
         ensureAdditiveStateColumns(db);
         sessionWatchMigration.migrateSessionWatchCursorProvenance(db);
         assertCanonicalStateSchemaShape(db, pathname);
-        db.exec(OPENCLAW_STATE_SCHEMA_SQL);
+        db.exec(NOVA_STATE_SCHEMA_SQL);
         migrateLegacyCronRunLogsToTaskRuns(db);
-        if (previousVersion < OPENCLAW_STATE_STRICT_SCHEMA_VERSION) {
+        if (previousVersion < NOVA_STATE_STRICT_SCHEMA_VERSION) {
           repairLegacyGatewayRestartHandoffsForStrictMigration(db);
-          migrateSqliteSchemaToStrictInTransaction(db, OPENCLAW_STATE_SCHEMA_SQL, {
+          migrateSqliteSchemaToStrictInTransaction(db, NOVA_STATE_SCHEMA_SQL, {
             databaseLabel: pathname,
           });
         }
-        repairCanonicalSqliteUniqueIndexes(db, pathname, OPENCLAW_STATE_CANONICAL_UNIQUE_INDEXES);
-        db.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION};`);
+        repairCanonicalSqliteUniqueIndexes(db, pathname, NOVA_STATE_CANONICAL_UNIQUE_INDEXES);
+        db.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION};`);
         executeSqliteQuerySync(
           db,
           kysely
@@ -260,7 +256,7 @@ function ensureSchema(db: DatabaseSync, pathname: string): void {
             .values({
               meta_key: "primary",
               role: "global",
-              schema_version: OPENCLAW_STATE_SCHEMA_VERSION,
+              schema_version: NOVA_STATE_SCHEMA_VERSION,
               agent_id: null,
               app_version: VERSION,
               created_at: now,
@@ -269,7 +265,7 @@ function ensureSchema(db: DatabaseSync, pathname: string): void {
             .onConflict((conflict) =>
               conflict.column("meta_key").doUpdateSet({
                 role: "global",
-                schema_version: OPENCLAW_STATE_SCHEMA_VERSION,
+                schema_version: NOVA_STATE_SCHEMA_VERSION,
                 agent_id: null,
                 app_version: VERSION,
                 updated_at: now,
@@ -278,7 +274,7 @@ function ensureSchema(db: DatabaseSync, pathname: string): void {
         );
       },
       {
-        busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+        busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
         databaseLabel: pathname,
         operationLabel: "state.schema.ensure",
       },
@@ -292,21 +288,21 @@ function assertStateDatabaseIntegrityBeforeMutation(
   database: DatabaseSync,
   pathname: string,
 ): void {
-  database.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+  database.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
   const userVersion = readSqliteUserVersion(database);
   const hasApplicationSchema = database
     .prepare("SELECT 1 FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1")
     .get();
   if (
     (userVersion === 0 && hasApplicationSchema) ||
-    (userVersion > 0 && userVersion < OPENCLAW_STATE_SCHEMA_VERSION)
+    (userVersion > 0 && userVersion < NOVA_STATE_SCHEMA_VERSION)
   ) {
     // Migration rewrites the schema; prove the whole file before that mutation.
     // Only a truly empty v0 file may skip; legacy v0 files need the same proof.
     stateDbLog.info("state database schema migration pending; verifying integrity first", {
       fromVersion: userVersion,
       path: pathname,
-      toVersion: OPENCLAW_STATE_SCHEMA_VERSION,
+      toVersion: NOVA_STATE_SCHEMA_VERSION,
     });
     assertSqliteIntegrity(database, pathname);
     return;
@@ -362,14 +358,14 @@ export function openOpenClawStateDatabase(
   const walMaintenance = (() => {
     let maintenance: SqliteWalMaintenance | undefined;
     try {
-      db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+      db.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
       assertSupportedSchemaVersion(db, pathname);
       assertStateDatabaseIntegrityBeforeMutation(db, pathname);
       configureSqlitePreSchemaPragmas(db, {
-        busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+        busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
       });
       maintenance = configureSqliteConnectionPragmas(db, {
-        busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+        busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
         databaseLabel: "openclaw-state",
         databasePath: pathname,
         foreignKeys: true,
@@ -407,7 +403,7 @@ export function runOpenClawStateWriteTransaction<T>(
 ): T {
   const database = openOpenClawStateDatabase(options);
   const result = runSqliteImmediateTransactionSync(database.db, () => operation(database), {
-    busyTimeoutMs: transactionOptions.busyTimeoutMs ?? OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+    busyTimeoutMs: transactionOptions.busyTimeoutMs ?? NOVA_SQLITE_BUSY_TIMEOUT_MS,
     databaseLabel: database.path,
     ...transactionOptions,
     operationLabel: transactionOptions.operationLabel ?? "state.write",

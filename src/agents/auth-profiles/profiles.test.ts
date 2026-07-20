@@ -77,8 +77,8 @@ async function withAuthProfileTestState<T>(
   try {
     return await withEnvAsync(
       {
-        OPENCLAW_STATE_DIR: stateDir,
-        ...(options.clearOAuthDir ? { OPENCLAW_OAUTH_DIR: undefined } : {}),
+        NOVA_STATE_DIR: stateDir,
+        ...(options.clearOAuthDir ? { NOVA_OAUTH_DIR: undefined } : {}),
       },
       async () =>
         await run({

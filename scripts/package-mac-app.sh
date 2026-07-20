@@ -9,11 +9,11 @@ source "$ROOT_DIR/scripts/lib/plistbuddy.sh"
 source "$ROOT_DIR/scripts/lib/swift-toolchain.sh"
 source "$ROOT_DIR/scripts/lib/build-metadata.sh"
 DEFAULT_APP_ROOT="$ROOT_DIR/dist/OpenClaw.app"
-APP_ROOT="${OPENCLAW_PACKAGE_APP_ROOT:-$DEFAULT_APP_ROOT}"
+APP_ROOT="${NOVA_PACKAGE_APP_ROOT:-$DEFAULT_APP_ROOT}"
 case "$APP_ROOT" in
   "$ROOT_DIR/dist/"*) ;;
   *)
-    echo "ERROR: OPENCLAW_PACKAGE_APP_ROOT must stay under $ROOT_DIR/dist" >&2
+    echo "ERROR: NOVA_PACKAGE_APP_ROOT must stay under $ROOT_DIR/dist" >&2
     exit 1
     ;;
 esac
@@ -27,7 +27,7 @@ PKG_VERSION="$(cd "$ROOT_DIR" && node -p "require('./package.json').version" 2>/
 BUILD_CONFIG="${BUILD_CONFIG:-debug}"
 BUILD_TS="$(openclaw_resolve_build_timestamp)"
 if [[ "$BUILD_CONFIG" == "release" ]]; then
-  OPENCLAW_REQUIRE_BUILD_METADATA=1
+  NOVA_REQUIRE_BUILD_METADATA=1
 fi
 BUILD_GIT_COMMIT="$(openclaw_resolve_git_commit "$ROOT_DIR")"
 if [[ "$BUILD_CONFIG" == "release" ]]; then
@@ -35,7 +35,7 @@ if [[ "$BUILD_CONFIG" == "release" ]]; then
     --root "$ROOT_DIR" \
     --expected-commit "$BUILD_GIT_COMMIT"
 fi
-export OPENCLAW_BUILD_TIMESTAMP="$BUILD_TS"
+export NOVA_BUILD_TIMESTAMP="$BUILD_TS"
 if openclaw_is_full_git_commit "$BUILD_GIT_COMMIT"; then
   export GIT_COMMIT="$BUILD_GIT_COMMIT"
 else

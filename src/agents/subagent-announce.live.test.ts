@@ -28,7 +28,7 @@ import { testing as subagentAnnounceTesting } from "./subagent-announce.js";
 import { resolveSubagentController, steerControlledSubagentRun } from "./subagent-control.js";
 import { listSubagentRunsForRequester } from "./subagent-registry.test-helpers.js";
 
-const LIVE = isLiveTestEnabled() && isTruthyEnvValue(process.env.OPENCLAW_LIVE_SUBAGENT_E2E);
+const LIVE = isLiveTestEnabled() && isTruthyEnvValue(process.env.NOVA_LIVE_SUBAGENT_E2E);
 const describeLive = LIVE ? describe : describe.skip;
 
 type AgentPayload = {
@@ -57,7 +57,7 @@ type LiveSubagentModelConfig = {
 type LiveSubagentModelProviders = NonNullable<NonNullable<OpenClawConfig["models"]>["providers"]>;
 
 function resolveLiveSubagentModelConfig(): LiveSubagentModelConfig {
-  const modelKey = process.env.OPENCLAW_LIVE_SUBAGENT_E2E_MODEL?.trim() || "openai/gpt-5.6-luna";
+  const modelKey = process.env.NOVA_LIVE_SUBAGENT_E2E_MODEL?.trim() || "openai/gpt-5.6-luna";
   if (modelKey.startsWith("google/")) {
     return {
       modelKey,
@@ -268,9 +268,9 @@ describeLive("subagent announce live", () => {
   it(
     "keeps issue 82913 busy-parent completion announce pending until transcript delivery",
     async () => {
-      if (!isTruthyEnvValue(process.env.OPENCLAW_SUBAGENT_ISSUE_82913_REPRO)) {
+      if (!isTruthyEnvValue(process.env.NOVA_SUBAGENT_ISSUE_82913_REPRO)) {
         console.warn(
-          "[issue-82913] skip: set OPENCLAW_SUBAGENT_ISSUE_82913_REPRO=1 to run this focused repro",
+          "[issue-82913] skip: set NOVA_SUBAGENT_ISSUE_82913_REPRO=1 to run this focused repro",
         );
         return;
       }
@@ -289,16 +289,16 @@ describeLive("subagent announce live", () => {
         label: "subagent-issue-82913-live",
         layout: "split",
         env: {
-          OPENCLAW_SKIP_CHANNELS: "1",
-          OPENCLAW_SKIP_CRON: "1",
-          OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-          OPENCLAW_SKIP_CANVAS_HOST: "1",
-          OPENCLAW_TEST_MINIMAL_GATEWAY: "1",
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-          OPENCLAW_BUNDLED_PLUGINS_DIR: path.resolve("extensions"),
-          OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
-          OPENCLAW_PLUGIN_CATALOG_PATHS: undefined,
-          OPENCLAW_PLUGINS_PATHS: undefined,
+          NOVA_SKIP_CHANNELS: "1",
+          NOVA_SKIP_CRON: "1",
+          NOVA_SKIP_BROWSER_CONTROL_SERVER: "1",
+          NOVA_SKIP_CANVAS_HOST: "1",
+          NOVA_TEST_MINIMAL_GATEWAY: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+          NOVA_BUNDLED_PLUGINS_DIR: path.resolve("extensions"),
+          NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+          NOVA_PLUGIN_CATALOG_PATHS: undefined,
+          NOVA_PLUGINS_PATHS: undefined,
         },
       });
       await state.writeConfig(
@@ -482,16 +482,16 @@ describeLive("subagent announce live", () => {
         label: "subagent-announce-live",
         layout: "split",
         env: {
-          OPENCLAW_SKIP_CHANNELS: "1",
-          OPENCLAW_SKIP_CRON: "1",
-          OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-          OPENCLAW_SKIP_CANVAS_HOST: "1",
-          OPENCLAW_TEST_MINIMAL_GATEWAY: "1",
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-          OPENCLAW_BUNDLED_PLUGINS_DIR: path.resolve("extensions"),
-          OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
-          OPENCLAW_PLUGIN_CATALOG_PATHS: undefined,
-          OPENCLAW_PLUGINS_PATHS: undefined,
+          NOVA_SKIP_CHANNELS: "1",
+          NOVA_SKIP_CRON: "1",
+          NOVA_SKIP_BROWSER_CONTROL_SERVER: "1",
+          NOVA_SKIP_CANVAS_HOST: "1",
+          NOVA_TEST_MINIMAL_GATEWAY: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+          NOVA_BUNDLED_PLUGINS_DIR: path.resolve("extensions"),
+          NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+          NOVA_PLUGIN_CATALOG_PATHS: undefined,
+          NOVA_PLUGINS_PATHS: undefined,
         },
       });
       await state.writeConfig(
@@ -660,7 +660,7 @@ describeLive("subagent announce live", () => {
       const modelConfig = resolveLiveSubagentModelConfig();
       if (!modelConfig.modelKey.startsWith("google/")) {
         console.warn(
-          "[subagent-stress] skip: set OPENCLAW_LIVE_SUBAGENT_E2E_MODEL=google/gemini-3.1-pro-preview",
+          "[subagent-stress] skip: set NOVA_LIVE_SUBAGENT_E2E_MODEL=google/gemini-3.1-pro-preview",
         );
         return;
       }
@@ -677,19 +677,19 @@ describeLive("subagent announce live", () => {
         label: "subagent-gemini-stress-live",
         layout: "split",
         env: {
-          OPENCLAW_SKIP_CHANNELS: "1",
-          OPENCLAW_SKIP_CRON: "1",
-          OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-          OPENCLAW_SKIP_CANVAS_HOST: "1",
-          OPENCLAW_TEST_MINIMAL_GATEWAY: "1",
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
-          OPENCLAW_BUNDLED_PLUGINS_DIR: path.resolve("extensions"),
-          OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
-          OPENCLAW_PLUGIN_CATALOG_PATHS: undefined,
-          OPENCLAW_PLUGINS_PATHS: undefined,
-          OPENCLAW_DEBUG_MODEL_TRANSPORT: "1",
-          OPENCLAW_DEBUG_MODEL_PAYLOAD: "tools",
-          OPENCLAW_DEBUG_SSE: "events",
+          NOVA_SKIP_CHANNELS: "1",
+          NOVA_SKIP_CRON: "1",
+          NOVA_SKIP_BROWSER_CONTROL_SERVER: "1",
+          NOVA_SKIP_CANVAS_HOST: "1",
+          NOVA_TEST_MINIMAL_GATEWAY: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
+          NOVA_BUNDLED_PLUGINS_DIR: path.resolve("extensions"),
+          NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+          NOVA_PLUGIN_CATALOG_PATHS: undefined,
+          NOVA_PLUGINS_PATHS: undefined,
+          NOVA_DEBUG_MODEL_TRANSPORT: "1",
+          NOVA_DEBUG_MODEL_PAYLOAD: "tools",
+          NOVA_DEBUG_SSE: "events",
         },
       });
       await fs.writeFile(

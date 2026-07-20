@@ -562,8 +562,8 @@ describe("getHealthSnapshot", () => {
     testStore = {};
     setActivePluginRegistry(createTestRegistry([]));
     const tmpStateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-health-dq-"));
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    process.env.OPENCLAW_STATE_DIR = tmpStateDir;
+    const previousStateDir = process.env.NOVA_STATE_DIR;
+    process.env.NOVA_STATE_DIR = tmpStateDir;
     try {
       const { moveDeliveryQueueEntryToFailed, upsertDeliveryQueueEntry } =
         await import("../infra/delivery-queue-sqlite.js");
@@ -598,9 +598,9 @@ describe("getHealthSnapshot", () => {
       const { closeOpenClawStateDatabaseForTest } = await import("../state/openclaw-state-db.js");
       closeOpenClawStateDatabaseForTest();
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.NOVA_STATE_DIR = previousStateDir;
       }
       fs.rmSync(tmpStateDir, { recursive: true, force: true });
     }

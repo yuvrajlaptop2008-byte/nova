@@ -333,7 +333,7 @@ function printSkipped(skipped) {
 
 function parseArgs(argv) {
   let check = false;
-  let jobs = parseJobs(process.env.OPENCLAW_RELEASE_PREFLIGHT_JOBS ?? "4");
+  let jobs = parseJobs(process.env.NOVA_RELEASE_PREFLIGHT_JOBS ?? "4");
   let wantsFix = false;
   let macosVersionsOnly = false;
   const scopes = new Set();

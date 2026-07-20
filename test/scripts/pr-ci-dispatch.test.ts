@@ -20,26 +20,26 @@ function createFakeGh() {
     fakeGh,
     `#!/usr/bin/env bash
 set -euo pipefail
-printf '%s\\n' "$*" >> "$OPENCLAW_TEST_GH_CALLS"
+printf '%s\\n' "$*" >> "$NOVA_TEST_GH_CALLS"
 case "$1 $2" in
   "run list")
-    if [ "\${OPENCLAW_TEST_GH_MODE:-}" = "pending-head-change" ]; then
+    if [ "\${NOVA_TEST_GH_MODE:-}" = "pending-head-change" ]; then
       printf '[]\\n'
-    elif [ -e "$OPENCLAW_TEST_GH_SEEN_RUN_LIST" ]; then
-      printf '[{"databaseId":99,"url":"https://github.com/openclaw/openclaw/actions/runs/99","headSha":"%s","createdAt":"2026-01-01T00:00:00Z","status":"queued"}]\\n' "$OPENCLAW_TEST_HEAD_SHA"
+    elif [ -e "$NOVA_TEST_GH_SEEN_RUN_LIST" ]; then
+      printf '[{"databaseId":99,"url":"https://github.com/openclaw/openclaw/actions/runs/99","headSha":"%s","createdAt":"2026-01-01T00:00:00Z","status":"queued"}]\\n' "$NOVA_TEST_HEAD_SHA"
     else
-      : > "$OPENCLAW_TEST_GH_SEEN_RUN_LIST"
+      : > "$NOVA_TEST_GH_SEEN_RUN_LIST"
       printf '[]\\n'
     fi
     ;;
   "pr view")
-    if [ -e "$OPENCLAW_TEST_GH_DISPATCHED" ] && [ -n "\${OPENCLAW_TEST_GH_MODE:-}" ]; then
-      printf '%s\\n' "$OPENCLAW_TEST_CHANGED_HEAD_SHA"
+    if [ -e "$NOVA_TEST_GH_DISPATCHED" ] && [ -n "\${NOVA_TEST_GH_MODE:-}" ]; then
+      printf '%s\\n' "$NOVA_TEST_CHANGED_HEAD_SHA"
     else
-      printf '%s\\n' "$OPENCLAW_TEST_HEAD_SHA"
+      printf '%s\\n' "$NOVA_TEST_HEAD_SHA"
     fi
     ;;
-  "workflow run") : > "$OPENCLAW_TEST_GH_DISPATCHED" ;;
+  "workflow run") : > "$NOVA_TEST_GH_DISPATCHED" ;;
   *) echo "unexpected gh invocation: $*" >&2; exit 2 ;;
 esac
 `,
@@ -69,13 +69,13 @@ function runDispatch(
       env: {
         ...process.env,
         NODE_OPTIONS: nodeOptions,
-        OPENCLAW_GH_BIN: fakeGh.fakeGh,
-        OPENCLAW_TEST_CHANGED_HEAD_SHA: changedSha,
-        OPENCLAW_TEST_GH_CALLS: fakeGh.calls,
-        OPENCLAW_TEST_GH_DISPATCHED: fakeGh.dispatched,
-        OPENCLAW_TEST_GH_MODE: options.mode ?? "",
-        OPENCLAW_TEST_GH_SEEN_RUN_LIST: fakeGh.seenRunList,
-        OPENCLAW_TEST_HEAD_SHA: sha,
+        NOVA_GH_BIN: fakeGh.fakeGh,
+        NOVA_TEST_CHANGED_HEAD_SHA: changedSha,
+        NOVA_TEST_GH_CALLS: fakeGh.calls,
+        NOVA_TEST_GH_DISPATCHED: fakeGh.dispatched,
+        NOVA_TEST_GH_MODE: options.mode ?? "",
+        NOVA_TEST_GH_SEEN_RUN_LIST: fakeGh.seenRunList,
+        NOVA_TEST_HEAD_SHA: sha,
       },
     },
   );
@@ -104,11 +104,11 @@ describePosix("scripts/pr ci-dispatch", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_GH_BIN: fakeGh.fakeGh,
-          OPENCLAW_TEST_GH_CALLS: fakeGh.calls,
-          OPENCLAW_TEST_GH_DISPATCHED: fakeGh.dispatched,
-          OPENCLAW_TEST_GH_SEEN_RUN_LIST: fakeGh.seenRunList,
-          OPENCLAW_TEST_HEAD_SHA: sha,
+          NOVA_GH_BIN: fakeGh.fakeGh,
+          NOVA_TEST_GH_CALLS: fakeGh.calls,
+          NOVA_TEST_GH_DISPATCHED: fakeGh.dispatched,
+          NOVA_TEST_GH_SEEN_RUN_LIST: fakeGh.seenRunList,
+          NOVA_TEST_HEAD_SHA: sha,
         },
       },
     );

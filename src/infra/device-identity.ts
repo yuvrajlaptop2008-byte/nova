@@ -55,7 +55,7 @@ function pathMayExist(filePath: string): boolean {
 }
 
 function resolveLegacyStateDir(options: DeviceIdentityStoreOptions): string {
-  if (options.env?.OPENCLAW_STATE_DIR?.trim()) {
+  if (options.env?.NOVA_STATE_DIR?.trim()) {
     return resolveStateDir(options.env);
   }
   if (options.path) {

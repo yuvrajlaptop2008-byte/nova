@@ -286,7 +286,7 @@ describe("release user journey assertions", () => {
 
     try {
       await expect(
-        withEnvAsync({ HOME: home, OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000" }, () =>
+        withEnvAsync({ HOME: home, NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000" }, () =>
           runReleaseUserJourneyAssertion("wait-clickclack-socket", [
             `http://127.0.0.1:${server.port}`,
             "1",
@@ -312,7 +312,7 @@ describe("release user journey assertions", () => {
 
     try {
       await expect(
-        withEnvAsync({ HOME: home, OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000" }, () =>
+        withEnvAsync({ HOME: home, NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000" }, () =>
           runReleaseUserJourneyAssertion("post-clickclack-inbound", [
             `http://127.0.0.1:${server.port}`,
             "hello",
@@ -336,7 +336,7 @@ describe("release user journey assertions", () => {
     try {
       const startedAt = Date.now();
       await expect(
-        withEnvAsync({ HOME: home, OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "100" }, () =>
+        withEnvAsync({ HOME: home, NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "100" }, () =>
           waitForClickClackSocket({
             baseUrl: `http://127.0.0.1:${server.port}`,
             pollIntervalMs: 20,
@@ -360,14 +360,14 @@ describe("release user journey assertions", () => {
 
     try {
       await expect(
-        withEnvAsync({ HOME: home, OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "100ms" }, () =>
+        withEnvAsync({ HOME: home, NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "100ms" }, () =>
           runReleaseUserJourneyAssertion("wait-clickclack-socket", [
             `http://127.0.0.1:${server.port}`,
             "1",
           ]),
         ),
       ).rejects.toThrow(
-        'OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS must be a positive integer. Got: "100ms"',
+        'NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS must be a positive integer. Got: "100ms"',
       );
     } finally {
       await server.stop();
@@ -392,7 +392,7 @@ describe("release user journey assertions", () => {
         withEnvAsync({ HOME: home }, () =>
           runReleaseUserJourneyAssertion("wait-clickclack-reply", [
             statePath,
-            "OPENCLAW_E2E_OK",
+            "NOVA_E2E_OK",
             "30s",
           ]),
         ),
@@ -417,8 +417,8 @@ describe("release user journey assertions", () => {
         withEnvAsync(
           {
             HOME: home,
-            OPENCLAW_RELEASE_USER_JOURNEY_HTTP_BODY_MAX_BYTES: "16",
-            OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000",
+            NOVA_RELEASE_USER_JOURNEY_HTTP_BODY_MAX_BYTES: "16",
+            NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000",
           },
           () =>
             runReleaseUserJourneyAssertion("post-clickclack-inbound", [
@@ -445,7 +445,7 @@ describe("release user journey assertions", () => {
         withEnvAsync(
           {
             HOME: home,
-            OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "25",
+            NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "25",
           },
           () =>
             runReleaseUserJourneyAssertion("post-clickclack-inbound", [
@@ -475,8 +475,8 @@ describe("release user journey assertions", () => {
         withEnvAsync(
           {
             HOME: home,
-            OPENCLAW_RELEASE_USER_JOURNEY_HTTP_BODY_MAX_BYTES: "16bytes",
-            OPENCLAW_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000",
+            NOVA_RELEASE_USER_JOURNEY_HTTP_BODY_MAX_BYTES: "16bytes",
+            NOVA_RELEASE_USER_JOURNEY_HTTP_TIMEOUT_MS: "1000",
           },
           () =>
             runReleaseUserJourneyAssertion("post-clickclack-inbound", [
@@ -485,7 +485,7 @@ describe("release user journey assertions", () => {
             ]),
         ),
       ).rejects.toThrow(
-        'OPENCLAW_RELEASE_USER_JOURNEY_HTTP_BODY_MAX_BYTES must be a positive integer. Got: "16bytes"',
+        'NOVA_RELEASE_USER_JOURNEY_HTTP_BODY_MAX_BYTES must be a positive integer. Got: "16bytes"',
       );
     } finally {
       await server.stop();

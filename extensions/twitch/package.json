@@ -37,7 +37,7 @@
       "configuredState": {
         "env": {
           "anyOf": [
-            "OPENCLAW_TWITCH_ACCESS_TOKEN"
+            "NOVA_TWITCH_ACCESS_TOKEN"
           ]
         }
       },

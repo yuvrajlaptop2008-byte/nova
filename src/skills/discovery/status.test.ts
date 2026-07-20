@@ -14,7 +14,7 @@ const tempDirs = useAutoCleanupTempDirTracker(afterEach);
 
 describe("buildWorkspaceSkillStatus", () => {
   it("reports blank env requirements as missing", () => {
-    const envName = "OPENCLAW_TEST_BLANK_SKILL_STATUS";
+    const envName = "NOVA_TEST_BLANK_SKILL_STATUS";
     const original = process.env[envName];
     process.env[envName] = "   ";
     try {
@@ -610,8 +610,8 @@ describe("buildWorkspaceSkillStatus", () => {
         }),
         createEntry("needs-env", {
           metadata: {
-            primaryEnv: "OPENCLAW_TEST_MISSING_SKILL_KEY",
-            requires: { env: ["OPENCLAW_TEST_MISSING_SKILL_KEY"] },
+            primaryEnv: "NOVA_TEST_MISSING_SKILL_KEY",
+            requires: { env: ["NOVA_TEST_MISSING_SKILL_KEY"] },
           },
         }),
         createEntry("prompt-hidden", {
@@ -670,12 +670,12 @@ describe("buildWorkspaceSkillStatus", () => {
     ]);
     const needsEnv = requireSkillStatus(byName, "needs-env");
     expect(needsEnv.eligible).toBe(false);
-    expect(needsEnv.primaryEnv).toBe("OPENCLAW_TEST_MISSING_SKILL_KEY");
+    expect(needsEnv.primaryEnv).toBe("NOVA_TEST_MISSING_SKILL_KEY");
     expect(needsEnv.missing).toStrictEqual({
       anyBins: [],
       bins: [],
       config: [],
-      env: ["OPENCLAW_TEST_MISSING_SKILL_KEY"],
+      env: ["NOVA_TEST_MISSING_SKILL_KEY"],
       os: [],
     });
     expectStatusFlags(requireSkillStatus(byName, "prompt-hidden"), {

@@ -1,4 +1,4 @@
-import { OPENCLAW_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
+import { NOVA_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
 
 const BOARD_SCHEMA_START = "CREATE TABLE IF NOT EXISTS board_tabs (";
 const BOARD_SCHEMA_END = "CREATE TABLE IF NOT EXISTS heartbeat_outcomes (";
@@ -15,7 +15,7 @@ function splitBoardSchema(sql: string): { board: string; withoutBoard: string } 
   };
 }
 
-const boardSchema = splitBoardSchema(OPENCLAW_AGENT_SCHEMA_SQL);
+const boardSchema = splitBoardSchema(NOVA_AGENT_SCHEMA_SQL);
 
-export const OPENCLAW_AGENT_BOARD_SCHEMA_SQL = boardSchema.board;
-export const OPENCLAW_AGENT_SCHEMA_WITHOUT_BOARD_SQL = boardSchema.withoutBoard;
+export const NOVA_AGENT_BOARD_SCHEMA_SQL = boardSchema.board;
+export const NOVA_AGENT_SCHEMA_WITHOUT_BOARD_SQL = boardSchema.withoutBoard;

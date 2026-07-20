@@ -7,10 +7,10 @@ import { applyPrivateModeSync } from "../infra/private-mode.js";
 import { VERSION } from "../version.js";
 import { resolveOpenClawStateSqliteDir } from "./openclaw-state-db.paths.js";
 
-const OPENCLAW_QUARANTINE_SCHEMA_VERSION = 1;
-const OPENCLAW_QUARANTINE_BUSY_TIMEOUT_MS = 5_000;
-const OPENCLAW_QUARANTINE_DIR_MODE = 0o700;
-const OPENCLAW_QUARANTINE_FILE_MODE = 0o600;
+const NOVA_QUARANTINE_SCHEMA_VERSION = 1;
+const NOVA_QUARANTINE_BUSY_TIMEOUT_MS = 5_000;
+const NOVA_QUARANTINE_DIR_MODE = 0o700;
+const NOVA_QUARANTINE_FILE_MODE = 0o600;
 
 type OpenClawDatabaseKind = "agent" | "state";
 
@@ -26,21 +26,21 @@ function resolveQuarantineStorePath(env: NodeJS.ProcessEnv): string {
 
 function ensureQuarantineStoreDirectory(storePath: string): void {
   const dir = path.dirname(storePath);
-  mkdirSync(dir, { recursive: true, mode: OPENCLAW_QUARANTINE_DIR_MODE });
-  applyPrivateModeSync(dir, OPENCLAW_QUARANTINE_DIR_MODE);
+  mkdirSync(dir, { recursive: true, mode: NOVA_QUARANTINE_DIR_MODE });
+  applyPrivateModeSync(dir, NOVA_QUARANTINE_DIR_MODE);
 }
 
 function configureQuarantineWriter(database: DatabaseSync, storePath: string): void {
   database.exec(`
-    PRAGMA busy_timeout = ${OPENCLAW_QUARANTINE_BUSY_TIMEOUT_MS};
+    PRAGMA busy_timeout = ${NOVA_QUARANTINE_BUSY_TIMEOUT_MS};
     PRAGMA journal_mode = DELETE;
     PRAGMA synchronous = FULL;
   `);
   const userVersion = readQuarantineSchemaVersion(database, storePath);
-  if (userVersion > OPENCLAW_QUARANTINE_SCHEMA_VERSION) {
+  if (userVersion > NOVA_QUARANTINE_SCHEMA_VERSION) {
     throw new Error(`Nova quarantine store ${storePath} uses newer schema version ${userVersion}.`);
   }
-  if (userVersion === OPENCLAW_QUARANTINE_SCHEMA_VERSION) {
+  if (userVersion === NOVA_QUARANTINE_SCHEMA_VERSION) {
     return;
   }
   database.exec(`
@@ -52,7 +52,7 @@ function configureQuarantineWriter(database: DatabaseSync, storePath: string): v
       quarantined_at INTEGER NOT NULL,
       writer_app_version TEXT
     ) STRICT;
-    PRAGMA user_version = ${OPENCLAW_QUARANTINE_SCHEMA_VERSION};
+    PRAGMA user_version = ${NOVA_QUARANTINE_SCHEMA_VERSION};
     COMMIT;
   `);
 }
@@ -77,7 +77,7 @@ function withQuarantineWriter<T>(env: NodeJS.ProcessEnv, operation: (db: Databas
   let completed = false;
   try {
     if (!existed) {
-      applyPrivateModeSync(storePath, OPENCLAW_QUARANTINE_FILE_MODE);
+      applyPrivateModeSync(storePath, NOVA_QUARANTINE_FILE_MODE);
     }
     configureQuarantineWriter(database, storePath);
     const result = operation(database);
@@ -86,7 +86,7 @@ function withQuarantineWriter<T>(env: NodeJS.ProcessEnv, operation: (db: Databas
   } finally {
     database.close();
     if (completed || !existed) {
-      applyPrivateModeSync(storePath, OPENCLAW_QUARANTINE_FILE_MODE);
+      applyPrivateModeSync(storePath, NOVA_QUARANTINE_FILE_MODE);
     }
   }
 }
@@ -104,12 +104,12 @@ export function readOpenClawDatabaseQuarantine(
   const sqlite = requireNodeSqlite();
   const database = new sqlite.DatabaseSync(storePath);
   try {
-    database.exec(`PRAGMA busy_timeout = ${OPENCLAW_QUARANTINE_BUSY_TIMEOUT_MS};`);
+    database.exec(`PRAGMA busy_timeout = ${NOVA_QUARANTINE_BUSY_TIMEOUT_MS};`);
     const userVersion = readQuarantineSchemaVersion(database, storePath);
     if (userVersion === 0) {
       return undefined;
     }
-    if (userVersion !== OPENCLAW_QUARANTINE_SCHEMA_VERSION) {
+    if (userVersion !== NOVA_QUARANTINE_SCHEMA_VERSION) {
       throw new Error(
         `Nova quarantine store ${storePath} uses newer schema version ${userVersion}.`,
       );

@@ -107,9 +107,9 @@ describe("config io write", () => {
     const home = await suiteRootTracker.make("case");
     return withEnvAsync(
       {
-        OPENCLAW_DEFER_SHELL_ENV_FALLBACK: undefined,
-        OPENCLAW_LOAD_SHELL_ENV: undefined,
-        OPENCLAW_SHELL_ENV_TIMEOUT_MS: undefined,
+        NOVA_DEFER_SHELL_ENV_FALLBACK: undefined,
+        NOVA_LOAD_SHELL_ENV: undefined,
+        NOVA_SHELL_ENV_TIMEOUT_MS: undefined,
       },
       () => fn(home),
     );
@@ -194,7 +194,7 @@ describe("config io write", () => {
 
   const createFastConfigIO = (home: string) =>
     createConfigIO({
-      env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+      env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
       homedir: () => home,
       logger: silentLogger,
     });
@@ -226,8 +226,8 @@ describe("config io write", () => {
       const io = createConfigIO({
         configPath,
         env: {
-          OPENCLAW_STATE_DIR: path.join(home, ".openclaw"),
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_STATE_DIR: path.join(home, ".openclaw"),
+          NOVA_TEST_FAST: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: { warn, error: vi.fn() },
@@ -257,8 +257,8 @@ describe("config io write", () => {
       const io = createConfigIO({
         configPath,
         env: {
-          OPENCLAW_NIX_MODE: "1",
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_NIX_MODE: "1",
+          NOVA_TEST_FAST: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
@@ -276,7 +276,7 @@ describe("config io write", () => {
     await withSuiteHome(async (home) => {
       const warn = vi.fn();
       const io = createConfigIO({
-        env: { HOME: home, OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { HOME: home, NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: { warn, error: vi.fn() },
       });
@@ -312,7 +312,7 @@ describe("config io write", () => {
     });
   });
 
-  it("keeps writes inside an OPENCLAW_STATE_DIR override even when the real home config exists", async () => {
+  it("keeps writes inside an NOVA_STATE_DIR override even when the real home config exists", async () => {
     await withSuiteHome(async (home) => {
       const liveConfigPath = path.join(home, ".openclaw", "openclaw.json");
       await fs.mkdir(path.dirname(liveConfigPath), { recursive: true });
@@ -323,7 +323,7 @@ describe("config io write", () => {
       );
 
       const overrideDir = path.join(home, "isolated-state");
-      const env = { OPENCLAW_STATE_DIR: overrideDir } as NodeJS.ProcessEnv;
+      const env = { NOVA_STATE_DIR: overrideDir } as NodeJS.ProcessEnv;
       const io = createConfigIO({
         env,
         homedir: () => home,
@@ -396,7 +396,7 @@ describe("config io write", () => {
 
       const io = createConfigIO({
         configPath,
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -512,7 +512,7 @@ describe("config io write", () => {
       const warn = vi.fn();
       const io = createConfigIO({
         env: {
-          OPENCLAW_CONFIG_WRITE_ANOMALY_LOG: "1",
+          NOVA_CONFIG_WRITE_ANOMALY_LOG: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: {
@@ -545,7 +545,7 @@ describe("config io write", () => {
       const io = createConfigIO({
         env: {
           VITEST: "true",
-          OPENCLAW_TEST_CONFIG_OVERWRITE_LOG: "1",
+          NOVA_TEST_CONFIG_OVERWRITE_LOG: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: {
@@ -1107,7 +1107,7 @@ describe("config io write", () => {
           {
             gateway: {
               mode: "local",
-              auth: { mode: "token", token: "${OPENCLAW_GATEWAY_TOKEN}" },
+              auth: { mode: "token", token: "${NOVA_GATEWAY_TOKEN}" },
             },
             channels: { "test-plugin-channel": { enabled: true } },
           },
@@ -1118,8 +1118,8 @@ describe("config io write", () => {
       );
       const io = createConfigIO({
         env: {
-          OPENCLAW_GATEWAY_TOKEN: "gateway-token-at-read",
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_GATEWAY_TOKEN: "gateway-token-at-read",
+          NOVA_TEST_FAST: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
@@ -1128,7 +1128,7 @@ describe("config io write", () => {
       const result = await io.readConfigFileSnapshotForWrite();
 
       expect(result.snapshot.valid).toBe(false);
-      expect(result.writeOptions.envSnapshotForRestore?.OPENCLAW_GATEWAY_TOKEN).toBe(
+      expect(result.writeOptions.envSnapshotForRestore?.NOVA_GATEWAY_TOKEN).toBe(
         "gateway-token-at-read",
       );
     });
@@ -1144,7 +1144,7 @@ describe("config io write", () => {
           {
             gateway: {
               mode: "local",
-              auth: { mode: "token", token: "${OPENCLAW_GATEWAY_TOKEN}" },
+              auth: { mode: "token", token: "${NOVA_GATEWAY_TOKEN}" },
             },
             channels: { "test-plugin-channel": { enabled: true } },
           },
@@ -1158,8 +1158,8 @@ describe("config io write", () => {
       });
       const io = createConfigIO({
         env: {
-          OPENCLAW_GATEWAY_TOKEN: "gateway-token-at-read",
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_GATEWAY_TOKEN: "gateway-token-at-read",
+          NOVA_TEST_FAST: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
@@ -1168,7 +1168,7 @@ describe("config io write", () => {
       const result = await io.readConfigFileSnapshotForWrite();
 
       expect(result.snapshot.valid).toBe(false);
-      expect(result.writeOptions.envSnapshotForRestore?.OPENCLAW_GATEWAY_TOKEN).toBe(
+      expect(result.writeOptions.envSnapshotForRestore?.NOVA_GATEWAY_TOKEN).toBe(
         "gateway-token-at-read",
       );
     });
@@ -1187,7 +1187,7 @@ describe("config io write", () => {
       );
       await fs.writeFile(includePath, malformedRaw, "utf-8");
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1213,13 +1213,13 @@ describe("config io write", () => {
       await fs.writeFile(firstConfigPath, "{}", "utf-8");
       await fs.writeFile(secondConfigPath, "{}", "utf-8");
       const env = {
-        OPENCLAW_CONFIG_PATH: firstConfigPath,
-        OPENCLAW_TEST_FAST: "1",
+        NOVA_CONFIG_PATH: firstConfigPath,
+        NOVA_TEST_FAST: "1",
       } as NodeJS.ProcessEnv;
       const io = createConfigIO({ env, homedir: () => home, logger: silentLogger });
 
       const result = await io.readConfigFileSnapshotForWrite();
-      env.OPENCLAW_CONFIG_PATH = secondConfigPath;
+      env.NOVA_CONFIG_PATH = secondConfigPath;
 
       expect(() => result.writeOptions.assertConfigPathForWrite?.()).toThrow(
         "config path changed since last load",
@@ -1235,11 +1235,11 @@ describe("config io write", () => {
       await fs.writeFile(firstConfigPath, "{}", "utf-8");
       await fs.writeFile(secondConfigPath, "{}", "utf-8");
       const env = {
-        OPENCLAW_CONFIG_PATH: firstConfigPath,
-        OPENCLAW_TEST_FAST: "1",
+        NOVA_CONFIG_PATH: firstConfigPath,
+        NOVA_TEST_FAST: "1",
       } as NodeJS.ProcessEnv;
       const io = createConfigIO({ env, homedir: () => home, logger: silentLogger });
-      env.OPENCLAW_CONFIG_PATH = secondConfigPath;
+      env.NOVA_CONFIG_PATH = secondConfigPath;
 
       await expect(io.readConfigFileSnapshotForWrite()).rejects.toThrow(
         "config path changed since last load",
@@ -1252,7 +1252,7 @@ describe("config io write", () => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
       const configuredNextPath = path.join(home, ".openclaw", "next.json");
       const sourceConfig = {
-        env: { OPENCLAW_CONFIG_PATH: configuredNextPath },
+        env: { NOVA_CONFIG_PATH: configuredNextPath },
         gateway: { mode: "local" },
       } satisfies OpenClawConfig;
       await fs.mkdir(path.dirname(configPath), { recursive: true });
@@ -1270,7 +1270,7 @@ describe("config io write", () => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
       const configuredNextPath = path.join(home, ".openclaw", "next.json");
       const sourceConfig = {
-        env: { OPENCLAW_CONFIG_PATH: configuredNextPath },
+        env: { NOVA_CONFIG_PATH: configuredNextPath },
         gateway: { mode: "local" },
       } satisfies OpenClawConfig;
       await fs.mkdir(path.dirname(configPath), { recursive: true });
@@ -1283,10 +1283,10 @@ describe("config io write", () => {
 
       await withEnvAsync(
         {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_HOME: home,
-          OPENCLAW_STATE_DIR: undefined,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_HOME: home,
+          NOVA_STATE_DIR: undefined,
+          NOVA_TEST_FAST: "1",
         },
         async () => {
           const prepared = await readConfigFileSnapshotForWrite();
@@ -1329,8 +1329,8 @@ describe("config io write", () => {
 
       await withEnvAsync(
         {
-          OPENCLAW_CONFIG_PATH: activeConfigPath,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_CONFIG_PATH: activeConfigPath,
+          NOVA_TEST_FAST: "1",
         },
         async () => {
           await writeConfigFile(
@@ -1364,7 +1364,7 @@ describe("config io write", () => {
         "utf-8",
       );
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1415,7 +1415,7 @@ describe("config io write", () => {
         "utf-8",
       );
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1449,13 +1449,13 @@ describe("config io write", () => {
       await fs.writeFile(secondConfigPath, originalRaw, "utf-8");
       const firstIo = createConfigIO({
         configPath: firstConfigPath,
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
       const secondIo = createConfigIO({
         configPath: secondConfigPath,
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1485,7 +1485,7 @@ describe("config io write", () => {
       await fs.writeFile(configPath, originalRaw, "utf-8");
       const io = createConfigIO({
         configPath,
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1524,7 +1524,7 @@ describe("config io write", () => {
         "utf-8",
       );
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1562,7 +1562,7 @@ describe("config io write", () => {
         "utf-8",
       );
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1589,7 +1589,7 @@ describe("config io write", () => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
       const io = createConfigIO({
         configPath,
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1617,7 +1617,7 @@ describe("config io write", () => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
       const io = createConfigIO({
         configPath,
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1639,7 +1639,7 @@ describe("config io write", () => {
       await fs.writeFile(configPath, "", "utf-8");
       const io = createConfigIO({
         configPath,
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1672,7 +1672,7 @@ describe("config io write", () => {
         `${JSON.stringify(
           {
             mode: "local",
-            auth: { mode: "token", token: "${OPENCLAW_GATEWAY_TOKEN}" },
+            auth: { mode: "token", token: "${NOVA_GATEWAY_TOKEN}" },
             invalid: true,
           },
           null,
@@ -1688,8 +1688,8 @@ describe("config io write", () => {
       const originalRootRaw = await fs.readFile(configPath, "utf-8");
       const io = createConfigIO({
         env: {
-          OPENCLAW_GATEWAY_TOKEN: "gateway-token-runtime",
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_GATEWAY_TOKEN: "gateway-token-runtime",
+          NOVA_TEST_FAST: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
@@ -1708,7 +1708,7 @@ describe("config io write", () => {
 
       await expect(fs.readFile(configPath, "utf-8")).resolves.toBe(originalRootRaw);
       await expect(fs.readFile(includePath, "utf-8")).resolves.toContain(
-        '"token": "${OPENCLAW_GATEWAY_TOKEN}"',
+        '"token": "${NOVA_GATEWAY_TOKEN}"',
       );
     });
   });
@@ -1738,7 +1738,7 @@ describe("config io write", () => {
       );
       const originalIncludeRaw = await fs.readFile(includePath, "utf-8");
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1773,7 +1773,7 @@ describe("config io write", () => {
       const originalRootRaw = await fs.readFile(configPath, "utf-8");
       const originalPluginsRaw = await fs.readFile(pluginsPath, "utf-8");
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1799,7 +1799,7 @@ describe("config io write", () => {
         "utf-8",
       );
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -1872,7 +1872,7 @@ describe("config io write", () => {
       );
       const io = createConfigIO({
         env: {
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_TEST_FAST: "1",
           ROOT_LITERAL_TOKEN: "secret",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
@@ -1899,7 +1899,7 @@ describe("config io write", () => {
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(
         includePath,
-        `${JSON.stringify({ id: "main", workspace: "${OPENCLAW_AGENT_WORKSPACE}" }, null, 2)}\n`,
+        `${JSON.stringify({ id: "main", workspace: "${NOVA_AGENT_WORKSPACE}" }, null, 2)}\n`,
         "utf-8",
       );
       await fs.writeFile(
@@ -1920,8 +1920,8 @@ describe("config io write", () => {
       const originalRootRaw = await fs.readFile(configPath, "utf-8");
       const io = createConfigIO({
         env: {
-          OPENCLAW_AGENT_WORKSPACE: "/resolved/agent-workspace",
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_AGENT_WORKSPACE: "/resolved/agent-workspace",
+          NOVA_TEST_FAST: "1",
         } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
@@ -1940,7 +1940,7 @@ describe("config io write", () => {
       expect(persistedRoot.agents?.defaults).toBeUndefined();
       expect(persistedRoot.agents?.list).toEqual([{ $include: "./main-agent.json5" }]);
       await expect(fs.readFile(includePath, "utf-8")).resolves.toContain(
-        '"workspace": "${OPENCLAW_AGENT_WORKSPACE}"',
+        '"workspace": "${NOVA_AGENT_WORKSPACE}"',
       );
     });
   });
@@ -2024,7 +2024,7 @@ describe("config io write", () => {
         "utf-8",
       );
 
-      await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+      await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
         setRuntimeConfigSnapshot(
           {
             gateway: { mode: "local" },
@@ -2101,7 +2101,7 @@ describe("config io write", () => {
           {
             gateway: {
               mode: "local",
-              auth: { mode: "token", token: "${OPENCLAW_GATEWAY_TOKEN}" },
+              auth: { mode: "token", token: "${NOVA_GATEWAY_TOKEN}" },
             },
             agents: { defaults: { model: { primary: "openai/gpt-5.4" } } },
           },
@@ -2118,8 +2118,8 @@ describe("config io write", () => {
       try {
         await withEnvAsync(
           {
-            OPENCLAW_CONFIG_PATH: configPath,
-            OPENCLAW_GATEWAY_TOKEN: "gateway-token-runtime",
+            NOVA_CONFIG_PATH: configPath,
+            NOVA_GATEWAY_TOKEN: "gateway-token-runtime",
           },
           async () => {
             setRuntimeConfigSnapshot(
@@ -2152,7 +2152,7 @@ describe("config io write", () => {
             const persisted = JSON.parse(await fs.readFile(configPath, "utf-8")) as {
               gateway?: { auth?: { token?: string } };
             };
-            expect(persisted.gateway?.auth?.token).toBe("${OPENCLAW_GATEWAY_TOKEN}");
+            expect(persisted.gateway?.auth?.token).toBe("${NOVA_GATEWAY_TOKEN}");
             expect(observedSources).toHaveLength(1);
             const observedSource = requireRecord(observedSources[0], "observed source config");
             expect(observedSource.gateway).toEqual({
@@ -2201,7 +2201,7 @@ describe("config io write", () => {
       );
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshot(initialConfig, initialConfig);
           await writeConfigFile(
             { ...initialConfig, logging: { level: "debug" } },
@@ -2222,11 +2222,11 @@ describe("config io write", () => {
   it("stages managed root-write config env until the owner accepts it", async () => {
     await withSuiteHome(async (home) => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
-      const envKey = "OPENCLAW_TEST_MANAGED_ROOT_ENV";
+      const envKey = "NOVA_TEST_MANAGED_ROOT_ENV";
       const initialAuthoredConfig = {
         gateway: {
           mode: "local" as const,
-          auth: { mode: "token" as const, token: "${OPENCLAW_TEST_MANAGED_ROOT_ENV}" },
+          auth: { mode: "token" as const, token: "${NOVA_TEST_MANAGED_ROOT_ENV}" },
         },
         env: { vars: { [envKey]: "old" } },
       } satisfies OpenClawConfig;
@@ -2263,7 +2263,7 @@ describe("config io write", () => {
       );
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath, [envKey]: "old" }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath, [envKey]: "old" }, async () => {
           setRuntimeConfigSnapshot(initialConfig, initialConfig);
           initializePublishedConfigRuntimeEnv(initialConfig, {
             ownedEnv: { [envKey]: "old" },
@@ -2286,19 +2286,19 @@ describe("config io write", () => {
   it("resolves watcher candidates after removing the accepted config env layer", async () => {
     await withSuiteHome(async (home) => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
-      const envKey = "OPENCLAW_TEST_WATCHER_ENV";
+      const envKey = "NOVA_TEST_WATCHER_ENV";
       const activeConfig = {
         env: { vars: { [envKey]: "old" } },
         gateway: { auth: { mode: "token" as const, token: "old" } },
       } satisfies OpenClawConfig;
       const candidate = {
         env: { vars: { [envKey]: "new" } },
-        gateway: { auth: { mode: "token" as const, token: "${OPENCLAW_TEST_WATCHER_ENV}" } },
+        gateway: { auth: { mode: "token" as const, token: "${NOVA_TEST_WATCHER_ENV}" } },
       } satisfies OpenClawConfig;
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(configPath, `${JSON.stringify(candidate, null, 2)}\n`, "utf-8");
 
-      await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath, [envKey]: "old" }, async () => {
+      await withEnvAsync({ NOVA_CONFIG_PATH: configPath, [envKey]: "old" }, async () => {
         initializePublishedConfigRuntimeEnv(activeConfig, {
           ownedEnv: { [envKey]: "old" },
         });
@@ -2313,7 +2313,7 @@ describe("config io write", () => {
   it("rereads a managed write against an env transaction accepted during preflight", async () => {
     await withSuiteHome(async (home) => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
-      const envKey = "OPENCLAW_TEST_INTERLEAVED_WRITE_ENV";
+      const envKey = "NOVA_TEST_INTERLEAVED_WRITE_ENV";
       const makeConfig = (value: string, token: string): OpenClawConfig => ({
         env: { vars: { [envKey]: value } },
         gateway: { mode: "local", auth: { mode: "token", token } },
@@ -2351,7 +2351,7 @@ describe("config io write", () => {
       );
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath, [envKey]: "a" }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath, [envKey]: "a" }, async () => {
           setRuntimeConfigSnapshot(configA, configA);
           initializePublishedConfigRuntimeEnv(configA, {
             ownedEnv: { [envKey]: "a" },
@@ -2379,7 +2379,7 @@ describe("config io write", () => {
       await fs.writeFile(configPath, originalRaw, "utf-8");
       const io = createConfigIO({
         env: {
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_TEST_FAST: "1",
           PLUGIN_A: "same-plugin",
           PLUGIN_B: "same-plugin",
         } as NodeJS.ProcessEnv,
@@ -2405,7 +2405,7 @@ describe("config io write", () => {
         "utf-8",
       );
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: silentLogger,
       });
@@ -2468,7 +2468,7 @@ describe("config io write", () => {
       });
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshot(runtimeConfig, sourceConfig);
 
           await writeConfigFile({
@@ -2481,7 +2481,7 @@ describe("config io write", () => {
           });
 
           const postWriteSnapshot = await createConfigIO({
-            env: { OPENCLAW_CONFIG_PATH: configPath, VITEST: "true" } as NodeJS.ProcessEnv,
+            env: { NOVA_CONFIG_PATH: configPath, VITEST: "true" } as NodeJS.ProcessEnv,
             homedir: () => home,
             logger: silentLogger,
           }).readConfigFileSnapshot();
@@ -2525,7 +2525,7 @@ describe("config io write", () => {
       expect(warn).toHaveBeenCalledTimes(1);
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshotRefreshHandler({
             refresh: () => {
               throw new Error("synthetic refresh failure");
@@ -2571,7 +2571,7 @@ describe("config io write", () => {
       } satisfies ConfigFileSnapshot;
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshotRefreshHandler({
             refresh: () => {
               throw new Error("synthetic refresh failure");
@@ -2612,7 +2612,7 @@ describe("config io write", () => {
       )}\n`;
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshotRefreshHandler({
             refresh: async () => {
               await fs.writeFile(configPath, concurrentRaw, "utf-8");
@@ -2642,7 +2642,7 @@ describe("config io write", () => {
       await fs.writeFile(configPath, initialRaw, "utf-8");
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshotRefreshHandler({
             preflight: async ({ sourceConfig }) => {
               observedSource = sourceConfig;
@@ -2677,7 +2677,7 @@ describe("config io write", () => {
       await fs.writeFile(configPath, initialRaw, "utf-8");
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshotRefreshHandler({
             preflight: () => {
               events.push("runtime");
@@ -2713,7 +2713,7 @@ describe("config io write", () => {
       const initialRaw = `${JSON.stringify({ gateway: { mode: "local" } }, null, 2)}\n`;
       const env = {
         ...process.env,
-        OPENCLAW_CONFIG_PATH: configPath,
+        NOVA_CONFIG_PATH: configPath,
       } as NodeJS.ProcessEnv;
       let observedSource: OpenClawConfig | undefined;
 
@@ -2746,7 +2746,7 @@ describe("config io write", () => {
   it("restores config env vars when post-write runtime refresh rollback succeeds", async () => {
     await withSuiteHome(async (home) => {
       const configPath = path.join(home, ".openclaw", "openclaw.json");
-      const envKey = "OPENCLAW_TEST_RUNTIME_ROLLBACK_ENV";
+      const envKey = "NOVA_TEST_RUNTIME_ROLLBACK_ENV";
       const initialConfig = { gateway: { mode: "local", port: 18789 } } satisfies OpenClawConfig;
       const initialRaw = `${JSON.stringify(initialConfig, null, 2)}\n`;
 
@@ -2756,7 +2756,7 @@ describe("config io write", () => {
       try {
         await withEnvAsync(
           {
-            OPENCLAW_CONFIG_PATH: configPath,
+            NOVA_CONFIG_PATH: configPath,
             [envKey]: undefined,
           },
           async () => {
@@ -2792,34 +2792,31 @@ describe("config io write", () => {
       await fs.writeFile(configPath, `${JSON.stringify(initialConfig, null, 2)}\n`, "utf-8");
 
       try {
-        await withEnvAsync(
-          { OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_TEST_FAST: "1" },
-          async () => {
-            await writeConfigFile(initialConfig, { skipRuntimeSnapshotRefresh: true });
-            const priorSlot = readConfigSnapshotAuditRecord({
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath, NOVA_TEST_FAST: "1" }, async () => {
+          await writeConfigFile(initialConfig, { skipRuntimeSnapshotRefresh: true });
+          const priorSlot = readConfigSnapshotAuditRecord({
+            env: process.env,
+            homedir: () => home,
+            configPath,
+          });
+          setRuntimeConfigSnapshotRefreshHandler({
+            refresh: () => {
+              throw new Error("synthetic refresh failure");
+            },
+          });
+
+          await expect(
+            writeConfigFile({ gateway: { mode: "local", port: 19001 } }),
+          ).rejects.toThrow(/runtime snapshot refresh failed: synthetic refresh failure/);
+
+          expect(
+            readConfigSnapshotAuditRecord({
               env: process.env,
               homedir: () => home,
               configPath,
-            });
-            setRuntimeConfigSnapshotRefreshHandler({
-              refresh: () => {
-                throw new Error("synthetic refresh failure");
-              },
-            });
-
-            await expect(
-              writeConfigFile({ gateway: { mode: "local", port: 19001 } }),
-            ).rejects.toThrow(/runtime snapshot refresh failed: synthetic refresh failure/);
-
-            expect(
-              readConfigSnapshotAuditRecord({
-                env: process.env,
-                homedir: () => home,
-                configPath,
-              }),
-            ).toEqual(priorSlot);
-          },
-        );
+            }),
+          ).toEqual(priorSlot);
+        });
       } finally {
         setRuntimeConfigSnapshotRefreshHandler(null);
       }
@@ -2853,7 +2850,7 @@ describe("config io write", () => {
       });
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshot(initialConfig, initialConfig);
           initializePublishedConfigRuntimeEnv(initialConfig);
 
@@ -2882,10 +2879,10 @@ describe("config io write", () => {
 
       await withEnvAsync(
         {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_HOME: home,
-          OPENCLAW_STATE_DIR: undefined,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_HOME: home,
+          NOVA_STATE_DIR: undefined,
+          NOVA_TEST_FAST: "1",
         },
         async () => {
           const prepared = await readConfigFileSnapshotForWrite();
@@ -2894,7 +2891,7 @@ describe("config io write", () => {
             writeConfigFile(
               {
                 gateway: { mode: "local", port: 19001 },
-                env: { OPENCLAW_CONFIG_PATH: nextConfigPath },
+                env: { NOVA_CONFIG_PATH: nextConfigPath },
               },
               {
                 baseSnapshot: prepared.snapshot,
@@ -2904,7 +2901,7 @@ describe("config io write", () => {
           ).rejects.toThrow("config path changed since last load");
 
           await expect(fs.readFile(configPath, "utf-8")).resolves.toBe(initialRaw);
-          expect(process.env.OPENCLAW_CONFIG_PATH).toBeUndefined();
+          expect(process.env.NOVA_CONFIG_PATH).toBeUndefined();
           await expect(fs.stat(nextConfigPath)).rejects.toMatchObject({ code: "ENOENT" });
         },
       );
@@ -2920,8 +2917,8 @@ describe("config io write", () => {
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(configPath, initialRaw, "utf-8");
       const env = {
-        OPENCLAW_CONFIG_PATH: configPath,
-        OPENCLAW_TEST_FAST: "1",
+        NOVA_CONFIG_PATH: configPath,
+        NOVA_TEST_FAST: "1",
       } as NodeJS.ProcessEnv;
       const readFile = fsNode.promises.readFile.bind(fsNode.promises);
       const rename = fsNode.promises.rename.bind(fsNode.promises);
@@ -2941,7 +2938,7 @@ describe("config io write", () => {
             await rename(from, to);
             if (!committed && to === configPath) {
               committed = true;
-              env.OPENCLAW_CONFIG_PATH = otherConfigPath;
+              env.NOVA_CONFIG_PATH = otherConfigPath;
             }
           },
         },
@@ -3008,7 +3005,7 @@ describe("config io write", () => {
       } satisfies ConfigFileSnapshot["config"];
 
       try {
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           setRuntimeConfigSnapshot(runtimeConfig, sourceConfig);
 
           await writeConfigFile(runtimeConfig, {
@@ -3075,7 +3072,7 @@ describe("config io write", () => {
           plugins: { entries: { "strict-plugin": { enabled: true } } },
         };
 
-        await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPath }, async () => {
+        await withEnvAsync({ NOVA_CONFIG_PATH: configPath }, async () => {
           await writeConfigFile(cfg, { skipPluginValidation: true });
           await expect(fs.readFile(configPath, "utf-8")).resolves.toContain('"strict-plugin"');
 
@@ -3150,7 +3147,7 @@ describe("config io write", () => {
         commentWarnings.push(message);
       });
       const io = createConfigIO({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         logger: { warn, error: vi.fn() },
       });
@@ -3197,7 +3194,7 @@ describe("config io write", () => {
       const result = await io.writeConfigFile(nextConfig, { auditOrigin: "doctor" });
 
       const record = listConfigAuditRecordsForTests({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
       })
         .filter((candidate) => candidate.event === "config.write")
@@ -3218,7 +3215,7 @@ describe("config io write", () => {
       ]);
 
       const slot = readConfigSnapshotAuditRecord({
-        env: { OPENCLAW_TEST_FAST: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_TEST_FAST: "1" } as NodeJS.ProcessEnv,
         homedir: () => home,
         configPath,
       });
@@ -3246,9 +3243,9 @@ describe("config io write", () => {
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await withEnvAsync(
         {
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_STATE_DIR: path.join(home, ".openclaw"),
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_STATE_DIR: path.join(home, ".openclaw"),
+          NOVA_TEST_FAST: "1",
         },
         async () => {
           const io = createConfigIO({
@@ -3293,9 +3290,9 @@ describe("config io write", () => {
       const stateDir = path.join(home, ".openclaw");
       await withEnvAsync(
         {
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_FAST: "1",
         },
         async () => {
           const io = createConfigIO({
@@ -3389,9 +3386,9 @@ describe("config io write", () => {
       const stateDir = path.join(home, ".openclaw");
       await withEnvAsync(
         {
-          OPENCLAW_CONFIG_PATH: configPathA,
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_CONFIG_PATH: configPathA,
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_FAST: "1",
         },
         async () => {
           const io = createConfigIO({
@@ -3407,7 +3404,7 @@ describe("config io write", () => {
             "utf-8",
           );
 
-          await withEnvAsync({ OPENCLAW_CONFIG_PATH: configPathB }, async () => {
+          await withEnvAsync({ NOVA_CONFIG_PATH: configPathB }, async () => {
             const snapshot = await readConfigFileSnapshotForRuntimeTransaction({});
             const watcher = {
               options: { usePolling: false },

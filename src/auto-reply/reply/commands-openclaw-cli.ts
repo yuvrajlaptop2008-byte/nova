@@ -6,15 +6,15 @@ import { isBunRuntime } from "../../daemon/runtime-binary.js";
 import { resolveOpenClawPackageRootSync } from "../../infra/openclaw-root.js";
 
 const requireFromHere = createRequire(import.meta.url);
-const OPENCLAW_CLI_ENTRY_BASENAMES = new Set(["openclaw", "openclaw.mjs"]);
-const OPENCLAW_PACKAGE_ENTRY_PATHS = new Set([
+const NOVA_CLI_ENTRY_BASENAMES = new Set(["openclaw", "openclaw.mjs"]);
+const NOVA_PACKAGE_ENTRY_PATHS = new Set([
   path.join("dist", "entry.js"),
   path.join("dist", "entry.mjs"),
   path.join("dist", "index.js"),
   path.join("dist", "index.mjs"),
   path.join("src", "entry.ts"),
 ]);
-const TEST_RUNNER_ENV_PREFIXES = ["VITEST_", "OPENCLAW_VITEST_"];
+const TEST_RUNNER_ENV_PREFIXES = ["VITEST_", "NOVA_VITEST_"];
 
 function quoteShellArg(value: string): string {
   if (process.platform === "win32") {
@@ -24,12 +24,12 @@ function quoteShellArg(value: string): string {
 }
 
 function isOpenClawCliLauncherEntry(entry: string): boolean {
-  return OPENCLAW_CLI_ENTRY_BASENAMES.has(path.basename(entry));
+  return NOVA_CLI_ENTRY_BASENAMES.has(path.basename(entry));
 }
 
 function isOpenClawPackageEntry(entry: string, packageRoot: string): boolean {
   const relativeEntry = path.relative(path.resolve(packageRoot), path.resolve(entry));
-  return OPENCLAW_PACKAGE_ENTRY_PATHS.has(relativeEntry);
+  return NOVA_PACKAGE_ENTRY_PATHS.has(relativeEntry);
 }
 
 function safeCwd(): string | undefined {

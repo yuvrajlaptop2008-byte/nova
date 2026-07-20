@@ -107,8 +107,8 @@ describe("loadOpenClawPlugins", () => {
 
           return withEnv(
             {
-              OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-              OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
+              NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+              NOVA_BUNDLED_PLUGINS_DIR: undefined,
             },
             () =>
               loadOpenClawPlugins({
@@ -175,7 +175,7 @@ describe("loadOpenClawPlugins", () => {
             ),
             "utf-8",
           );
-          process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledDir;
+          process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
           return loadOpenClawPlugins({
             cache: false,
@@ -384,7 +384,7 @@ describe("loadOpenClawPlugins", () => {
             ),
             "utf-8",
           );
-          process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledDir;
+          process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
           return loadOpenClawPlugins({
             cache: false,
@@ -447,7 +447,7 @@ describe("loadOpenClawPlugins", () => {
             ),
             "utf-8",
           );
-          process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledDir;
+          process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
           return loadOpenClawPlugins({
             cache: false,
@@ -491,7 +491,7 @@ describe("loadOpenClawPlugins", () => {
             ),
             "utf-8",
           );
-          process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledDir;
+          process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
 
           return loadOpenClawPlugins({
             cache: false,
@@ -521,8 +521,8 @@ describe("loadOpenClawPlugins", () => {
 
           return withEnv(
             {
-              OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-              OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
+              NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+              NOVA_BUNDLED_PLUGINS_DIR: undefined,
             },
             () =>
               loadOpenClawPlugins({
@@ -697,8 +697,8 @@ describe("loadOpenClawPlugins", () => {
             body: simplePluginBody("demo-dev-source-duplicate"),
             bundledDir: path.join(bundledPluginsDir, "demo-dev-source-duplicate"),
           });
-          process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
-          return withEnv({ OPENCLAW_DEV_SOURCE_ROOT: devSourceRoot }, () =>
+          process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
+          return withEnv({ NOVA_DEV_SOURCE_ROOT: devSourceRoot }, () =>
             withStateDir((stateDir) => {
               const globalDir = path.join(stateDir, "extensions", "demo-dev-source-duplicate");
               mkdirSafe(globalDir);
@@ -1042,7 +1042,7 @@ describe("loadOpenClawPlugins", () => {
   it("includes actionable plugins.allow remediation hints in the untracked-provenance warning", () => {
     useNoBundledPlugins();
     const stateDir = makeTempDir();
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const globalDir = path.join(stateDir, "extensions", "warn-untracked-remediation");
       mkdirSafe(globalDir);
       writePlugin({
@@ -1316,7 +1316,7 @@ describe("loadOpenClawPlugins", () => {
         label: "warns when loaded non-bundled plugin has no provenance and no allowlist is set",
         loadRegistry: () => {
           const stateDir = makeTempDir();
-          return withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+          return withEnv({ NOVA_STATE_DIR: stateDir }, () => {
             const globalDir = path.join(stateDir, "extensions", "rogue");
             mkdirSafe(globalDir);
             writePlugin({
@@ -1450,8 +1450,8 @@ describe("loadOpenClawPlugins", () => {
             logger: createWarningLogger(warnings),
             env: {
               ...process.env,
-              OPENCLAW_STATE_DIR: stateDir,
-              OPENCLAW_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
+              NOVA_STATE_DIR: stateDir,
+              NOVA_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
             },
             config: {
               plugins: {
@@ -1487,7 +1487,7 @@ describe("loadOpenClawPlugins", () => {
   it("uses the source runtime snapshot allowlist for plugin trust checks", () => {
     useNoBundledPlugins();
     const stateDir = makeTempDir();
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const globalDir = path.join(stateDir, "extensions", "trusted-plugin");
       mkdirSafe(globalDir);
       writePlugin({
@@ -1596,7 +1596,7 @@ describe("loadOpenClawPlugins", () => {
       throw err;
     }
 
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledDir;
+    process.env.NOVA_BUNDLED_PLUGINS_DIR = bundledDir;
     const registry = loadOpenClawPlugins({
       cache: false,
       workspaceDir: bundledDir,
@@ -1638,7 +1638,7 @@ describe("loadOpenClawPlugins", () => {
   } };`,
     });
 
-    const registry = withEnv({ OPENCLAW_STATE_DIR: stateDir }, () =>
+    const registry = withEnv({ NOVA_STATE_DIR: stateDir }, () =>
       loadRegistryFromSinglePlugin({
         plugin,
         pluginConfig: {
@@ -1657,7 +1657,7 @@ describe("loadOpenClawPlugins", () => {
   it("suppresses trust warning logs for non-activating snapshot loads", () => {
     useNoBundledPlugins();
     const stateDir = makeTempDir();
-    withEnv({ OPENCLAW_STATE_DIR: stateDir }, () => {
+    withEnv({ NOVA_STATE_DIR: stateDir }, () => {
       const globalDir = path.join(stateDir, "extensions", "rogue");
       mkdirSafe(globalDir);
       writePlugin({

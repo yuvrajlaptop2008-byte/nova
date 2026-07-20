@@ -1,7 +1,4 @@
-import {
-  isDefaultAgentRuntimeId,
-  OPENCLAW_AGENT_RUNTIME_ID,
-} from "../../agents/agent-runtime-id.js";
+import { isDefaultAgentRuntimeId, NOVA_AGENT_RUNTIME_ID } from "../../agents/agent-runtime-id.js";
 import { resolveSessionModelRef } from "../../agents/session-model-ref.js";
 import { resolvePersistedSessionRuntimeId } from "../../agents/session-runtime-compat.js";
 import { resolveEffectiveAgentRuntime } from "../../agents/thinking-runtime.js";
@@ -29,5 +26,5 @@ export function resolveWorkerPlacementSessionRuntime(params: {
 }
 
 export function isWorkerPlacementSessionRuntimeSupported(runtime: string): boolean {
-  return runtime === OPENCLAW_AGENT_RUNTIME_ID;
+  return runtime === NOVA_AGENT_RUNTIME_ID;
 }

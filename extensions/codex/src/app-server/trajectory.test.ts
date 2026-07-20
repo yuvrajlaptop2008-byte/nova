@@ -273,7 +273,7 @@ describe("Codex trajectory recorder", () => {
         sessionId: "session-1",
         model: { api: "responses" },
       } as never,
-      env: { OPENCLAW_TRAJECTORY: "0" },
+      env: { NOVA_TRAJECTORY: "0" },
       warn,
     });
 

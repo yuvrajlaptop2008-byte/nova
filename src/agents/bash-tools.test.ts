@@ -156,14 +156,14 @@ vi.mock("../process/supervisor/index.js", () => {
     return commands;
   };
   const applySegmentShellEffects = (segment: string, env: NodeJS.ProcessEnv) => {
-    if (segment === 'export PATH="${OPENCLAW_PREPEND_PATH}${PATH:+:$PATH}"') {
-      const prepend = env.OPENCLAW_PREPEND_PATH ?? "";
+    if (segment === 'export PATH="${NOVA_PREPEND_PATH}${PATH:+:$PATH}"') {
+      const prepend = env.NOVA_PREPEND_PATH ?? "";
       const current = readEnvPath(env);
       writeEnvPath(env, `${prepend}${current ? `:${current}` : ""}`);
       return;
     }
-    if (segment === "unset OPENCLAW_PREPEND_PATH") {
-      delete env.OPENCLAW_PREPEND_PATH;
+    if (segment === "unset NOVA_PREPEND_PATH") {
+      delete env.NOVA_PREPEND_PATH;
     }
   };
   const stdoutForSegment = (segment: string, env: NodeJS.ProcessEnv) => {
@@ -237,9 +237,7 @@ vi.mock("../process/supervisor/index.js", () => {
 });
 
 const isWin = process.platform === "win32";
-const defaultShell = isWin
-  ? undefined
-  : process.env.OPENCLAW_TEST_SHELL || getBashShellConfig().shell;
+const defaultShell = isWin ? undefined : process.env.NOVA_TEST_SHELL || getBashShellConfig().shell;
 // PowerShell: Start-Sleep for delays, ; for command separation, $null for null device
 const shortDelayCmd = isWin ? "Start-Sleep -Milliseconds 4" : "sleep 0.004";
 const POLL_INTERVAL_MS = isWin ? 15 : 2;
@@ -253,8 +251,8 @@ const NOTIFY_POLL_OPTIONS = {
   timeout: NOTIFY_EVENT_TIMEOUT_MS,
   interval: POLL_INTERVAL_MS,
 };
-const SHELL_ENV_KEYS = ["OPENCLAW_EXEC_SHELL_SNAPSHOT", "SHELL"] as const;
-const PATH_SHELL_ENV_KEYS = ["OPENCLAW_EXEC_SHELL_SNAPSHOT", "PATH", "SHELL"] as const;
+const SHELL_ENV_KEYS = ["NOVA_EXEC_SHELL_SNAPSHOT", "SHELL"] as const;
+const PATH_SHELL_ENV_KEYS = ["NOVA_EXEC_SHELL_SNAPSHOT", "PATH", "SHELL"] as const;
 const PROCESS_STATUS_RUNNING = "running";
 const PROCESS_STATUS_COMPLETED = "completed";
 const PROCESS_STATUS_FAILED = "failed";
@@ -387,7 +385,7 @@ async function pollProcessSession(params: {
   };
 }
 function applyDefaultShellEnv() {
-  process.env.OPENCLAW_EXEC_SHELL_SNAPSHOT = "0";
+  process.env.NOVA_EXEC_SHELL_SNAPSHOT = "0";
   if (!isWin && defaultShell) {
     process.env.SHELL = defaultShell;
   }

@@ -197,11 +197,11 @@ describe("current plugin metadata snapshot", () => {
     const snapshot = createSnapshot({ config });
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     setCurrentPluginMetadataSnapshot(snapshot, { config, env: snapshotEnv });
 
@@ -214,11 +214,11 @@ describe("current plugin metadata snapshot", () => {
     const snapshot = createSnapshot({ config });
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     setCurrentPluginMetadataSnapshot(snapshot, { config, env: snapshotEnv });
 
@@ -255,7 +255,7 @@ describe("current plugin metadata snapshot", () => {
     const snapshot = createSnapshot({ config });
     const env = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     setCurrentPluginMetadataSnapshot(snapshot, { config, env });
 

@@ -1,7 +1,7 @@
 /**
  * Prepares the durable session manager before embedded-agent session creation.
  */
-import { OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../../context-engine/host-compat.js";
+import { NOVA_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../../context-engine/host-compat.js";
 import type { AgentMessage } from "../../runtime/index.js";
 import {
   invalidateSessionFileRepairCache,
@@ -155,7 +155,7 @@ export async function prepareEmbeddedAttemptSessionManager(input: {
         activeAgentId: input.sessionAgentId,
         contextEnginePluginId: input.resolveActiveContextEnginePluginId(),
       }),
-      contextEngineHostSupport: OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST,
+      contextEngineHostSupport: NOVA_EMBEDDED_CONTEXT_ENGINE_HOST,
       providerId: attempt.provider,
       requestedModelId: attempt.requestedModelId,
       modelId: attempt.modelId,

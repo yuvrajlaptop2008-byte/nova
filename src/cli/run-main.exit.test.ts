@@ -140,8 +140,8 @@ const maybeRunCliInContainerMock = vi.hoisted(() =>
   >((argv: string[]) => ({ handled: false, argv })),
 );
 const serviceEnvSnapshot = captureEnv([
-  "OPENCLAW_SERVICE_MARKER",
-  "OPENCLAW_SERVICE_KIND",
+  "NOVA_SERVICE_MARKER",
+  "NOVA_SERVICE_KIND",
   GATEWAY_SERVICE_RUNTIME_PID_ENV,
 ]);
 
@@ -403,13 +403,13 @@ describe("runCli exit behavior", () => {
   });
 
   beforeEach(() => {
-    delete process.env.OPENCLAW_SERVICE_MARKER;
-    delete process.env.OPENCLAW_SERVICE_KIND;
+    delete process.env.NOVA_SERVICE_MARKER;
+    delete process.env.NOVA_SERVICE_KIND;
     // Sibling CLI suites run `gateway run --token/--password`, which exports
     // credentials into process.env; leaked values change gateway preflight
     // auth in shared vitest workers.
-    delete process.env.OPENCLAW_GATEWAY_TOKEN;
-    delete process.env.OPENCLAW_GATEWAY_PASSWORD;
+    delete process.env.NOVA_GATEWAY_TOKEN;
+    delete process.env.NOVA_GATEWAY_PASSWORD;
     delete process.env[GATEWAY_SERVICE_RUNTIME_PID_ENV];
     vi.clearAllMocks();
     readConfigFileSnapshotMock.mockResolvedValue({
@@ -448,8 +448,8 @@ describe("runCli exit behavior", () => {
     resolveManifestCommandAliasOwnerMock.mockReturnValue(undefined);
     resolveManifestToolOwnerMock.mockReturnValue(undefined);
     resolveManifestCliCommandSurfaceOwnerMock.mockReturnValue(undefined);
-    delete process.env.OPENCLAW_DISABLE_CLI_STARTUP_HELP_FAST_PATH;
-    delete process.env.OPENCLAW_HIDE_BANNER;
+    delete process.env.NOVA_DISABLE_CLI_STARTUP_HELP_FAST_PATH;
+    delete process.env.NOVA_HIDE_BANNER;
     loggingState.forceConsoleToStderr = false;
   });
 
@@ -704,8 +704,8 @@ describe("runCli exit behavior", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
-          OPENCLAW_SERVICE_MARKER: undefined,
+          NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
+          NOVA_SERVICE_MARKER: undefined,
         },
         async () => {
           await expect(
@@ -716,7 +716,7 @@ describe("runCli exit behavior", () => {
               raw: "{}",
               valid: true,
               sourceConfig: {
-                env: { vars: { OPENCLAW_SERVICE_MARKER: "gateway" } },
+                env: { vars: { NOVA_SERVICE_MARKER: "gateway" } },
                 meta: { lastTouchedVersion: "9999.1.1" },
               },
             }),
@@ -724,7 +724,7 @@ describe("runCli exit behavior", () => {
           expect(errorSpy).toHaveBeenCalledWith(
             expect.stringContaining("start the gateway service"),
           );
-          expect(process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
+          expect(process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
           expect(exitSpy).not.toHaveBeenCalled();
         },
       );
@@ -781,17 +781,17 @@ describe("runCli exit behavior", () => {
       valid: true,
       sourceConfig: { meta: { lastTouchedVersion: "9999.1.1" } },
     });
-    const previousMarker = process.env.OPENCLAW_SERVICE_MARKER;
-    const previousOverride = process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS;
+    const previousMarker = process.env.NOVA_SERVICE_MARKER;
+    const previousOverride = process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS;
     if (params.marker) {
-      process.env.OPENCLAW_SERVICE_MARKER = params.marker;
+      process.env.NOVA_SERVICE_MARKER = params.marker;
     } else {
-      delete process.env.OPENCLAW_SERVICE_MARKER;
+      delete process.env.NOVA_SERVICE_MARKER;
     }
     if (params.override) {
-      process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = params.override;
+      process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = params.override;
     } else {
-      delete process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS;
+      delete process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS;
     }
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const exitSpy = vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
@@ -807,20 +807,20 @@ describe("runCli exit behavior", () => {
         [{ isolateEnv: true, observe: false }],
       ]);
       if (params.marker) {
-        expect(process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
+        expect(process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
       }
     } finally {
       exitSpy.mockRestore();
       errorSpy.mockRestore();
       if (previousMarker === undefined) {
-        delete process.env.OPENCLAW_SERVICE_MARKER;
+        delete process.env.NOVA_SERVICE_MARKER;
       } else {
-        process.env.OPENCLAW_SERVICE_MARKER = previousMarker;
+        process.env.NOVA_SERVICE_MARKER = previousMarker;
       }
       if (previousOverride === undefined) {
-        delete process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS;
+        delete process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS;
       } else {
-        process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = previousOverride;
+        process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS = previousOverride;
       }
     }
   });
@@ -830,7 +830,7 @@ describe("runCli exit behavior", () => {
       exists: true,
       valid: true,
       sourceConfig: {
-        env: { vars: { OPENCLAW_SERVICE_MARKER: "gateway" } },
+        env: { vars: { NOVA_SERVICE_MARKER: "gateway" } },
         meta: { lastTouchedVersion: "9999.1.1" },
       },
     });
@@ -841,13 +841,13 @@ describe("runCli exit behavior", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
-          OPENCLAW_SERVICE_MARKER: undefined,
+          NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
+          NOVA_SERVICE_MARKER: undefined,
         },
         async () => {
           await expect(runCli(["node", "openclaw", "gateway"])).rejects.toThrow("exit:78");
-          expect(process.env.OPENCLAW_SERVICE_MARKER).toBeUndefined();
-          expect(process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
+          expect(process.env.NOVA_SERVICE_MARKER).toBeUndefined();
+          expect(process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
           expect(ensureCliExecutionBootstrapMock).not.toHaveBeenCalled();
         },
       );
@@ -862,21 +862,21 @@ describe("runCli exit behavior", () => {
       exists: true,
       valid: false,
       sourceConfig: {
-        env: { vars: { OPENCLAW_SERVICE_MARKER: "gateway" } },
+        env: { vars: { NOVA_SERVICE_MARKER: "gateway" } },
         meta: { lastTouchedVersion: "9999.1.1" },
       },
     });
 
     await withEnvAsync(
       {
-        OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
-        OPENCLAW_SERVICE_MARKER: undefined,
+        NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
+        NOVA_SERVICE_MARKER: undefined,
       },
       async () => {
         await runCli(["node", "openclaw", "gateway"]);
 
-        expect(process.env.OPENCLAW_SERVICE_MARKER).toBeUndefined();
-        expect(process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBe("1");
+        expect(process.env.NOVA_SERVICE_MARKER).toBeUndefined();
+        expect(process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBe("1");
       },
     );
   });
@@ -889,8 +889,8 @@ describe("runCli exit behavior", () => {
     await fs.writeFile(
       path.join(stateDir, ".env"),
       [
-        `OPENCLAW_CONFIG_PATH=${selectedConfigPath}`,
-        "OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1",
+        `NOVA_CONFIG_PATH=${selectedConfigPath}`,
+        "NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1",
         "",
       ].join("\n"),
     );
@@ -898,14 +898,14 @@ describe("runCli exit behavior", () => {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: undefined,
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           readConfigFileSnapshotMock.mockImplementation(async () =>
-            process.env.OPENCLAW_CONFIG_PATH === selectedConfigPath
+            process.env.NOVA_CONFIG_PATH === selectedConfigPath
               ? {
                   exists: true,
                   valid: true,
@@ -920,8 +920,8 @@ describe("runCli exit behavior", () => {
 
           await runCli(["node", "openclaw", "gateway"]);
 
-          expect(process.env.OPENCLAW_CONFIG_PATH).toBe(selectedConfigPath);
-          expect(process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
+          expect(process.env.NOVA_CONFIG_PATH).toBe(selectedConfigPath);
+          expect(process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
           expect(readConfigFileSnapshotMock).toHaveBeenCalledOnce();
         },
       );
@@ -937,12 +937,12 @@ describe("runCli exit behavior", () => {
     const configPath = path.join(configDir, "openclaw.json");
     await fs.mkdir(stateDir, { recursive: true });
     await fs.mkdir(configDir, { recursive: true });
-    await fs.writeFile(path.join(stateDir, ".env"), "OPENCLAW_GATEWAY_TOKEN=state-token\n");
+    await fs.writeFile(path.join(stateDir, ".env"), "NOVA_GATEWAY_TOKEN=state-token\n");
     await fs.writeFile(
       path.join(configDir, ".env"),
       [
-        "OPENCLAW_GATEWAY_PASSWORD=config-root-password",
-        "OPENCLAW_GATEWAY_TOKEN=config-root-token",
+        "NOVA_GATEWAY_PASSWORD=config-root-password",
+        "NOVA_GATEWAY_TOKEN=config-root-token",
         "",
       ].join("\n"),
     );
@@ -950,17 +950,17 @@ describe("runCli exit behavior", () => {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_GATEWAY_PASSWORD: undefined,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_GATEWAY_PASSWORD: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           await runCli(["node", "openclaw", "gateway"]);
 
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("state-token");
-          expect(process.env.OPENCLAW_GATEWAY_PASSWORD).toBe("config-root-password");
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("state-token");
+          expect(process.env.NOVA_GATEWAY_PASSWORD).toBe("config-root-password");
         },
       );
     } finally {
@@ -973,16 +973,16 @@ describe("runCli exit behavior", () => {
     const legacyStateDir = path.join(homeDir, ".clawdbot");
     const newStateDir = path.join(homeDir, ".openclaw");
     await fs.mkdir(legacyStateDir, { recursive: true });
-    await fs.writeFile(path.join(legacyStateDir, ".env"), "OPENCLAW_GATEWAY_TOKEN=legacy-token\n");
+    await fs.writeFile(path.join(legacyStateDir, ".env"), "NOVA_GATEWAY_TOKEN=legacy-token\n");
     try {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
-          OPENCLAW_TEST_FAST: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
+          NOVA_TEST_FAST: undefined,
         },
         async () => {
           ensureCliExecutionBootstrapMock.mockImplementationOnce(async () => {
@@ -994,7 +994,7 @@ describe("runCli exit behavior", () => {
             | undefined;
           await hooks?.beforeRun?.({});
 
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("legacy-token");
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("legacy-token");
           await expect(fs.access(path.join(newStateDir, ".env"))).resolves.toBeUndefined();
           const bootstrapOrder = ensureCliExecutionBootstrapMock.mock.invocationCallOrder[0] ?? 0;
           const finalPinOrder = pinRuntimePathsMock.mock.invocationCallOrder.at(-1) ?? 0;
@@ -1092,7 +1092,7 @@ describe("runCli exit behavior", () => {
       if (options?.recoverSuspicious) {
         await options.allowSuspiciousRecovery?.(
           {
-            env: { vars: { OPENCLAW_SERVICE_MARKER: "gateway" } },
+            env: { vars: { NOVA_SERVICE_MARKER: "gateway" } },
             gateway: { mode: "local" },
             meta: { lastTouchedVersion: "9999.1.1" },
           },
@@ -1108,8 +1108,8 @@ describe("runCli exit behavior", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
-          OPENCLAW_SERVICE_MARKER: undefined,
+          NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: "1",
+          NOVA_SERVICE_MARKER: undefined,
         },
         async () => {
           await runCli(["node", "openclaw", "gateway"]);
@@ -1133,25 +1133,25 @@ describe("runCli exit behavior", () => {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           readConfigFileSnapshotMock.mockImplementation(async () => {
-            if (process.env.OPENCLAW_CONFIG_PATH === "/tmp/openclaw-chain-c.json") {
+            if (process.env.NOVA_CONFIG_PATH === "/tmp/openclaw-chain-c.json") {
               return {
                 exists: true,
                 valid: true,
                 sourceConfig: { meta: { lastTouchedVersion: "9999.1.1" } },
               };
             }
-            if (process.env.OPENCLAW_STATE_DIR === "/tmp/openclaw-chain-b") {
+            if (process.env.NOVA_STATE_DIR === "/tmp/openclaw-chain-b") {
               return {
                 exists: true,
                 valid: true,
                 sourceConfig: {
-                  env: { vars: { OPENCLAW_CONFIG_PATH: "/tmp/openclaw-chain-c.json" } },
+                  env: { vars: { NOVA_CONFIG_PATH: "/tmp/openclaw-chain-c.json" } },
                   gateway: { mode: "local" },
                 },
               };
@@ -1160,7 +1160,7 @@ describe("runCli exit behavior", () => {
               exists: true,
               valid: true,
               sourceConfig: {
-                env: { vars: { OPENCLAW_STATE_DIR: "/tmp/openclaw-chain-b" } },
+                env: { vars: { NOVA_STATE_DIR: "/tmp/openclaw-chain-b" } },
                 gateway: { mode: "local" },
               },
             };
@@ -1231,18 +1231,18 @@ describe("runCli exit behavior", () => {
   it("drops credentials from configs superseded during state selection", async () => {
     await withEnvAsync(
       {
-        OPENCLAW_GATEWAY_TOKEN: undefined,
-        OPENCLAW_HOME: undefined,
-        OPENCLAW_STATE_DIR: undefined,
+        NOVA_GATEWAY_TOKEN: undefined,
+        NOVA_HOME: undefined,
+        NOVA_STATE_DIR: undefined,
       },
       async () => {
         readConfigFileSnapshotMock.mockImplementation(async () =>
-          process.env.OPENCLAW_STATE_DIR === "/tmp/openclaw-selected-state"
+          process.env.NOVA_STATE_DIR === "/tmp/openclaw-selected-state"
             ? {
                 exists: true,
                 valid: true,
                 sourceConfig: {
-                  env: { vars: { OPENCLAW_GATEWAY_TOKEN: "selected-token" } },
+                  env: { vars: { NOVA_GATEWAY_TOKEN: "selected-token" } },
                   gateway: { mode: "local" },
                 },
               }
@@ -1252,8 +1252,8 @@ describe("runCli exit behavior", () => {
                 sourceConfig: {
                   env: {
                     vars: {
-                      OPENCLAW_GATEWAY_TOKEN: "superseded-token",
-                      OPENCLAW_STATE_DIR: "/tmp/openclaw-selected-state",
+                      NOVA_GATEWAY_TOKEN: "superseded-token",
+                      NOVA_STATE_DIR: "/tmp/openclaw-selected-state",
                     },
                   },
                   gateway: { mode: "local" },
@@ -1267,8 +1267,8 @@ describe("runCli exit behavior", () => {
           | undefined;
         await hooks?.beforeRun?.({});
 
-        expect(process.env.OPENCLAW_STATE_DIR).toBe("/tmp/openclaw-selected-state");
-        expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("selected-token");
+        expect(process.env.NOVA_STATE_DIR).toBe("/tmp/openclaw-selected-state");
+        expect(process.env.NOVA_GATEWAY_TOKEN).toBe("selected-token");
         expect(ensureCliExecutionBootstrapMock).toHaveBeenCalledOnce();
       },
     );
@@ -1280,22 +1280,22 @@ describe("runCli exit behavior", () => {
     await fs.writeFile(
       path.join(stateDir, ".env"),
       [
-        `OPENCLAW_CONFIG_PATH=${futureConfigPath}`,
-        "OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1",
+        `NOVA_CONFIG_PATH=${futureConfigPath}`,
+        "NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1",
         "",
       ].join("\n"),
     );
     try {
       await withEnvAsync(
         {
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_HOME: undefined,
-          OPENCLAW_STATE_DIR: undefined,
-          OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_HOME: undefined,
+          NOVA_STATE_DIR: undefined,
+          NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: undefined,
         },
         async () => {
           readConfigFileSnapshotMock.mockImplementation(async () => {
-            if (process.env.OPENCLAW_CONFIG_PATH === futureConfigPath) {
+            if (process.env.NOVA_CONFIG_PATH === futureConfigPath) {
               return {
                 exists: true,
                 valid: true,
@@ -1306,7 +1306,7 @@ describe("runCli exit behavior", () => {
               exists: true,
               valid: true,
               sourceConfig: {
-                env: { vars: { OPENCLAW_STATE_DIR: stateDir } },
+                env: { vars: { NOVA_STATE_DIR: stateDir } },
                 gateway: { mode: "local" },
               },
             };
@@ -1322,7 +1322,7 @@ describe("runCli exit behavior", () => {
             );
             expect(ensureCliExecutionBootstrapMock).not.toHaveBeenCalled();
             expect(readConfigFileSnapshotMock).toHaveBeenCalledTimes(2);
-            expect(process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
+            expect(process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
           } finally {
             exitSpy.mockRestore();
             errorSpy.mockRestore();
@@ -1335,7 +1335,7 @@ describe("runCli exit behavior", () => {
   });
 
   it("re-inspects recovery after recovery changes config selection", async () => {
-    await withEnvAsync({ OPENCLAW_CONFIG_PATH: undefined }, async () => {
+    await withEnvAsync({ NOVA_CONFIG_PATH: undefined }, async () => {
       const selectedConfigPath = "/tmp/openclaw-recovered-selection.json";
       const currentSnapshot = {
         exists: true,
@@ -1353,7 +1353,7 @@ describe("runCli exit behavior", () => {
             exists: true,
             valid: true,
             sourceConfig: {
-              env: { vars: { OPENCLAW_CONFIG_PATH: selectedConfigPath } },
+              env: { vars: { NOVA_CONFIG_PATH: selectedConfigPath } },
               gateway: { mode: "local" },
             },
           };
@@ -1396,13 +1396,13 @@ describe("runCli exit behavior", () => {
 
   it("discards env from a config replaced by suspicious recovery", async () => {
     await withEnvAsync(
-      { OPENCLAW_GATEWAY_TOKEN: undefined, OPENCLAW_PROXY_ACTIVE: undefined },
+      { NOVA_GATEWAY_TOKEN: undefined, NOVA_PROXY_ACTIVE: undefined },
       async () => {
         const clobberedSnapshot = {
           exists: true,
           valid: true,
           sourceConfig: {
-            env: { vars: { OPENCLAW_GATEWAY_TOKEN: "discarded-token" } },
+            env: { vars: { NOVA_GATEWAY_TOKEN: "discarded-token" } },
             gateway: { mode: "local" },
           },
           hash: "clobbered",
@@ -1438,26 +1438,26 @@ describe("runCli exit behavior", () => {
         await runCli(["node", "openclaw", "gateway"]);
 
         currentSnapshot = clobberedSnapshot;
-        process.env.OPENCLAW_PROXY_ACTIVE = "1";
+        process.env.NOVA_PROXY_ACTIVE = "1";
         const hooks = addGatewayRunCommandMock.mock.calls[0]?.[1] as
           | { beforeRun?: (opts: { force?: boolean }) => Promise<void> }
           | undefined;
         await hooks?.beforeRun?.({});
 
-        expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBeUndefined();
-        expect(process.env.OPENCLAW_PROXY_ACTIVE).toBe("1");
+        expect(process.env.NOVA_GATEWAY_TOKEN).toBeUndefined();
+        expect(process.env.NOVA_PROXY_ACTIVE).toBe("1");
         expect(ensureCliExecutionBootstrapMock).toHaveBeenCalledOnce();
       },
     );
   });
 
   it("does not apply environment variables from invalid config snapshots", async () => {
-    await withEnvAsync({ OPENCLAW_INCLUDE_ROOTS: undefined }, async () => {
+    await withEnvAsync({ NOVA_INCLUDE_ROOTS: undefined }, async () => {
       readConfigFileSnapshotMock.mockResolvedValue({
         exists: true,
         valid: false,
         sourceConfig: {
-          env: { vars: { OPENCLAW_INCLUDE_ROOTS: "/tmp/openclaw-includes" } },
+          env: { vars: { NOVA_INCLUDE_ROOTS: "/tmp/openclaw-includes" } },
           gateway: { mode: "local" },
         },
       });
@@ -1468,7 +1468,7 @@ describe("runCli exit behavior", () => {
         | undefined;
       await hooks?.beforeRun?.({});
 
-      expect(process.env.OPENCLAW_INCLUDE_ROOTS).toBeUndefined();
+      expect(process.env.NOVA_INCLUDE_ROOTS).toBeUndefined();
       expect(readConfigFileSnapshotMock.mock.calls).toEqual([
         [{ isolateEnv: true, observe: false }],
         [{ isolateEnv: true, observe: false }],
@@ -1481,15 +1481,15 @@ describe("runCli exit behavior", () => {
     const homeDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-gateway-selected-env-"));
     const stateDir = path.join(homeDir, "state");
     await fs.mkdir(stateDir, { recursive: true });
-    await fs.writeFile(path.join(stateDir, ".env"), "OPENCLAW_GATEWAY_TOKEN=state-token\n");
+    await fs.writeFile(path.join(stateDir, ".env"), "NOVA_GATEWAY_TOKEN=state-token\n");
     try {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           readConfigFileSnapshotMock.mockResolvedValue({
@@ -1498,8 +1498,8 @@ describe("runCli exit behavior", () => {
             sourceConfig: {
               env: {
                 vars: {
-                  OPENCLAW_GATEWAY_TOKEN: "config-token",
-                  OPENCLAW_STATE_DIR: stateDir,
+                  NOVA_GATEWAY_TOKEN: "config-token",
+                  NOVA_STATE_DIR: stateDir,
                 },
               },
               gateway: { mode: "local" },
@@ -1507,12 +1507,12 @@ describe("runCli exit behavior", () => {
           });
           let tokenAtNormalize: string | undefined;
           normalizeEnvMock.mockImplementation(() => {
-            tokenAtNormalize = process.env.OPENCLAW_GATEWAY_TOKEN;
+            tokenAtNormalize = process.env.NOVA_GATEWAY_TOKEN;
           });
 
           await runCli(["node", "openclaw", "gateway"]);
 
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("state-token");
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("state-token");
           expect(tokenAtNormalize).toBe("state-token");
         },
       );
@@ -1529,29 +1529,22 @@ describe("runCli exit behavior", () => {
     await fs.mkdir(selectedStateDir, { recursive: true });
     await fs.writeFile(
       path.join(defaultStateDir, ".env"),
-      [
-        `OPENCLAW_STATE_DIR=${selectedStateDir}`,
-        "OPENCLAW_GATEWAY_TOKEN=superseded-token",
-        "",
-      ].join("\n"),
+      [`NOVA_STATE_DIR=${selectedStateDir}`, "NOVA_GATEWAY_TOKEN=superseded-token", ""].join("\n"),
     );
-    await fs.writeFile(
-      path.join(selectedStateDir, ".env"),
-      "OPENCLAW_GATEWAY_TOKEN=selected-token\n",
-    );
+    await fs.writeFile(path.join(selectedStateDir, ".env"), "NOVA_GATEWAY_TOKEN=selected-token\n");
     try {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           await runCli(["node", "openclaw", "gateway"]);
 
-          expect(process.env.OPENCLAW_STATE_DIR).toBe(selectedStateDir);
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("selected-token");
+          expect(process.env.NOVA_STATE_DIR).toBe(selectedStateDir);
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("selected-token");
         },
       );
     } finally {
@@ -1567,23 +1560,18 @@ describe("runCli exit behavior", () => {
     await fs.mkdir(defaultStateDir, { recursive: true });
     await fs.mkdir(selectedStateDir, { recursive: true });
     await fs.mkdir(gatewayEnvDir, { recursive: true });
-    await fs.writeFile(
-      path.join(defaultStateDir, ".env"),
-      `OPENCLAW_STATE_DIR=${selectedStateDir}\n`,
-    );
+    await fs.writeFile(path.join(defaultStateDir, ".env"), `NOVA_STATE_DIR=${selectedStateDir}\n`);
     await fs.writeFile(
       path.join(gatewayEnvDir, "gateway.env"),
-      [
-        "OPENCLAW_CONFIG_PATH=/tmp/wrong-openclaw.json",
-        "OPENCLAW_GATEWAY_TOKEN=fallback-token",
-        "",
-      ].join("\n"),
+      ["NOVA_CONFIG_PATH=/tmp/wrong-openclaw.json", "NOVA_GATEWAY_TOKEN=fallback-token", ""].join(
+        "\n",
+      ),
     );
     await fs.writeFile(
       path.join(selectedStateDir, ".env"),
       [
-        "OPENCLAW_GATEWAY_TOKEN=selected-token",
-        "OPENCLAW_INCLUDE_ROOTS=/tmp/untrusted-include-root",
+        "NOVA_GATEWAY_TOKEN=selected-token",
+        "NOVA_INCLUDE_ROOTS=/tmp/untrusted-include-root",
         "NODE_OPTIONS=--require /tmp/untrusted.js",
         "",
       ].join("\n"),
@@ -1592,18 +1580,18 @@ describe("runCli exit behavior", () => {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
           NODE_OPTIONS: undefined,
         },
         async () => {
           await runCli(["node", "openclaw", "gateway"]);
 
-          expect(process.env.OPENCLAW_STATE_DIR).toBe(selectedStateDir);
-          expect(process.env.OPENCLAW_CONFIG_PATH).toBeUndefined();
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("selected-token");
+          expect(process.env.NOVA_STATE_DIR).toBe(selectedStateDir);
+          expect(process.env.NOVA_CONFIG_PATH).toBeUndefined();
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("selected-token");
         },
       );
     } finally {
@@ -1619,30 +1607,25 @@ describe("runCli exit behavior", () => {
     await fs.mkdir(gatewayEnvDir, { recursive: true });
     await fs.writeFile(
       path.join(gatewayEnvDir, "gateway.env"),
-      [`OPENCLAW_STATE_DIR=${selectedStateDir}`, "OPENCLAW_GATEWAY_TOKEN=fallback-token", ""].join(
-        "\n",
-      ),
+      [`NOVA_STATE_DIR=${selectedStateDir}`, "NOVA_GATEWAY_TOKEN=fallback-token", ""].join("\n"),
     );
-    await fs.writeFile(
-      path.join(selectedStateDir, ".env"),
-      "OPENCLAW_GATEWAY_TOKEN=selected-token\n",
-    );
+    await fs.writeFile(path.join(selectedStateDir, ".env"), "NOVA_GATEWAY_TOKEN=selected-token\n");
     try {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_INCLUDE_ROOTS: undefined,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_INCLUDE_ROOTS: undefined,
+          NOVA_STATE_DIR: undefined,
           NODE_OPTIONS: undefined,
         },
         async () => {
           await runCli(["node", "openclaw", "gateway"]);
 
-          expect(process.env.OPENCLAW_STATE_DIR).toBe(selectedStateDir);
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("selected-token");
-          expect(process.env.OPENCLAW_INCLUDE_ROOTS).toBeUndefined();
+          expect(process.env.NOVA_STATE_DIR).toBe(selectedStateDir);
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("selected-token");
+          expect(process.env.NOVA_INCLUDE_ROOTS).toBeUndefined();
           expect(process.env.NODE_OPTIONS).toBeUndefined();
         },
       );
@@ -1657,39 +1640,33 @@ describe("runCli exit behavior", () => {
     const selectedStateDir = path.join(homeDir, "selected-state");
     await fs.mkdir(defaultStateDir, { recursive: true });
     await fs.mkdir(selectedStateDir, { recursive: true });
-    await fs.writeFile(
-      path.join(defaultStateDir, ".env"),
-      "OPENCLAW_GATEWAY_TOKEN=superseded-token\n",
-    );
-    await fs.writeFile(
-      path.join(selectedStateDir, ".env"),
-      "OPENCLAW_GATEWAY_TOKEN=selected-token\n",
-    );
+    await fs.writeFile(path.join(defaultStateDir, ".env"), "NOVA_GATEWAY_TOKEN=superseded-token\n");
+    await fs.writeFile(path.join(selectedStateDir, ".env"), "NOVA_GATEWAY_TOKEN=selected-token\n");
     try {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           readConfigFileSnapshotMock.mockImplementation(async () => ({
             exists: true,
             valid: true,
             sourceConfig:
-              process.env.OPENCLAW_STATE_DIR === selectedStateDir
+              process.env.NOVA_STATE_DIR === selectedStateDir
                 ? { gateway: { mode: "local" } }
                 : {
-                    env: { vars: { OPENCLAW_STATE_DIR: selectedStateDir } },
+                    env: { vars: { NOVA_STATE_DIR: selectedStateDir } },
                     gateway: { mode: "local" },
                   },
           }));
 
           await runCli(["node", "openclaw", "gateway"]);
 
-          expect(process.env.OPENCLAW_STATE_DIR).toBe(selectedStateDir);
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("selected-token");
+          expect(process.env.NOVA_STATE_DIR).toBe(selectedStateDir);
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("selected-token");
         },
       );
     } finally {
@@ -1703,18 +1680,15 @@ describe("runCli exit behavior", () => {
     const selectedStateDir = path.join(homeDir, "selected-state");
     await fs.mkdir(defaultStateDir, { recursive: true });
     await fs.mkdir(selectedStateDir, { recursive: true });
-    await fs.writeFile(path.join(defaultStateDir, ".env"), "OPENCLAW_GATEWAY_TOKEN=early-token\n");
-    await fs.writeFile(
-      path.join(selectedStateDir, ".env"),
-      "OPENCLAW_GATEWAY_TOKEN=selected-token\n",
-    );
+    await fs.writeFile(path.join(defaultStateDir, ".env"), "NOVA_GATEWAY_TOKEN=early-token\n");
+    await fs.writeFile(path.join(selectedStateDir, ".env"), "NOVA_GATEWAY_TOKEN=selected-token\n");
     try {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_GATEWAY_TOKEN: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_GATEWAY_TOKEN: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           let selectLateState = false;
@@ -1722,16 +1696,16 @@ describe("runCli exit behavior", () => {
             exists: true,
             valid: true,
             sourceConfig:
-              selectLateState && process.env.OPENCLAW_STATE_DIR !== selectedStateDir
+              selectLateState && process.env.NOVA_STATE_DIR !== selectedStateDir
                 ? {
-                    env: { vars: { OPENCLAW_STATE_DIR: selectedStateDir } },
+                    env: { vars: { NOVA_STATE_DIR: selectedStateDir } },
                     gateway: { mode: "local" },
                   }
                 : { gateway: { mode: "local" } },
           }));
 
           await runCli(["node", "openclaw", "gateway"]);
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("early-token");
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("early-token");
 
           selectLateState = true;
           const hooks = addGatewayRunCommandMock.mock.calls[0]?.[1] as
@@ -1739,8 +1713,8 @@ describe("runCli exit behavior", () => {
             | undefined;
           await hooks?.beforeRun?.({});
 
-          expect(process.env.OPENCLAW_STATE_DIR).toBe(selectedStateDir);
-          expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBe("selected-token");
+          expect(process.env.NOVA_STATE_DIR).toBe(selectedStateDir);
+          expect(process.env.NOVA_GATEWAY_TOKEN).toBe("selected-token");
           expect(ensureCliExecutionBootstrapMock).toHaveBeenCalledOnce();
         },
       );
@@ -1791,20 +1765,20 @@ describe("runCli exit behavior", () => {
     await fs.mkdir(gatewayEnvDir, { recursive: true });
     await fs.writeFile(
       path.join(gatewayEnvDir, "gateway.env"),
-      "OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1\n",
+      "NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1\n",
     );
     try {
       await withEnvAsync(
         {
           HOME: homeDir,
-          OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: undefined,
-          OPENCLAW_CONFIG_PATH: undefined,
-          OPENCLAW_HOME: homeDir,
-          OPENCLAW_STATE_DIR: undefined,
+          NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS: undefined,
+          NOVA_CONFIG_PATH: undefined,
+          NOVA_HOME: homeDir,
+          NOVA_STATE_DIR: undefined,
         },
         async () => {
           readConfigFileSnapshotMock.mockImplementation(async () =>
-            process.env.OPENCLAW_CONFIG_PATH === futureConfigPath
+            process.env.NOVA_CONFIG_PATH === futureConfigPath
               ? {
                   exists: true,
                   valid: true,
@@ -1814,7 +1788,7 @@ describe("runCli exit behavior", () => {
                   exists: true,
                   valid: true,
                   sourceConfig: {
-                    env: { vars: { OPENCLAW_CONFIG_PATH: futureConfigPath } },
+                    env: { vars: { NOVA_CONFIG_PATH: futureConfigPath } },
                     gateway: { mode: "local" },
                   },
                 },
@@ -1828,7 +1802,7 @@ describe("runCli exit behavior", () => {
             expect(errorSpy).toHaveBeenCalledWith(
               expect.stringContaining("run automatic gateway startup migrations"),
             );
-            expect(process.env.OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
+            expect(process.env.NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS).toBeUndefined();
           } finally {
             exitSpy.mockRestore();
             errorSpy.mockRestore();
@@ -1871,14 +1845,14 @@ describe("runCli exit behavior", () => {
   it("retains selected config paths and invocation reset targets", async () => {
     await withEnvAsync(
       {
-        OPENCLAW_CONFIG_PATH: "/tmp/openclaw-invocation/openclaw.json",
-        OPENCLAW_GATEWAY_TOKEN: undefined,
-        OPENCLAW_HOME: "/tmp/openclaw-invocation-home",
-        OPENCLAW_INCLUDE_ROOTS: undefined,
-        OPENCLAW_PROFILE: undefined,
-        OPENCLAW_STATE_DIR: "/tmp/openclaw-invocation-state",
-        OPENCLAW_TEST_FAST: "1",
-        OPENCLAW_WORKSPACE_DIR: "/tmp/openclaw-invocation-workspace",
+        NOVA_CONFIG_PATH: "/tmp/openclaw-invocation/openclaw.json",
+        NOVA_GATEWAY_TOKEN: undefined,
+        NOVA_HOME: "/tmp/openclaw-invocation-home",
+        NOVA_INCLUDE_ROOTS: undefined,
+        NOVA_PROFILE: undefined,
+        NOVA_STATE_DIR: "/tmp/openclaw-invocation-state",
+        NOVA_TEST_FAST: "1",
+        NOVA_WORKSPACE_DIR: "/tmp/openclaw-invocation-workspace",
       },
       async () => {
         readConfigFileSnapshotMock.mockResolvedValue({
@@ -1887,14 +1861,14 @@ describe("runCli exit behavior", () => {
           sourceConfig: {
             env: {
               vars: {
-                OPENCLAW_CONFIG_PATH: "/tmp/openclaw-reset/openclaw.json",
-                OPENCLAW_GATEWAY_TOKEN: "old-token",
-                OPENCLAW_HOME: "/tmp/openclaw-reset-home",
-                OPENCLAW_INCLUDE_ROOTS: "/tmp/openclaw-reset-includes",
-                OPENCLAW_PROFILE: "config-dev",
-                OPENCLAW_STATE_DIR: "/tmp/openclaw-reset",
-                OPENCLAW_TEST_FAST: "0",
-                OPENCLAW_WORKSPACE_DIR: "/tmp/openclaw-reset-workspace",
+                NOVA_CONFIG_PATH: "/tmp/openclaw-reset/openclaw.json",
+                NOVA_GATEWAY_TOKEN: "old-token",
+                NOVA_HOME: "/tmp/openclaw-reset-home",
+                NOVA_INCLUDE_ROOTS: "/tmp/openclaw-reset-includes",
+                NOVA_PROFILE: "config-dev",
+                NOVA_STATE_DIR: "/tmp/openclaw-reset",
+                NOVA_TEST_FAST: "0",
+                NOVA_WORKSPACE_DIR: "/tmp/openclaw-reset-workspace",
               },
             },
             gateway: { mode: "local" },
@@ -1907,47 +1881,44 @@ describe("runCli exit behavior", () => {
           | undefined;
         await hooks?.beforeRun?.({ reset: true });
 
-        expect(process.env.OPENCLAW_CONFIG_PATH).toBe("/tmp/openclaw-invocation/openclaw.json");
-        expect(process.env.OPENCLAW_HOME).toBe("/tmp/openclaw-invocation-home");
-        expect(process.env.OPENCLAW_PROFILE).toBeUndefined();
-        expect(process.env.OPENCLAW_STATE_DIR).toBe("/tmp/openclaw-invocation-state");
-        expect(process.env.OPENCLAW_TEST_FAST).toBe("1");
-        expect(process.env.OPENCLAW_WORKSPACE_DIR).toBe("/tmp/openclaw-invocation-workspace");
-        expect(process.env.OPENCLAW_GATEWAY_TOKEN).toBeUndefined();
-        expect(process.env.OPENCLAW_INCLUDE_ROOTS).toBeUndefined();
+        expect(process.env.NOVA_CONFIG_PATH).toBe("/tmp/openclaw-invocation/openclaw.json");
+        expect(process.env.NOVA_HOME).toBe("/tmp/openclaw-invocation-home");
+        expect(process.env.NOVA_PROFILE).toBeUndefined();
+        expect(process.env.NOVA_STATE_DIR).toBe("/tmp/openclaw-invocation-state");
+        expect(process.env.NOVA_TEST_FAST).toBe("1");
+        expect(process.env.NOVA_WORKSPACE_DIR).toBe("/tmp/openclaw-invocation-workspace");
+        expect(process.env.NOVA_GATEWAY_TOKEN).toBeUndefined();
+        expect(process.env.NOVA_INCLUDE_ROOTS).toBeUndefined();
         expect(ensureCliExecutionBootstrapMock).not.toHaveBeenCalled();
       },
     );
   });
 
   it("does not let config env authorize or retarget an explicit reset", async () => {
-    await withEnvAsync(
-      { OPENCLAW_PROFILE: undefined, OPENCLAW_WORKSPACE_DIR: undefined },
-      async () => {
-        readConfigFileSnapshotMock.mockResolvedValue({
-          exists: true,
-          valid: true,
-          sourceConfig: {
-            env: {
-              vars: {
-                OPENCLAW_PROFILE: "dev",
-                OPENCLAW_WORKSPACE_DIR: "/tmp/openclaw-config-workspace",
-              },
+    await withEnvAsync({ NOVA_PROFILE: undefined, NOVA_WORKSPACE_DIR: undefined }, async () => {
+      readConfigFileSnapshotMock.mockResolvedValue({
+        exists: true,
+        valid: true,
+        sourceConfig: {
+          env: {
+            vars: {
+              NOVA_PROFILE: "dev",
+              NOVA_WORKSPACE_DIR: "/tmp/openclaw-config-workspace",
             },
-            gateway: { mode: "local" },
           },
-        });
+          gateway: { mode: "local" },
+        },
+      });
 
-        await runCli(["node", "openclaw", "gateway", "--reset"]);
+      await runCli(["node", "openclaw", "gateway", "--reset"]);
 
-        expect(process.env.OPENCLAW_PROFILE).toBeUndefined();
-        expect(process.env.OPENCLAW_WORKSPACE_DIR).toBeUndefined();
-      },
-    );
+      expect(process.env.NOVA_PROFILE).toBeUndefined();
+      expect(process.env.NOVA_WORKSPACE_DIR).toBeUndefined();
+    });
   });
 
   it("honors banner suppression on the gateway foreground fast path", async () => {
-    process.env.OPENCLAW_HIDE_BANNER = "1";
+    process.env.NOVA_HIDE_BANNER = "1";
 
     await runCli(["node", "openclaw", "gateway"]);
 
@@ -2219,17 +2190,17 @@ describe("runCli exit behavior", () => {
   });
 
   it("selects gateway config env before starting its managed proxy", async () => {
-    await withEnvAsync({ OPENCLAW_TEST_PROXY_SELECTION: undefined }, async () => {
+    await withEnvAsync({ NOVA_TEST_PROXY_SELECTION: undefined }, async () => {
       readConfigFileSnapshotMock.mockResolvedValue({
         exists: true,
         valid: true,
         sourceConfig: {
-          env: { vars: { OPENCLAW_TEST_PROXY_SELECTION: "selected" } },
+          env: { vars: { NOVA_TEST_PROXY_SELECTION: "selected" } },
           gateway: { mode: "local" },
         },
       });
       loadConfigMock.mockImplementationOnce(() => ({
-        proxy: { selected: process.env.OPENCLAW_TEST_PROXY_SELECTION },
+        proxy: { selected: process.env.NOVA_TEST_PROXY_SELECTION },
       }));
 
       await runCli(["node", "openclaw", "gateway", "run"]);
@@ -2786,14 +2757,14 @@ describe("runCli exit behavior", () => {
             password: {
               source: "env",
               provider: "default",
-              id: "OPENCLAW_GATEWAY_PASSWORD",
+              id: "NOVA_GATEWAY_PASSWORD",
             },
           },
         },
       },
     });
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_PASSWORD: "gateway-ref-password" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_PASSWORD: "gateway-ref-password" }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });
@@ -2959,7 +2930,7 @@ describe("runCli exit behavior", () => {
     });
     readActiveGatewayLockPortMock.mockResolvedValueOnce(48789);
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_PORT: "19001" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_PORT: "19001" }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });
@@ -3017,7 +2988,7 @@ describe("runCli exit behavior", () => {
       },
     });
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_TOKEN: "env-token" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_TOKEN: "env-token" }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });
@@ -3367,7 +3338,7 @@ describe("runCli exit behavior", () => {
       },
     });
 
-    await withEnvAsync({ OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: undefined }, async () => {
+    await withEnvAsync({ NOVA_ALLOW_INSECURE_PRIVATE_WS: undefined }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });
@@ -3394,7 +3365,7 @@ describe("runCli exit behavior", () => {
       },
     });
 
-    await withEnvAsync({ OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: undefined }, async () => {
+    await withEnvAsync({ NOVA_ALLOW_INSECURE_PRIVATE_WS: undefined }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });
@@ -3427,7 +3398,7 @@ describe("runCli exit behavior", () => {
       },
     });
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_PASSWORD: "stale-env-password" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_PASSWORD: "stale-env-password" }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });
@@ -3472,8 +3443,8 @@ describe("runCli exit behavior", () => {
       {
         MISSING_REMOTE_GATEWAY_TOKEN: undefined,
         MISSING_REMOTE_GATEWAY_PASSWORD: undefined,
-        OPENCLAW_GATEWAY_TOKEN: "env-remote-token",
-        OPENCLAW_GATEWAY_PASSWORD: "env-remote-password",
+        NOVA_GATEWAY_TOKEN: "env-remote-token",
+        NOVA_GATEWAY_PASSWORD: "env-remote-password",
       },
       async () => {
         await withInteractiveTty(async () => {
@@ -3507,7 +3478,7 @@ describe("runCli exit behavior", () => {
       },
     });
 
-    await withEnvAsync({ OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: "1" }, async () => {
+    await withEnvAsync({ NOVA_ALLOW_INSECURE_PRIVATE_WS: "1" }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });
@@ -3570,7 +3541,7 @@ describe("runCli exit behavior", () => {
       },
     });
 
-    await withEnvAsync({ OPENCLAW_ALLOW_INSECURE_PRIVATE_WS: undefined }, async () => {
+    await withEnvAsync({ NOVA_ALLOW_INSECURE_PRIVATE_WS: undefined }, async () => {
       await withInteractiveTty(async () => {
         await runCli(["node", "openclaw"]);
       });

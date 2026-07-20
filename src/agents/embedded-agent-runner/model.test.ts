@@ -680,7 +680,7 @@ describe("resolveModel", () => {
     fs.mkdirSync(agentDir, { recursive: true });
     fs.mkdirSync(mainAgentDir, { recursive: true });
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: rootDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: rootDir }, async () => {
         mockDiscoveredModel(discoverModels, {
           provider: "openai",
           modelId: "gpt-5.5",

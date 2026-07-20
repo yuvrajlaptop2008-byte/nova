@@ -540,7 +540,7 @@ describe("CORE_HEALTH_CHECKS", () => {
 
   it("skips gateway auth warning when SecretRef-managed token resolves in lint checks", async () => {
     const check = CORE_HEALTH_CHECKS.find((entry) => entry.id === "core/doctor/gateway-auth");
-    await withEnvAsync({ OPENCLAW_TEST_GATEWAY_TOKEN: "resolved-test-token" }, async () => {
+    await withEnvAsync({ NOVA_TEST_GATEWAY_TOKEN: "resolved-test-token" }, async () => {
       const findings = await check?.detect({
         mode: "lint",
         runtime: { log() {}, error() {}, exit() {} },
@@ -552,7 +552,7 @@ describe("CORE_HEALTH_CHECKS", () => {
               token: {
                 source: "env",
                 provider: "default",
-                id: "OPENCLAW_TEST_GATEWAY_TOKEN",
+                id: "NOVA_TEST_GATEWAY_TOKEN",
               },
             },
           },
@@ -569,12 +569,12 @@ describe("CORE_HEALTH_CHECKS", () => {
     });
   });
 
-  it("reports unresolved SecretRefs even when OPENCLAW_GATEWAY_TOKEN is set", async () => {
+  it("reports unresolved SecretRefs even when NOVA_GATEWAY_TOKEN is set", async () => {
     const check = CORE_HEALTH_CHECKS.find((entry) => entry.id === "core/doctor/gateway-auth");
     await withEnvAsync(
       {
-        OPENCLAW_GATEWAY_TOKEN: "fallback-token",
-        OPENCLAW_MISSING_GATEWAY_REF_TOKEN: undefined,
+        NOVA_GATEWAY_TOKEN: "fallback-token",
+        NOVA_MISSING_GATEWAY_REF_TOKEN: undefined,
       },
       async () => {
         const findings = await check?.detect({
@@ -588,7 +588,7 @@ describe("CORE_HEALTH_CHECKS", () => {
                 token: {
                   source: "env",
                   provider: "default",
-                  id: "OPENCLAW_MISSING_GATEWAY_REF_TOKEN",
+                  id: "NOVA_MISSING_GATEWAY_REF_TOKEN",
                 },
               },
             },
@@ -714,7 +714,7 @@ describe("CORE_HEALTH_CHECKS", () => {
     );
     const check = CORE_HEALTH_CHECKS.find((entry) => entry.id === "core/doctor/gateway-auth");
 
-    const findings = await withEnvAsync({ OPENCLAW_GATEWAY_TOKEN: "fallback-token" }, async () => {
+    const findings = await withEnvAsync({ NOVA_GATEWAY_TOKEN: "fallback-token" }, async () => {
       return await check?.detect({
         mode: "lint",
         runtime: { log() {}, error() {}, exit() {} },

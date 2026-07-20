@@ -107,16 +107,16 @@ describe("generate-npm-shrinkwrap", () => {
 
   it("validates shrinkwrap worker counts from flags and environment", () => {
     expect(resolveShrinkwrapJobs("3", {})).toBe(3);
-    expect(resolveShrinkwrapJobs(undefined, { OPENCLAW_NPM_SHRINKWRAP_JOBS: "2" })).toBe(2);
-    expect(() => resolveShrinkwrapJobs("0", {})).toThrow("invalid OPENCLAW_NPM_SHRINKWRAP_JOBS: 0");
+    expect(resolveShrinkwrapJobs(undefined, { NOVA_NPM_SHRINKWRAP_JOBS: "2" })).toBe(2);
+    expect(() => resolveShrinkwrapJobs("0", {})).toThrow("invalid NOVA_NPM_SHRINKWRAP_JOBS: 0");
     expect(() => resolveShrinkwrapJobs("17", {})).toThrow("maximum is 16");
   });
 
   it("accepts strict npm shrinkwrap command timeout and buffer overrides", () => {
     expect(
       createNpmShrinkwrapExecOptions({ command: "npm", args: ["install"] }, "/tmp/package", {
-        OPENCLAW_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES: "1048576",
-        OPENCLAW_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS: "30000",
+        NOVA_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES: "1048576",
+        NOVA_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS: "30000",
       }),
     ).toMatchObject({
       maxBuffer: 1024 * 1024,
@@ -127,14 +127,14 @@ describe("generate-npm-shrinkwrap", () => {
   it("rejects loose npm shrinkwrap command timeout and buffer overrides", () => {
     expect(() =>
       createNpmShrinkwrapExecOptions({ command: "npm", args: ["install"] }, "/tmp/package", {
-        OPENCLAW_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS: "30s",
+        NOVA_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS: "30s",
       }),
-    ).toThrow("invalid OPENCLAW_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS: 30s");
+    ).toThrow("invalid NOVA_NPM_SHRINKWRAP_COMMAND_TIMEOUT_MS: 30s");
     expect(() =>
       createNpmShrinkwrapExecOptions({ command: "npm", args: ["install"] }, "/tmp/package", {
-        OPENCLAW_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES: "64mb",
+        NOVA_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES: "64mb",
       }),
-    ).toThrow("invalid OPENCLAW_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES: 64mb");
+    ).toThrow("invalid NOVA_NPM_SHRINKWRAP_COMMAND_MAX_BUFFER_BYTES: 64mb");
   });
 
   it("extracts exact versions from npm override specs", () => {

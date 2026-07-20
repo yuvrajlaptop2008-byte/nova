@@ -91,12 +91,12 @@ describe("buildCurrentOpenClawCliArgv", () => {
         PATH: "/usr/bin",
         VITEST: "true",
         VITEST_POOL_ID: "pool",
-        OPENCLAW_VITEST_MAX_WORKERS: "1",
+        NOVA_VITEST_MAX_WORKERS: "1",
       }),
     ).toEqual({
       VITEST: "",
       VITEST_POOL_ID: "",
-      OPENCLAW_VITEST_MAX_WORKERS: "",
+      NOVA_VITEST_MAX_WORKERS: "",
     });
   });
 });

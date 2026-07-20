@@ -8,13 +8,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { getWindowsCmdExePath } from "../../infra/windows-install-roots.js";
 import { prepareRestartScript, runRestartScript } from "./restart-helper.js";
 
-const windowsKillPolicyStartMarker = "# OPENCLAW_RESTART_KILL_POLICY_BEGIN";
-const windowsKillPolicyEndMarker = "# OPENCLAW_RESTART_KILL_POLICY_END";
+const windowsKillPolicyStartMarker = "# NOVA_RESTART_KILL_POLICY_BEGIN";
+const windowsKillPolicyEndMarker = "# NOVA_RESTART_KILL_POLICY_END";
 
 function findPowerShell(): string | null {
   const executable = process.platform === "win32" ? "pwsh.exe" : "pwsh";
   const candidates = [
-    process.env.OPENCLAW_TEST_PWSH,
+    process.env.NOVA_TEST_PWSH,
     ...(process.env.PATH ?? "")
       .split(path.delimiter)
       .filter(Boolean)
@@ -217,7 +217,7 @@ exit 0
     it("creates a systemd restart script on Linux", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       });
       expect(scriptPath.endsWith(".sh")).toBe(true);
       expect(content).toContain("#!/bin/sh");
@@ -250,7 +250,7 @@ exit 0
 
       try {
         const { scriptPath } = await prepareAndReadScript({
-          OPENCLAW_PROFILE: "default",
+          NOVA_PROFILE: "default",
         });
         const scriptDir = path.dirname(scriptPath);
         const relativeScriptDir = path.relative(os.tmpdir(), scriptDir);
@@ -281,11 +281,11 @@ exit 0
       }
     });
 
-    it("uses OPENCLAW_SYSTEMD_UNIT override for systemd scripts", async () => {
+    it("uses NOVA_SYSTEMD_UNIT override for systemd scripts", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
-        OPENCLAW_SYSTEMD_UNIT: "custom-gateway",
+        NOVA_PROFILE: "default",
+        NOVA_SYSTEMD_UNIT: "custom-gateway",
       });
       expect(content).toContain("systemctl --user restart 'custom-gateway.service'");
       await cleanupScript(scriptPath);
@@ -301,7 +301,7 @@ exit 0
       await fs.writeFile(
         path.join(fakeBinDir, "systemctl"),
         `#!/bin/sh
-printf '%s\\n' "$*" >> "$OPENCLAW_SYSTEMCTL_CALLS"
+printf '%s\\n' "$*" >> "$NOVA_SYSTEMCTL_CALLS"
 if [ "$1" = "--user" ] && [ "$2" = "is-active" ]; then exit 3; fi
 if [ "$1" = "--user" ] && [ "$2" = "is-enabled" ]; then exit 1; fi
 if [ "$1" = "is-active" ] && [ "$2" = "--quiet" ]; then exit 0; fi
@@ -313,13 +313,13 @@ exit 1
       );
 
       const { scriptPath } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
         HOME: path.join(tmpDir, "home"),
-        OPENCLAW_STATE_DIR: path.join(tmpDir, "state"),
+        NOVA_STATE_DIR: path.join(tmpDir, "state"),
       });
       const result = await executeScript(scriptPath, {
         PATH: `${fakeBinDir}:${process.env.PATH ?? ""}`,
-        OPENCLAW_SYSTEMCTL_CALLS: callsPath,
+        NOVA_SYSTEMCTL_CALLS: callsPath,
       });
       const calls = await fs.readFile(callsPath, "utf-8");
 
@@ -336,7 +336,7 @@ exit 1
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       });
       expect(scriptPath.endsWith(".sh")).toBe(true);
       expect(content).toContain("#!/bin/sh");
@@ -361,7 +361,7 @@ exit 1
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
         HOME: "/Users/testuser",
       });
       expect(content).toContain("exec >>'/Users/testuser/.openclaw/logs/gateway-restart.log' 2>&1");
@@ -372,14 +372,14 @@ exit 1
       await cleanupScript(scriptPath);
     });
 
-    it("uses OPENCLAW_STATE_DIR for the macOS update restart log", async () => {
+    it("uses NOVA_STATE_DIR for the macOS update restart log", async () => {
       Object.defineProperty(process, "platform", { value: "darwin" });
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
         HOME: "/Users/testuser",
-        OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
+        NOVA_STATE_DIR: "/tmp/openclaw-state",
       });
 
       expect(content).toContain(
@@ -411,9 +411,9 @@ exit 0
       );
 
       const { scriptPath } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
         HOME: path.join(tmpDir, "home"),
-        OPENCLAW_STATE_DIR: stateDir,
+        NOVA_STATE_DIR: stateDir,
       });
 
       const result = await executeScript(scriptPath, {
@@ -447,9 +447,9 @@ exit 0
       );
 
       const { scriptPath } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
         HOME: path.join(tmpDir, "home"),
-        OPENCLAW_STATE_DIR: stateFile,
+        NOVA_STATE_DIR: stateFile,
       });
 
       const result = await executeScript(scriptPath, {
@@ -472,9 +472,9 @@ exit 0
       await writeFakeLaunchctl(fakeBinDir);
 
       const { scriptPath } = await prepareAndReadScript({
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.$(echo injected)",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.$(echo injected)",
         HOME: path.join(tmpDir, "home"),
-        OPENCLAW_STATE_DIR: stateDir,
+        NOVA_STATE_DIR: stateDir,
       });
 
       const result = await executeScript(scriptPath, {
@@ -487,13 +487,13 @@ exit 0
       expect(log).not.toContain("target=ai.openclaw.injected");
     });
 
-    it("uses OPENCLAW_LAUNCHD_LABEL override on macOS", async () => {
+    it("uses NOVA_LAUNCHD_LABEL override on macOS", async () => {
       Object.defineProperty(process, "platform", { value: "darwin" });
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
-        OPENCLAW_LAUNCHD_LABEL: "com.custom.openclaw",
+        NOVA_PROFILE: "default",
+        NOVA_LAUNCHD_LABEL: "com.custom.openclaw",
       });
       expect(content).toContain("launchctl kickstart -k 'gui/501/com.custom.openclaw'");
       await cleanupScript(scriptPath);
@@ -503,7 +503,7 @@ exit 0
       Object.defineProperty(process, "platform", { value: "win32" });
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       });
       expect(scriptPath.endsWith(".cmd")).toBe(true);
       expect(content).toContain("@echo off");
@@ -524,7 +524,7 @@ exit 0
       expect(content).toContain("openclaw restart launched startup fallback");
       expectWindowsRestartWaitOrdering(content);
       expect(content).toContain('del "%~f0" >nul 2>&1');
-      expect(content).toContain('rmdir "%OPENCLAW_RESTART_SCRIPT_DIR%" >nul 2>&1');
+      expect(content).toContain('rmdir "%NOVA_RESTART_SCRIPT_DIR%" >nul 2>&1');
       await cleanupScript(scriptPath);
     });
 
@@ -539,7 +539,7 @@ exit 0
         "18789",
       ];
       const { scriptPath, content } = await prepareAndReadScript(
-        { OPENCLAW_PROFILE: "default" },
+        { NOVA_PROFILE: "default" },
         18789,
         expectedArgv,
       );
@@ -570,7 +570,7 @@ exit 0
       async () => {
         Object.defineProperty(process, "platform", { value: "win32" });
         const { scriptPath, content } = await prepareAndReadScript(
-          { OPENCLAW_PROFILE: "default" },
+          { NOVA_PROFILE: "default" },
           18789,
           ["node", "C:\\openclaw\\dist\\entry.js", "gateway", "--port", "18789"],
         );
@@ -719,24 +719,24 @@ Assert-True (-not $recycledLease.Terminated) "recycled PID target was killed"
 Assert-True $recycledLease.Disposed "recycled PID handle was not disposed"
 Assert-DecisionLog "process-replaced"
 
-Write-Output "OPENCLAW_RESTART_POLICY_OK"
+Write-Output "NOVA_RESTART_POLICY_OK"
 `,
           );
 
           expect(result.stderr).toBe("");
-          expect(result.stdout).toContain("OPENCLAW_RESTART_POLICY_OK");
+          expect(result.stdout).toContain("NOVA_RESTART_POLICY_OK");
         } finally {
           await cleanupScript(scriptPath);
         }
       },
     );
 
-    it("uses OPENCLAW_WINDOWS_TASK_NAME override on Windows", async () => {
+    it("uses NOVA_WINDOWS_TASK_NAME override on Windows", async () => {
       Object.defineProperty(process, "platform", { value: "win32" });
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
-        OPENCLAW_WINDOWS_TASK_NAME: "Nova Gateway (custom)",
+        NOVA_PROFILE: "default",
+        NOVA_WINDOWS_TASK_NAME: "Nova Gateway (custom)",
       });
       expect(content).toContain("$taskName = 'Nova Gateway (custom)'");
       expect(content).toContain("Get-OpenClawScheduledTaskState -TaskName $taskName");
@@ -756,7 +756,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
 
       const { scriptPath, content } = await prepareAndReadScript(
         {
-          OPENCLAW_PROFILE: "default",
+          NOVA_PROFILE: "default",
         },
         customPort,
       );
@@ -771,7 +771,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
     it("uses custom profile in service names", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "production",
+        NOVA_PROFILE: "production",
       });
       expect(content).toContain("openclaw-gateway-production.service");
       await cleanupScript(scriptPath);
@@ -782,7 +782,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
       process.getuid = () => 502;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "staging",
+        NOVA_PROFILE: "staging",
       });
       expect(content).toContain("gui/502/ai.openclaw.staging");
       await cleanupScript(scriptPath);
@@ -792,7 +792,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
       Object.defineProperty(process, "platform", { value: "win32" });
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "production",
+        NOVA_PROFILE: "production",
       });
       expect(content).toContain("$taskName = 'Nova Gateway (production)'");
       expectWindowsRestartWaitOrdering(content);
@@ -812,7 +812,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
         .mockRejectedValueOnce(new Error("simulated write failure"));
 
       const scriptPath = await prepareRestartScript({
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       });
 
       expect(scriptPath).toBeNull();
@@ -822,7 +822,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
     it("escapes single quotes in profile names for shell scripts", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "it's-a-test",
+        NOVA_PROFILE: "it's-a-test",
       });
       // Single quotes should be escaped with '\'' pattern
       expect(content).not.toContain("it's");
@@ -836,7 +836,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
 
       const { scriptPath, content } = await prepareAndReadScript({
         HOME: "/Users/testuser",
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       });
       // The plist path must contain the resolved home dir, not literal $HOME
       expect(content).toMatch(/[\\/]Users[\\/]testuser[\\/]Library[\\/]LaunchAgents[\\/]/);
@@ -850,7 +850,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
 
       const { scriptPath, content } = await prepareAndReadScript({
         HOME: "/Users/envhome",
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       });
       expect(content).toMatch(/[\\/]Users[\\/]envhome[\\/]Library[\\/]LaunchAgents[\\/]/);
       await cleanupScript(scriptPath);
@@ -862,7 +862,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
 
       const { scriptPath, content } = await prepareAndReadScript({
         HOME: "/Users/testuser",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.it's-a-test",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.it's-a-test",
       });
       // The plist path must also shell-escape the label to prevent injection
       expect(content).toContain("ai.openclaw.it'\\''s-a-test.plist");
@@ -872,7 +872,7 @@ Write-Output "OPENCLAW_RESTART_POLICY_OK"
     it("rejects unsafe batch profile names on Windows", async () => {
       Object.defineProperty(process, "platform", { value: "win32" });
       const scriptPath = await prepareRestartScript({
-        OPENCLAW_PROFILE: "test&whoami",
+        NOVA_PROFILE: "test&whoami",
       });
 
       expect(scriptPath).toBeNull();

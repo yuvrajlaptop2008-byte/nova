@@ -509,11 +509,11 @@ function assertCodexAppServerCommandHasNoInlineArgs(params: {
   }
   const sourceLabel =
     params.source === "env"
-      ? "OPENCLAW_CODEX_APP_SERVER_BIN"
+      ? "NOVA_CODEX_APP_SERVER_BIN"
       : "plugins.entries.codex.config.appServer.command";
   const argsLabel =
     params.source === "env"
-      ? "OPENCLAW_CODEX_APP_SERVER_ARGS"
+      ? "NOVA_CODEX_APP_SERVER_ARGS"
       : "plugins.entries.codex.config.appServer.args";
   throw new Error(
     `${sourceLabel} must be only the Codex app-server executable path; "${inlineArgs.executable}" was configured with inline arguments "${inlineArgs.arguments}". Move those arguments to ${argsLabel}, or remove the override to use the managed Codex startup path.`,
@@ -604,7 +604,7 @@ export function resolveCodexAppServerRuntimeOptions(
   const transport = resolveTransport(config.transport);
   const homeScope: CodexAppServerHomeScope = config.homeScope ?? "agent";
   const configCommand = readNonEmptyString(config.command);
-  const envCommand = readNonEmptyString(env.OPENCLAW_CODEX_APP_SERVER_BIN);
+  const envCommand = readNonEmptyString(env.NOVA_CODEX_APP_SERVER_BIN);
   const command = configCommand ?? envCommand ?? "codex";
   const commandSource: CodexAppServerCommandSource = configCommand
     ? "config"
@@ -614,7 +614,7 @@ export function resolveCodexAppServerRuntimeOptions(
   if (commandSource === "config" || commandSource === "env") {
     assertCodexAppServerCommandHasNoInlineArgs({ command, source: commandSource });
   }
-  const args = resolveArgs(config.args, env.OPENCLAW_CODEX_APP_SERVER_ARGS);
+  const args = resolveArgs(config.args, env.NOVA_CODEX_APP_SERVER_ARGS);
   const headers = normalizeHeaders(config.headers);
   const clearEnv = normalizeStringList(config.clearEnv);
   const authToken = normalizeCodexAppServerSecretInput({
@@ -631,9 +631,9 @@ export function resolveCodexAppServerRuntimeOptions(
   });
   assertCodexAppServerAllowedForOpenClawExecMode(execMode);
   const explicitPolicyMode =
-    resolvePolicyMode(config.mode) ?? resolvePolicyMode(env.OPENCLAW_CODEX_APP_SERVER_MODE);
+    resolvePolicyMode(config.mode) ?? resolvePolicyMode(env.NOVA_CODEX_APP_SERVER_MODE);
   const configuredSandbox =
-    resolveSandbox(config.sandbox) ?? resolveSandbox(env.OPENCLAW_CODEX_APP_SERVER_SANDBOX);
+    resolveSandbox(config.sandbox) ?? resolveSandbox(env.NOVA_CODEX_APP_SERVER_SANDBOX);
   const explicitApprovalsReviewer = resolveApprovalsReviewer(config.approvalsReviewer);
   const normalizedPolicyMode = resolveCodexPolicyModeForOpenClawExecMode(execMode);
   const ignoreLegacyYoloPolicyMode =
@@ -741,7 +741,7 @@ export function resolveCodexAppServerRuntimeOptions(
   });
 
   const configApprovalPolicy = resolveApprovalPolicy(config.approvalPolicy);
-  const envApprovalPolicy = resolveApprovalPolicy(env.OPENCLAW_CODEX_APP_SERVER_APPROVAL_POLICY);
+  const envApprovalPolicy = resolveApprovalPolicy(env.NOVA_CODEX_APP_SERVER_APPROVAL_POLICY);
   const approvalPolicy =
     configApprovalPolicy ??
     envApprovalPolicy ??
@@ -970,75 +970,75 @@ export function resolveCodexComputerUseConfig(
   const marketplaceSource =
     readNonEmptyString(params.overrides?.marketplaceSource) ??
     readNonEmptyString(config.marketplaceSource) ??
-    readNonEmptyString(env.OPENCLAW_CODEX_COMPUTER_USE_MARKETPLACE_SOURCE);
+    readNonEmptyString(env.NOVA_CODEX_COMPUTER_USE_MARKETPLACE_SOURCE);
   const marketplacePath =
     readNonEmptyString(params.overrides?.marketplacePath) ??
     readNonEmptyString(config.marketplacePath) ??
-    readNonEmptyString(env.OPENCLAW_CODEX_COMPUTER_USE_MARKETPLACE_PATH);
+    readNonEmptyString(env.NOVA_CODEX_COMPUTER_USE_MARKETPLACE_PATH);
   const marketplaceName =
     readNonEmptyString(params.overrides?.marketplaceName) ??
     readNonEmptyString(config.marketplaceName) ??
-    readNonEmptyString(env.OPENCLAW_CODEX_COMPUTER_USE_MARKETPLACE_NAME);
+    readNonEmptyString(env.NOVA_CODEX_COMPUTER_USE_MARKETPLACE_NAME);
   const configuredPluginName =
     readNonEmptyString(params.overrides?.pluginName) ??
     readNonEmptyString(config.pluginName) ??
-    readNonEmptyString(env.OPENCLAW_CODEX_COMPUTER_USE_PLUGIN_NAME);
+    readNonEmptyString(env.NOVA_CODEX_COMPUTER_USE_PLUGIN_NAME);
   const configuredMcpServerName =
     readNonEmptyString(params.overrides?.mcpServerName) ??
     readNonEmptyString(config.mcpServerName) ??
-    readNonEmptyString(env.OPENCLAW_CODEX_COMPUTER_USE_MCP_SERVER_NAME);
+    readNonEmptyString(env.NOVA_CODEX_COMPUTER_USE_MCP_SERVER_NAME);
   const autoInstall =
     params.overrides?.autoInstall ??
     config.autoInstall ??
-    readBooleanEnv(env.OPENCLAW_CODEX_COMPUTER_USE_AUTO_INSTALL) ??
+    readBooleanEnv(env.NOVA_CODEX_COMPUTER_USE_AUTO_INSTALL) ??
     false;
   const marketplaceDiscoveryTimeoutMs = normalizePositiveNumber(
     params.overrides?.marketplaceDiscoveryTimeoutMs ??
       config.marketplaceDiscoveryTimeoutMs ??
-      readNumberEnv(env.OPENCLAW_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS),
+      readNumberEnv(env.NOVA_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS),
     DEFAULT_CODEX_COMPUTER_USE_MARKETPLACE_DISCOVERY_TIMEOUT_MS,
   );
   const liveTestTimeoutMs = normalizePositiveNumber(
     params.overrides?.liveTestTimeoutMs ??
       config.liveTestTimeoutMs ??
-      readNumberEnv(env.OPENCLAW_CODEX_COMPUTER_USE_LIVE_TEST_TIMEOUT_MS),
+      readNumberEnv(env.NOVA_CODEX_COMPUTER_USE_LIVE_TEST_TIMEOUT_MS),
     DEFAULT_CODEX_COMPUTER_USE_LIVE_TEST_TIMEOUT_MS,
   );
   const toolCallTimeoutMs = normalizePositiveNumber(
     params.overrides?.toolCallTimeoutMs ??
       config.toolCallTimeoutMs ??
-      readNumberEnv(env.OPENCLAW_CODEX_COMPUTER_USE_TOOL_CALL_TIMEOUT_MS),
+      readNumberEnv(env.NOVA_CODEX_COMPUTER_USE_TOOL_CALL_TIMEOUT_MS),
     DEFAULT_CODEX_COMPUTER_USE_TOOL_CALL_TIMEOUT_MS,
   );
   const healthCheckIntervalMinutes = normalizeComputerUseHealthCheckIntervalMinutes(
     params.overrides?.healthCheckIntervalMinutes ??
       config.healthCheckIntervalMinutes ??
-      readNumberEnv(env.OPENCLAW_CODEX_COMPUTER_USE_HEALTH_CHECK_INTERVAL_MINUTES),
+      readNumberEnv(env.NOVA_CODEX_COMPUTER_USE_HEALTH_CHECK_INTERVAL_MINUTES),
   );
   const healthCheckEnabled =
     params.overrides?.healthCheckEnabled ??
     config.healthCheckEnabled ??
-    readBooleanEnv(env.OPENCLAW_CODEX_COMPUTER_USE_HEALTH_CHECK_ENABLED) ??
+    readBooleanEnv(env.NOVA_CODEX_COMPUTER_USE_HEALTH_CHECK_ENABLED) ??
     false;
   const pluginCacheMode =
     normalizeComputerUsePluginCacheMode(params.overrides?.pluginCacheMode) ??
     normalizeComputerUsePluginCacheMode(config.pluginCacheMode) ??
-    normalizeComputerUsePluginCacheMode(env.OPENCLAW_CODEX_COMPUTER_USE_PLUGIN_CACHE_MODE) ??
+    normalizeComputerUsePluginCacheMode(env.NOVA_CODEX_COMPUTER_USE_PLUGIN_CACHE_MODE) ??
     "independent";
   const strictReadiness =
     params.overrides?.strictReadiness ??
     config.strictReadiness ??
-    readBooleanEnv(env.OPENCLAW_CODEX_COMPUTER_USE_STRICT_READINESS) ??
+    readBooleanEnv(env.NOVA_CODEX_COMPUTER_USE_STRICT_READINESS) ??
     false;
   const autoRepair =
     params.overrides?.autoRepair ??
     config.autoRepair ??
-    readBooleanEnv(env.OPENCLAW_CODEX_COMPUTER_USE_AUTO_REPAIR) ??
+    readBooleanEnv(env.NOVA_CODEX_COMPUTER_USE_AUTO_REPAIR) ??
     false;
   const enabled =
     params.overrides?.enabled ??
     config.enabled ??
-    readBooleanEnv(env.OPENCLAW_CODEX_COMPUTER_USE) ??
+    readBooleanEnv(env.NOVA_CODEX_COMPUTER_USE) ??
     Boolean(
       autoInstall ||
       marketplaceSource ||

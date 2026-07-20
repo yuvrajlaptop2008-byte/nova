@@ -1,7 +1,7 @@
 // ACPX tests cover process reaper plugin behavior.
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { OPENCLAW_ACPX_LEASE_ID_ARG, OPENCLAW_GATEWAY_INSTANCE_ID_ARG } from "./process-lease.js";
+import { NOVA_ACPX_LEASE_ID_ARG, NOVA_GATEWAY_INSTANCE_ID_ARG } from "./process-lease.js";
 
 const runExecMock = vi.hoisted(() => vi.fn());
 
@@ -18,7 +18,7 @@ import {
 
 const WRAPPER_ROOT = "/tmp/openclaw-state/acpx";
 const CODEX_WRAPPER_COMMAND = `node ${WRAPPER_ROOT}/codex-acp-wrapper.mjs`;
-const CODEX_WRAPPER_COMMAND_WITH_LEASE = `${CODEX_WRAPPER_COMMAND} ${OPENCLAW_ACPX_LEASE_ID_ARG} lease-1 ${OPENCLAW_GATEWAY_INSTANCE_ID_ARG} gateway-1`;
+const CODEX_WRAPPER_COMMAND_WITH_LEASE = `${CODEX_WRAPPER_COMMAND} ${NOVA_ACPX_LEASE_ID_ARG} lease-1 ${NOVA_GATEWAY_INSTANCE_ID_ARG} gateway-1`;
 const CLAUDE_WRAPPER_COMMAND = `node ${WRAPPER_ROOT}/claude-agent-acp-wrapper.mjs`;
 const PLUGIN_DEPS_CODEX_COMMAND =
   "node /tmp/openclaw/plugin-runtime-deps/node_modules/@agentclientprotocol/codex-acp/dist/index.js";
@@ -173,7 +173,7 @@ describe("process reaper", () => {
       {
         pid: 113,
         ppid: 1,
-        command: `${CODEX_WRAPPER_COMMAND} ${OPENCLAW_ACPX_LEASE_ID_ARG} other-lease ${OPENCLAW_GATEWAY_INSTANCE_ID_ARG} gateway-1`,
+        command: `${CODEX_WRAPPER_COMMAND} ${NOVA_ACPX_LEASE_ID_ARG} other-lease ${NOVA_GATEWAY_INSTANCE_ID_ARG} gateway-1`,
       },
     ]);
 

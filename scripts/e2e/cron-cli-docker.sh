@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-cron-cli-e2e" OPENCLAW_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-cron-cli-e2e" NOVA_IMAGE)"
 PORT="18789"
 TOKEN="cron-cli-e2e-$(date +%s)-$$"
 CONTAINER_NAME="openclaw-cron-cli-e2e-$$"
@@ -18,28 +18,28 @@ cleanup() {
 trap cleanup EXIT
 
 docker_e2e_build_or_reuse "$IMAGE_NAME" cron-cli
-OPENCLAW_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 cron-cli empty)"
+NOVA_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 cron-cli empty)"
 
 echo "Running in-container Gateway + cron CLI smoke..."
 set +e
 docker_e2e_run_with_harness \
   --name "$CONTAINER_NAME" \
-  -e "OPENCLAW_GATEWAY_TOKEN=$TOKEN" \
-  -e "OPENCLAW_SKIP_CHANNELS=1" \
-  -e "OPENCLAW_SKIP_GMAIL_WATCHER=1" \
-  -e "OPENCLAW_SKIP_CANVAS_HOST=1" \
-  -e "OPENCLAW_SKIP_ACPX_RUNTIME=1" \
-  -e "OPENCLAW_SKIP_ACPX_RUNTIME_PROBE=1" \
-  -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$OPENCLAW_TEST_STATE_SCRIPT_B64" \
+  -e "NOVA_GATEWAY_TOKEN=$TOKEN" \
+  -e "NOVA_SKIP_CHANNELS=1" \
+  -e "NOVA_SKIP_GMAIL_WATCHER=1" \
+  -e "NOVA_SKIP_CANVAS_HOST=1" \
+  -e "NOVA_SKIP_ACPX_RUNTIME=1" \
+  -e "NOVA_SKIP_ACPX_RUNTIME_PROBE=1" \
+  -e "NOVA_TEST_STATE_SCRIPT_B64=$NOVA_TEST_STATE_SCRIPT_B64" \
   -e "GW_TOKEN=$TOKEN" \
-  -e "OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1" \
+  -e "NOVA_ALLOW_INSECURE_PRIVATE_WS=1" \
   -i \
   "$IMAGE_NAME" \
   bash -s >"$CLIENT_LOG" 2>&1 <<'INNER'
 set -euo pipefail
 
 source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}"
 
 entry="$(openclaw_e2e_resolve_entrypoint)"
 gateway_pid=

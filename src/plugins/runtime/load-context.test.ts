@@ -214,7 +214,7 @@ describe("resolvePluginRuntimeLoadContext", () => {
   it("invalidates auto-enable results when config or process env mutates in place", () => {
     const rawConfig: OpenClawConfig = { plugins: {} };
     const env = process.env;
-    const envKey = "OPENCLAW_TEST_PLUGIN_AUTO_ENABLE_FINGERPRINT";
+    const envKey = "NOVA_TEST_PLUGIN_AUTO_ENABLE_FINGERPRINT";
     const previousEnvValue = env[envKey];
     delete env[envKey];
 

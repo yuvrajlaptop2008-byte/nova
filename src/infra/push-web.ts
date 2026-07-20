@@ -109,17 +109,15 @@ export async function resolveVapidKeys(baseDir?: string): Promise<VapidKeyPair> 
 }
 
 function resolveVapidSubjectFromEnv(): string {
-  return (
-    normalizeOptionalString(process.env.OPENCLAW_VAPID_SUBJECT) ?? DEFAULT_WEB_PUSH_VAPID_SUBJECT
-  );
+  return normalizeOptionalString(process.env.NOVA_VAPID_SUBJECT) ?? DEFAULT_WEB_PUSH_VAPID_SUBJECT;
 }
 
 function resolveVapidPublicKeyFromEnv(): string | undefined {
-  return normalizeOptionalString(process.env.OPENCLAW_VAPID_PUBLIC_KEY);
+  return normalizeOptionalString(process.env.NOVA_VAPID_PUBLIC_KEY);
 }
 
 function resolveVapidPrivateKeyFromEnv(): string | undefined {
-  return normalizeOptionalString(process.env.OPENCLAW_VAPID_PRIVATE_KEY);
+  return normalizeOptionalString(process.env.NOVA_VAPID_PRIVATE_KEY);
 }
 
 // --- Subscription CRUD ---

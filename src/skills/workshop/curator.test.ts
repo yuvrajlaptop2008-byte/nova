@@ -206,8 +206,8 @@ beforeEach(() => {
   rootDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-curator-")));
   stateDir = path.join(rootDir, "state-root");
   fs.mkdirSync(stateDir, { recursive: true });
-  originalStateDir = process.env.OPENCLAW_STATE_DIR;
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  originalStateDir = process.env.NOVA_STATE_DIR;
+  process.env.NOVA_STATE_DIR = stateDir;
   store.entries.length = 0;
   store.records.clear();
   store.readManifest.mockReset().mockImplementation(async () => ({
@@ -224,9 +224,9 @@ afterEach(() => {
   closeOpenClawStateDatabaseForTest();
   resetDiagnosticEventsForTest();
   if (originalStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = originalStateDir;
+    process.env.NOVA_STATE_DIR = originalStateDir;
   }
   fs.rmSync(rootDir, { recursive: true, force: true });
 });

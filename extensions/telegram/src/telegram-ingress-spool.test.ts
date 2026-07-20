@@ -26,7 +26,7 @@ async function withTempState<T>(
   const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-tg-spool-"));
   const spoolDir = resolveTelegramIngressSpoolDir({
     accountId: "acct",
-    env: { OPENCLAW_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
+    env: { NOVA_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
   });
   setTelegramRuntime({
     state: {

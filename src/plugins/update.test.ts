@@ -1543,7 +1543,7 @@ describe("updateNpmInstalledPlugins", () => {
   });
 
   it("does not skip unchanged npm plugins when package metadata requires a newer plugin API", async () => {
-    vi.stubEnv("OPENCLAW_COMPATIBILITY_HOST_VERSION", "2026.5.28-beta.3");
+    vi.stubEnv("NOVA_COMPATIBILITY_HOST_VERSION", "2026.5.28-beta.3");
     const installPath = createInstalledPackageDir({
       name: "@openclaw/msteams",
       version: "2026.5.28-beta.4",
@@ -1608,7 +1608,7 @@ describe("updateNpmInstalledPlugins", () => {
   });
 
   it("does not skip unchanged npm plugins when package metadata requires a newer host", async () => {
-    vi.stubEnv("OPENCLAW_COMPATIBILITY_HOST_VERSION", "2026.5.28-beta.3");
+    vi.stubEnv("NOVA_COMPATIBILITY_HOST_VERSION", "2026.5.28-beta.3");
     const installPath = createInstalledPackageDir({
       name: "@openclaw/msteams",
       version: "2026.5.28-beta.4",
@@ -5045,7 +5045,7 @@ describe("syncPluginsForUpdateChannel", () => {
 
   it("forwards an explicit env to bundled plugin source resolution", async () => {
     resolveBundledPluginSourcesMock.mockReturnValue(new Map());
-    const env = { OPENCLAW_HOME: "/srv/openclaw-home" } as NodeJS.ProcessEnv;
+    const env = { NOVA_HOME: "/srv/openclaw-home" } as NodeJS.ProcessEnv;
 
     await syncPluginsForUpdateChannel({
       channel: "beta",
@@ -5073,7 +5073,7 @@ describe("syncPluginsForUpdateChannel", () => {
         channel: "beta",
         env: {
           ...process.env,
-          OPENCLAW_HOME: bundledHome,
+          NOVA_HOME: bundledHome,
           HOME: "/tmp/ignored-home",
         },
         config: {

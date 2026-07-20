@@ -278,7 +278,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
 
     const findings = scanSessionStoreForStaleRuntimeSnapshotPaths({
       bundledSkillsDir,
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
       store: {
         "agent:imsg": sessionEntry({
           skillsSnapshot: {
@@ -309,7 +309,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
 
     const findings = scanSessionStoreForStaleRuntimeSnapshotPaths({
       bundledSkillsDir: packageSkillsDir,
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
       store: {
         "agent:imsg": sessionEntry({
           skillsSnapshot: {
@@ -553,7 +553,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
     await noteSessionSnapshotHealth({
       cfg: { session: { store: configuredStorePath } } as OpenClawConfig,
       bundledSkillsDir,
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
     });
 
     expect(note).toHaveBeenCalledTimes(1);
@@ -590,7 +590,7 @@ describe("doctor session snapshot stale runtime metadata", () => {
         agents: { list: [{ id: "main" }, { id: "ops" }] },
       } as OpenClawConfig,
       bundledSkillsDir,
-      env: { OPENCLAW_STATE_DIR: path.join(root, "state") },
+      env: { NOVA_STATE_DIR: path.join(root, "state") },
     });
 
     expect(note).toHaveBeenCalledTimes(1);

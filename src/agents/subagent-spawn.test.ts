@@ -392,7 +392,7 @@ describe("spawnSubagentDirect seam flow", () => {
   });
 
   it("holds the collector slot until an accepted run is confirmed stopped", async () => {
-    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    vi.stubEnv("NOVA_TEST_FAST", "1");
     hoisted.configOverride = createConfigOverride({
       tools: { swarm: { enabled: true, maxConcurrent: 1 } },
     });

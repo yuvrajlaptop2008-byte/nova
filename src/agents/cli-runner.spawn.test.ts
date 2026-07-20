@@ -373,7 +373,7 @@ async function withTempExecApprovalsFile(
 async function withTempOpenClawHome(run: (home: string) => Promise<void>): Promise<void> {
   const home = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-cli-home-"));
   try {
-    await withEnvAsync({ OPENCLAW_HOME: home }, async () => run(home));
+    await withEnvAsync({ NOVA_HOME: home }, async () => run(home));
   } finally {
     await fs.rm(home, { recursive: true, force: true });
   }
@@ -2805,7 +2805,7 @@ describe("runCliAgent spawn path", () => {
     supervisorSpawnMock.mockImplementationOnce(async (...args: unknown[]) => {
       const input = args[0] as Parameters<ReturnType<typeof getProcessSupervisor>["spawn"]>[0];
       const captureHandle = markMcpLoopbackToolCallStarted({
-        captureKey: input.env?.OPENCLAW_MCP_CLI_CAPTURE_KEY ?? "",
+        captureKey: input.env?.NOVA_MCP_CLI_CAPTURE_KEY ?? "",
         toolName: "message",
         args: { action: "send", target: "chat123", message: "done" },
       });
@@ -3730,7 +3730,7 @@ ${JSON.stringify({
         onStdout?: (chunk: string) => void;
       };
       stdoutListener = input.onStdout;
-      captureKey = input.env?.OPENCLAW_MCP_CLI_CAPTURE_KEY ?? "";
+      captureKey = input.env?.NOVA_MCP_CLI_CAPTURE_KEY ?? "";
       return {
         runId: "live-run-blocked",
         pid: 3061,
@@ -3853,7 +3853,7 @@ ${JSON.stringify({
         onStdout?: (chunk: string) => void;
       };
       stdoutListener = input.onStdout;
-      captureKey = input.env?.OPENCLAW_MCP_CLI_CAPTURE_KEY ?? "";
+      captureKey = input.env?.NOVA_MCP_CLI_CAPTURE_KEY ?? "";
       return {
         runId: "live-run-identical",
         pid: 3062,
@@ -5813,7 +5813,7 @@ ${JSON.stringify({
 
   it("can preserve selected clearEnv keys for live CLI backend probes", async () => {
     try {
-      process.env.OPENCLAW_LIVE_CLI_BACKEND_PRESERVE_ENV = '["SAFE_CLEAR"]';
+      process.env.NOVA_LIVE_CLI_BACKEND_PRESERVE_ENV = '["SAFE_CLEAR"]';
       process.env.SAFE_CLEAR = "from-base";
       mockSuccessfulCliRun();
       await executePreparedCliRun(
@@ -5834,7 +5834,7 @@ ${JSON.stringify({
       expect(input.env?.SAFE_CLEAR).toBe("from-base");
       expect(input.env?.SAFE_DROP).toBeUndefined();
     } finally {
-      delete process.env.OPENCLAW_LIVE_CLI_BACKEND_PRESERVE_ENV;
+      delete process.env.NOVA_LIVE_CLI_BACKEND_PRESERVE_ENV;
       delete process.env.SAFE_CLEAR;
     }
   });

@@ -915,8 +915,8 @@ describe("deliverSubagentAnnouncement active requester steering", () => {
   });
 
   it("waits through compaction and re-steers the active requester (86566)", async () => {
-    const previousTestFast = process.env.OPENCLAW_TEST_FAST;
-    process.env.OPENCLAW_TEST_FAST = "1";
+    const previousTestFast = process.env.NOVA_TEST_FAST;
+    process.env.NOVA_TEST_FAST = "1";
     try {
       // First steer attempt observes a compacting run; once compaction ends the
       // same wake succeeds, so completion must stay on the steering path instead
@@ -946,16 +946,16 @@ describe("deliverSubagentAnnouncement active requester steering", () => {
       expect(retryOptions.deliveryTimeoutMs).toBeLessThan(120_000);
     } finally {
       if (previousTestFast === undefined) {
-        delete process.env.OPENCLAW_TEST_FAST;
+        delete process.env.NOVA_TEST_FAST;
       } else {
-        process.env.OPENCLAW_TEST_FAST = previousTestFast;
+        process.env.NOVA_TEST_FAST = previousTestFast;
       }
     }
   });
 
   it("keeps retrying compaction past the backoff schedule until the delivery timeout (86566)", async () => {
-    const previousTestFast = process.env.OPENCLAW_TEST_FAST;
-    process.env.OPENCLAW_TEST_FAST = "1";
+    const previousTestFast = process.env.NOVA_TEST_FAST;
+    process.env.NOVA_TEST_FAST = "1";
     try {
       // The backoff schedule has four entries, but a compaction that only
       // finishes after the schedule is exhausted should still be retried while
@@ -983,16 +983,16 @@ describe("deliverSubagentAnnouncement active requester steering", () => {
       expect(queueEmbeddedAgentMessageWithOutcome).toHaveBeenCalledTimes(6);
     } finally {
       if (previousTestFast === undefined) {
-        delete process.env.OPENCLAW_TEST_FAST;
+        delete process.env.NOVA_TEST_FAST;
       } else {
-        process.env.OPENCLAW_TEST_FAST = previousTestFast;
+        process.env.NOVA_TEST_FAST = previousTestFast;
       }
     }
   });
 
   it("passes the remaining delivery window into compaction retries (86566)", async () => {
-    const previousTestFast = process.env.OPENCLAW_TEST_FAST;
-    process.env.OPENCLAW_TEST_FAST = "1";
+    const previousTestFast = process.env.NOVA_TEST_FAST;
+    process.env.NOVA_TEST_FAST = "1";
     try {
       const queueEmbeddedAgentMessageWithOutcome = vi
         .fn<QueueEmbeddedAgentMessageWithOutcome>()
@@ -1030,9 +1030,9 @@ describe("deliverSubagentAnnouncement active requester steering", () => {
       expect(retryOptions.deliveryTimeoutMs).toBeLessThan(500);
     } finally {
       if (previousTestFast === undefined) {
-        delete process.env.OPENCLAW_TEST_FAST;
+        delete process.env.NOVA_TEST_FAST;
       } else {
-        process.env.OPENCLAW_TEST_FAST = previousTestFast;
+        process.env.NOVA_TEST_FAST = previousTestFast;
       }
     }
   });
@@ -1257,8 +1257,8 @@ describe("deliverSubagentAnnouncement completion delivery", () => {
   });
 
   it("waits through compaction on the completion handoff wake (86566)", async () => {
-    const previousTestFast = process.env.OPENCLAW_TEST_FAST;
-    process.env.OPENCLAW_TEST_FAST = "1";
+    const previousTestFast = process.env.NOVA_TEST_FAST;
+    process.env.NOVA_TEST_FAST = "1";
     try {
       // The generated-completion active wake (expectsCompletionMessage) must also
       // wait through a compacting run and re-steer the same wake instead of
@@ -1285,9 +1285,9 @@ describe("deliverSubagentAnnouncement completion delivery", () => {
       expect(callGateway).not.toHaveBeenCalled();
     } finally {
       if (previousTestFast === undefined) {
-        delete process.env.OPENCLAW_TEST_FAST;
+        delete process.env.NOVA_TEST_FAST;
       } else {
-        process.env.OPENCLAW_TEST_FAST = previousTestFast;
+        process.env.NOVA_TEST_FAST = previousTestFast;
       }
     }
   });

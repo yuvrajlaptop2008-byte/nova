@@ -174,7 +174,7 @@ load_podman_env_file() {
     key="${key%"${key##*[![:space:]]}"}"
     [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
     case "$key" in
-      OPENCLAW_GATEWAY_TOKEN|OPENCLAW_PODMAN_CONTAINER|OPENCLAW_PODMAN_IMAGE|OPENCLAW_IMAGE|OPENCLAW_PODMAN_PULL|OPENCLAW_PODMAN_RUN_TIMEOUT|OPENCLAW_PODMAN_GATEWAY_HOST_PORT|OPENCLAW_GATEWAY_PORT|OPENCLAW_PODMAN_BRIDGE_HOST_PORT|OPENCLAW_BRIDGE_PORT|OPENCLAW_GATEWAY_BIND|OPENCLAW_PODMAN_USERNS|OPENCLAW_BIND_MOUNT_OPTIONS|OPENCLAW_PODMAN_PUBLISH_HOST)
+      NOVA_GATEWAY_TOKEN|NOVA_PODMAN_CONTAINER|NOVA_PODMAN_IMAGE|NOVA_IMAGE|NOVA_PODMAN_PULL|NOVA_PODMAN_RUN_TIMEOUT|NOVA_PODMAN_GATEWAY_HOST_PORT|NOVA_GATEWAY_PORT|NOVA_PODMAN_BRIDGE_HOST_PORT|NOVA_BRIDGE_PORT|NOVA_GATEWAY_BIND|NOVA_PODMAN_USERNS|NOVA_BIND_MOUNT_OPTIONS|NOVA_PODMAN_PUBLISH_HOST)
         ;;
       *)
         continue
@@ -228,8 +228,8 @@ if [[ -z "${EFFECTIVE_HOME:-}" ]]; then
 fi
 validate_absolute_path "effective home" "$EFFECTIVE_HOME"
 
-CONFIG_DIR="${OPENCLAW_CONFIG_DIR:-$EFFECTIVE_HOME/.openclaw}"
-ENV_FILE="${OPENCLAW_PODMAN_ENV:-$CONFIG_DIR/.env}"
+CONFIG_DIR="${NOVA_CONFIG_DIR:-$EFFECTIVE_HOME/.openclaw}"
+ENV_FILE="${NOVA_PODMAN_ENV:-$CONFIG_DIR/.env}"
 # Bootstrap `.env` may set runtime/container options, but it must not
 # relocate the config/workspace/env paths mid-run. Those path overrides are
 # only honored from the parent process environment before bootstrap.
@@ -237,21 +237,21 @@ if [[ -f "$ENV_FILE" ]]; then
   load_podman_env_file "$ENV_FILE"
 fi
 
-CONFIG_DIR="${OPENCLAW_CONFIG_DIR:-$EFFECTIVE_HOME/.openclaw}"
-ENV_FILE="${OPENCLAW_PODMAN_ENV:-$CONFIG_DIR/.env}"
-WORKSPACE_DIR="${OPENCLAW_WORKSPACE_DIR:-$CONFIG_DIR/workspace}"
-CONTAINER_NAME="${OPENCLAW_PODMAN_CONTAINER:-openclaw}"
-OPENCLAW_IMAGE="${OPENCLAW_PODMAN_IMAGE:-${OPENCLAW_IMAGE:-openclaw:local}}"
-PODMAN_PULL="${OPENCLAW_PODMAN_PULL:-never}"
-PODMAN_RUN_TIMEOUT="${OPENCLAW_PODMAN_RUN_TIMEOUT:-600s}"
-HOST_GATEWAY_PORT="${OPENCLAW_PODMAN_GATEWAY_HOST_PORT:-${OPENCLAW_GATEWAY_PORT:-18789}}"
-HOST_BRIDGE_PORT="${OPENCLAW_PODMAN_BRIDGE_HOST_PORT:-${OPENCLAW_BRIDGE_PORT:-18790}}"
-PUBLISH_HOST="${OPENCLAW_PODMAN_PUBLISH_HOST:-127.0.0.1}"
+CONFIG_DIR="${NOVA_CONFIG_DIR:-$EFFECTIVE_HOME/.openclaw}"
+ENV_FILE="${NOVA_PODMAN_ENV:-$CONFIG_DIR/.env}"
+WORKSPACE_DIR="${NOVA_WORKSPACE_DIR:-$CONFIG_DIR/workspace}"
+CONTAINER_NAME="${NOVA_PODMAN_CONTAINER:-openclaw}"
+NOVA_IMAGE="${NOVA_PODMAN_IMAGE:-${NOVA_IMAGE:-openclaw:local}}"
+PODMAN_PULL="${NOVA_PODMAN_PULL:-never}"
+PODMAN_RUN_TIMEOUT="${NOVA_PODMAN_RUN_TIMEOUT:-600s}"
+HOST_GATEWAY_PORT="${NOVA_PODMAN_GATEWAY_HOST_PORT:-${NOVA_GATEWAY_PORT:-18789}}"
+HOST_BRIDGE_PORT="${NOVA_PODMAN_BRIDGE_HOST_PORT:-${NOVA_BRIDGE_PORT:-18790}}"
+PUBLISH_HOST="${NOVA_PODMAN_PUBLISH_HOST:-127.0.0.1}"
 validate_mount_source_path "config directory" "$CONFIG_DIR"
 validate_mount_source_path "workspace directory" "$WORKSPACE_DIR"
 validate_absolute_path "env file path" "$ENV_FILE"
 validate_single_line_value "container name" "$CONTAINER_NAME"
-validate_single_line_value "image name" "$OPENCLAW_IMAGE"
+validate_single_line_value "image name" "$NOVA_IMAGE"
 validate_single_line_value "publish host" "$PUBLISH_HOST"
 validate_port "gateway host port" "$HOST_GATEWAY_PORT"
 validate_port "bridge host port" "$HOST_BRIDGE_PORT"
@@ -275,15 +275,15 @@ resolve_config_gateway_bind() {
   if ! command -v openclaw >/dev/null 2>&1; then
     return 0
   fi
-  OPENCLAW_CONTAINER="" OPENCLAW_CONFIG_DIR="$config_dir" \
+  NOVA_CONTAINER="" NOVA_CONFIG_DIR="$config_dir" \
     openclaw config get gateway.bind 2>/dev/null || true
 }
 
 # For published container ports, the gateway must listen on the container
 # interface, so the Podman launcher defaults to lan. Respect an explicit
-# OPENCLAW_GATEWAY_BIND first, then gateway.bind in local config.
+# NOVA_GATEWAY_BIND first, then gateway.bind in local config.
 CONFIG_GATEWAY_BIND="$(resolve_config_gateway_bind "$CONFIG_DIR")"
-GATEWAY_BIND="${OPENCLAW_GATEWAY_BIND:-${CONFIG_GATEWAY_BIND:-lan}}"
+GATEWAY_BIND="${NOVA_GATEWAY_BIND:-${CONFIG_GATEWAY_BIND:-lan}}"
 
 upsert_env_var() {
   local file="$1"
@@ -324,7 +324,7 @@ PY
     od -An -N32 -tx1 /dev/urandom | tr -d " \n"
     return 0
   fi
-  echo "Missing dependency: need openssl or python3 (or od) to generate OPENCLAW_GATEWAY_TOKEN." >&2
+  echo "Missing dependency: need openssl or python3 (or od) to generate NOVA_GATEWAY_TOKEN." >&2
   exit 1
 }
 
@@ -337,7 +337,7 @@ create_token_env_file() {
   ensure_private_existing_dir_owned_by_user "token env directory" "$dir"
   tmp="$(mktemp "$dir/.token.env.XXXXXX")"
   chmod 600 "$tmp"
-  printf 'OPENCLAW_GATEWAY_TOKEN=%s\n' "$token" >"$tmp"
+  printf 'NOVA_GATEWAY_TOKEN=%s\n' "$token" >"$tmp"
   printf '%s' "$tmp"
 }
 
@@ -353,14 +353,14 @@ sync_local_control_ui_origins_via_cli() {
     return 0
   fi
   if ! command -v python3 >/dev/null 2>&1; then
-    OPENCLAW_CONTAINER="" OPENCLAW_CONFIG_DIR="$config_dir" \
+    NOVA_CONTAINER="" NOVA_CONFIG_DIR="$config_dir" \
       openclaw config set gateway.controlUi.allowedOrigins \
       "[\"http://127.0.0.1:${port}\",\"http://localhost:${port}\"]" \
       --strict-json >/dev/null
     return 0
   fi
   allowed_json="$(
-    OPENCLAW_CONTAINER="" OPENCLAW_CONFIG_DIR="$config_dir" \
+    NOVA_CONTAINER="" NOVA_CONFIG_DIR="$config_dir" \
       openclaw config get gateway.controlUi.allowedOrigins --json 2>/dev/null || true
   )"
   merged_json="$(python3 - "$port" "$allowed_json" <<'PY'
@@ -394,7 +394,7 @@ for origin in allowed + desired:
 print(json.dumps(cleaned))
 PY
   )"
-  OPENCLAW_CONTAINER="" OPENCLAW_CONFIG_DIR="$config_dir" \
+  NOVA_CONTAINER="" NOVA_CONFIG_DIR="$config_dir" \
     openclaw config set gateway.controlUi.allowedOrigins "$merged_json" --strict-json >/dev/null
 }
 
@@ -483,12 +483,12 @@ cleanup_token_env_file() {
 }
 trap cleanup_token_env_file EXIT
 
-if [[ -z "${OPENCLAW_GATEWAY_TOKEN:-}" ]]; then
-  export OPENCLAW_GATEWAY_TOKEN="$(generate_token_hex_32)"
+if [[ -z "${NOVA_GATEWAY_TOKEN:-}" ]]; then
+  export NOVA_GATEWAY_TOKEN="$(generate_token_hex_32)"
   mkdir -p "$(dirname "$ENV_FILE")"
   ensure_safe_existing_dir "env file directory" "$(dirname "$ENV_FILE")"
-  upsert_env_var "$ENV_FILE" "OPENCLAW_GATEWAY_TOKEN" "$OPENCLAW_GATEWAY_TOKEN"
-  echo "Generated OPENCLAW_GATEWAY_TOKEN and wrote it to $ENV_FILE." >&2
+  upsert_env_var "$ENV_FILE" "NOVA_GATEWAY_TOKEN" "$NOVA_GATEWAY_TOKEN"
+  echo "Generated NOVA_GATEWAY_TOKEN and wrote it to $ENV_FILE." >&2
 fi
 
 CONFIG_JSON="$CONFIG_DIR/openclaw.json"
@@ -503,7 +503,7 @@ JSON
 fi
 sync_local_control_ui_origins "$CONFIG_JSON" "$HOST_GATEWAY_PORT"
 
-PODMAN_USERNS="${OPENCLAW_PODMAN_USERNS:-keep-id}"
+PODMAN_USERNS="${NOVA_PODMAN_USERNS:-keep-id}"
 USERNS_ARGS=()
 RUN_USER_ARGS=()
 case "$PODMAN_USERNS" in
@@ -511,7 +511,7 @@ case "$PODMAN_USERNS" in
   keep-id) USERNS_ARGS=(--userns=keep-id) ;;
   host) USERNS_ARGS=(--userns=host) ;;
   *)
-    echo "Unsupported OPENCLAW_PODMAN_USERNS=$PODMAN_USERNS (expected: keep-id, auto, host)." >&2
+    echo "Unsupported NOVA_PODMAN_USERNS=$PODMAN_USERNS (expected: keep-id, auto, host)." >&2
     exit 2
     ;;
 esac
@@ -521,11 +521,11 @@ RUN_GID="$(id -g)"
 if [[ "$PODMAN_USERNS" == "keep-id" ]]; then
   RUN_USER_ARGS=(--user "${RUN_UID}:${RUN_GID}")
 else
-  echo "Starting container without --user (OPENCLAW_PODMAN_USERNS=$PODMAN_USERNS), mounts may require ownership fixes." >&2
+  echo "Starting container without --user (NOVA_PODMAN_USERNS=$PODMAN_USERNS), mounts may require ownership fixes." >&2
 fi
 
 SELINUX_MOUNT_OPTS=""
-if [[ -z "${OPENCLAW_BIND_MOUNT_OPTIONS:-}" ]]; then
+if [[ -z "${NOVA_BIND_MOUNT_OPTIONS:-}" ]]; then
   if [[ "$(uname -s 2>/dev/null)" == "Linux" ]] && command -v getenforce >/dev/null 2>&1; then
     _selinux_mode="$(getenforce 2>/dev/null || true)"
     if [[ "$_selinux_mode" == "Enforcing" || "$_selinux_mode" == "Permissive" ]]; then
@@ -533,40 +533,40 @@ if [[ -z "${OPENCLAW_BIND_MOUNT_OPTIONS:-}" ]]; then
     fi
   fi
 else
-  SELINUX_MOUNT_OPTS="${OPENCLAW_BIND_MOUNT_OPTIONS#:}"
+  SELINUX_MOUNT_OPTS="${NOVA_BIND_MOUNT_OPTIONS#:}"
   [[ -n "$SELINUX_MOUNT_OPTS" ]] && SELINUX_MOUNT_OPTS=",$SELINUX_MOUNT_OPTS"
 fi
 
 if [[ "$RUN_SETUP" == true ]]; then
-  TOKEN_ENV_FILE="$(create_token_env_file "$ENV_FILE" "$OPENCLAW_GATEWAY_TOKEN")"
+  TOKEN_ENV_FILE="$(create_token_env_file "$ENV_FILE" "$NOVA_GATEWAY_TOKEN")"
   podman run --pull="$PODMAN_PULL" --rm -it \
     --init \
     "${USERNS_ARGS[@]}" "${RUN_USER_ARGS[@]}" \
     -e HOME=/home/node -e TERM=xterm-256color -e BROWSER=echo \
     -e NPM_CONFIG_CACHE=/home/node/.openclaw/.npm \
-    -e OPENCLAW_NO_RESPAWN=1 \
+    -e NOVA_NO_RESPAWN=1 \
     --env-file "$TOKEN_ENV_FILE" \
     -v "$CONFIG_DIR:/home/node/.openclaw:rw${SELINUX_MOUNT_OPTS}" \
     -v "$WORKSPACE_DIR:/home/node/.openclaw/workspace:rw${SELINUX_MOUNT_OPTS}" \
-    "$OPENCLAW_IMAGE" \
+    "$NOVA_IMAGE" \
     node dist/index.js onboard "$@"
   exit 0
 fi
 
-TOKEN_ENV_FILE="$(create_token_env_file "$ENV_FILE" "$OPENCLAW_GATEWAY_TOKEN")"
+TOKEN_ENV_FILE="$(create_token_env_file "$ENV_FILE" "$NOVA_GATEWAY_TOKEN")"
 run_podman_detached --pull="$PODMAN_PULL" -d --replace \
   --name "$CONTAINER_NAME" \
   --init \
   "${USERNS_ARGS[@]}" "${RUN_USER_ARGS[@]}" \
   -e HOME=/home/node -e TERM=xterm-256color \
   -e NPM_CONFIG_CACHE=/home/node/.openclaw/.npm \
-  -e OPENCLAW_NO_RESPAWN=1 \
+  -e NOVA_NO_RESPAWN=1 \
   --env-file "$TOKEN_ENV_FILE" \
   -v "$CONFIG_DIR:/home/node/.openclaw:rw${SELINUX_MOUNT_OPTS}" \
   -v "$WORKSPACE_DIR:/home/node/.openclaw/workspace:rw${SELINUX_MOUNT_OPTS}" \
   -p "${PUBLISH_HOST}:${HOST_GATEWAY_PORT}:18789" \
   -p "${PUBLISH_HOST}:${HOST_BRIDGE_PORT}:18790" \
-  "$OPENCLAW_IMAGE" \
+  "$NOVA_IMAGE" \
   node dist/index.js gateway --bind "$GATEWAY_BIND" --port 18789 >/dev/null
 
 echo "Container $CONTAINER_NAME started: http://127.0.0.1:${HOST_GATEWAY_PORT}/"

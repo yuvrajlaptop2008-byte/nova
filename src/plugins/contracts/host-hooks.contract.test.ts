@@ -131,7 +131,7 @@ async function withHostHookState(
   const storePath = path.join(stateDir, "sessions.json");
   const tempConfig = createTempConfig(storePath);
   try {
-    await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+    await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
       await withTempConfig({
         cfg: tempConfig,
         run: async () => await run({ stateDir, storePath, tempConfig }),

@@ -12,7 +12,7 @@ import {
 
 const chromiumExecutablePath = resolvePlaywrightChromiumExecutablePath(chromium.executablePath());
 const chromiumAvailable = canRunPlaywrightChromium(chromiumExecutablePath);
-const allowMissingChromium = process.env.OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
+const allowMissingChromium = process.env.NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
 const describeControlUiE2e = chromiumAvailable || !allowMissingChromium ? describe : describe.skip;
 
 let browser: Browser;
@@ -372,7 +372,7 @@ describeControlUiE2e("Control UI usage cost analysis mocked Gateway E2E", () => 
       await expect.poll(() => topProviders.textContent()).toContain("No provider data");
       await expect.poll(() => topProviders.textContent()).not.toContain("openai");
 
-      if (process.env.OPENCLAW_CAPTURE_UI_PROOF === "1") {
+      if (process.env.NOVA_CAPTURE_UI_PROOF === "1") {
         const artifactDir = path.join(
           process.cwd(),
           ".artifacts",

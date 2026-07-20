@@ -425,14 +425,14 @@ describe("getApiKeyForModel", () => {
           api: "openai-chatgpt-responses",
         } as Model;
 
-        const store = ensureAuthProfileStore(process.env.OPENCLAW_AGENT_DIR, {
+        const store = ensureAuthProfileStore(process.env.NOVA_AGENT_DIR, {
           allowKeychainPrompt: false,
         });
         const apiKey = await getApiKeyForModel({
           model,
           profileId: "openai:default",
           store,
-          agentDir: process.env.OPENCLAW_AGENT_DIR,
+          agentDir: process.env.NOVA_AGENT_DIR,
         });
         expect(apiKey.apiKey).toBe(oauthFixture.access);
       },

@@ -3,7 +3,7 @@ import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { assertSqliteIntegrity } from "../infra/sqlite-integrity.js";
 import { runSqliteImmediateTransactionSync } from "../infra/sqlite-transaction.js";
 import {
-  OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+  NOVA_SQLITE_BUSY_TIMEOUT_MS,
   type OpenClawStateDatabaseOptions,
 } from "./openclaw-state-db-contract.js";
 import {
@@ -48,7 +48,7 @@ function ensureStartupMigrationCheckpointSchema(db: DatabaseSync, pathname: stri
       ensureColumn(db, "schema_meta", "app_version TEXT");
     },
     {
-      busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+      busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
       databaseLabel: pathname,
       operationLabel: "state.schema.ensure-startup-checkpoint",
     },

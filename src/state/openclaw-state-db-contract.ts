@@ -2,13 +2,12 @@ import type { DatabaseSync } from "node:sqlite";
 import type { SqliteWalMaintenance } from "../infra/sqlite-wal.js";
 
 // v5 records durable cloud-worker result refs on pending workspace fences.
-export const OPENCLAW_STATE_SCHEMA_VERSION = 5;
-export const OPENCLAW_STATE_STRICT_SCHEMA_VERSION = 3;
+export const NOVA_STATE_SCHEMA_VERSION = 5;
+export const NOVA_STATE_STRICT_SCHEMA_VERSION = 3;
 /** Maximum time one synchronous SQLite call may wait for a lock. */
-export const OPENCLAW_SQLITE_BUSY_TIMEOUT_MS = 5_000;
+export const NOVA_SQLITE_BUSY_TIMEOUT_MS = 5_000;
 /** User-facing guide for schema refusals; lives here so error sites avoid import cycles. */
-export const OPENCLAW_DATABASE_SCHEMA_DOCS_URL =
-  "https://docs.openclaw.ai/reference/database-schemas";
+export const NOVA_DATABASE_SCHEMA_DOCS_URL = "https://docs.openclaw.ai/reference/database-schemas";
 
 /** Open shared SQLite database handle plus WAL maintenance lifecycle. */
 export type OpenClawStateDatabase = {

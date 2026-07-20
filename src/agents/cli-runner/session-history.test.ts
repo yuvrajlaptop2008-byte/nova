@@ -117,7 +117,7 @@ function expectBranchSummary(value: unknown, summary: string) {
 }
 
 async function withCliSessionState<T>(stateDir: string, run: () => Promise<T>): Promise<T> {
-  return await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, run);
+  return await withEnvAsync({ NOVA_STATE_DIR: stateDir }, run);
 }
 
 describe("loadCliSessionHistoryMessages", () => {

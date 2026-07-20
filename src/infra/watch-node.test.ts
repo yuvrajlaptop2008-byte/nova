@@ -195,11 +195,11 @@ describe("watch-node script", () => {
       expect(spawnOptions.stdio).toBe("inherit");
       const spawnEnv = requireSpawnEnv(spawn, 0);
       expect(spawnEnv.PATH).toBe("/usr/bin");
-      expect(spawnEnv.OPENCLAW_WATCH_MODE).toBe("1");
-      expect(spawnEnv.OPENCLAW_WATCH_SESSION).toBe("1700000000000-4242");
-      expect(spawnEnv.OPENCLAW_NO_RESPAWN).toBe("1");
-      expect(spawnEnv.OPENCLAW_WATCH_COMMAND).toBe("gateway --force");
-      expect(spawnEnv.OPENCLAW_TRACE_SYNC_IO).toBeUndefined();
+      expect(spawnEnv.NOVA_WATCH_MODE).toBe("1");
+      expect(spawnEnv.NOVA_WATCH_SESSION).toBe("1700000000000-4242");
+      expect(spawnEnv.NOVA_NO_RESPAWN).toBe("1");
+      expect(spawnEnv.NOVA_WATCH_COMMAND).toBe("gateway --force");
+      expect(spawnEnv.NOVA_TRACE_SYNC_IO).toBeUndefined();
       fakeProcess.emit("SIGINT");
       const exitCode = await runPromise;
       expect(exitCode).toBe(130);
@@ -215,7 +215,7 @@ describe("watch-node script", () => {
         args: ["gateway", "--force"],
         cwd,
         createWatcher,
-        env: { OPENCLAW_TRACE_SYNC_IO: "0" },
+        env: { NOVA_TRACE_SYNC_IO: "0" },
         lockDisabled: true,
         process: fakeProcess,
         spawn,
@@ -224,7 +224,7 @@ describe("watch-node script", () => {
       const spawnCall = requireMockCall(spawn, 0);
       expect(spawnCall[0]).toBe("/usr/local/bin/node");
       expect(spawnCall[1]).toEqual(["scripts/run-node.mjs", "gateway", "--force"]);
-      expect(requireSpawnEnv(spawn, 0).OPENCLAW_TRACE_SYNC_IO).toBe("0");
+      expect(requireSpawnEnv(spawn, 0).NOVA_TRACE_SYNC_IO).toBe("0");
 
       fakeProcess.emit("SIGINT");
       await runPromise;
@@ -428,7 +428,7 @@ describe("watch-node script", () => {
     const runPromise = runWatch({
       args: ["gateway", "--force"],
       createWatcher,
-      env: { OPENCLAW_GATEWAY_WATCH_AUTO_DOCTOR: "0" },
+      env: { NOVA_GATEWAY_WATCH_AUTO_DOCTOR: "0" },
       lockDisabled: true,
       process: fakeProcess,
       spawn,
@@ -483,7 +483,7 @@ describe("watch-node script", () => {
     expect(spawnCall[1]).toEqual(["scripts/run-node.mjs", "gateway", "--force"]);
     const spawnEnv = requireSpawnEnv(spawn, 0);
     expect(spawnEnv.LAUNCH_JOB_LABEL).toBe("ai.openclaw.gateway");
-    expect(spawnEnv.OPENCLAW_NO_RESPAWN).toBe("1");
+    expect(spawnEnv.NOVA_NO_RESPAWN).toBe("1");
 
     fakeProcess.emit("SIGINT");
     const exitCode = await runPromise;

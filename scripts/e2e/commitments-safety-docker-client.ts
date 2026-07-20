@@ -35,16 +35,16 @@ function deleteEnvValue(key: string): void {
 
 async function withStateDir<T>(name: string, fn: (stateDir: string) => Promise<T>): Promise<T> {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), `openclaw-${name}-`));
-  const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+  const previousStateDir = process.env.NOVA_STATE_DIR;
   try {
-    setEnvValue("OPENCLAW_STATE_DIR", root);
+    setEnvValue("NOVA_STATE_DIR", root);
     return await fn(root);
   } finally {
     resetCommitmentExtractionRuntimeForTests();
     if (previousStateDir === undefined) {
-      deleteEnvValue("OPENCLAW_STATE_DIR");
+      deleteEnvValue("NOVA_STATE_DIR");
     } else {
-      setEnvValue("OPENCLAW_STATE_DIR", previousStateDir);
+      setEnvValue("NOVA_STATE_DIR", previousStateDir);
     }
     await fs.rm(root, { recursive: true, force: true });
   }
@@ -221,15 +221,15 @@ async function runPackagedDoctor(stateDir: string): Promise<void> {
     env: {
       ...process.env,
       HOME: stateDir,
-      OPENCLAW_CONFIG_PATH: configPath,
-      OPENCLAW_DISABLE_BONJOUR: "1",
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-      OPENCLAW_NO_ONBOARD: "1",
-      OPENCLAW_STATE_DIR: stateDir,
-      OPENCLAW_SKIP_CANVAS_HOST: "1",
-      OPENCLAW_SKIP_CHANNELS: "1",
-      OPENCLAW_SKIP_CRON: "1",
-      OPENCLAW_SKIP_GMAIL_WATCHER: "1",
+      NOVA_CONFIG_PATH: configPath,
+      NOVA_DISABLE_BONJOUR: "1",
+      NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+      NOVA_NO_ONBOARD: "1",
+      NOVA_STATE_DIR: stateDir,
+      NOVA_SKIP_CANVAS_HOST: "1",
+      NOVA_SKIP_CHANNELS: "1",
+      NOVA_SKIP_CRON: "1",
+      NOVA_SKIP_GMAIL_WATCHER: "1",
     },
     encoding: "utf8",
     timeout: 120_000,

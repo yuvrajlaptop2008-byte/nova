@@ -21820,18 +21820,18 @@
     },
     {
       "id": "native.apple.b52cb4aae7ca6573",
-      "source": "Paste the token configured on the gateway host. On the gateway host, run `openclaw config get gateway.auth.token`. If the gateway uses an environment variable instead, use `OPENCLAW_GATEWAY_TOKEN`.",
-      "translated": "Paste the token configured on the gateway host. On the gateway host, run `openclaw config get gateway.auth.token`. If the gateway uses an environment variable instead, use `OPENCLAW_GATEWAY_TOKEN`."
+      "source": "Paste the token configured on the gateway host. On the gateway host, run `openclaw config get gateway.auth.token`. If the gateway uses an environment variable instead, use `NOVA_GATEWAY_TOKEN`.",
+      "translated": "Paste the token configured on the gateway host. On the gateway host, run `openclaw config get gateway.auth.token`. If the gateway uses an environment variable instead, use `NOVA_GATEWAY_TOKEN`."
     },
     {
       "id": "native.apple.bbb87d21ce8a291e",
-      "source": "Check `gateway.auth.token` or `OPENCLAW_GATEWAY_TOKEN` on the gateway host and try again.",
-      "translated": "Vérifiez `gateway.auth.token` ou `OPENCLAW_GATEWAY_TOKEN` sur l’hôte Gateway, puis réessayez."
+      "source": "Check `gateway.auth.token` or `NOVA_GATEWAY_TOKEN` on the gateway host and try again.",
+      "translated": "Vérifiez `gateway.auth.token` ou `NOVA_GATEWAY_TOKEN` sur l’hôte Gateway, puis réessayez."
     },
     {
       "id": "native.apple.c26f61d639591f81",
-      "source": "This gateway is set to token auth, but no `gateway.auth.token` is configured on the gateway host. If the gateway uses an environment variable instead, set `OPENCLAW_GATEWAY_TOKEN` before starting the gateway.",
-      "translated": "This gateway is set to token auth, but no `gateway.auth.token` is configured on the gateway host. If the gateway uses an environment variable instead, set `OPENCLAW_GATEWAY_TOKEN` before starting the gateway."
+      "source": "This gateway is set to token auth, but no `gateway.auth.token` is configured on the gateway host. If the gateway uses an environment variable instead, set `NOVA_GATEWAY_TOKEN` before starting the gateway.",
+      "translated": "This gateway is set to token auth, but no `gateway.auth.token` is configured on the gateway host. If the gateway uses an environment variable instead, set `NOVA_GATEWAY_TOKEN` before starting the gateway."
     },
     {
       "id": "native.apple.83145f8f53d7be34",
@@ -21855,8 +21855,8 @@
     },
     {
       "id": "native.apple.e3f983b8c517da29",
-      "source": "Gateway token mismatch. Check gateway.auth.token or OPENCLAW_GATEWAY_TOKEN on the gateway host.",
-      "translated": "Incompatibilité du jeton du Gateway. Vérifiez gateway.auth.token ou OPENCLAW_GATEWAY_TOKEN sur l’hôte Gateway."
+      "source": "Gateway token mismatch. Check gateway.auth.token or NOVA_GATEWAY_TOKEN on the gateway host.",
+      "translated": "Incompatibilité du jeton du Gateway. Vérifiez gateway.auth.token ou NOVA_GATEWAY_TOKEN sur l’hôte Gateway."
     },
     {
       "id": "native.apple.cd96754a96e5aa35",
@@ -22740,8 +22740,8 @@
     },
     {
       "id": "native.apple.800bb607f45c05e4",
-      "source": "Stored in ~/.openclaw/openclaw.json. Prefer OPENCLAW_GATEWAY_PASSWORD for production.",
-      "translated": "Stocké dans ~/.openclaw/openclaw.json. Préférez OPENCLAW_GATEWAY_PASSWORD pour la production."
+      "source": "Stored in ~/.openclaw/openclaw.json. Prefer NOVA_GATEWAY_PASSWORD for production.",
+      "translated": "Stocké dans ~/.openclaw/openclaw.json. Préférez NOVA_GATEWAY_PASSWORD pour la production."
     },
     {
       "id": "native.apple.3942d43ca047de29",

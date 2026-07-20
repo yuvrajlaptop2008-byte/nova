@@ -380,8 +380,8 @@ describe("installPluginFromNpmSpec e2e", () => {
     const registry = await startStaticRegistry([{ packageName, latest: "2026.5.27", versions }]);
     process.env.NPM_CONFIG_REGISTRY = registry;
     process.env.npm_config_registry = registry;
-    const previousHostVersion = process.env.OPENCLAW_COMPATIBILITY_HOST_VERSION;
-    process.env.OPENCLAW_COMPATIBILITY_HOST_VERSION = "2026.5.10-beta.1";
+    const previousHostVersion = process.env.NOVA_COMPATIBILITY_HOST_VERSION;
+    process.env.NOVA_COMPATIBILITY_HOST_VERSION = "2026.5.10-beta.1";
     const warnings: string[] = [];
 
     try {
@@ -408,9 +408,9 @@ describe("installPluginFromNpmSpec e2e", () => {
       expect(installedPackageJson.version).toBe("2026.5.26");
     } finally {
       if (previousHostVersion === undefined) {
-        delete process.env.OPENCLAW_COMPATIBILITY_HOST_VERSION;
+        delete process.env.NOVA_COMPATIBILITY_HOST_VERSION;
       } else {
-        process.env.OPENCLAW_COMPATIBILITY_HOST_VERSION = previousHostVersion;
+        process.env.NOVA_COMPATIBILITY_HOST_VERSION = previousHostVersion;
       }
     }
   });

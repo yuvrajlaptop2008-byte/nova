@@ -111,7 +111,7 @@ describe("legacy core audit log migration", () => {
       expect(result.warnings).toEqual([]);
       expect(result.changes).toHaveLength(6);
 
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const configRecords = listConfigAuditRecordsForTests({ env, homedir: () => stateDir });
       expect(configRecords).toHaveLength(1);
       expect(JSON.stringify(configRecords)).not.toContain("must-redact");
@@ -214,7 +214,7 @@ describe("legacy core audit log migration", () => {
       expect(result.warnings.join("\n")).toContain("changed other than by append");
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).map((entry) => entry.value.summary),
       ).toEqual(["original"]);
     });
@@ -340,7 +340,7 @@ describe("legacy core audit log migration", () => {
       await expect(fs.readFile(rawPath, "utf8")).resolves.not.toContain("restart-redaction-marker");
       expect(
         listConfigAuditRecordsForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
           homedir: () => stateDir,
         }),
       ).toHaveLength(1);
@@ -455,7 +455,7 @@ describe("legacy core audit log migration", () => {
       await expect(fs.access(`${sourcePath}.migrated.raw`)).resolves.toBeUndefined();
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }),
       ).toHaveLength(1);
 
@@ -478,7 +478,7 @@ describe("legacy core audit log migration", () => {
       await migrateLegacyAuditLogs({ detected: numberedRaw, stateDir });
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }),
       ).toHaveLength(2);
     });
@@ -504,7 +504,7 @@ describe("legacy core audit log migration", () => {
       createSqliteAuditRecordStore({
         scope: SYSTEM_AGENT_AUDIT_SCOPE,
         maxEntries: 3,
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       }).register("runtime", {
         timestamp: "2026-07-04T00:00:00.000Z",
         operation: "gateway.reload",
@@ -528,13 +528,13 @@ describe("legacy core audit log migration", () => {
       expect(recovered.changes.join("\n")).toContain("Recovered 1 later");
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).map((entry) => entry.value.summary),
       ).toEqual(["second", "third", "appended", "runtime"]);
       const rawCheckpoints = createSqliteAuditRecordStore<{ recordCount: number }>({
         scope: "migration.legacy-audit-raw",
         maxEntries: 10_000,
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       }).entries();
       expect(rawCheckpoints).toHaveLength(1);
       expect(rawCheckpoints[0]?.value.recordCount).toBe(0);
@@ -576,7 +576,7 @@ describe("legacy core audit log migration", () => {
       expect(result.warnings).toEqual([]);
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }),
       ).toHaveLength(5);
       expect(detectLegacyAuditLogs({ stateDir, doctorOnlyStateMigrations: true }).hasLegacy).toBe(
@@ -608,7 +608,7 @@ describe("legacy core audit log migration", () => {
       createSqliteAuditRecordStore({
         scope: SYSTEM_AGENT_AUDIT_SCOPE,
         maxEntries: 1,
-        env: { ...process.env, OPENCLAW_STATE_DIR: restoredStateDir },
+        env: { ...process.env, NOVA_STATE_DIR: restoredStateDir },
       }).register("runtime-after-restore", {
         timestamp: "2026-07-04T00:00:00.000Z",
         operation: "gateway.reload",
@@ -628,7 +628,7 @@ describe("legacy core audit log migration", () => {
       expect(result.warnings).toEqual([]);
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: restoredStateDir },
+          env: { ...process.env, NOVA_STATE_DIR: restoredStateDir },
         }).map((entry) => entry.value.summary),
       ).toEqual(["Runtime after restore"]);
       expect(
@@ -670,7 +670,7 @@ describe("legacy core audit log migration", () => {
         });
         expect(
           listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+            env: { ...process.env, NOVA_STATE_DIR: stateDir },
           }),
         ).toHaveLength(1);
       },
@@ -708,7 +708,7 @@ describe("legacy core audit log migration", () => {
         await expect(fs.access(`${sourcePath}.migrated.2.raw`)).resolves.toBeUndefined();
         expect(
           listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+            env: { ...process.env, NOVA_STATE_DIR: stateDir },
           }),
         ).toHaveLength(2);
       },
@@ -757,7 +757,7 @@ describe("legacy core audit log migration", () => {
         await expect(fs.access(`${sourcePath}.migrated.2.raw`)).resolves.toBeUndefined();
         expect(
           listSystemAgentAuditEntriesForTests({
-            env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+            env: { ...process.env, NOVA_STATE_DIR: stateDir },
           }),
         ).toHaveLength(2);
       },
@@ -779,7 +779,7 @@ describe("legacy core audit log migration", () => {
       await expect(fs.access(sourcePath)).resolves.toBeUndefined();
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }),
       ).toEqual([]);
     });
@@ -808,7 +808,7 @@ describe("legacy core audit log migration", () => {
       await expect(fs.access(sourcePath)).resolves.toBeUndefined();
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }),
       ).toEqual([]);
 
@@ -821,7 +821,7 @@ describe("legacy core audit log migration", () => {
       expect(repaired.warnings).toEqual([]);
       expect(
         listSystemAgentAuditEntriesForTests({
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).map((entry) => entry.value.summary),
       ).toEqual(["repaired older generation", "newer generation"]);
     });
@@ -900,7 +900,7 @@ describe("legacy core audit log migration", () => {
           summary: "Restarted gateway",
         })}\n`,
       );
-      const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+      const env = { ...process.env, NOVA_STATE_DIR: stateDir };
       const gatewayLock = await acquireGatewayLock({
         allowInTests: true,
         env,
@@ -989,7 +989,7 @@ describe("legacy core audit log migration", () => {
         createSqliteAuditRecordStore({
           scope: CONFIG_AUDIT_SCOPE,
           maxEntries: CONFIG_AUDIT_MAX_ENTRIES,
-          env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+          env: { ...process.env, NOVA_STATE_DIR: stateDir },
         }).entries(),
       ).toHaveLength(10_001);
     });
@@ -1030,7 +1030,7 @@ describe("legacy core audit log migration", () => {
           });
           expect(
             listSystemAgentAuditEntriesForTests({
-              env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+              env: { ...process.env, NOVA_STATE_DIR: stateDir },
             }),
           ).toEqual([]);
         });

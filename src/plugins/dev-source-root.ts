@@ -5,7 +5,7 @@ import { resolveUserPath } from "../utils.js";
 import { isPathInside, safeRealpathSync } from "./path-safety.js";
 
 /** Env var that points bundled-plugin lookup at an Nova source checkout. */
-const OPENCLAW_DEV_SOURCE_ROOT_ENV = "OPENCLAW_DEV_SOURCE_ROOT";
+const NOVA_DEV_SOURCE_ROOT_ENV = "NOVA_DEV_SOURCE_ROOT";
 
 function readPackageName(packageJsonPath: string): string | null {
   try {
@@ -18,7 +18,7 @@ function readPackageName(packageJsonPath: string): string | null {
 
 /** Resolves and validates the configured Nova development source root. */
 export function resolveOpenClawDevSourceRoot(env: NodeJS.ProcessEnv = process.env): string | null {
-  const rawRoot = env[OPENCLAW_DEV_SOURCE_ROOT_ENV]?.trim();
+  const rawRoot = env[NOVA_DEV_SOURCE_ROOT_ENV]?.trim();
   if (!rawRoot) {
     return null;
   }

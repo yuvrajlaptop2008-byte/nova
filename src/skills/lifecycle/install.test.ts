@@ -101,9 +101,9 @@ async function withWorkspaceCase(
 ): Promise<void> {
   const workspaceDir = await workspaceSuite.createCaseDir("case");
   const stateDir = path.join(workspaceDir, "state");
-  const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+  const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
   try {
-    process.env.OPENCLAW_STATE_DIR = stateDir;
+    process.env.NOVA_STATE_DIR = stateDir;
     await run({ workspaceDir, stateDir });
   } finally {
     envSnapshot.restore();
@@ -117,9 +117,9 @@ describe("installSkill before_install hooks", () => {
     skillsInstallTesting.setDepsForTest({
       loadWorkspaceSkillEntries: loadTestWorkspaceSkillEntries,
       resolveNodeInstallStateDir: () => {
-        const stateDir = process.env.OPENCLAW_STATE_DIR;
+        const stateDir = process.env.NOVA_STATE_DIR;
         if (!stateDir) {
-          throw new Error("OPENCLAW_STATE_DIR missing in skills install test");
+          throw new Error("NOVA_STATE_DIR missing in skills install test");
         }
         return stateDir;
       },
@@ -157,10 +157,10 @@ describe("installSkill before_install hooks", () => {
   });
 
   it("keeps the default npm prefix out of env-overridden state paths", () => {
-    const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR", "OPENCLAW_CONFIG_PATH"]);
+    const envSnapshot = captureEnv(["NOVA_STATE_DIR", "NOVA_CONFIG_PATH"]);
     try {
-      process.env.OPENCLAW_STATE_DIR = "/tmp/untrusted-state";
-      process.env.OPENCLAW_CONFIG_PATH = "/tmp/untrusted-config/openclaw.json";
+      process.env.NOVA_STATE_DIR = "/tmp/untrusted-state";
+      process.env.NOVA_CONFIG_PATH = "/tmp/untrusted-config/openclaw.json";
 
       expect(
         skillsInstallTesting.resolveDefaultNodeInstallStateDir({

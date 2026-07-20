@@ -48,7 +48,7 @@ function createContext(): PluginDoctorStateMigrationContext {
 function createMigrationParams(stateDir: string) {
   return {
     config: {} as OpenClawConfig,
-    env: { OPENCLAW_STATE_DIR: stateDir },
+    env: { NOVA_STATE_DIR: stateDir },
     stateDir,
     oauthDir: path.join(stateDir, "oauth"),
     context: createContext(),
@@ -498,7 +498,7 @@ describe("matrix doctor contract state migrations", () => {
     }>("matrix", {
       namespace: "inbound-dedupe",
       maxEntries: 20_000,
-      env: { OPENCLAW_STATE_DIR: sqliteRoot },
+      env: { NOVA_STATE_DIR: sqliteRoot },
     });
     await legacyStore.register(legacyKey("ops", "$committed"), {
       roomId,
@@ -515,7 +515,7 @@ describe("matrix doctor contract state migrations", () => {
       {
         namespace: "inbound-dedupe-migrations",
         maxEntries: 1_000,
-        env: { OPENCLAW_STATE_DIR: sqliteRoot },
+        env: { NOVA_STATE_DIR: sqliteRoot },
       },
     );
     await legacyMarkersStore.register("ops:legacy-json-marker", { importedAt: now });
@@ -551,7 +551,7 @@ describe("matrix doctor contract state migrations", () => {
     });
 
     // Pre-upgrade markers must keep deduping through the new runtime guard.
-    const dedupeEnv = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const dedupeEnv = { ...process.env, NOVA_STATE_DIR: stateDir };
     const opsDeduper = createMatrixInboundEventDeduper({
       auth: { accountId: "ops" },
       env: dedupeEnv,
@@ -612,7 +612,7 @@ describe("matrix doctor contract state migrations", () => {
   it("keeps newer runtime dedupe rows when legacy imports hit capacity", async () => {
     const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-matrix-doctor-"));
     tempDirs.push(stateDir);
-    const io = { context: createContext(), env: { OPENCLAW_STATE_DIR: stateDir } };
+    const io = { context: createContext(), env: { NOVA_STATE_DIR: stateDir } };
     const roomId = "!room:example.org";
     const now = Date.now();
     // Simulate the row the upgraded runtime already committed post-upgrade.

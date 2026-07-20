@@ -79,7 +79,7 @@ describe("Reef conversation directory", () => {
     runtime.state.openSyncKeyedStore = <T>(options: OpenKeyedStoreOptions) =>
       createPluginStateSyncKeyedStoreForTests<T>("reef", {
         ...options,
-        env: { OPENCLAW_STATE_DIR: stateDir },
+        env: { NOVA_STATE_DIR: stateDir },
       });
     setReefRuntime(runtime);
     const identity = generateIdentity();

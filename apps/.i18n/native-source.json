@@ -34909,7 +34909,7 @@
       "kind": "conditional-branch",
       "line": 64,
       "path": "apps/macos/Sources/OpenClaw/RemoteGatewayProbe.swift",
-      "source": "Paste the token configured on the gateway host. On the gateway host, run `openclaw config get gateway.auth.token`. If the gateway uses an environment variable instead, use `OPENCLAW_GATEWAY_TOKEN`.",
+      "source": "Paste the token configured on the gateway host. On the gateway host, run `openclaw config get gateway.auth.token`. If the gateway uses an environment variable instead, use `NOVA_GATEWAY_TOKEN`.",
       "surface": "apple",
       "id": "native.apple.b52cb4aae7ca6573"
     },
@@ -34917,7 +34917,7 @@
       "kind": "conditional-branch",
       "line": 68,
       "path": "apps/macos/Sources/OpenClaw/RemoteGatewayProbe.swift",
-      "source": "Check `gateway.auth.token` or `OPENCLAW_GATEWAY_TOKEN` on the gateway host and try again.",
+      "source": "Check `gateway.auth.token` or `NOVA_GATEWAY_TOKEN` on the gateway host and try again.",
       "surface": "apple",
       "id": "native.apple.bbb87d21ce8a291e"
     },
@@ -34925,7 +34925,7 @@
       "kind": "conditional-branch",
       "line": 70,
       "path": "apps/macos/Sources/OpenClaw/RemoteGatewayProbe.swift",
-      "source": "This gateway is set to token auth, but no `gateway.auth.token` is configured on the gateway host. If the gateway uses an environment variable instead, set `OPENCLAW_GATEWAY_TOKEN` before starting the gateway.",
+      "source": "This gateway is set to token auth, but no `gateway.auth.token` is configured on the gateway host. If the gateway uses an environment variable instead, set `NOVA_GATEWAY_TOKEN` before starting the gateway.",
       "surface": "apple",
       "id": "native.apple.c26f61d639591f81"
     },
@@ -34965,7 +34965,7 @@
       "kind": "conditional-branch",
       "line": 104,
       "path": "apps/macos/Sources/OpenClaw/RemoteGatewayProbe.swift",
-      "source": "Gateway token mismatch. Check gateway.auth.token or OPENCLAW_GATEWAY_TOKEN on the gateway host.",
+      "source": "Gateway token mismatch. Check gateway.auth.token or NOVA_GATEWAY_TOKEN on the gateway host.",
       "surface": "apple",
       "id": "native.apple.e3f983b8c517da29"
     },
@@ -36381,7 +36381,7 @@
       "kind": "ui-call",
       "line": 276,
       "path": "apps/macos/Sources/OpenClaw/TailscaleIntegrationSection.swift",
-      "source": "Stored in ~/.openclaw/openclaw.json. Prefer OPENCLAW_GATEWAY_PASSWORD for production.",
+      "source": "Stored in ~/.openclaw/openclaw.json. Prefer NOVA_GATEWAY_PASSWORD for production.",
       "surface": "apple",
       "id": "native.apple.800bb607f45c05e4"
     },

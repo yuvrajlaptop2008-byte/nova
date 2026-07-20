@@ -23,7 +23,7 @@ import { clientVoiceSessionTesting } from "../../talk/client-voice-session.test-
 import { captureEnv, setTestEnvValue } from "../../test-utils/env.js";
 import { talkClientHandlers } from "./talk-client.js";
 
-const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
 const sessionKey = "agent:main:main";
 const sessionId = "voice-transcript-session";
 let tempDir: string;
@@ -54,7 +54,7 @@ describe("talk.client.transcript", () => {
     tempDir = await fs.realpath(
       await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-talk-transcript-")),
     );
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempDir);
     await replaceSessionEntry(
       { agentId: "main", sessionKey },
       { sessionId, updatedAt: Date.now() },

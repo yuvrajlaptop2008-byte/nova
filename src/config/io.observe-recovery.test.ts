@@ -104,7 +104,7 @@ describe("config observe recovery", () => {
   async function readObserveEvents(auditPath: string): Promise<Record<string, unknown>[]> {
     const stateDir = path.dirname(path.dirname(auditPath));
     return listConfigAuditRecordsForTests({
-      env: { OPENCLAW_STATE_DIR: stateDir },
+      env: { NOVA_STATE_DIR: stateDir },
       homedir: () => stateDir,
     }).filter((event) => event.event === "config.observe");
   }
@@ -510,13 +510,13 @@ describe("config observe recovery", () => {
       await seedConfigBackup(configPath, recoverableTelegramConfig);
       await writeConfigRaw(configPath, {
         meta: { lastTouchedVersion: "2026.5.28" },
-        env: { vars: { OPENCLAW_CLOBBER_ONLY: "bad" } },
+        env: { vars: { NOVA_CLOBBER_ONLY: "bad" } },
       });
 
       const config = io.loadConfig();
 
       expect(config.gateway?.mode).toBe("local");
-      expect(env.OPENCLAW_CLOBBER_ONLY).toBeUndefined();
+      expect(env.NOVA_CLOBBER_ONLY).toBeUndefined();
     });
   });
 
@@ -527,13 +527,13 @@ describe("config observe recovery", () => {
       await seedConfigBackup(configPath, recoverableTelegramConfig);
       await writeConfigRaw(configPath, {
         meta: { lastTouchedVersion: "2026.5.28" },
-        env: { vars: { OPENCLAW_CLOBBER_ONLY: "bad" } },
+        env: { vars: { NOVA_CLOBBER_ONLY: "bad" } },
       });
 
       const snapshot = await io.readConfigFileSnapshot({ recoverSuspicious: true });
 
       expect(snapshot.config.gateway?.mode).toBe("local");
-      expect(env.OPENCLAW_CLOBBER_ONLY).toBeUndefined();
+      expect(env.NOVA_CLOBBER_ONLY).toBeUndefined();
     });
   });
 
@@ -696,7 +696,7 @@ describe("config observe recovery", () => {
       const { io, configPath } = createTestConfigIO(home, vi.fn(), { env });
       await seedConfigBackup(configPath, {
         gateway: { mode: "local" },
-        env: { vars: { OPENCLAW_BACKUP_ONLY: "stale" } },
+        env: { vars: { NOVA_BACKUP_ONLY: "stale" } },
         agents: { defaults: { model: 123 } },
       });
       await writeConfigRaw(configPath, {
@@ -705,7 +705,7 @@ describe("config observe recovery", () => {
 
       await io.readConfigFileSnapshot({ recoverSuspicious: true });
 
-      expect(env.OPENCLAW_BACKUP_ONLY).toBeUndefined();
+      expect(env.NOVA_BACKUP_ONLY).toBeUndefined();
     });
   });
 

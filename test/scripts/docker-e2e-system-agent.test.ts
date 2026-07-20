@@ -48,7 +48,7 @@ describe("Nova Docker E2E scripts", () => {
     const shell = readScript("scripts/e2e/system-agent-rescue-docker.sh");
     const source = readScript("scripts/e2e/system-agent-rescue-docker-client.ts");
 
-    expect(shell).toContain("OPENCLAW_GATEWAY_TOKEN=system-agent-rescue-token");
+    expect(shell).toContain("NOVA_GATEWAY_TOKEN=system-agent-rescue-token");
     expect(source).toContain("../../dist/auto-reply/reply/commands-system-agent.js");
     expect(source).toContain("../../dist/system-agent/rescue-message.js");
     expect(source).toContain("handleSystemAgentCommand(");

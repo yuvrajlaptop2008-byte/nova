@@ -275,7 +275,7 @@ describe("resolveGatewayProgramArguments", () => {
         port: 18789,
         wrapperPath,
       }),
-    ).rejects.toThrow("OPENCLAW_WRAPPER must point to an executable file");
+    ).rejects.toThrow("NOVA_WRAPPER must point to an executable file");
   });
 });
 

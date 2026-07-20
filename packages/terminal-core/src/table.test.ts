@@ -453,7 +453,7 @@ describe("renderTable", () => {
     const home = path.resolve("test-home", "alice");
     vi.stubEnv("HOME", home);
     vi.stubEnv("USERPROFILE", "");
-    vi.stubEnv("OPENCLAW_HOME", "");
+    vi.stubEnv("NOVA_HOME", "");
 
     const out = renderTable({
       border: "none",

@@ -21,15 +21,15 @@ const runFeishuDoctorSequence = feishuDoctor.runConfigSequence!;
 
 type EnvSnapshot = {
   HOME?: string;
-  OPENCLAW_HOME?: string;
-  OPENCLAW_STATE_DIR?: string;
+  NOVA_HOME?: string;
+  NOVA_STATE_DIR?: string;
 };
 
 function captureEnv(): EnvSnapshot {
   return {
     HOME: process.env.HOME,
-    OPENCLAW_HOME: process.env.OPENCLAW_HOME,
-    OPENCLAW_STATE_DIR: process.env.OPENCLAW_STATE_DIR,
+    NOVA_HOME: process.env.NOVA_HOME,
+    NOVA_STATE_DIR: process.env.NOVA_STATE_DIR,
   };
 }
 
@@ -56,9 +56,9 @@ function feishuConfig(): OpenClawConfig {
 }
 
 function stateDir(): string {
-  const dir = process.env.OPENCLAW_STATE_DIR;
+  const dir = process.env.NOVA_STATE_DIR;
   if (!dir) {
-    throw new Error("OPENCLAW_STATE_DIR is not set");
+    throw new Error("NOVA_STATE_DIR is not set");
   }
   return dir;
 }
@@ -147,9 +147,9 @@ describe("Feishu doctor state repair", () => {
     envSnapshot = captureEnv();
     tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-feishu-doctor-"));
     process.env.HOME = tempHome;
-    process.env.OPENCLAW_HOME = tempHome;
-    process.env.OPENCLAW_STATE_DIR = path.join(tempHome, ".openclaw");
-    fs.mkdirSync(process.env.OPENCLAW_STATE_DIR, { recursive: true, mode: 0o700 });
+    process.env.NOVA_HOME = tempHome;
+    process.env.NOVA_STATE_DIR = path.join(tempHome, ".openclaw");
+    fs.mkdirSync(process.env.NOVA_STATE_DIR, { recursive: true, mode: 0o700 });
   });
 
   afterEach(() => {

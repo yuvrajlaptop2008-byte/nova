@@ -542,7 +542,7 @@ describe("browser manage output", () => {
     expect(output).toContain(
       "FAIL gateway: Gateway auth SecretRef is unavailable in this command path",
     );
-    expect(output).toContain("OPENCLAW_GATEWAY_TOKEN");
+    expect(output).toContain("NOVA_GATEWAY_TOKEN");
     expect(output).not.toContain("GatewaySecretRefUnavailableError");
   });
 });

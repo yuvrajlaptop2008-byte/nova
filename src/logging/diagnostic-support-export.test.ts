@@ -211,7 +211,7 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
@@ -227,7 +227,7 @@ describe("diagnostic support export", () => {
             programArguments: ["openclaw", "gateway", "run", "--token", fakeToken],
             environment: {
               HOME: tempDir,
-              OPENCLAW_GATEWAY_TOKEN: fakeToken,
+              NOVA_GATEWAY_TOKEN: fakeToken,
             },
           },
         },
@@ -295,14 +295,14 @@ describe("diagnostic support export", () => {
     expect(combined).not.toContain(requestAuthValue);
     expect(combined).not.toContain(requestTlsPassphrase);
     expect(combined).not.toContain(proxyTlsPassphrase);
-    expect(combined).not.toContain("__OPENCLAW_REDACTED__");
+    expect(combined).not.toContain("__NOVA_REDACTED__");
     expect(combined).not.toContain("gateway-session-15555551212");
     expect(combined).not.toContain("supportEventSecret");
     expect(combined).not.toContain(fakeAwsKey);
     expect(combined).not.toContain(fakeJwt);
     expect(combined).toContain("payload.large");
     expect(combined).toContain("gateway.http.json");
-    expect(combined).toContain("$OPENCLAW_STATE_DIR");
+    expect(combined).toContain("$NOVA_STATE_DIR");
     expect(combined).toContain("<redacted-hostname>");
     expect(combined).toContain("gateway-status.json");
     expect(combined).toContain("gateway-health.json");
@@ -352,7 +352,7 @@ describe("diagnostic support export", () => {
       "--token",
       "<redacted>",
     ]);
-    expect(status.data?.service?.command?.environment?.OPENCLAW_GATEWAY_TOKEN).toBe("<redacted>");
+    expect(status.data?.service?.command?.environment?.NOVA_GATEWAY_TOKEN).toBe("<redacted>");
     expect(JSON.stringify(status)).toContain(
       "wss://<redacted>:<redacted>@gateway.example/ws?token=<redacted>",
     );
@@ -488,7 +488,7 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
@@ -558,9 +558,9 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_CONFIG_PATH: configPath,
-        OPENCLAW_DISABLE_BONJOUR: "1",
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_CONFIG_PATH: configPath,
+        NOVA_DISABLE_BONJOUR: "1",
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
@@ -631,7 +631,7 @@ describe("diagnostic support export", () => {
     const redaction = {
       env: {
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
     };
@@ -647,7 +647,7 @@ describe("diagnostic support export", () => {
     const redaction = {
       env: {
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
     };
@@ -732,7 +732,7 @@ describe("diagnostic support export", () => {
     const redaction = {
       env: {
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
     };
@@ -742,7 +742,7 @@ describe("diagnostic support export", () => {
       `abcd${truncationSuffix}`,
     );
 
-    const redactedPathPrefix = `$OPENCLAW_STATE_DIR${path.sep}`;
+    const redactedPathPrefix = `$NOVA_STATE_DIR${path.sep}`;
     expect(
       redactSupportString(path.join(tempDir, "abcd😀tail"), redaction, {
         maxLength: redactedPathPrefix.length + 5,
@@ -756,13 +756,13 @@ describe("diagnostic support export", () => {
     const redaction = {
       env: {
         USERPROFILE: userProfile,
-        OPENCLAW_STATE_DIR: stateDir,
+        NOVA_STATE_DIR: stateDir,
       },
       stateDir,
     };
 
     expect(redactSupportString(`${stateDir}\\logs\\gateway.log`, redaction)).toBe(
-      "$OPENCLAW_STATE_DIR\\logs\\gateway.log",
+      "$NOVA_STATE_DIR\\logs\\gateway.log",
     );
     expect(
       redactSupportString(`failed at ${userProfile}\\Documents\\snapshot-error.txt`, redaction),
@@ -793,7 +793,7 @@ describe("diagnostic support export", () => {
     const serialized = JSON.stringify(status);
     expect(serialized).not.toContain("support-user");
     expect(serialized).toContain("~\\\\openclaw\\\\dist\\\\index.js");
-    expect(serialized).toContain("$OPENCLAW_STATE_DIR\\\\openclaw.json");
+    expect(serialized).toContain("$NOVA_STATE_DIR\\\\openclaw.json");
     expect(serialized).toContain("~\\\\AppData\\\\Local\\\\openclaw\\\\gateway-service.json");
   });
 
@@ -805,7 +805,7 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
@@ -846,7 +846,7 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,
@@ -885,8 +885,8 @@ describe("diagnostic support export", () => {
         env: {
           ...process.env,
           HOME: tempDir,
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_STATE_DIR: tempDir,
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_STATE_DIR: tempDir,
         },
         stateDir: tempDir,
         outputPath,
@@ -922,8 +922,8 @@ describe("diagnostic support export", () => {
       env: {
         ...process.env,
         HOME: tempDir,
-        OPENCLAW_CONFIG_PATH: configPath,
-        OPENCLAW_STATE_DIR: tempDir,
+        NOVA_CONFIG_PATH: configPath,
+        NOVA_STATE_DIR: tempDir,
       },
       stateDir: tempDir,
       outputPath,

@@ -49,7 +49,7 @@ describe("provider auth warm worker", () => {
 
     await withEnvAsync(
       {
-        OPENCLAW_STATE_DIR: path.join(root, "state"),
+        NOVA_STATE_DIR: path.join(root, "state"),
       },
       async () => {
         const agentDir = path.join(root, "agent");

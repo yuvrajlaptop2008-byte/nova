@@ -74,7 +74,7 @@ function readVaultCredentialFile(filePath, label, emptyMessage) {
 }
 
 function resolveVaultAuthMethod() {
-  const method = normalizeOptionalString(process.env.OPENCLAW_VAULT_AUTH_METHOD) ?? "token";
+  const method = normalizeOptionalString(process.env.NOVA_VAULT_AUTH_METHOD) ?? "token";
   if (
     method === "token" ||
     method === "token_file" ||
@@ -83,7 +83,7 @@ function resolveVaultAuthMethod() {
   ) {
     return method;
   }
-  throw new Error("OPENCLAW_VAULT_AUTH_METHOD must be token, token_file, jwt, or kubernetes.");
+  throw new Error("NOVA_VAULT_AUTH_METHOD must be token, token_file, jwt, or kubernetes.");
 }
 
 function resolveVaultTokenEnv() {
@@ -107,18 +107,18 @@ function resolveVaultTokenFile() {
 }
 
 function resolveKvMount() {
-  return process.env.OPENCLAW_VAULT_KV_MOUNT?.trim().replace(/^\/+|\/+$/gu, "") || "secret";
+  return process.env.NOVA_VAULT_KV_MOUNT?.trim().replace(/^\/+|\/+$/gu, "") || "secret";
 }
 
 function resolveKvVersion() {
-  const raw = process.env.OPENCLAW_VAULT_KV_VERSION?.trim();
+  const raw = process.env.NOVA_VAULT_KV_VERSION?.trim();
   if (!raw || raw === "2") {
     return 2;
   }
   if (raw === "1") {
     return 1;
   }
-  throw new Error("OPENCLAW_VAULT_KV_VERSION must be 1 or 2.");
+  throw new Error("NOVA_VAULT_KV_VERSION must be 1 or 2.");
 }
 
 function encodePath(pathValue) {
@@ -225,28 +225,28 @@ function addVaultNamespaceHeader(headers) {
 }
 
 function resolveVaultAuthMount(method) {
-  return process.env.OPENCLAW_VAULT_AUTH_MOUNT?.trim().replace(/^\/+|\/+$/gu, "") || method;
+  return process.env.NOVA_VAULT_AUTH_MOUNT?.trim().replace(/^\/+|\/+$/gu, "") || method;
 }
 
 function resolveVaultAuthRole(method) {
-  const role = normalizeOptionalString(process.env.OPENCLAW_VAULT_AUTH_ROLE);
+  const role = normalizeOptionalString(process.env.NOVA_VAULT_AUTH_ROLE);
   if (!role) {
-    throw new Error(`OPENCLAW_VAULT_AUTH_ROLE is required for ${method} auth.`);
+    throw new Error(`NOVA_VAULT_AUTH_ROLE is required for ${method} auth.`);
   }
   return role;
 }
 
 function resolveVaultJwt(method) {
   const jwtFile =
-    normalizeOptionalString(process.env.OPENCLAW_VAULT_JWT_FILE) ??
+    normalizeOptionalString(process.env.NOVA_VAULT_JWT_FILE) ??
     (method === "kubernetes" ? KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH : undefined);
   if (!jwtFile) {
-    throw new Error("OPENCLAW_VAULT_JWT_FILE is required for jwt auth.");
+    throw new Error("NOVA_VAULT_JWT_FILE is required for jwt auth.");
   }
   return readVaultCredentialFile(
     jwtFile,
     "Vault JWT",
-    "OPENCLAW_VAULT_JWT_FILE did not contain a JWT.",
+    "NOVA_VAULT_JWT_FILE did not contain a JWT.",
   );
 }
 

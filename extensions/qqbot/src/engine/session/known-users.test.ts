@@ -43,7 +43,7 @@ function knownUserRows(stateDir: string): KnownUser[] {
   const store = createPluginStateSyncKeyedStoreForTests<KnownUser>("qqbot", {
     namespace: "known-users",
     maxEntries: 100_000,
-    env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+    env: { ...process.env, NOVA_STATE_DIR: stateDir },
   });
   return store.entries().map((entry) => entry.value);
 }
@@ -53,7 +53,7 @@ describe("engine/session/known-users", () => {
     vi.resetModules();
     const stateDir = createTempDir("qqbot-state-");
     const homeDir = createTempDir("qqbot-home-");
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("NOVA_STATE_DIR", stateDir);
     vi.stubEnv("HOME", homeDir);
     await useMockHome(homeDir);
     installQQBotRuntimeForStateTests(stateDir);
@@ -71,7 +71,7 @@ describe("engine/session/known-users", () => {
 
   it("records known users in SQLite and flushes synchronously", async () => {
     const { flushKnownUsers, recordKnownUser } = await import("./known-users.js");
-    const stateDir = process.env.OPENCLAW_STATE_DIR!;
+    const stateDir = process.env.NOVA_STATE_DIR!;
 
     recordKnownUser({
       openid: "user-1",

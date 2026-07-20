@@ -113,8 +113,8 @@ export async function runWindowsBackgroundPowerShell(
   const guestRunDir = `openclaw-parallels\\${nonce}`;
   const windowsDonePath = `%WINDIR%\\Temp\\${guestRunDir}\\done`;
   const windowsLogPath = `%WINDIR%\\Temp\\${guestRunDir}\\run.log`;
-  const backgroundExitPrefix = `__OPENCLAW_BACKGROUND_EXIT__:${nonce}:`;
-  const backgroundDoneMarker = `__OPENCLAW_BACKGROUND_DONE__:${nonce}`;
+  const backgroundExitPrefix = `__NOVA_BACKGROUND_EXIT__:${nonce}:`;
+  const backgroundDoneMarker = `__NOVA_BACKGROUND_DONE__:${nonce}`;
   const deadline = Date.now() + options.timeoutMs;
   const pathsScript = `$runDir = Join-Path (Join-Path $env:WINDIR 'Temp\\openclaw-parallels') ${psSingleQuote(nonce)}
 $scriptPath = Join-Path $runDir 'run.ps1'
@@ -483,7 +483,7 @@ export class LinuxGuest {
   }
 
   private transportArgs(args: string[]): string[] {
-    return ["exec", this.vmName, "/usr/bin/env", "HOME=/root", "OPENCLAW_ALLOW_ROOT=1", ...args];
+    return ["exec", this.vmName, "/usr/bin/env", "HOME=/root", "NOVA_ALLOW_ROOT=1", ...args];
   }
 
   bash(script: string): string {

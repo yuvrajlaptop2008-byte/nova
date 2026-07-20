@@ -146,8 +146,8 @@ describe("gateway startup benchmark script", () => {
       name: "gateway default",
     });
 
-    expect(env.OPENCLAW_LOCAL_CHECK).toBeUndefined();
-    expect(env.OPENCLAW_GATEWAY_STARTUP_TRACE).toBe("1");
+    expect(env.NOVA_LOCAL_CHECK).toBeUndefined();
+    expect(env.NOVA_GATEWAY_STARTUP_TRACE).toBe("1");
   });
 
   it("rejects malformed ps RSS samples", () => {

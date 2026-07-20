@@ -975,7 +975,7 @@ describe("prepared model runtime snapshots", () => {
       prepareModelRuntimeSnapshot({
         config,
         agentDir: "/tmp/unused-agent",
-        env: { ...process.env, OPENCLAW_PREPARED_RUNTIME_TEST_SCOPE: "different" },
+        env: { ...process.env, NOVA_PREPARED_RUNTIME_TEST_SCOPE: "different" },
       }),
     ).rejects.toThrow("prepared model runtime owner was not published");
   });

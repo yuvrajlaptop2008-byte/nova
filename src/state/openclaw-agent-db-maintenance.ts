@@ -14,17 +14,17 @@ import {
   readSqliteUserVersion,
 } from "../infra/sqlite-user-version.js";
 import { normalizeAgentId } from "../routing/session-key.js";
-import { OPENCLAW_AGENT_SCHEMA_VERSION } from "./openclaw-agent-db-contract.js";
+import { NOVA_AGENT_SCHEMA_VERSION } from "./openclaw-agent-db-contract.js";
 import {
   assertExistingAgentSchemaOwner,
   assertSupportedAgentSchemaVersion,
   readExistingAgentSchemaMeta,
 } from "./openclaw-agent-db-schema-helpers.js";
 import { ensureOpenClawAgentDatabaseSchema } from "./openclaw-agent-db-schema.js";
-import { OPENCLAW_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
-import { OPENCLAW_SQLITE_BUSY_TIMEOUT_MS } from "./openclaw-state-db.js";
+import { NOVA_AGENT_SCHEMA_SQL } from "./openclaw-agent-schema.generated.js";
+import { NOVA_SQLITE_BUSY_TIMEOUT_MS } from "./openclaw-state-db.js";
 
-const OPENCLAW_AGENT_MAINTENANCE_SCHEMA_COMPATIBILITY = {
+const NOVA_AGENT_MAINTENANCE_SCHEMA_COMPATIBILITY = {
   allowedColumnDefinitions: {
     "conversations.delivery_target": ["delivery_target TEXT NOT NULL DEFAULT ''"],
   },
@@ -49,29 +49,29 @@ export function assertOpenClawAgentDatabaseForMaintenance(
   assertExistingAgentSchemaOwner(metadata, agentId, options.pathname);
 
   const userVersion = readSqliteUserVersion(database);
-  if (userVersion > OPENCLAW_AGENT_SCHEMA_VERSION) {
+  if (userVersion > NOVA_AGENT_SCHEMA_VERSION) {
     throw createNewerSqliteSchemaVersionError(
       "Nova agent database",
       options.pathname,
       userVersion,
-      OPENCLAW_AGENT_SCHEMA_VERSION,
+      NOVA_AGENT_SCHEMA_VERSION,
     );
   }
-  if (userVersion !== OPENCLAW_AGENT_SCHEMA_VERSION) {
+  if (userVersion !== NOVA_AGENT_SCHEMA_VERSION) {
     throw new Error(
       `Nova agent database ${options.pathname} uses schema version ${userVersion}; run openclaw doctor --fix before compacting it.`,
     );
   }
-  if (metadata.schemaVersion !== OPENCLAW_AGENT_SCHEMA_VERSION) {
+  if (metadata.schemaVersion !== NOVA_AGENT_SCHEMA_VERSION) {
     throw new Error(
-      `Nova agent database ${options.pathname} metadata schema version ${metadata.schemaVersion ?? "invalid"} does not match ${OPENCLAW_AGENT_SCHEMA_VERSION}; run openclaw doctor --fix before compacting it.`,
+      `Nova agent database ${options.pathname} metadata schema version ${metadata.schemaVersion ?? "invalid"} does not match ${NOVA_AGENT_SCHEMA_VERSION}; run openclaw doctor --fix before compacting it.`,
     );
   }
   assertSqliteSchemaContains(
     database,
     options.pathname,
-    OPENCLAW_AGENT_SCHEMA_SQL,
-    OPENCLAW_AGENT_MAINTENANCE_SCHEMA_COMPATIBILITY,
+    NOVA_AGENT_SCHEMA_SQL,
+    NOVA_AGENT_MAINTENANCE_SCHEMA_COMPATIBILITY,
   );
 }
 
@@ -84,7 +84,7 @@ export function migrateOpenClawAgentDatabaseForMaintenance(options: {
   const sqlite = requireNodeSqlite();
   const database = new sqlite.DatabaseSync(options.pathname);
   try {
-    database.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+    database.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
     const metadata = readExistingAgentSchemaMeta(database);
     if (!metadata) {
       return;
@@ -95,11 +95,11 @@ export function migrateOpenClawAgentDatabaseForMaintenance(options: {
     const metadataVersion = metadata.schemaVersion;
     const hasSupportedOlderVersion =
       userVersion >= 1 &&
-      userVersion < OPENCLAW_AGENT_SCHEMA_VERSION &&
+      userVersion < NOVA_AGENT_SCHEMA_VERSION &&
       metadataVersion !== null &&
       metadataVersion === userVersion &&
       metadataVersion >= 1 &&
-      metadataVersion < OPENCLAW_AGENT_SCHEMA_VERSION;
+      metadataVersion < NOVA_AGENT_SCHEMA_VERSION;
     if (!hasSupportedOlderVersion) {
       return;
     }

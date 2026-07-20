@@ -111,7 +111,7 @@ describe("entry compile cache", () => {
       args: ["--no-warnings", path.join(root, "dist", "entry.js"), "status", "--json"],
       env: {
         NODE_DISABLE_COMPILE_CACHE: "1",
-        OPENCLAW_COMPILE_CACHE_DISABLED_RESPAWNED: "1",
+        NOVA_COMPILE_CACHE_DISABLED_RESPAWNED: "1",
       },
       detachForProcessTree: true,
     });
@@ -185,7 +185,7 @@ describe("entry compile cache", () => {
       args: ["--no-warnings", entryFile, "doctor", "--fix", "--non-interactive"],
       env: {
         NODE_DISABLE_COMPILE_CACHE: "1",
-        OPENCLAW_COMPILE_CACHE_DISABLED_RESPAWNED: "1",
+        NOVA_COMPILE_CACHE_DISABLED_RESPAWNED: "1",
       },
       detachForProcessTree: false,
     });
@@ -201,7 +201,7 @@ describe("entry compile cache", () => {
         currentFile: path.join(root, "dist", "entry.js"),
         env: {
           NODE_COMPILE_CACHE: "/tmp/openclaw-cache",
-          OPENCLAW_COMPILE_CACHE_DISABLED_RESPAWNED: "1",
+          NOVA_COMPILE_CACHE_DISABLED_RESPAWNED: "1",
         },
         installRoot: root,
       }),

@@ -116,7 +116,7 @@ describe("relaunchGatewayScheduledTask", () => {
       return { unref };
     });
 
-    const result = relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    const result = relaunchGatewayScheduledTask({ NOVA_PROFILE: "work" });
     const cmdExePath = getWindowsCmdExePath();
 
     expect(result.ok).toBe(true);
@@ -157,15 +157,15 @@ describe("relaunchGatewayScheduledTask", () => {
     expect(script).toContain('del "%~f0" >nul 2>&1');
   });
 
-  it("prefers OPENCLAW_WINDOWS_TASK_NAME overrides", () => {
+  it("prefers NOVA_WINDOWS_TASK_NAME overrides", () => {
     spawnMock.mockImplementation((_file: string, args: string[]) => {
       createdScriptPaths.add(decodeCmdPathArg(expectDefined(args[3], "args[3] test invariant")));
       return { unref: vi.fn() };
     });
 
     relaunchGatewayScheduledTask({
-      OPENCLAW_PROFILE: "work",
-      OPENCLAW_WINDOWS_TASK_NAME: "Nova Gateway (custom)",
+      NOVA_PROFILE: "work",
+      NOVA_WINDOWS_TASK_NAME: "Nova Gateway (custom)",
     });
 
     const scriptPath = expectDefined(
@@ -183,7 +183,7 @@ describe("relaunchGatewayScheduledTask", () => {
     });
 
     relaunchGatewayScheduledTask({
-      OPENCLAW_WINDOWS_TASK_NAME: "Nova Gateway (Bob's work)",
+      NOVA_WINDOWS_TASK_NAME: "Nova Gateway (Bob's work)",
     });
 
     const scriptPath = expectDefined(
@@ -202,7 +202,7 @@ describe("relaunchGatewayScheduledTask", () => {
       throw new Error("spawn failed");
     });
 
-    const result = relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    const result = relaunchGatewayScheduledTask({ NOVA_PROFILE: "work" });
 
     expect(result.ok).toBe(false);
     expect(result.method).toBe("schtasks");
@@ -216,7 +216,7 @@ describe("relaunchGatewayScheduledTask", () => {
     resolvePreferredOpenClawTmpDirMock.mockReturnValue(metacharTmpDir);
     spawnMock.mockReturnValue({ unref });
 
-    relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    relaunchGatewayScheduledTask({ NOVA_PROFILE: "work" });
 
     expect(spawnMock).toHaveBeenCalledOnce();
     const spawnCall = requireFirstMockCall(spawnMock, "restart helper spawn");
@@ -252,7 +252,7 @@ describe("relaunchGatewayScheduledTask", () => {
       return { unref: vi.fn() };
     });
 
-    const result = relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    const result = relaunchGatewayScheduledTask({ NOVA_PROFILE: "work" });
 
     expect(result.ok).toBe(true);
     const scriptPath = expectDefined(
@@ -272,7 +272,7 @@ describe("relaunchGatewayScheduledTask", () => {
   const asciiPathEnv = {
     HOME: "C:\\ocw-test",
     USERPROFILE: "C:\\ocw-test",
-    OPENCLAW_STATE_DIR: "C:\\ocw-test\\state",
+    NOVA_STATE_DIR: "C:\\ocw-test\\state",
   };
 
   it("writes marked code-page bytes for CJK task names that decode back exactly", () => {
@@ -284,7 +284,7 @@ describe("relaunchGatewayScheduledTask", () => {
 
     const result = relaunchGatewayScheduledTask({
       ...asciiPathEnv,
-      OPENCLAW_WINDOWS_TASK_NAME: "Nova Gateway (隆)",
+      NOVA_WINDOWS_TASK_NAME: "Nova Gateway (隆)",
     });
 
     expect(result.ok).toBe(true);
@@ -314,7 +314,7 @@ describe("relaunchGatewayScheduledTask", () => {
 
     const result = relaunchGatewayScheduledTask({
       ...asciiPathEnv,
-      OPENCLAW_WINDOWS_TASK_NAME: "🚀",
+      NOVA_WINDOWS_TASK_NAME: "🚀",
     });
 
     expect(result.ok).toBe(false);

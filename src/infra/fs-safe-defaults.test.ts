@@ -18,7 +18,7 @@ describe("fs-safe defaults", () => {
   afterEach(() => {
     configureFsSafePython.mockReset();
     delete process.env.FS_SAFE_PYTHON_MODE;
-    delete process.env.OPENCLAW_FS_SAFE_PYTHON_MODE;
+    delete process.env.NOVA_FS_SAFE_PYTHON_MODE;
   });
 
   it("disables the Python helper by default in Nova", async () => {
@@ -36,7 +36,7 @@ describe("fs-safe defaults", () => {
   });
 
   it("honors the Nova-specific env mode override", async () => {
-    process.env.OPENCLAW_FS_SAFE_PYTHON_MODE = "auto";
+    process.env.NOVA_FS_SAFE_PYTHON_MODE = "auto";
 
     await importDefaults();
 

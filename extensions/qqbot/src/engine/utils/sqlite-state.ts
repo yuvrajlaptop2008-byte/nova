@@ -16,7 +16,7 @@ function resolveStoreEnv(options: QQBotSyncStoreOptions): NodeJS.ProcessEnv | un
   }
   return {
     ...(options.env ?? process.env),
-    OPENCLAW_STATE_DIR: options.stateDir,
+    NOVA_STATE_DIR: options.stateDir,
   };
 }
 

@@ -384,8 +384,8 @@ describe("command gating", () => {
         gateway: {
           auth: {
             mode: "token",
-            token: "OPENCLAW_CONFIG_SHOW_CANARY_TOKEN_65623",
-            password: "OPENCLAW_CONFIG_SHOW_CANARY_PASSWORD_65623",
+            token: "NOVA_CONFIG_SHOW_CANARY_TOKEN_65623",
+            password: "NOVA_CONFIG_SHOW_CANARY_PASSWORD_65623",
           },
           bind: "127.0.0.1",
           port: 3210,
@@ -393,7 +393,7 @@ describe("command gating", () => {
         models: {
           providers: {
             openai: {
-              apiKey: "OPENCLAW_CONFIG_SHOW_CANARY_API_KEY_65623",
+              apiKey: "NOVA_CONFIG_SHOW_CANARY_API_KEY_65623",
               baseUrl: "https://api.example.test",
               models: [{ id: "gpt-test", name: "gpt-test" }],
             },
@@ -401,21 +401,21 @@ describe("command gating", () => {
         },
         browser: {
           cdpUrl:
-            "wss://chrome.example.test/devtools?token=OPENCLAW_CONFIG_SHOW_CANARY_CDP_TOKEN_65623&apiKey=OPENCLAW_CONFIG_SHOW_CANARY_CDP_API_KEY_65623",
+            "wss://chrome.example.test/devtools?token=NOVA_CONFIG_SHOW_CANARY_CDP_TOKEN_65623&apiKey=NOVA_CONFIG_SHOW_CANARY_CDP_API_KEY_65623",
           profiles: {
             local: {
               cdpUrl: "ws://localhost:9222",
             },
             remote: {
               cdpUrl:
-                "wss://chrome.remote.example.test/devtools?apiKey=OPENCLAW_CONFIG_SHOW_CANARY_CDP_PROFILE_API_KEY_65623",
+                "wss://chrome.remote.example.test/devtools?apiKey=NOVA_CONFIG_SHOW_CANARY_CDP_PROFILE_API_KEY_65623",
             },
           },
         },
         talk: {
           providers: {
             openai: {
-              apiKey: "OPENCLAW_CONFIG_SHOW_CANARY_API_KEY_65623",
+              apiKey: "NOVA_CONFIG_SHOW_CANARY_API_KEY_65623",
               baseUrl: "https://api.example.test",
               model: "gpt-test",
             },
@@ -452,12 +452,12 @@ describe("command gating", () => {
     expect(output).toContain("browser");
     expect(output).toContain("cdpUrl");
     expect(output).toContain(REDACTED_SENTINEL);
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_TOKEN_65623");
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_PASSWORD_65623");
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_API_KEY_65623");
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_CDP_TOKEN_65623");
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_CDP_API_KEY_65623");
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_CDP_PROFILE_API_KEY_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_TOKEN_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_PASSWORD_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_API_KEY_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_CDP_TOKEN_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_CDP_API_KEY_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_CDP_PROFILE_API_KEY_65623");
     expect(output).toContain('"mode": "token"');
     expect(output).toContain('"bind": "127.0.0.1"');
     expect(output).toContain('"port": 3210');
@@ -474,7 +474,7 @@ describe("command gating", () => {
         gateway: {
           auth: {
             mode: "token",
-            token: "OPENCLAW_CONFIG_SHOW_CANARY_TOKEN_65623",
+            token: "NOVA_CONFIG_SHOW_CANARY_TOKEN_65623",
           },
         },
       },
@@ -490,7 +490,7 @@ describe("command gating", () => {
 
     expect(output).toContain("Config gateway.auth.token");
     expect(output).toContain(REDACTED_SENTINEL);
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_TOKEN_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_TOKEN_65623");
   });
 
   it("redacts browser cdpUrl query secrets from path-specific /config show replies", async () => {
@@ -499,7 +499,7 @@ describe("command gating", () => {
       parsed: {
         browser: {
           cdpUrl:
-            "wss://chrome.example.test/devtools?token=OPENCLAW_CONFIG_SHOW_CANARY_CDP_TOKEN_65623&apiKey=OPENCLAW_CONFIG_SHOW_CANARY_CDP_API_KEY_65623",
+            "wss://chrome.example.test/devtools?token=NOVA_CONFIG_SHOW_CANARY_CDP_TOKEN_65623&apiKey=NOVA_CONFIG_SHOW_CANARY_CDP_API_KEY_65623",
         },
       },
     });
@@ -514,8 +514,8 @@ describe("command gating", () => {
 
     expect(output).toContain("Config browser.cdpUrl");
     expect(output).toContain(REDACTED_SENTINEL);
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_CDP_TOKEN_65623");
-    expect(output).not.toContain("OPENCLAW_CONFIG_SHOW_CANARY_CDP_API_KEY_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_CDP_TOKEN_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SHOW_CANARY_CDP_API_KEY_65623");
   });
 
   it("redacts secret-shaped values from /config set acknowledgements", async () => {
@@ -524,7 +524,7 @@ describe("command gating", () => {
       parsed: { gateway: { auth: { mode: "token" } } },
     });
     const params = buildParams(
-      '/config set gateway.auth.token="OPENCLAW_CONFIG_SET_CANARY_TOKEN_65623"',
+      '/config set gateway.auth.token="NOVA_CONFIG_SET_CANARY_TOKEN_65623"',
       {
         commands: { config: true, text: true },
         channels: { whatsapp: { allowFrom: ["*"] } },
@@ -537,19 +537,19 @@ describe("command gating", () => {
 
     expect(output).toContain("Config updated: gateway.auth.token=");
     expect(output).toContain(REDACTED_SENTINEL);
-    expect(output).not.toContain("OPENCLAW_CONFIG_SET_CANARY_TOKEN_65623");
+    expect(output).not.toContain("NOVA_CONFIG_SET_CANARY_TOKEN_65623");
   });
 
   it("redacts secret-shaped fields from /debug show replies", async () => {
     getConfigOverridesMock.mockReturnValueOnce({
       gateway: {
         auth: {
-          token: "OPENCLAW_DEBUG_SHOW_CANARY_TOKEN_65623",
+          token: "NOVA_DEBUG_SHOW_CANARY_TOKEN_65623",
         },
       },
       channels: {
         telegram: {
-          botToken: "OPENCLAW_DEBUG_SHOW_CANARY_BOT_TOKEN_65623",
+          botToken: "NOVA_DEBUG_SHOW_CANARY_BOT_TOKEN_65623",
         },
       },
       messages: {
@@ -568,13 +568,13 @@ describe("command gating", () => {
     expect(output).toContain("Debug overrides (memory-only)");
     expect(output).toContain(REDACTED_SENTINEL);
     expect(output).toContain("ackReaction");
-    expect(output).not.toContain("OPENCLAW_DEBUG_SHOW_CANARY_TOKEN_65623");
-    expect(output).not.toContain("OPENCLAW_DEBUG_SHOW_CANARY_BOT_TOKEN_65623");
+    expect(output).not.toContain("NOVA_DEBUG_SHOW_CANARY_TOKEN_65623");
+    expect(output).not.toContain("NOVA_DEBUG_SHOW_CANARY_BOT_TOKEN_65623");
   });
 
   it("redacts secret-shaped values from /debug set acknowledgements", async () => {
     const params = buildParams(
-      '/debug set gateway.auth.token="OPENCLAW_DEBUG_SET_CANARY_TOKEN_65623"',
+      '/debug set gateway.auth.token="NOVA_DEBUG_SET_CANARY_TOKEN_65623"',
       {
         commands: { debug: true, text: true },
         channels: { whatsapp: { allowFrom: ["*"] } },
@@ -587,7 +587,7 @@ describe("command gating", () => {
 
     expect(output).toContain("Debug override set: gateway.auth.token=");
     expect(output).toContain(REDACTED_SENTINEL);
-    expect(output).not.toContain("OPENCLAW_DEBUG_SET_CANARY_TOKEN_65623");
+    expect(output).not.toContain("NOVA_DEBUG_SET_CANARY_TOKEN_65623");
   });
 
   it("returns explicit unauthorized replies for native privileged commands", async () => {

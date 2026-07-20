@@ -285,7 +285,7 @@ describe("runtime postbuild static assets", () => {
       cwd: rootDir,
       repoRoot: rootDir,
       rootDir,
-      env: { OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0" },
+      env: { NOVA_RUNTIME_POSTBUILD_STATIC_ASSETS: "0" },
       timings: false,
       warn,
     });

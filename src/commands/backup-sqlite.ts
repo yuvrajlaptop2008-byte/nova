@@ -64,7 +64,7 @@ type ResolvedSnapshotDatabase = {
   identity: { role: "global" } | { role: "agent"; agentId: string };
 };
 
-const OPENCLAW_SNAPSHOT_READ_OPTIONS = {
+const NOVA_SNAPSHOT_READ_OPTIONS = {
   allowedDatabaseRoles: ["global", "agent"],
 } as const;
 
@@ -91,7 +91,7 @@ export async function backupSqliteListCommand(
   const repositoryPath = resolveRequiredPath(options.repository, "--repository");
   const snapshots = await createLocalSqliteSnapshotProvider({
     repositoryPath,
-    ...OPENCLAW_SNAPSHOT_READ_OPTIONS,
+    ...NOVA_SNAPSHOT_READ_OPTIONS,
   }).list();
   const report: BackupSqliteListResult = {
     ok: true,
@@ -175,7 +175,7 @@ function resolveSnapshot(
     provider: createLocalSqliteSnapshotProvider({
       repositoryPath,
       validationRootPath,
-      ...OPENCLAW_SNAPSHOT_READ_OPTIONS,
+      ...NOVA_SNAPSHOT_READ_OPTIONS,
     }),
     ref: { path: snapshotPath },
   };

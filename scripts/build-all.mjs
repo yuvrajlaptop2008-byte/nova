@@ -77,10 +77,7 @@ const TSDOWN_UNIFIED_CACHE_INPUTS = [
 ];
 const declarationCacheOutputs = (roots) =>
   roots.map((root) => ({ path: root, extensions: TSDOWN_DECLARATION_EXTENSIONS }));
-const PLUGIN_SDK_ENTRY_DTS_CACHE_ENV = [
-  "OPENCLAW_BUILD_PRIVATE_QA",
-  "OPENCLAW_PLUGIN_SDK_CANONICAL_DTS",
-];
+const PLUGIN_SDK_ENTRY_DTS_CACHE_ENV = ["NOVA_BUILD_PRIVATE_QA", "NOVA_PLUGIN_SDK_CANONICAL_DTS"];
 const PLUGIN_SDK_ENTRY_DTS_SHARED_CACHE_INPUTS = [
   "scripts/write-plugin-sdk-entry-dts.ts",
   "scripts/lib/plugin-sdk-entries.mjs",
@@ -132,7 +129,7 @@ export const BUILD_ALL_STEPS = [
     kind: "node",
     args: ["scripts/tsdown-build.mjs", "--config", "tsdown.ai.config.ts"],
     cache: {
-      env: ["OPENCLAW_RUN_NODE_SKIP_DTS_BUILD"],
+      env: ["NOVA_RUN_NODE_SKIP_DTS_BUILD"],
       inputs: [
         ...TSDOWN_DECLARATION_TOOL_INPUTS,
         "tsdown.ai.config.ts",
@@ -141,7 +138,7 @@ export const BUILD_ALL_STEPS = [
       outputs: declarationCacheOutputs([TSDOWN_AI_OUTPUT_ROOT]),
       restore: "always",
       runOnHit: {
-        env: { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" },
+        env: { NOVA_RUN_NODE_SKIP_DTS_BUILD: "1" },
       },
     },
   },
@@ -156,12 +153,12 @@ export const BUILD_ALL_STEPS = [
       TSDOWN_PACKAGE_CONFIG_GROUP,
     ],
     cache: {
-      env: ["OPENCLAW_RUN_NODE_SKIP_DTS_BUILD"],
+      env: ["NOVA_RUN_NODE_SKIP_DTS_BUILD"],
       inputs: [...TSDOWN_DECLARATION_TOOL_INPUTS, "tsdown.config.ts", TSDOWN_PACKAGES_CACHE_INPUT],
       outputs: declarationCacheOutputs(TSDOWN_MAIN_PACKAGE_OUTPUT_ROOTS),
       restore: "always",
       runOnHit: {
-        env: { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" },
+        env: { NOVA_RUN_NODE_SKIP_DTS_BUILD: "1" },
       },
     },
   },
@@ -176,7 +173,7 @@ export const BUILD_ALL_STEPS = [
       TSDOWN_UNIFIED_CONFIG_GROUP,
     ],
     cache: {
-      env: ["OPENCLAW_BUILD_PRIVATE_QA", "OPENCLAW_RUN_NODE_SKIP_DTS_BUILD"],
+      env: ["NOVA_BUILD_PRIVATE_QA", "NOVA_RUN_NODE_SKIP_DTS_BUILD"],
       inputs: [
         ...TSDOWN_DECLARATION_TOOL_INPUTS,
         "tsdown.config.ts",
@@ -185,7 +182,7 @@ export const BUILD_ALL_STEPS = [
       outputs: declarationCacheOutputs(["dist"]),
       restore: "always",
       runOnHit: {
-        env: { OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1" },
+        env: { NOVA_RUN_NODE_SKIP_DTS_BUILD: "1" },
       },
     },
   },
@@ -211,7 +208,7 @@ export const BUILD_ALL_STEPS = [
     kind: "node",
     args: ["--import", "tsx", "scripts/write-plugin-sdk-entry-dts.ts"],
     env: {
-      OPENCLAW_PLUGIN_SDK_CANONICAL_DTS: "1",
+      NOVA_PLUGIN_SDK_CANONICAL_DTS: "1",
     },
     cache: {
       env: PLUGIN_SDK_ENTRY_DTS_CACHE_ENV,
@@ -248,7 +245,7 @@ export const BUILD_ALL_STEPS = [
     kind: "pnpm",
     pnpmArgs: ["ui:build"],
     // No build-all cache: ui/vite.config.ts derives the Control UI build ID
-    // from package.json, git HEAD, and OPENCLAW_CONTROL_UI_BUILD_ID env, so a
+    // from package.json, git HEAD, and NOVA_CONTROL_UI_BUILD_ID env, so a
     // file-input signature cannot exactly invalidate generated assets and a
     // warm hit could restore stale service-worker/app cache metadata.
     cache: undefined,
@@ -348,7 +345,7 @@ export const BUILD_ALL_PROFILES = {
 export const BUILD_ALL_PROFILE_STEP_ENV = {
   full: {
     "tsdown-unified": {
-      OPENCLAW_PRESERVE_CLI_STARTUP_METADATA: "1",
+      NOVA_PRESERVE_CLI_STARTUP_METADATA: "1",
     },
   },
   ciArtifacts: {
@@ -357,39 +354,39 @@ export const BUILD_ALL_PROFILE_STEP_ENV = {
       // CI's dist consumers are runtime JS only; the plugin-sdk gate below
       // self-builds its scoped declarations instead. Release/package builds
       // (full profile, docker packaging) keep canonical dts.
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
-      OPENCLAW_PRESERVE_CLI_STARTUP_METADATA: "1",
+      NOVA_RUN_NODE_SKIP_DTS_BUILD: "1",
+      NOVA_PRESERVE_CLI_STARTUP_METADATA: "1",
     },
     "write-plugin-sdk-entry-dts": {
-      OPENCLAW_PLUGIN_SDK_CANONICAL_DTS: "0",
+      NOVA_PLUGIN_SDK_CANONICAL_DTS: "0",
     },
   },
   gatewayWatch: {
     tsdown: {
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
+      NOVA_RUN_NODE_SKIP_DTS_BUILD: "1",
     },
     "runtime-postbuild": {
-      OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
+      NOVA_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
     },
   },
   qaRuntime: {
     tsdown: {
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
+      NOVA_RUN_NODE_SKIP_DTS_BUILD: "1",
     },
   },
   sourcePerformance: {
     tsdown: {
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
-      OPENCLAW_PRESERVE_CLI_STARTUP_METADATA: "1",
+      NOVA_RUN_NODE_SKIP_DTS_BUILD: "1",
+      NOVA_PRESERVE_CLI_STARTUP_METADATA: "1",
     },
   },
   cliStartup: {
     tsdown: {
-      OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "1",
-      OPENCLAW_PRESERVE_CLI_STARTUP_METADATA: "1",
+      NOVA_RUN_NODE_SKIP_DTS_BUILD: "1",
+      NOVA_PRESERVE_CLI_STARTUP_METADATA: "1",
     },
     "runtime-postbuild": {
-      OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
+      NOVA_RUNTIME_POSTBUILD_STATIC_ASSETS: "0",
     },
   },
 };
@@ -455,7 +452,7 @@ export function resolveBuildAllSteps(profile = "full") {
     // clears dist. Canonical mode keeps its narrower generated-dts cache.
     if (
       step.label === "write-plugin-sdk-entry-dts" &&
-      mergedEnv.OPENCLAW_PLUGIN_SDK_CANONICAL_DTS !== "1"
+      mergedEnv.NOVA_PLUGIN_SDK_CANONICAL_DTS !== "1"
     ) {
       merged.cache = {
         ...step.cache,
@@ -481,7 +478,7 @@ export function resolveBuildAllEnvironment(
   now = () => new Date(),
   readGitCommit = readCurrentGitCommit,
 ) {
-  const explicitTimestamp = env.OPENCLAW_BUILD_TIMESTAMP?.trim();
+  const explicitTimestamp = env.NOVA_BUILD_TIMESTAMP?.trim();
   const explicitCommit = env.GIT_COMMIT?.trim() || env.GIT_SHA?.trim();
   const checkedOutCommit = explicitCommit ? null : readGitCommit()?.trim();
   // GITHUB_SHA names the workflow invocation and can differ from a checked-out tag.
@@ -491,7 +488,7 @@ export function resolveBuildAllEnvironment(
   }
   const buildEnv = {
     ...env,
-    OPENCLAW_BUILD_TIMESTAMP: explicitTimestamp || now().toISOString(),
+    NOVA_BUILD_TIMESTAMP: explicitTimestamp || now().toISOString(),
   };
   if (commit) {
     buildEnv.GIT_COMMIT = commit.toLowerCase();
@@ -521,7 +518,7 @@ export function resolveBuildAllStep(step, params = {}) {
   const env = resolveStepEnv(step, params.env ?? process.env, platform);
   if (step.kind === "pnpm") {
     const nodeFallbackArgs =
-      env.OPENCLAW_BUILD_ALL_NO_PNPM === "1" ? PNPM_STEP_NODE_FALLBACKS.get(step.label) : undefined;
+      env.NOVA_BUILD_ALL_NO_PNPM === "1" ? PNPM_STEP_NODE_FALLBACKS.get(step.label) : undefined;
     if (nodeFallbackArgs) {
       return {
         command: params.nodeExecPath ?? nodeBin,
@@ -867,7 +864,7 @@ if (isMainModule()) {
       const cacheState = resolveBuildAllStepCacheState(step, { env: buildEnv });
       let stepToRun = step;
       let reusedCache = false;
-      if (process.env.OPENCLAW_BUILD_CACHE !== "0" && cacheState.fresh) {
+      if (process.env.NOVA_BUILD_CACHE !== "0" && cacheState.fresh) {
         restoreBuildAllStepCacheOutputs(cacheState);
         const cacheHitStep = resolveBuildAllStepOnCacheHit(step);
         if (!cacheHitStep) {

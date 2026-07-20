@@ -213,8 +213,8 @@ async function runSetupScript(repoRoot: string, worktreePath: string): Promise<v
     timeoutMs: 120_000,
     cwd: worktreePath,
     env: {
-      OPENCLAW_SOURCE_TREE_PATH: repoRoot,
-      OPENCLAW_WORKTREE_PATH: worktreePath,
+      NOVA_SOURCE_TREE_PATH: repoRoot,
+      NOVA_WORKTREE_PATH: worktreePath,
     },
   });
   if (result.code !== 0) {

@@ -807,7 +807,7 @@ const PLUGIN_COMPAT_RECORDS = [
     replacement: "focused `openclaw/plugin-sdk/<subpath>` imports",
     docsPath: "/plugins/sdk-migration",
     surfaces: ["openclaw/plugin-sdk", "openclaw/plugin-sdk/compat"],
-    diagnostics: ["OPENCLAW_PLUGIN_SDK_COMPAT_DEPRECATED"],
+    diagnostics: ["NOVA_PLUGIN_SDK_COMPAT_DEPRECATED"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
       "The deprecated compatibility surfaces tracked by legacy-root-sdk-import were removed in the July 2026 sweep.",
@@ -1250,7 +1250,7 @@ const PLUGIN_COMPAT_RECORDS = [
     removeAfter: "2026-07-25",
     replacement: "`openclaw plugins registry --refresh` and `openclaw doctor --fix`",
     docsPath: "/cli/plugins#registry",
-    surfaces: ["OPENCLAW_DISABLE_PERSISTED_PLUGIN_REGISTRY", "plugin registry reads"],
+    surfaces: ["NOVA_DISABLE_PERSISTED_PLUGIN_REGISTRY", "plugin registry reads"],
     diagnostics: ["persisted-registry-disabled"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
@@ -1267,8 +1267,8 @@ const PLUGIN_COMPAT_RECORDS = [
     replacement: "`openclaw plugins registry --refresh` and `openclaw doctor --fix`",
     docsPath: "/cli/plugins#registry",
     surfaces: [
-      "OPENCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION",
-      "OPENCLAW_FORCE_PLUGIN_REGISTRY_MIGRATION",
+      "NOVA_DISABLE_PLUGIN_REGISTRY_MIGRATION",
+      "NOVA_FORCE_PLUGIN_REGISTRY_MIGRATION",
       "package postinstall plugin registry migration",
     ],
     diagnostics: ["postinstall migration skip", "postinstall migration force deprecation warning"],
@@ -1496,7 +1496,7 @@ const PLUGIN_COMPAT_RECORDS = [
       "injected `api.runtime.*` helpers or focused `openclaw/plugin-sdk/<subpath>` imports",
     docsPath: "/plugins/sdk-migration",
     surfaces: ["openclaw/extension-api"],
-    diagnostics: ["OPENCLAW_EXTENSION_API_DEPRECATED"],
+    diagnostics: ["NOVA_EXTENSION_API_DEPRECATED"],
     tests: ["src/plugins/compat/registry.test.ts"],
     releaseNote:
       "The deprecated compatibility surfaces tracked by legacy-extension-api-import were removed in the July 2026 sweep.",

@@ -75,7 +75,7 @@ function throwGatewayAuthResolutionError(reason: string): never {
   throw new Error(
     [
       reason,
-      "Fix: set OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD, pass --token/--password,",
+      "Fix: set NOVA_GATEWAY_TOKEN/NOVA_GATEWAY_PASSWORD, pass --token/--password,",
       "or resolve the configured secret provider for this credential.",
     ].join("\n"),
   );
@@ -468,10 +468,7 @@ async function resolveGatewayConnection(
     errorHint: "Fix: pass --token or --password when using --url.",
   });
   const hasExplicitGatewayTarget = Boolean(
-    urlOverride ||
-    env.OPENCLAW_GATEWAY_URL?.trim() ||
-    env.OPENCLAW_GATEWAY_PORT?.trim() ||
-    isRemoteMode,
+    urlOverride || env.NOVA_GATEWAY_URL?.trim() || env.NOVA_GATEWAY_PORT?.trim() || isRemoteMode,
   );
   const activeLocalGatewayPort = hasExplicitGatewayTarget
     ? undefined

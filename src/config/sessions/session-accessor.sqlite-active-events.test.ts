@@ -56,7 +56,7 @@ describe("SQLite active transcript event projection", () => {
     stateDir = tempDirs.make("openclaw-active-transcript-");
     scope = {
       agentId: "main",
-      env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+      env: { ...process.env, NOVA_STATE_DIR: stateDir },
       sessionId: "active-transcript-test",
       sessionKey: "agent:main:active-transcript-test",
     };

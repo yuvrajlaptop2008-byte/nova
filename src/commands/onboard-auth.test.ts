@@ -29,14 +29,14 @@ const providerEnvVarsById = vi.hoisted(
 );
 
 vi.mock("../config/paths.js", () => ({
-  resolveStateDir: () => process.env.OPENCLAW_STATE_DIR ?? "/tmp/openclaw-state",
+  resolveStateDir: () => process.env.NOVA_STATE_DIR ?? "/tmp/openclaw-state",
 }));
 
 vi.mock("../agents/auth-profiles/profiles.js", async () => {
   const fsLocal = await import("node:fs");
   const pathLocal = await import("node:path");
   const upsert = (params: { profileId: string; credential: unknown; agentDir?: string }) => {
-    const stateDir = process.env.OPENCLAW_STATE_DIR ?? "/tmp/openclaw-state";
+    const stateDir = process.env.NOVA_STATE_DIR ?? "/tmp/openclaw-state";
     const agentDir = params.agentDir ?? pathLocal.join(stateDir, "agents", "main", "agent");
     const file = pathLocal.join(agentDir, "auth-profiles.json");
     fsLocal.mkdirSync(agentDir, { recursive: true });
@@ -123,11 +123,7 @@ async function expectMissingFile(readPromise: Promise<unknown>) {
 }
 
 describe("writeOAuthCredentials", () => {
-  const lifecycle = createAuthTestLifecycle([
-    "OPENCLAW_STATE_DIR",
-    "OPENCLAW_AGENT_DIR",
-    "OPENCLAW_OAUTH_DIR",
-  ]);
+  const lifecycle = createAuthTestLifecycle(["NOVA_STATE_DIR", "NOVA_AGENT_DIR", "NOVA_OAUTH_DIR"]);
 
   let tempStateDir: string;
   const authProfilePathFor = (dir: string) => path.join(dir, "auth-profiles.json");
@@ -164,7 +160,7 @@ describe("writeOAuthCredentials", () => {
   it("writes OAuth credentials to all sibling agent dirs when syncSiblingAgents=true", async () => {
     tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-oauth-sync-"));
     lifecycle.setStateDir(tempStateDir);
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempStateDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
 
     const mainAgentDir = path.join(tempStateDir, "agents", "main", "agent");
     const kidAgentDir = path.join(tempStateDir, "agents", "kid", "agent");
@@ -173,7 +169,7 @@ describe("writeOAuthCredentials", () => {
     await fs.mkdir(kidAgentDir, { recursive: true });
     await fs.mkdir(workerAgentDir, { recursive: true });
 
-    setTestEnvValue("OPENCLAW_AGENT_DIR", kidAgentDir);
+    setTestEnvValue("NOVA_AGENT_DIR", kidAgentDir);
 
     const creds = {
       refresh: "refresh-sync",
@@ -201,14 +197,14 @@ describe("writeOAuthCredentials", () => {
   it("writes OAuth credentials only to target dir by default", async () => {
     tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-oauth-nosync-"));
     lifecycle.setStateDir(tempStateDir);
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempStateDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
 
     const mainAgentDir = path.join(tempStateDir, "agents", "main", "agent");
     const kidAgentDir = path.join(tempStateDir, "agents", "kid", "agent");
     await fs.mkdir(mainAgentDir, { recursive: true });
     await fs.mkdir(kidAgentDir, { recursive: true });
 
-    setTestEnvValue("OPENCLAW_AGENT_DIR", kidAgentDir);
+    setTestEnvValue("NOVA_AGENT_DIR", kidAgentDir);
 
     const creds = {
       refresh: "refresh-kid",
@@ -230,12 +226,12 @@ describe("writeOAuthCredentials", () => {
     await expectMissingFile(fs.readFile(authProfilePathFor(mainAgentDir), "utf8"));
   });
 
-  it("syncs siblings from explicit agentDir outside OPENCLAW_STATE_DIR", async () => {
+  it("syncs siblings from explicit agentDir outside NOVA_STATE_DIR", async () => {
     tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-oauth-external-"));
     lifecycle.setStateDir(tempStateDir);
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempStateDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
 
-    // Create standard-layout agents tree *outside* OPENCLAW_STATE_DIR
+    // Create standard-layout agents tree *outside* NOVA_STATE_DIR
     const externalRoot = path.join(tempStateDir, "external", "agents");
     const extMain = path.join(externalRoot, "main", "agent");
     const extKid = path.join(externalRoot, "kid", "agent");
@@ -275,8 +271,8 @@ describe("writeOAuthCredentials", () => {
 
 describe("upsertApiKeyProfile secret refs", () => {
   const lifecycle = createAuthTestLifecycle([
-    "OPENCLAW_STATE_DIR",
-    "OPENCLAW_AGENT_DIR",
+    "NOVA_STATE_DIR",
+    "NOVA_AGENT_DIR",
     "MOONSHOT_API_KEY",
     "OPENAI_API_KEY",
     "CLOUDFLARE_AI_GATEWAY_API_KEY",
@@ -419,7 +415,7 @@ describe("upsertApiKeyProfile secret refs", () => {
 });
 
 describe("upsertApiKeyProfile", () => {
-  const lifecycle = createAuthTestLifecycle(["OPENCLAW_STATE_DIR", "OPENCLAW_AGENT_DIR"]);
+  const lifecycle = createAuthTestLifecycle(["NOVA_STATE_DIR", "NOVA_AGENT_DIR"]);
 
   afterEach(async () => {
     await lifecycle.cleanup();

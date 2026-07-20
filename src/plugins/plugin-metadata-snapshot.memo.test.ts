@@ -71,7 +71,7 @@ function touchPersistedIndex(stateDir: string, value = 1): void {
         generated_at_ms: value,
       });
     },
-    { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } },
+    { env: { ...process.env, NOVA_STATE_DIR: stateDir } },
   );
 }
 
@@ -278,8 +278,8 @@ describe("loadPluginMetadataSnapshot process memo", () => {
     const stateDir = tempStateDir();
     const timelinePath = path.join(stateDir, "timeline", "metadata.jsonl");
     const env = {
-      OPENCLAW_DIAGNOSTICS: "timeline",
-      OPENCLAW_DIAGNOSTICS_TIMELINE_PATH: timelinePath,
+      NOVA_DIAGNOSTICS: "timeline",
+      NOVA_DIAGNOSTICS_TIMELINE_PATH: timelinePath,
     };
     touchPersistedIndex(stateDir);
     loadPluginRegistrySnapshotWithMetadata.mockReturnValue({

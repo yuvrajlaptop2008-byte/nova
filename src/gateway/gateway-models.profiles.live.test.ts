@@ -85,13 +85,13 @@ import { startGatewayServer } from "./server.impl.js";
 import { readSessionMessagesAsync } from "./session-transcript-readers.js";
 import { loadSessionEntry } from "./session-utils.js";
 
-const ZAI_FALLBACK = isTruthyEnvValue(process.env.OPENCLAW_LIVE_GATEWAY_ZAI_FALLBACK);
+const ZAI_FALLBACK = isTruthyEnvValue(process.env.NOVA_LIVE_GATEWAY_ZAI_FALLBACK);
 const REQUIRE_PROFILE_KEYS = isLiveProfileKeyModeEnabled();
 const LIVE_CREDENTIAL_PRECEDENCE = REQUIRE_PROFILE_KEYS ? "profile-first" : "env-first";
-const PROVIDERS = parseFilter(process.env.OPENCLAW_LIVE_GATEWAY_PROVIDERS);
-const GATEWAY_LIVE_SMOKE = isTruthyEnvValue(process.env.OPENCLAW_LIVE_GATEWAY_SMOKE);
+const PROVIDERS = parseFilter(process.env.NOVA_LIVE_GATEWAY_PROVIDERS);
+const GATEWAY_LIVE_SMOKE = isTruthyEnvValue(process.env.NOVA_LIVE_GATEWAY_SMOKE);
 const GATEWAY_LIVE_OPENAI_API_DEFAULT = isTruthyEnvValue(
-  process.env.OPENCLAW_LIVE_GATEWAY_OPENAI_API_DEFAULT,
+  process.env.NOVA_LIVE_GATEWAY_OPENAI_API_DEFAULT,
 );
 const GATEWAY_LIVE_THINKING_LEVELS = [
   "off",
@@ -105,7 +105,7 @@ const GATEWAY_LIVE_THINKING_LEVELS = [
 ] as const;
 type GatewayLiveThinkingLevel = (typeof GATEWAY_LIVE_THINKING_LEVELS)[number];
 const THINKING_LEVEL = resolveGatewayLiveThinkingLevel({
-  raw: process.env.OPENCLAW_LIVE_GATEWAY_THINKING,
+  raw: process.env.NOVA_LIVE_GATEWAY_THINKING,
   smoke: GATEWAY_LIVE_SMOKE,
 });
 const ENABLE_EXTRA_TOOL_PROBES = !GATEWAY_LIVE_SMOKE;
@@ -118,7 +118,7 @@ const EXPLICIT_LIVE_FALLBACK_CONTEXT_WINDOW = 128_000;
 const GATEWAY_LIVE_MAX_TIMEOUT_MS = 2 * 60 * 60 * 1000;
 const GATEWAY_LIVE_PROBE_TIMEOUT_MS = Math.max(
   30_000,
-  toInt(process.env.OPENCLAW_LIVE_GATEWAY_STEP_TIMEOUT_MS, 90_000),
+  toInt(process.env.NOVA_LIVE_GATEWAY_STEP_TIMEOUT_MS, 90_000),
 );
 const GATEWAY_LIVE_SETUP_TIMEOUT_MS = resolveGatewayLiveSetupTimeoutMs();
 const GATEWAY_LIVE_MODEL_TIMEOUT_MS = resolveGatewayLiveModelTimeoutMs();
@@ -128,7 +128,7 @@ const GATEWAY_LIVE_AGENT_RUN_TIMEOUT_MS = resolveGatewayLiveAgentRunTimeoutMs();
 const GATEWAY_LIVE_AGENT_WAIT_TIMEOUT_MS = resolveGatewayLiveAgentWaitTimeoutMs();
 const GATEWAY_LIVE_HEARTBEAT_MS = Math.max(
   1_000,
-  toInt(process.env.OPENCLAW_LIVE_GATEWAY_HEARTBEAT_MS, 30_000),
+  toInt(process.env.NOVA_LIVE_GATEWAY_HEARTBEAT_MS, 30_000),
 );
 const GATEWAY_LIVE_STRIP_SCAFFOLDING_MODEL_KEYS = new Set([
   "google/gemini-3-flash-preview",
@@ -159,9 +159,9 @@ const GATEWAY_LIVE_TOOL_NONCE_MISS_SKIP_MODEL_KEYS = new Set([
 ]);
 const GATEWAY_LIVE_MAX_MODELS = resolveGatewayLiveMaxModels();
 const GATEWAY_LIVE_SUITE_TIMEOUT_MS = resolveGatewayLiveSuiteTimeoutMs(GATEWAY_LIVE_MAX_MODELS);
-const QUIET_LIVE_LOGS = process.env.OPENCLAW_LIVE_TEST_QUIET !== "0";
+const QUIET_LIVE_LOGS = process.env.NOVA_LIVE_TEST_QUIET !== "0";
 
-const describeLive = isLiveTestEnabled(["OPENCLAW_LIVE_GATEWAY"]) ? describe : describe.skip;
+const describeLive = isLiveTestEnabled(["NOVA_LIVE_GATEWAY"]) ? describe : describe.skip;
 
 function parseFilter(raw?: string): Set<string> | null {
   const trimmed = raw?.trim();
@@ -311,22 +311,22 @@ function toInt(value: string | undefined, fallback: number): number {
 }
 
 function resolveGatewayLiveSetupTimeoutMs(
-  raw = process.env.OPENCLAW_LIVE_GATEWAY_SETUP_TIMEOUT_MS,
+  raw = process.env.NOVA_LIVE_GATEWAY_SETUP_TIMEOUT_MS,
 ): number {
   return Math.max(1_000, toInt(raw, 180_000));
 }
 
 function resolveGatewayLiveMaxModels(): number {
-  const gatewayRaw = process.env.OPENCLAW_LIVE_GATEWAY_MAX_MODELS?.trim();
+  const gatewayRaw = process.env.NOVA_LIVE_GATEWAY_MAX_MODELS?.trim();
   if (gatewayRaw) {
     return Math.max(0, toInt(gatewayRaw, 0));
   }
-  const rawModels = process.env.OPENCLAW_LIVE_GATEWAY_MODELS?.trim();
+  const rawModels = process.env.NOVA_LIVE_GATEWAY_MODELS?.trim();
   const useSmallModels = rawModels === "small";
   const useExplicitModels =
     Boolean(rawModels) && rawModels !== "modern" && rawModels !== "all" && !useSmallModels;
   return resolveHighSignalLiveModelLimit({
-    rawMaxModels: process.env.OPENCLAW_LIVE_MAX_MODELS,
+    rawMaxModels: process.env.NOVA_LIVE_MAX_MODELS,
     useExplicitModels,
     defaultLimit: useSmallModels
       ? DEFAULT_SMALL_LIVE_MODEL_LIMIT
@@ -350,8 +350,8 @@ function resolveGatewayLiveSuiteTimeoutMs(maxModels: number): number {
 }
 
 function resolveGatewayLiveModelTimeoutMs(
-  gatewayModelTimeoutRaw = process.env.OPENCLAW_LIVE_GATEWAY_MODEL_TIMEOUT_MS,
-  liveModelTimeoutRaw = process.env.OPENCLAW_LIVE_MODEL_TIMEOUT_MS,
+  gatewayModelTimeoutRaw = process.env.NOVA_LIVE_GATEWAY_MODEL_TIMEOUT_MS,
+  liveModelTimeoutRaw = process.env.NOVA_LIVE_MODEL_TIMEOUT_MS,
   stepTimeoutMs = GATEWAY_LIVE_PROBE_TIMEOUT_MS,
 ): number {
   const requested = toInt(gatewayModelTimeoutRaw, toInt(liveModelTimeoutRaw, 300_000));
@@ -595,10 +595,10 @@ function enterProductionEnvForLiveRun() {
   const previous = {
     vitest: process.env.VITEST,
     nodeEnv: process.env.NODE_ENV,
-    testFast: process.env.OPENCLAW_TEST_FAST,
+    testFast: process.env.NOVA_TEST_FAST,
   };
   delete process.env.VITEST;
-  delete process.env.OPENCLAW_TEST_FAST;
+  delete process.env.NOVA_TEST_FAST;
   process.env.NODE_ENV = "production";
   return previous;
 }
@@ -614,9 +614,9 @@ function restoreProductionEnvForLiveRun(previous: {
     process.env.VITEST = previous.vitest;
   }
   if (previous.testFast === undefined) {
-    delete process.env.OPENCLAW_TEST_FAST;
+    delete process.env.NOVA_TEST_FAST;
   } else {
-    process.env.OPENCLAW_TEST_FAST = previous.testFast;
+    process.env.NOVA_TEST_FAST = previous.testFast;
   }
   if (previous.nodeEnv === undefined) {
     delete process.env.NODE_ENV;
@@ -1159,9 +1159,9 @@ describe("resolveGatewayLiveSuiteTimeoutMs", () => {
 });
 
 describe("resolveGatewayLiveMaxModels", () => {
-  const originalGatewayModels = process.env.OPENCLAW_LIVE_GATEWAY_MODELS;
-  const originalGatewayMax = process.env.OPENCLAW_LIVE_GATEWAY_MAX_MODELS;
-  const originalSharedMax = process.env.OPENCLAW_LIVE_MAX_MODELS;
+  const originalGatewayModels = process.env.NOVA_LIVE_GATEWAY_MODELS;
+  const originalGatewayMax = process.env.NOVA_LIVE_GATEWAY_MAX_MODELS;
+  const originalSharedMax = process.env.NOVA_LIVE_MAX_MODELS;
   function restoreEnvValue(name: string, value: string | undefined): void {
     if (value === undefined) {
       deleteTestEnvValue(name);
@@ -1171,35 +1171,35 @@ describe("resolveGatewayLiveMaxModels", () => {
   }
 
   afterEach(() => {
-    restoreEnvValue("OPENCLAW_LIVE_GATEWAY_MODELS", originalGatewayModels);
-    restoreEnvValue("OPENCLAW_LIVE_GATEWAY_MAX_MODELS", originalGatewayMax);
-    restoreEnvValue("OPENCLAW_LIVE_MAX_MODELS", originalSharedMax);
+    restoreEnvValue("NOVA_LIVE_GATEWAY_MODELS", originalGatewayModels);
+    restoreEnvValue("NOVA_LIVE_GATEWAY_MAX_MODELS", originalGatewayMax);
+    restoreEnvValue("NOVA_LIVE_MAX_MODELS", originalSharedMax);
   });
 
   it("defaults modern gateway sweeps to the curated high-signal cap", () => {
-    delete process.env.OPENCLAW_LIVE_GATEWAY_MODELS;
-    delete process.env.OPENCLAW_LIVE_GATEWAY_MAX_MODELS;
-    delete process.env.OPENCLAW_LIVE_MAX_MODELS;
+    delete process.env.NOVA_LIVE_GATEWAY_MODELS;
+    delete process.env.NOVA_LIVE_GATEWAY_MAX_MODELS;
+    delete process.env.NOVA_LIVE_MAX_MODELS;
 
     expect(resolveGatewayLiveMaxModels()).toBe(DEFAULT_HIGH_SIGNAL_LIVE_MODEL_LIMIT);
   });
 
   it("defaults small gateway sweeps to the curated small-model cap", () => {
-    process.env.OPENCLAW_LIVE_GATEWAY_MODELS = "small";
-    delete process.env.OPENCLAW_LIVE_GATEWAY_MAX_MODELS;
-    delete process.env.OPENCLAW_LIVE_MAX_MODELS;
+    process.env.NOVA_LIVE_GATEWAY_MODELS = "small";
+    delete process.env.NOVA_LIVE_GATEWAY_MAX_MODELS;
+    delete process.env.NOVA_LIVE_MAX_MODELS;
 
     expect(resolveGatewayLiveMaxModels()).toBe(DEFAULT_SMALL_LIVE_MODEL_LIMIT);
   });
 
   it("keeps explicit gateway model lists uncapped unless a cap is provided", () => {
-    process.env.OPENCLAW_LIVE_GATEWAY_MODELS = "openai/gpt-5.5,anthropic/claude-opus-4-6";
-    delete process.env.OPENCLAW_LIVE_GATEWAY_MAX_MODELS;
-    delete process.env.OPENCLAW_LIVE_MAX_MODELS;
+    process.env.NOVA_LIVE_GATEWAY_MODELS = "openai/gpt-5.5,anthropic/claude-opus-4-6";
+    delete process.env.NOVA_LIVE_GATEWAY_MAX_MODELS;
+    delete process.env.NOVA_LIVE_MAX_MODELS;
 
     expect(resolveGatewayLiveMaxModels()).toBe(0);
 
-    process.env.OPENCLAW_LIVE_GATEWAY_MAX_MODELS = "2";
+    process.env.NOVA_LIVE_GATEWAY_MAX_MODELS = "2";
     expect(resolveGatewayLiveMaxModels()).toBe(2);
   });
 });
@@ -2292,22 +2292,22 @@ describe("enterProductionEnvForLiveRun", () => {
     const previous = {
       vitest: process.env.VITEST,
       nodeEnv: process.env.NODE_ENV,
-      testFast: process.env.OPENCLAW_TEST_FAST,
+      testFast: process.env.NOVA_TEST_FAST,
     };
     process.env.VITEST = "1";
     process.env.NODE_ENV = "test";
-    process.env.OPENCLAW_TEST_FAST = "1";
+    process.env.NOVA_TEST_FAST = "1";
 
     const runtimeEnv = enterProductionEnvForLiveRun();
     try {
       expect(process.env.VITEST).toBeUndefined();
       expect(process.env.NODE_ENV).toBe("production");
-      expect(process.env.OPENCLAW_TEST_FAST).toBeUndefined();
+      expect(process.env.NOVA_TEST_FAST).toBeUndefined();
     } finally {
       restoreProductionEnvForLiveRun(runtimeEnv);
       restoreOptionalEnv("VITEST", previous.vitest);
       restoreOptionalEnv("NODE_ENV", previous.nodeEnv);
-      restoreOptionalEnv("OPENCLAW_TEST_FAST", previous.testFast);
+      restoreOptionalEnv("NOVA_TEST_FAST", previous.testFast);
     }
   });
 });
@@ -4282,23 +4282,23 @@ function resolveGatewayLiveThinkingLevel(params: { raw?: string; smoke: boolean 
 }
 
 async function resolveGatewayLiveRequestedModels(): Promise<string | undefined> {
-  const configured = process.env.OPENCLAW_LIVE_GATEWAY_MODELS?.trim();
+  const configured = process.env.NOVA_LIVE_GATEWAY_MODELS?.trim();
   if (!GATEWAY_LIVE_OPENAI_API_DEFAULT) {
     return configured;
   }
   if (configured) {
     throw new Error(
-      "OPENCLAW_LIVE_GATEWAY_OPENAI_API_DEFAULT cannot be combined with OPENCLAW_LIVE_GATEWAY_MODELS",
+      "NOVA_LIVE_GATEWAY_OPENAI_API_DEFAULT cannot be combined with NOVA_LIVE_GATEWAY_MODELS",
     );
   }
   if (!PROVIDERS || PROVIDERS.size !== 1 || !PROVIDERS.has("openai")) {
     throw new Error(
-      "OPENCLAW_LIVE_GATEWAY_OPENAI_API_DEFAULT requires OPENCLAW_LIVE_GATEWAY_PROVIDERS=openai",
+      "NOVA_LIVE_GATEWAY_OPENAI_API_DEFAULT requires NOVA_LIVE_GATEWAY_PROVIDERS=openai",
     );
   }
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
-    throw new Error("OPENCLAW_LIVE_GATEWAY_OPENAI_API_DEFAULT requires OPENAI_API_KEY");
+    throw new Error("NOVA_LIVE_GATEWAY_OPENAI_API_DEFAULT requires OPENAI_API_KEY");
   }
   const { detectInferenceBackends } = await import("../commands/onboard-inference.js");
   const candidates = await detectInferenceBackends({
@@ -4471,7 +4471,7 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
   );
   if (ultraCandidates.length > 0 && ultraCandidates.length !== params.candidates.length) {
     throw new Error(
-      "OPENCLAW_LIVE_GATEWAY_THINKING=ultra requires an explicit GPT-5.6 OpenAI model list",
+      "NOVA_LIVE_GATEWAY_THINKING=ultra requires an explicit GPT-5.6 OpenAI model list",
     );
   }
   const ultraUpstreamBaseUrls = new Set(
@@ -4486,16 +4486,16 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
   }
   const [ultraUpstreamBaseUrl] = [...ultraUpstreamBaseUrls];
   const previous = {
-    configPath: process.env.OPENCLAW_CONFIG_PATH,
-    token: process.env.OPENCLAW_GATEWAY_TOKEN,
-    skipChannels: process.env.OPENCLAW_SKIP_CHANNELS,
-    skipGmail: process.env.OPENCLAW_SKIP_GMAIL_WATCHER,
-    skipCron: process.env.OPENCLAW_SKIP_CRON,
-    skipCanvas: process.env.OPENCLAW_SKIP_CANVAS_HOST,
-    disableBonjour: process.env.OPENCLAW_DISABLE_BONJOUR,
-    logLevel: process.env.OPENCLAW_LOG_LEVEL,
-    agentDir: process.env.OPENCLAW_AGENT_DIR,
-    stateDir: process.env.OPENCLAW_STATE_DIR,
+    configPath: process.env.NOVA_CONFIG_PATH,
+    token: process.env.NOVA_GATEWAY_TOKEN,
+    skipChannels: process.env.NOVA_SKIP_CHANNELS,
+    skipGmail: process.env.NOVA_SKIP_GMAIL_WATCHER,
+    skipCron: process.env.NOVA_SKIP_CRON,
+    skipCanvas: process.env.NOVA_SKIP_CANVAS_HOST,
+    disableBonjour: process.env.NOVA_DISABLE_BONJOUR,
+    logLevel: process.env.NOVA_LOG_LEVEL,
+    agentDir: process.env.NOVA_AGENT_DIR,
+    stateDir: process.env.NOVA_STATE_DIR,
   };
   let runtimeEnv: ReturnType<typeof enterProductionEnvForLiveRun> | undefined;
   let cleanupTempStateDir: string | undefined;
@@ -4510,17 +4510,17 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
     clearRuntimeConfigSnapshot();
     runtimeEnv = enterProductionEnvForLiveRun();
 
-    process.env.OPENCLAW_SKIP_CHANNELS = "1";
-    process.env.OPENCLAW_SKIP_GMAIL_WATCHER = "1";
-    process.env.OPENCLAW_SKIP_CRON = "1";
-    process.env.OPENCLAW_SKIP_CANVAS_HOST = "1";
+    process.env.NOVA_SKIP_CHANNELS = "1";
+    process.env.NOVA_SKIP_GMAIL_WATCHER = "1";
+    process.env.NOVA_SKIP_CRON = "1";
+    process.env.NOVA_SKIP_CANVAS_HOST = "1";
     if (QUIET_LIVE_LOGS) {
-      process.env.OPENCLAW_DISABLE_BONJOUR = "1";
-      process.env.OPENCLAW_LOG_LEVEL = "silent";
+      process.env.NOVA_DISABLE_BONJOUR = "1";
+      process.env.NOVA_LOG_LEVEL = "silent";
     }
 
     const token = `test-${randomUUID()}`;
-    process.env.OPENCLAW_GATEWAY_TOKEN = token;
+    process.env.NOVA_GATEWAY_TOKEN = token;
     const agentId = GATEWAY_LIVE_AGENT_ID;
 
     const hostAgentDir = resolveDefaultAgentDir(getRuntimeConfig());
@@ -4538,7 +4538,7 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
     });
     const tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-state-"));
     cleanupTempStateDir = tempStateDir;
-    setTestEnvValue("OPENCLAW_STATE_DIR", tempStateDir);
+    setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
     const tempAgentDir: string | undefined = path.join(
       tempStateDir,
       "agents",
@@ -4551,7 +4551,7 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
     if (tempSessionAgentDir !== tempAgentDir) {
       saveAuthProfileStore(sanitizedStore, tempSessionAgentDir);
     }
-    setTestEnvValue("OPENCLAW_AGENT_DIR", tempAgentDir);
+    setTestEnvValue("NOVA_AGENT_DIR", tempAgentDir);
 
     const workspaceDir = path.join(tempStateDir, "workspace-dev");
     await fs.mkdir(workspaceDir, { recursive: true });
@@ -4607,7 +4607,7 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
     cleanupTempDir = tempDir;
     const tempConfigPath = path.join(tempDir, "openclaw.json");
     await fs.writeFile(tempConfigPath, `${JSON.stringify(nextCfg, null, 2)}\n`);
-    setTestEnvValue("OPENCLAW_CONFIG_PATH", tempConfigPath);
+    setTestEnvValue("NOVA_CONFIG_PATH", tempConfigPath);
 
     const liveProviders = nextCfg.models?.providers;
     if (liveProviders && Object.keys(liveProviders).length > 0) {
@@ -5409,16 +5409,16 @@ async function runGatewayModelSuite(params: GatewayModelSuiteParams) {
         if (runtimeEnv) {
           restoreProductionEnvForLiveRun(runtimeEnv);
         }
-        restoreOptionalEnv("OPENCLAW_CONFIG_PATH", previous.configPath);
-        restoreOptionalEnv("OPENCLAW_GATEWAY_TOKEN", previous.token);
-        restoreOptionalEnv("OPENCLAW_SKIP_CHANNELS", previous.skipChannels);
-        restoreOptionalEnv("OPENCLAW_SKIP_GMAIL_WATCHER", previous.skipGmail);
-        restoreOptionalEnv("OPENCLAW_SKIP_CRON", previous.skipCron);
-        restoreOptionalEnv("OPENCLAW_SKIP_CANVAS_HOST", previous.skipCanvas);
-        restoreOptionalEnv("OPENCLAW_DISABLE_BONJOUR", previous.disableBonjour);
-        restoreOptionalEnv("OPENCLAW_LOG_LEVEL", previous.logLevel);
-        restoreOptionalEnv("OPENCLAW_AGENT_DIR", previous.agentDir);
-        restoreOptionalEnv("OPENCLAW_STATE_DIR", previous.stateDir);
+        restoreOptionalEnv("NOVA_CONFIG_PATH", previous.configPath);
+        restoreOptionalEnv("NOVA_GATEWAY_TOKEN", previous.token);
+        restoreOptionalEnv("NOVA_SKIP_CHANNELS", previous.skipChannels);
+        restoreOptionalEnv("NOVA_SKIP_GMAIL_WATCHER", previous.skipGmail);
+        restoreOptionalEnv("NOVA_SKIP_CRON", previous.skipCron);
+        restoreOptionalEnv("NOVA_SKIP_CANVAS_HOST", previous.skipCanvas);
+        restoreOptionalEnv("NOVA_DISABLE_BONJOUR", previous.disableBonjour);
+        restoreOptionalEnv("NOVA_LOG_LEVEL", previous.logLevel);
+        restoreOptionalEnv("NOVA_AGENT_DIR", previous.agentDir);
+        restoreOptionalEnv("NOVA_STATE_DIR", previous.stateDir);
       }
     }
   }
@@ -5620,7 +5620,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
         );
         if (selectedCandidates.length < candidates.length) {
           logProgress(
-            `[all-models] capped to ${selectedCandidates.length}/${candidates.length} via OPENCLAW_LIVE_GATEWAY_MAX_MODELS=${maxModels}`,
+            `[all-models] capped to ${selectedCandidates.length}/${candidates.length} via NOVA_LIVE_GATEWAY_MAX_MODELS=${maxModels}`,
           );
         }
         expect(selectedCandidates.length).toBeGreaterThan(0);
@@ -5676,23 +5676,23 @@ describeLive("gateway live (dev agent, profile keys)", () => {
     clearRuntimeConfigSnapshot();
     const runtimeEnv = enterProductionEnvForLiveRun();
     const previous = {
-      configPath: process.env.OPENCLAW_CONFIG_PATH,
-      token: process.env.OPENCLAW_GATEWAY_TOKEN,
-      skipChannels: process.env.OPENCLAW_SKIP_CHANNELS,
-      skipGmail: process.env.OPENCLAW_SKIP_GMAIL_WATCHER,
-      skipCron: process.env.OPENCLAW_SKIP_CRON,
-      skipCanvas: process.env.OPENCLAW_SKIP_CANVAS_HOST,
-      agentDir: process.env.OPENCLAW_AGENT_DIR,
-      stateDir: process.env.OPENCLAW_STATE_DIR,
+      configPath: process.env.NOVA_CONFIG_PATH,
+      token: process.env.NOVA_GATEWAY_TOKEN,
+      skipChannels: process.env.NOVA_SKIP_CHANNELS,
+      skipGmail: process.env.NOVA_SKIP_GMAIL_WATCHER,
+      skipCron: process.env.NOVA_SKIP_CRON,
+      skipCanvas: process.env.NOVA_SKIP_CANVAS_HOST,
+      agentDir: process.env.NOVA_AGENT_DIR,
+      stateDir: process.env.NOVA_STATE_DIR,
     };
 
-    process.env.OPENCLAW_SKIP_CHANNELS = "1";
-    process.env.OPENCLAW_SKIP_GMAIL_WATCHER = "1";
-    process.env.OPENCLAW_SKIP_CRON = "1";
-    process.env.OPENCLAW_SKIP_CANVAS_HOST = "1";
+    process.env.NOVA_SKIP_CHANNELS = "1";
+    process.env.NOVA_SKIP_GMAIL_WATCHER = "1";
+    process.env.NOVA_SKIP_CRON = "1";
+    process.env.NOVA_SKIP_CANVAS_HOST = "1";
 
     const token = `test-${randomUUID()}`;
-    process.env.OPENCLAW_GATEWAY_TOKEN = token;
+    process.env.NOVA_GATEWAY_TOKEN = token;
 
     let server: Awaited<ReturnType<typeof startGatewayServer>> | undefined;
     let client: GatewayClient | undefined;
@@ -5732,7 +5732,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
 
       const agentId = GATEWAY_LIVE_AGENT_ID;
       tempStateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-zai-state-"));
-      setTestEnvValue("OPENCLAW_STATE_DIR", tempStateDir);
+      setTestEnvValue("NOVA_STATE_DIR", tempStateDir);
       const workspaceDir = path.join(tempStateDir, "workspace-dev");
       await fs.mkdir(workspaceDir, { recursive: true });
       await fs.mkdir(path.join(workspaceDir, ".openclaw"), { recursive: true });
@@ -5762,7 +5762,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
       });
       const tempAgentDir = path.join(tempStateDir, "agents", agentId, "agent");
       saveAuthProfileStore(sanitizedStore, tempAgentDir);
-      setTestEnvValue("OPENCLAW_AGENT_DIR", tempAgentDir);
+      setTestEnvValue("NOVA_AGENT_DIR", tempAgentDir);
 
       const sanitizedCfg: OpenClawConfig = {
         ...cfg,
@@ -5777,7 +5777,7 @@ describeLive("gateway live (dev agent, profile keys)", () => {
       tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-live-zai-"));
       const tempConfigPath = path.join(tempDir, "openclaw.json");
       await fs.writeFile(tempConfigPath, `${JSON.stringify(nextCfg, null, 2)}\n`);
-      setTestEnvValue("OPENCLAW_CONFIG_PATH", tempConfigPath);
+      setTestEnvValue("NOVA_CONFIG_PATH", tempConfigPath);
       clearRuntimeConfigSnapshot();
 
       const liveProviders = nextCfg.models?.providers;
@@ -5912,14 +5912,14 @@ describeLive("gateway live (dev agent, profile keys)", () => {
         });
       }
 
-      restoreOptionalEnv("OPENCLAW_CONFIG_PATH", previous.configPath);
-      restoreOptionalEnv("OPENCLAW_GATEWAY_TOKEN", previous.token);
-      restoreOptionalEnv("OPENCLAW_SKIP_CHANNELS", previous.skipChannels);
-      restoreOptionalEnv("OPENCLAW_SKIP_GMAIL_WATCHER", previous.skipGmail);
-      restoreOptionalEnv("OPENCLAW_SKIP_CRON", previous.skipCron);
-      restoreOptionalEnv("OPENCLAW_SKIP_CANVAS_HOST", previous.skipCanvas);
-      restoreOptionalEnv("OPENCLAW_AGENT_DIR", previous.agentDir);
-      restoreOptionalEnv("OPENCLAW_STATE_DIR", previous.stateDir);
+      restoreOptionalEnv("NOVA_CONFIG_PATH", previous.configPath);
+      restoreOptionalEnv("NOVA_GATEWAY_TOKEN", previous.token);
+      restoreOptionalEnv("NOVA_SKIP_CHANNELS", previous.skipChannels);
+      restoreOptionalEnv("NOVA_SKIP_GMAIL_WATCHER", previous.skipGmail);
+      restoreOptionalEnv("NOVA_SKIP_CRON", previous.skipCron);
+      restoreOptionalEnv("NOVA_SKIP_CANVAS_HOST", previous.skipCanvas);
+      restoreOptionalEnv("NOVA_AGENT_DIR", previous.agentDir);
+      restoreOptionalEnv("NOVA_STATE_DIR", previous.stateDir);
     }
   }, 180_000);
 });

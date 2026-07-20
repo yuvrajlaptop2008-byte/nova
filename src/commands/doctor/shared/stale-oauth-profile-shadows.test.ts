@@ -55,7 +55,7 @@ async function writeRawAuthStore(agentDir: string, store: unknown): Promise<void
 }
 
 describe("stale OAuth profile shadow doctor repair", () => {
-  const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR", "OPENCLAW_HOME"]);
+  const envSnapshot = captureEnv(["NOVA_STATE_DIR", "NOVA_HOME"]);
   let tempRoot = "";
   let stateDir = "";
 
@@ -63,8 +63,8 @@ describe("stale OAuth profile shadow doctor repair", () => {
     clearRuntimeAuthProfileStoreSnapshots();
     tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-stale-oauth-shadow-"));
     stateDir = path.join(tempRoot, "state");
-    process.env.OPENCLAW_STATE_DIR = stateDir;
-    process.env.OPENCLAW_HOME = stateDir;
+    process.env.NOVA_STATE_DIR = stateDir;
+    process.env.NOVA_HOME = stateDir;
   });
 
   afterEach(async () => {
@@ -166,8 +166,8 @@ describe("stale OAuth profile shadow doctor repair", () => {
     const injectedStateDir = path.join(tempRoot, "injected-state");
     const injectedEnv = {
       ...process.env,
-      OPENCLAW_STATE_DIR: injectedStateDir,
-      OPENCLAW_HOME: injectedStateDir,
+      NOVA_STATE_DIR: injectedStateDir,
+      NOVA_HOME: injectedStateDir,
     };
     saveAuthProfileStore(
       storeWith(

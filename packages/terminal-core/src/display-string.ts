@@ -41,12 +41,12 @@ function resolveRawOsHomeDir(env: NodeJS.ProcessEnv, homedir: () => string): str
   );
 }
 
-/** Resolve raw home with OPENCLAW_HOME tilde expansion. */
+/** Resolve raw home with NOVA_HOME tilde expansion. */
 function resolveRawHomeDir(
   env: NodeJS.ProcessEnv = process.env,
   homedir: () => string = os.homedir,
 ): string | undefined {
-  const explicitHome = normalize(env.OPENCLAW_HOME);
+  const explicitHome = normalize(env.NOVA_HOME);
   if (explicitHome) {
     const fallbackHome = resolveRawOsHomeDir(env, homedir);
     return fallbackHome ? explicitHome.replace(/^~(?=$|[\\/])/, fallbackHome) : explicitHome;
@@ -69,8 +69,8 @@ function resolveHomeDisplayPrefix(): { home: string; prefix: string } | undefine
   if (!home) {
     return undefined;
   }
-  const explicitHome = process.env.OPENCLAW_HOME?.trim();
-  return explicitHome ? { home, prefix: "$OPENCLAW_HOME" } : { home, prefix: "~" };
+  const explicitHome = process.env.NOVA_HOME?.trim();
+  return explicitHome ? { home, prefix: "$NOVA_HOME" } : { home, prefix: "~" };
 }
 
 /** Replace a whole-value home or child path without clipping sibling path prefixes. */
@@ -108,7 +108,7 @@ function replaceHomePath(input: string, display: { home: string; prefix: string 
   return output;
 }
 
-/** Replace the effective home path with "~" or "$OPENCLAW_HOME" for terminal display. */
+/** Replace the effective home path with "~" or "$NOVA_HOME" for terminal display. */
 export function displayString(input: string): string {
   if (!input) {
     return input;

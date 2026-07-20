@@ -400,7 +400,7 @@ describe("browser plugin", () => {
   });
 
   it("eager-loads the browser control service when explicitly requested", async () => {
-    vi.stubEnv("OPENCLAW_EAGER_BROWSER_CONTROL_SERVER", "1");
+    vi.stubEnv("NOVA_EAGER_BROWSER_CONTROL_SERVER", "1");
     const { api, registerService } = createApi();
     registerBrowserPlugin(api);
 
@@ -415,7 +415,7 @@ describe("browser plugin", () => {
 
   for (const value of ["false", "", "disabled"]) {
     it(`keeps browser control service env value ${JSON.stringify(value)} lazy`, async () => {
-      vi.stubEnv("OPENCLAW_EAGER_BROWSER_CONTROL_SERVER", value);
+      vi.stubEnv("NOVA_EAGER_BROWSER_CONTROL_SERVER", value);
       const { api, registerService } = createApi();
       registerBrowserPlugin(api);
 

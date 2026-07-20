@@ -19,7 +19,7 @@ if ! declare -F docker_e2e_docker_cmd >/dev/null 2>&1; then
 fi
 if ! declare -F docker_e2e_docker_run_resource_args >/dev/null 2>&1; then
   docker_e2e_resource_limits_disabled() {
-    case "${OPENCLAW_DOCKER_E2E_DISABLE_RESOURCE_LIMITS:-}" in
+    case "${NOVA_DOCKER_E2E_DISABLE_RESOURCE_LIMITS:-}" in
       1 | true | TRUE | yes | YES | on | ON)
         return 0
         ;;
@@ -37,8 +37,8 @@ if ! declare -F docker_e2e_docker_run_resource_args >/dev/null 2>&1; then
   }
 
   docker_e2e_detect_available_cpus() {
-    if [ -n "${OPENCLAW_DOCKER_E2E_AVAILABLE_CPUS:-}" ]; then
-      printf '%s\n' "$OPENCLAW_DOCKER_E2E_AVAILABLE_CPUS"
+    if [ -n "${NOVA_DOCKER_E2E_AVAILABLE_CPUS:-}" ]; then
+      printf '%s\n' "$NOVA_DOCKER_E2E_AVAILABLE_CPUS"
       return 0
     fi
     if command -v nproc >/dev/null 2>&1; then
@@ -83,7 +83,7 @@ if ! declare -F docker_e2e_docker_run_resource_args >/dev/null 2>&1; then
   docker_e2e_resolve_pids_limit() {
     local pids_limit="$1"
     if [[ ! "$pids_limit" =~ ^[0-9]+$ ]] || (( 10#$pids_limit < 1 )); then
-      echo "invalid OPENCLAW_DOCKER_E2E_PIDS_LIMIT: $pids_limit" >&2
+      echo "invalid NOVA_DOCKER_E2E_PIDS_LIMIT: $pids_limit" >&2
       return 2
     fi
     printf '%s\n' "$((10#$pids_limit))"
@@ -95,9 +95,9 @@ if ! declare -F docker_e2e_docker_run_resource_args >/dev/null 2>&1; then
       return 0
     fi
 
-    local memory="${OPENCLAW_DOCKER_E2E_MEMORY:-8g}"
-    local cpus="${OPENCLAW_DOCKER_E2E_CPUS:-16}"
-    local pids_limit="${OPENCLAW_DOCKER_E2E_PIDS_LIMIT:-2048}"
+    local memory="${NOVA_DOCKER_E2E_MEMORY:-8g}"
+    local cpus="${NOVA_DOCKER_E2E_CPUS:-16}"
+    local pids_limit="${NOVA_DOCKER_E2E_PIDS_LIMIT:-2048}"
     cpus="$(docker_e2e_resolve_cpus "$cpus")"
 
     if ! docker_e2e_resource_value_disabled "$memory" && ! docker_e2e_run_arg_present --memory "$@"; then
@@ -140,11 +140,11 @@ if ! declare -F docker_e2e_docker_run_cmd >/dev/null 2>&1; then
       shift
       docker_e2e_docker_run_resource_args "$@" || return $?
       docker_e2e_docker_run_with_resource_diagnostics \
-        "${DOCKER_COMMAND_TIMEOUT:-${OPENCLAW_DOCKER_E2E_RUN_TIMEOUT:-3600s}}" \
+        "${DOCKER_COMMAND_TIMEOUT:-${NOVA_DOCKER_E2E_RUN_TIMEOUT:-3600s}}" \
         "$@"
       return
     fi
-    docker_e2e_timeout_cmd "${DOCKER_COMMAND_TIMEOUT:-${OPENCLAW_DOCKER_E2E_RUN_TIMEOUT:-3600s}}" docker "$@"
+    docker_e2e_timeout_cmd "${DOCKER_COMMAND_TIMEOUT:-${NOVA_DOCKER_E2E_RUN_TIMEOUT:-3600s}}" docker "$@"
   }
 fi
 
@@ -296,7 +296,7 @@ docker_e2e_restore_package_dist_from_image() (
 
 docker_e2e_prepare_package_tgz() {
   local label="$1"
-  local package_tgz="${2:-${OPENCLAW_CURRENT_PACKAGE_TGZ:-}}"
+  local package_tgz="${2:-${NOVA_CURRENT_PACKAGE_TGZ:-}}"
 
   if [ -n "$package_tgz" ]; then
     if [ ! -f "$package_tgz" ]; then
@@ -347,12 +347,12 @@ docker_e2e_prepare_package_context() {
 docker_e2e_package_mount_args() {
   local package_tgz="$1"
   local target="${2:-/tmp/openclaw-current.tgz}"
-  DOCKER_E2E_PACKAGE_ARGS=(-v "$package_tgz:$target:ro" -e "OPENCLAW_CURRENT_PACKAGE_TGZ=$target")
-  if [ -n "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-}" ]; then
-    DOCKER_E2E_PACKAGE_ARGS+=(-e "OPENCLAW_E2E_NPM_INSTALL_TIMEOUT=$OPENCLAW_E2E_NPM_INSTALL_TIMEOUT")
+  DOCKER_E2E_PACKAGE_ARGS=(-v "$package_tgz:$target:ro" -e "NOVA_CURRENT_PACKAGE_TGZ=$target")
+  if [ -n "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-}" ]; then
+    DOCKER_E2E_PACKAGE_ARGS+=(-e "NOVA_E2E_NPM_INSTALL_TIMEOUT=$NOVA_E2E_NPM_INSTALL_TIMEOUT")
   fi
-  if [ -n "${OPENCLAW_E2E_COMMAND_TIMEOUT:-}" ]; then
-    DOCKER_E2E_PACKAGE_ARGS+=(-e "OPENCLAW_E2E_COMMAND_TIMEOUT=$OPENCLAW_E2E_COMMAND_TIMEOUT")
+  if [ -n "${NOVA_E2E_COMMAND_TIMEOUT:-}" ]; then
+    DOCKER_E2E_PACKAGE_ARGS+=(-e "NOVA_E2E_COMMAND_TIMEOUT=$NOVA_E2E_COMMAND_TIMEOUT")
   fi
 }
 
@@ -457,7 +457,7 @@ docker_e2e_run_with_harness() {
       kill -TERM $descendant_pids 2>/dev/null || true
     fi
     kill -TERM "$docker_run_pid" 2>/dev/null || true
-    local grace_seconds="${OPENCLAW_DOCKER_E2E_CONTAINER_TERM_GRACE_SECONDS:-10}"
+    local grace_seconds="${NOVA_DOCKER_E2E_CONTAINER_TERM_GRACE_SECONDS:-10}"
     if ! [[ "$grace_seconds" =~ ^[0-9]+$ ]] || [ "$grace_seconds" -lt 1 ]; then
       grace_seconds="10"
     else
@@ -550,7 +550,7 @@ docker_e2e_run_logged_print_with_harness() {
   local label="$1"
   shift
   local heartbeat_seconds
-  heartbeat_seconds="$(docker_e2e_read_positive_int_env OPENCLAW_DOCKER_E2E_LOG_HEARTBEAT_SECONDS 30)" || return $?
+  heartbeat_seconds="$(docker_e2e_read_positive_int_env NOVA_DOCKER_E2E_LOG_HEARTBEAT_SECONDS 30)" || return $?
   run_logged_print_heartbeat \
     "$label" \
     "$heartbeat_seconds" \

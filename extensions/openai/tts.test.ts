@@ -121,7 +121,7 @@ describe("openai tts", () => {
 
   describe("openaiTTS diagnostics", () => {
     it("adds Nova attribution headers to native OpenAI speech requests", async () => {
-      vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
+      vi.stubEnv("NOVA_VERSION", "2026.3.22");
       const fetchMock = vi.fn(
         async (_url: string | URL, _init?: RequestInit) =>
           new Response(Buffer.from("audio-bytes"), { status: 200 }),
@@ -350,9 +350,9 @@ describe("openai tts", () => {
     it("records TTS exchanges in debug proxy capture mode", async () => {
       const tempDir = mkdtempSync(path.join(os.tmpdir(), "openai-tts-capture-"));
       proxyReset.captureProxyEnv();
-      process.env.OPENCLAW_DEBUG_PROXY_ENABLED = "1";
-      process.env.OPENCLAW_STATE_DIR = tempDir;
-      process.env.OPENCLAW_DEBUG_PROXY_SESSION_ID = "tts-session";
+      process.env.NOVA_DEBUG_PROXY_ENABLED = "1";
+      process.env.NOVA_STATE_DIR = tempDir;
+      process.env.NOVA_DEBUG_PROXY_SESSION_ID = "tts-session";
 
       globalThis.fetch = vi
         .fn()
@@ -393,9 +393,9 @@ describe("openai tts", () => {
     it("does not double-capture TTS exchanges when the global fetch patch is installed", async () => {
       const tempDir = mkdtempSync(path.join(os.tmpdir(), "openai-tts-patched-capture-"));
       proxyReset.captureProxyEnv();
-      process.env.OPENCLAW_DEBUG_PROXY_ENABLED = "1";
-      process.env.OPENCLAW_STATE_DIR = tempDir;
-      process.env.OPENCLAW_DEBUG_PROXY_SESSION_ID = "tts-patched-session";
+      process.env.NOVA_DEBUG_PROXY_ENABLED = "1";
+      process.env.NOVA_STATE_DIR = tempDir;
+      process.env.NOVA_DEBUG_PROXY_SESSION_ID = "tts-patched-session";
 
       globalThis.fetch = vi
         .fn()

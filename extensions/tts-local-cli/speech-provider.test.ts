@@ -371,7 +371,7 @@ mkdirSync(process.argv[outIndex + 1]);
   );
 
   it("can synthesize through a real local CLI fixture and ffmpeg", async () => {
-    if (process.env.OPENCLAW_LIVE_TEST !== "1") {
+    if (process.env.NOVA_LIVE_TEST !== "1") {
       return;
     }
     const fixture = createCliFixture();

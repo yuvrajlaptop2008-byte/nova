@@ -55,20 +55,18 @@ describe("scripts/ios-release-signing.mjs", () => {
   it("emits manual App Store profile settings for every signed target", () => {
     const output = runSigning("xcconfig");
 
-    expect(output).toContain("OPENCLAW_CODE_SIGN_STYLE = Manual");
-    expect(output).toContain("OPENCLAW_CODE_SIGN_IDENTITY = Apple Distribution");
-    expect(output).toContain("OPENCLAW_APP_GROUP_ID = group.ai.openclawfoundation.app.shared");
-    expect(output).toContain("OPENCLAW_APP_PROFILE = Nova App Store ai.openclawfoundation.app");
+    expect(output).toContain("NOVA_CODE_SIGN_STYLE = Manual");
+    expect(output).toContain("NOVA_CODE_SIGN_IDENTITY = Apple Distribution");
+    expect(output).toContain("NOVA_APP_GROUP_ID = group.ai.openclawfoundation.app.shared");
+    expect(output).toContain("NOVA_APP_PROFILE = Nova App Store ai.openclawfoundation.app");
+    expect(output).toContain("NOVA_SHARE_PROFILE = Nova App Store ai.openclawfoundation.app.share");
     expect(output).toContain(
-      "OPENCLAW_SHARE_PROFILE = Nova App Store ai.openclawfoundation.app.share",
+      "NOVA_ACTIVITY_WIDGET_PROFILE = Nova App Store ai.openclawfoundation.app.activitywidget",
     );
     expect(output).toContain(
-      "OPENCLAW_ACTIVITY_WIDGET_PROFILE = Nova App Store ai.openclawfoundation.app.activitywidget",
+      "NOVA_WATCH_APP_PROFILE = Nova App Store ai.openclawfoundation.app.watchkitapp",
     );
-    expect(output).toContain(
-      "OPENCLAW_WATCH_APP_PROFILE = Nova App Store ai.openclawfoundation.app.watchkitapp",
-    );
-    expect(output).not.toContain("OPENCLAW_WATCH_EXTENSION_PROFILE");
+    expect(output).not.toContain("NOVA_WATCH_EXTENSION_PROFILE");
   });
 
   it("documents the canonical release signing plan", () => {

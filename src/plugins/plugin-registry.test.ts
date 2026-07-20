@@ -68,8 +68,8 @@ function makeTempDir() {
 
 function hermeticEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   return {
-    OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-    OPENCLAW_VERSION: "2026.4.25",
+    NOVA_BUNDLED_PLUGINS_DIR: undefined,
+    NOVA_VERSION: "2026.4.25",
     VITEST: "true",
     ...overrides,
   };
@@ -680,7 +680,7 @@ describe("plugin registry facade", () => {
     const result = loadPluginRegistrySnapshotWithMetadata({
       stateDir,
       candidates: [candidate],
-      env: hermeticEnv({ OPENCLAW_BUNDLED_PLUGINS_DIR: rootDir }),
+      env: hermeticEnv({ NOVA_BUNDLED_PLUGINS_DIR: rootDir }),
     });
 
     expect(result.source).toBe("derived");
@@ -716,8 +716,8 @@ describe("plugin registry facade", () => {
     fs.copyFileSync(path.join(sourceRoot, "index.ts"), path.join(builtRoot, "index.ts"));
     fs.writeFileSync(path.join(builtRoot, "package.json"), packageJson);
     const env = hermeticEnv({
-      OPENCLAW_BUNDLED_PLUGINS_DIR: path.dirname(builtRoot),
-      OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+      NOVA_BUNDLED_PLUGINS_DIR: path.dirname(builtRoot),
+      NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
     });
     const freshIndex = loadPluginRegistrySnapshot({
       candidates: [sourceCandidate],
@@ -826,7 +826,7 @@ describe("plugin registry facade", () => {
     const rootDir = path.join(bundledRoot, "demo");
     fs.mkdirSync(rootDir, { recursive: true });
     createCandidate(rootDir);
-    const env = hermeticEnv({ OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot });
+    const env = hermeticEnv({ NOVA_BUNDLED_PLUGINS_DIR: bundledRoot });
     const config = { plugins: { entries: { demo: { enabled: true } } } } as const;
     const readFileSyncSpy = vi.spyOn(fs, "readFileSync");
 
@@ -864,8 +864,8 @@ describe("plugin registry facade", () => {
     fs.mkdirSync(firstRoot, { recursive: true });
     createCandidate(firstRoot, "first");
     const env = hermeticEnv({
-      OPENCLAW_CONFIG_PATH: path.join(configDir, "openclaw.json"),
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
+      NOVA_CONFIG_PATH: path.join(configDir, "openclaw.json"),
+      NOVA_DISABLE_BUNDLED_PLUGINS: "1",
     });
 
     const first = loadPluginRegistrySnapshotWithMetadata({ stateDir, env });
@@ -891,14 +891,14 @@ describe("plugin registry facade", () => {
     const first = loadPluginRegistrySnapshotWithMetadata({
       stateDir,
       config,
-      env: hermeticEnv({ OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot }),
+      env: hermeticEnv({ NOVA_BUNDLED_PLUGINS_DIR: bundledRoot }),
     });
     const second = loadPluginRegistrySnapshotWithMetadata({
       stateDir,
       config,
       env: hermeticEnv({
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
-        OPENCLAW_VERSION: "2026.4.26",
+        NOVA_BUNDLED_PLUGINS_DIR: bundledRoot,
+        NOVA_VERSION: "2026.4.26",
       }),
     });
 
@@ -945,7 +945,7 @@ describe("plugin registry facade", () => {
           Date.now(),
         );
       },
-      { env: { ...env, OPENCLAW_STATE_DIR: stateDir } },
+      { env: { ...env, NOVA_STATE_DIR: stateDir } },
     );
     const second = loadPluginRegistrySnapshotWithMetadata({ stateDir, env });
 

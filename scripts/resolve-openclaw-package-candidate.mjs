@@ -35,7 +35,7 @@ const SIGNAL_EXIT_CODES = {
   SIGTERM: 143,
 };
 const TRUSTED_PACKAGE_SOURCE_POLICY = ".github/package-trusted-sources.json";
-const TRUSTED_PACKAGE_SOURCE_TOKEN_ENV = "OPENCLAW_TRUSTED_PACKAGE_TOKEN";
+const TRUSTED_PACKAGE_SOURCE_TOKEN_ENV = "NOVA_TRUSTED_PACKAGE_TOKEN";
 const BLOCKED_PACKAGE_HOSTNAMES = new Set([
   "localhost",
   "localhost.localdomain",
@@ -62,7 +62,7 @@ for (const signal of Object.keys(SIGNAL_EXIT_CODES)) {
     }, FORWARDED_SIGNAL_KILL_AFTER_MS);
   });
 }
-export const OPENCLAW_PACKAGE_SPEC_RE =
+export const NOVA_PACKAGE_SPEC_RE =
   /^openclaw@(alpha|beta|extended-stable|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$/u;
 
 function usage() {
@@ -172,7 +172,7 @@ function resolvePackedOpenClawTarballFilename(value) {
 }
 
 export function validateOpenClawPackageSpec(spec) {
-  if (!OPENCLAW_PACKAGE_SPEC_RE.test(spec)) {
+  if (!NOVA_PACKAGE_SPEC_RE.test(spec)) {
     throw new Error(
       `package_spec must be openclaw@alpha, openclaw@beta, openclaw@extended-stable, openclaw@latest, or an exact Nova release version; got: ${spec}`,
     );

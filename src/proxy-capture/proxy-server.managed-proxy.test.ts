@@ -11,15 +11,15 @@ import { startDebugProxyServer } from "./proxy-server.js";
 import { closeDebugProxyCaptureStore } from "./store.sqlite.js";
 
 let testRoot: string | undefined;
-const originalStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalStateDir = process.env.NOVA_STATE_DIR;
 
 async function cleanupTestDirs(): Promise<void> {
   closeDebugProxyCaptureStore();
   closeOpenClawStateDatabaseForTest();
   if (originalStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = originalStateDir;
+    process.env.NOVA_STATE_DIR = originalStateDir;
   }
   if (!testRoot) {
     return;
@@ -35,7 +35,7 @@ async function makeSettings(): Promise<DebugProxySettings> {
   await mkdir(certDir, { recursive: true });
   await writeFile(join(certDir, "root-ca.pem"), "test root cert\n", "utf8");
   await writeFile(join(certDir, "root-ca-key.pem"), "test root key\n", "utf8");
-  process.env.OPENCLAW_STATE_DIR = testRoot;
+  process.env.NOVA_STATE_DIR = testRoot;
   return {
     enabled: true,
     required: false,
@@ -146,34 +146,33 @@ async function startCanaryOrigin(): Promise<{
 }
 
 describe("debug proxy managed-proxy direct upstream policy", () => {
-  const originalProxyActive = process.env["OPENCLAW_PROXY_ACTIVE"];
+  const originalProxyActive = process.env["NOVA_PROXY_ACTIVE"];
   const originalAllowDirect =
-    process.env["OPENCLAW_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"];
+    process.env["NOVA_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"];
 
   beforeEach(async () => {
     await cleanupTestDirs();
-    delete process.env["OPENCLAW_PROXY_ACTIVE"];
-    delete process.env["OPENCLAW_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"];
+    delete process.env["NOVA_PROXY_ACTIVE"];
+    delete process.env["NOVA_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"];
   });
 
   afterEach(async () => {
     if (originalProxyActive === undefined) {
-      delete process.env["OPENCLAW_PROXY_ACTIVE"];
+      delete process.env["NOVA_PROXY_ACTIVE"];
     } else {
-      process.env["OPENCLAW_PROXY_ACTIVE"] = originalProxyActive;
+      process.env["NOVA_PROXY_ACTIVE"] = originalProxyActive;
     }
     if (originalAllowDirect === undefined) {
-      delete process.env["OPENCLAW_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"];
+      delete process.env["NOVA_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"];
     } else {
-      process.env["OPENCLAW_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"] =
-        originalAllowDirect;
+      process.env["NOVA_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"] = originalAllowDirect;
     }
     await cleanupTestDirs();
   });
 
   it("allows HTTP upstreams with the explicit diagnostic override", async () => {
-    process.env["OPENCLAW_PROXY_ACTIVE"] = "1";
-    process.env["OPENCLAW_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"] = "1";
+    process.env["NOVA_PROXY_ACTIVE"] = "1";
+    process.env["NOVA_DEBUG_PROXY_ALLOW_DIRECT_CONNECT_WITH_MANAGED_PROXY"] = "1";
     const origin = await startCanaryOrigin();
     const server = await startDebugProxyServer({ settings: await makeSettings() });
     try {
@@ -189,7 +188,7 @@ describe("debug proxy managed-proxy direct upstream policy", () => {
   });
 
   it("rejects CONNECT upstreams before opening direct sockets while managed proxy mode is active", async () => {
-    process.env["OPENCLAW_PROXY_ACTIVE"] = "true";
+    process.env["NOVA_PROXY_ACTIVE"] = "true";
     const server = await startDebugProxyServer({ settings: await makeSettings() });
     try {
       const response = await connectThroughProxy(server.proxyUrl);
@@ -203,7 +202,7 @@ describe("debug proxy managed-proxy direct upstream policy", () => {
   });
 
   it("accepts bracketed IPv6 CONNECT targets before applying upstream policy", async () => {
-    process.env["OPENCLAW_PROXY_ACTIVE"] = "1";
+    process.env["NOVA_PROXY_ACTIVE"] = "1";
     const server = await startDebugProxyServer({ settings: await makeSettings() });
     try {
       const response = await connectThroughProxy(server.proxyUrl, "[::1]:8443");
@@ -230,7 +229,7 @@ describe("debug proxy managed-proxy direct upstream policy", () => {
   );
 
   it("rejects absolute-form HTTP proxy requests before opening direct upstreams while managed proxy mode is active", async () => {
-    process.env["OPENCLAW_PROXY_ACTIVE"] = "1";
+    process.env["NOVA_PROXY_ACTIVE"] = "1";
     const origin = await startCanaryOrigin();
     const server = await startDebugProxyServer({ settings: await makeSettings() });
     try {

@@ -109,15 +109,15 @@ targets:
     settings:
       base:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        CODE_SIGN_IDENTITY: "$(OPENCLAW_CODE_SIGN_IDENTITY)"
-        CODE_SIGN_ENTITLEMENTS: "$(OPENCLAW_CODE_SIGN_ENTITLEMENTS)"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-        OPENCLAW_ACTIVE_APP_GROUP_ID: "$(OPENCLAW_APP_GROUP_ID)"
-        OPENCLAW_APP_DISPLAY_NAME: OpenClaw
-        OPENCLAW_URL_SCHEME: openclaw
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_APP_BUNDLE_ID)"
-        PROVISIONING_PROFILE_SPECIFIER: "$(OPENCLAW_APP_PROFILE)"
+        CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
+        CODE_SIGN_ENTITLEMENTS: "$(NOVA_CODE_SIGN_ENTITLEMENTS)"
+        CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
+        NOVA_ACTIVE_APP_GROUP_ID: "$(NOVA_APP_GROUP_ID)"
+        NOVA_APP_DISPLAY_NAME: OpenClaw
+        NOVA_URL_SCHEME: openclaw
+        PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_APP_BUNDLE_ID)"
+        PROVISIONING_PROFILE_SPECIFIER: "$(NOVA_APP_PROFILE)"
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
@@ -128,35 +128,35 @@ targets:
         Debug:
           ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDebug
           CODE_SIGN_STYLE: Automatic
-          OPENCLAW_ACTIVE_APP_GROUP_ID: "$(OPENCLAW_DEBUG_APP_GROUP_ID)"
-          OPENCLAW_APP_DISPLAY_NAME: OpenClaw
-          OPENCLAW_CODE_SIGN_ENTITLEMENTS: Sources/OpenClaw.entitlements
-          OPENCLAW_APNS_ENTITLEMENT_ENVIRONMENT: development
-          OPENCLAW_URL_SCHEME: openclaw-debug
-          PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_DEBUG_APP_BUNDLE_ID)"
+          NOVA_ACTIVE_APP_GROUP_ID: "$(NOVA_DEBUG_APP_GROUP_ID)"
+          NOVA_APP_DISPLAY_NAME: OpenClaw
+          NOVA_CODE_SIGN_ENTITLEMENTS: Sources/OpenClaw.entitlements
+          NOVA_APNS_ENTITLEMENT_ENVIRONMENT: development
+          NOVA_URL_SCHEME: openclaw-debug
+          PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_APP_BUNDLE_ID)"
           PROVISIONING_PROFILE_SPECIFIER: ""
-          OPENCLAW_PUSH_MODE: localSandbox
-          OPENCLAW_PUSH_RELAY_BASE_URL: ""
+          NOVA_PUSH_MODE: localSandbox
+          NOVA_PUSH_RELAY_BASE_URL: ""
         Release:
-          OPENCLAW_CODE_SIGN_ENTITLEMENTS: Sources/OpenClaw.entitlements
-          OPENCLAW_APNS_ENTITLEMENT_ENVIRONMENT: production
-          OPENCLAW_PUSH_MODE: localProduction
-          OPENCLAW_PUSH_RELAY_BASE_URL: ""
+          NOVA_CODE_SIGN_ENTITLEMENTS: Sources/OpenClaw.entitlements
+          NOVA_APNS_ENTITLEMENT_ENVIRONMENT: production
+          NOVA_PUSH_MODE: localProduction
+          NOVA_PUSH_RELAY_BASE_URL: ""
     info:
       path: Sources/Info.plist
       properties:
-        CFBundleDisplayName: "$(OPENCLAW_APP_DISPLAY_NAME)"
+        CFBundleDisplayName: "$(NOVA_APP_DISPLAY_NAME)"
         CFBundleIconName: "$(ASSETCATALOG_COMPILER_APPICON_NAME)"
         CFBundleURLTypes:
           - CFBundleURLName: ai.openclawfoundation.app
             CFBundleURLSchemes:
-              - "$(OPENCLAW_URL_SCHEME)"
-        CFBundleShortVersionString: "$(OPENCLAW_MARKETING_VERSION)"
-        OpenClawCanonicalVersion: "$(OPENCLAW_IOS_VERSION)"
-        OpenClawGitCommit: "$(OPENCLAW_GIT_COMMIT)"
-        OpenClawBuildTimestamp: "$(OPENCLAW_BUILD_TIMESTAMP)"
-        OpenClawAppGroupIdentifier: "$(OPENCLAW_ACTIVE_APP_GROUP_ID)"
-        CFBundleVersion: "$(OPENCLAW_BUILD_VERSION)"
+              - "$(NOVA_URL_SCHEME)"
+        CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
+        OpenClawCanonicalVersion: "$(NOVA_IOS_VERSION)"
+        OpenClawGitCommit: "$(NOVA_GIT_COMMIT)"
+        OpenClawBuildTimestamp: "$(NOVA_BUILD_TIMESTAMP)"
+        OpenClawAppGroupIdentifier: "$(NOVA_ACTIVE_APP_GROUP_ID)"
+        CFBundleVersion: "$(NOVA_BUILD_VERSION)"
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
@@ -196,8 +196,8 @@ targets:
           - JetBrainsMono-Regular.ttf
           - JetBrainsMono-Medium.ttf
           - JetBrainsMono-SemiBold.ttf
-        OpenClawPushMode: "$(OPENCLAW_PUSH_MODE)"
-        OpenClawPushRelayBaseURL: "$(OPENCLAW_PUSH_RELAY_BASE_URL)"
+        OpenClawPushMode: "$(NOVA_PUSH_MODE)"
+        OpenClawPushRelayBaseURL: "$(NOVA_PUSH_RELAY_BASE_URL)"
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
@@ -218,31 +218,31 @@ targets:
       - sdk: AppIntents.framework
     settings:
       base:
-        CODE_SIGN_IDENTITY: "$(OPENCLAW_CODE_SIGN_IDENTITY)"
+        CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
         CODE_SIGN_ENTITLEMENTS: ShareExtension/OpenClawShareExtension.entitlements
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
+        CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
         ENABLE_APPINTENTS_METADATA: NO
         ENABLE_APP_INTENTS_METADATA_GENERATION: NO
-        OPENCLAW_ACTIVE_APP_GROUP_ID: "$(OPENCLAW_APP_GROUP_ID)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_SHARE_BUNDLE_ID)"
-        PROVISIONING_PROFILE_SPECIFIER: "$(OPENCLAW_SHARE_PROFILE)"
+        NOVA_ACTIVE_APP_GROUP_ID: "$(NOVA_APP_GROUP_ID)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_SHARE_BUNDLE_ID)"
+        PROVISIONING_PROFILE_SPECIFIER: "$(NOVA_SHARE_PROFILE)"
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
       configs:
         Debug:
           CODE_SIGN_STYLE: Automatic
-          OPENCLAW_ACTIVE_APP_GROUP_ID: "$(OPENCLAW_DEBUG_APP_GROUP_ID)"
-          PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_DEBUG_SHARE_BUNDLE_ID)"
+          NOVA_ACTIVE_APP_GROUP_ID: "$(NOVA_DEBUG_APP_GROUP_ID)"
+          PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_SHARE_BUNDLE_ID)"
           PROVISIONING_PROFILE_SPECIFIER: ""
     info:
       path: ShareExtension/Info.plist
       properties:
         CFBundleDisplayName: OpenClaw Share
-        CFBundleShortVersionString: "$(OPENCLAW_MARKETING_VERSION)"
-        OpenClawAppGroupIdentifier: "$(OPENCLAW_ACTIVE_APP_GROUP_ID)"
-        CFBundleVersion: "$(OPENCLAW_BUILD_VERSION)"
+        CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
+        OpenClawAppGroupIdentifier: "$(NOVA_ACTIVE_APP_GROUP_ID)"
+        CFBundleVersion: "$(NOVA_BUILD_VERSION)"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
           NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).ShareViewController"
@@ -274,11 +274,11 @@ targets:
       - sdk: ActivityKit.framework
     settings:
       base:
-        CODE_SIGN_IDENTITY: "$(OPENCLAW_CODE_SIGN_IDENTITY)"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_ACTIVITY_WIDGET_BUNDLE_ID)"
-        PROVISIONING_PROFILE_SPECIFIER: "$(OPENCLAW_ACTIVITY_WIDGET_PROFILE)"
+        CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
+        CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_ACTIVITY_WIDGET_BUNDLE_ID)"
+        PROVISIONING_PROFILE_SPECIFIER: "$(NOVA_ACTIVITY_WIDGET_PROFILE)"
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
@@ -286,14 +286,14 @@ targets:
       configs:
         Debug:
           CODE_SIGN_STYLE: Automatic
-          PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_DEBUG_ACTIVITY_WIDGET_BUNDLE_ID)"
+          PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_ACTIVITY_WIDGET_BUNDLE_ID)"
           PROVISIONING_PROFILE_SPECIFIER: ""
     info:
       path: ActivityWidget/Info.plist
       properties:
         CFBundleDisplayName: OpenClaw Activity
-        CFBundleShortVersionString: "$(OPENCLAW_MARKETING_VERSION)"
-        CFBundleVersion: "$(OPENCLAW_BUILD_VERSION)"
+        CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
+        CFBundleVersion: "$(NOVA_BUILD_VERSION)"
         NSSupportsLiveActivities: true
         UIAppFonts:
           - RedHatDisplay[wght].ttf
@@ -344,35 +344,35 @@ targets:
       Debug: Config/Signing.xcconfig
       Release: Config/Signing.xcconfig
     attributes:
-      DevelopmentTeam: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-      ProvisioningStyle: "$(OPENCLAW_CODE_SIGN_STYLE)"
+      DevelopmentTeam: "$(NOVA_DEVELOPMENT_TEAM)"
+      ProvisioningStyle: "$(NOVA_CODE_SIGN_STYLE)"
     settings:
       base:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        CODE_SIGN_IDENTITY: "$(OPENCLAW_CODE_SIGN_IDENTITY)"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
+        CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
+        CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
         ENABLE_APPINTENTS_METADATA: NO
         ENABLE_APP_INTENTS_METADATA_GENERATION: NO
-        OPENCLAW_COMPANION_APP_BUNDLE_ID: "$(OPENCLAW_APP_BUNDLE_ID)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_WATCH_APP_BUNDLE_ID)"
-        PROVISIONING_PROFILE_SPECIFIER: "$(OPENCLAW_WATCH_APP_PROFILE)"
+        NOVA_COMPANION_APP_BUNDLE_ID: "$(NOVA_APP_BUNDLE_ID)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_WATCH_APP_BUNDLE_ID)"
+        PROVISIONING_PROFILE_SPECIFIER: "$(NOVA_WATCH_APP_PROFILE)"
         SWIFT_STRICT_CONCURRENCY: complete
         SWIFT_VERSION: "6.0"
       configs:
         Debug:
           ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDebug
           CODE_SIGN_STYLE: Automatic
-          OPENCLAW_COMPANION_APP_BUNDLE_ID: "$(OPENCLAW_DEBUG_APP_BUNDLE_ID)"
-          PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_DEBUG_WATCH_APP_BUNDLE_ID)"
+          NOVA_COMPANION_APP_BUNDLE_ID: "$(NOVA_DEBUG_APP_BUNDLE_ID)"
+          PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_WATCH_APP_BUNDLE_ID)"
           PROVISIONING_PROFILE_SPECIFIER: ""
     info:
       path: WatchApp/Info.plist
       properties:
         CFBundleDisplayName: OpenClaw
-        CFBundleShortVersionString: "$(OPENCLAW_MARKETING_VERSION)"
-        CFBundleVersion: "$(OPENCLAW_BUILD_VERSION)"
-        WKCompanionAppBundleIdentifier: "$(OPENCLAW_COMPANION_APP_BUNDLE_ID)"
+        CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
+        CFBundleVersion: "$(NOVA_BUILD_VERSION)"
+        WKCompanionAppBundleIdentifier: "$(NOVA_COMPANION_APP_BUNDLE_ID)"
         WKApplication: true
         WKPrefersNetworkUponForeground: true
         NSLocalNetworkUsageDescription: OpenClaw connects this Apple Watch directly to your Gateway on trusted local networks.
@@ -403,10 +403,10 @@ targets:
       - sdk: AppIntents.framework
     settings:
       base:
-        CODE_SIGN_IDENTITY: "$(OPENCLAW_CODE_SIGN_IDENTITY)"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_APP_BUNDLE_ID).tests"
+        CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
+        CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_APP_BUNDLE_ID).tests"
         ENABLE_APP_INTENTS_METADATA_GENERATION: NO
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
@@ -414,13 +414,13 @@ targets:
         BUNDLE_LOADER: "$(TEST_HOST)"
       configs:
         Debug:
-          PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_DEBUG_APP_BUNDLE_ID).tests"
+          PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_APP_BUNDLE_ID).tests"
     info:
       path: Tests/Info.plist
       properties:
         CFBundleDisplayName: OpenClawTests
-        CFBundleShortVersionString: "$(OPENCLAW_MARKETING_VERSION)"
-        CFBundleVersion: "$(OPENCLAW_BUILD_VERSION)"
+        CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
+        CFBundleVersion: "$(NOVA_BUILD_VERSION)"
 
   OpenClawLogicTests:
     type: bundle.unit-test
@@ -456,23 +456,23 @@ targets:
       - package: OpenClawKit
     settings:
       base:
-        CODE_SIGN_IDENTITY: "$(OPENCLAW_CODE_SIGN_IDENTITY)"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_APP_BUNDLE_ID).logic-tests"
+        CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
+        CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_APP_BUNDLE_ID).logic-tests"
         ENABLE_APP_INTENTS_METADATA_GENERATION: NO
         SWIFT_EMIT_CONST_VALUE_PROTOCOLS: ""
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
       configs:
         Debug:
-          PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_DEBUG_APP_BUNDLE_ID).logic-tests"
+          PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_APP_BUNDLE_ID).logic-tests"
     info:
       path: Tests/Info.plist
       properties:
         CFBundleDisplayName: OpenClawLogicTests
-        CFBundleShortVersionString: "$(OPENCLAW_MARKETING_VERSION)"
-        CFBundleVersion: "$(OPENCLAW_BUILD_VERSION)"
+        CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
+        CFBundleVersion: "$(NOVA_BUILD_VERSION)"
 
   OpenClawUITests:
     type: bundle.ui-testing
@@ -486,10 +486,10 @@ targets:
       - target: OpenClaw
     settings:
       base:
-        CODE_SIGN_IDENTITY: "$(OPENCLAW_CODE_SIGN_IDENTITY)"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_APP_BUNDLE_ID).ui-tests"
+        CODE_SIGN_IDENTITY: "$(NOVA_CODE_SIGN_IDENTITY)"
+        CODE_SIGN_STYLE: "$(NOVA_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(NOVA_DEVELOPMENT_TEAM)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_APP_BUNDLE_ID).ui-tests"
         SDKROOT: iphoneos
         SUPPORTED_PLATFORMS: "iphonesimulator iphoneos"
         SUPPORTS_MACCATALYST: NO
@@ -498,10 +498,10 @@ targets:
         SWIFT_VERSION: "5.0"
       configs:
         Debug:
-          PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_DEBUG_APP_BUNDLE_ID).ui-tests"
+          PRODUCT_BUNDLE_IDENTIFIER: "$(NOVA_DEBUG_APP_BUNDLE_ID).ui-tests"
     info:
       path: UITests/Info.plist
       properties:
         CFBundleDisplayName: OpenClawUITests
-        CFBundleShortVersionString: "$(OPENCLAW_MARKETING_VERSION)"
-        CFBundleVersion: "$(OPENCLAW_BUILD_VERSION)"
+        CFBundleShortVersionString: "$(NOVA_MARKETING_VERSION)"
+        CFBundleVersion: "$(NOVA_BUILD_VERSION)"

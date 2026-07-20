@@ -11,7 +11,7 @@ import type { CodexAppServerStartOptions } from "./config.js";
 import type { CodexAppServerTransport } from "./transport.js";
 
 const UNSAFE_ENVIRONMENT_KEYS = new Set(["__proto__", "constructor", "prototype"]);
-const QA_PARENT_PID_ENV = "OPENCLAW_QA_PARENT_PID";
+const QA_PARENT_PID_ENV = "NOVA_QA_PARENT_PID";
 
 type CodexAppServerSpawnRuntime = {
   platform: NodeJS.Platform;

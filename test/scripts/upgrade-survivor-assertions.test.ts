@@ -142,10 +142,10 @@ function assertConfiguredPluginState(params: { installPath?: string } = {}): voi
     execFileSync(process.execPath, [ASSERTIONS_PATH, "assert-state"], {
       env: {
         ...process.env,
-        OPENCLAW_STATE_DIR: stateDir,
-        OPENCLAW_TEST_WORKSPACE_DIR: workspace,
-        OPENCLAW_UPGRADE_SURVIVOR_CONFIG_COVERAGE_JSON: coveragePath,
-        OPENCLAW_UPGRADE_SURVIVOR_SCENARIO: "configured-plugin-installs",
+        NOVA_STATE_DIR: stateDir,
+        NOVA_TEST_WORKSPACE_DIR: workspace,
+        NOVA_UPGRADE_SURVIVOR_CONFIG_COVERAGE_JSON: coveragePath,
+        NOVA_UPGRADE_SURVIVOR_SCENARIO: "configured-plugin-installs",
       },
       stdio: "pipe",
     });
@@ -271,9 +271,9 @@ describe("upgrade survivor assertions", () => {
       execFileSync(process.execPath, [ASSERTIONS_PATH, "seed"], {
         env: {
           ...process.env,
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_TEST_WORKSPACE_DIR: workspace,
-          OPENCLAW_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
+          NOVA_STATE_DIR: stateDir,
+          NOVA_TEST_WORKSPACE_DIR: workspace,
+          NOVA_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
         },
         stdio: "pipe",
       });
@@ -308,9 +308,9 @@ describe("upgrade survivor assertions", () => {
       execFileSync(process.execPath, [ASSERTIONS_PATH, "assert-config"], {
         env: {
           ...process.env,
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_UPGRADE_SURVIVOR_CONFIG_COVERAGE_JSON: coveragePath,
-          OPENCLAW_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_UPGRADE_SURVIVOR_CONFIG_COVERAGE_JSON: coveragePath,
+          NOVA_UPGRADE_SURVIVOR_SCENARIO: "acpx-openclaw-tools-bridge",
         },
         stdio: "pipe",
       });

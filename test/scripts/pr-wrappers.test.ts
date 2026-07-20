@@ -145,7 +145,7 @@ describe("scripts/pr wrappers", () => {
     expect(script).toContain("export NO_COLOR=1");
     expect(script).toContain("unset COLORTERM");
     expect(script).toContain('source "$script_parent_dir/lib/plain-gh.sh"');
-    expect(script).toContain("OPENCLAW_GH_BIN=");
+    expect(script).toContain("NOVA_GH_BIN=");
     expect(script).toContain("gh_plain");
     expect(script).toContain("scripts/pr review-init <PR>");
     expect(script).toContain("scripts/pr prepare-run <PR>");
@@ -195,7 +195,7 @@ describe("scripts/pr wrappers", () => {
       const envResult = spawnSync(join(fixture.linked, "scripts", "pr"), ["ci-dispatch", "123"], {
         cwd: fixture.linked,
         encoding: "utf8",
-        env: { ...fixture.env, OPENCLAW_PR_DEV_WRAPPER: "1" },
+        env: { ...fixture.env, NOVA_PR_DEV_WRAPPER: "1" },
       });
       expect(envResult.status, envResult.stderr).toBe(0);
       expect(envResult.stdout).toContain("local wrapper executed");
@@ -251,7 +251,7 @@ describe("scripts/pr wrappers", () => {
   it("defaults to squash and allows commit-preserving merge methods", () => {
     const script = readScript("scripts/pr-lib/merge.sh");
 
-    expect(script).toContain("OPENCLAW_PR_MERGE_METHOD:-squash");
+    expect(script).toContain("NOVA_PR_MERGE_METHOD:-squash");
     expect(script).toContain("--squash");
     expect(script).toContain("--merge");
     expect(script).toContain("--rebase");
@@ -415,7 +415,7 @@ exit 1
       ],
       {
         cwd: process.cwd(),
-        env: { ...process.env, OPENCLAW_GH_BIN: gh },
+        env: { ...process.env, NOVA_GH_BIN: gh },
         encoding: "utf8",
       },
     );

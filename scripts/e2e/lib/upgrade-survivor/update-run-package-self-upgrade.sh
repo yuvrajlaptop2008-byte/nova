@@ -4,32 +4,32 @@ set -Eeuo pipefail
 source scripts/lib/openclaw-e2e-instance.sh
 source scripts/e2e/lib/upgrade-survivor/update-restart-auth.sh
 
-if [ "${OPENCLAW_QA_ALLOW_UPDATE_RUN_SELF:-0}" != "1" ]; then
-  echo "blocked destructive package self-upgrade; set OPENCLAW_QA_ALLOW_UPDATE_RUN_SELF=1 to run" >&2
+if [ "${NOVA_QA_ALLOW_UPDATE_RUN_SELF:-0}" != "1" ]; then
+  echo "blocked destructive package self-upgrade; set NOVA_QA_ALLOW_UPDATE_RUN_SELF=1 to run" >&2
   exit 2
 fi
 
 export CI=true
-export OPENCLAW_NO_ONBOARD=1
-export OPENCLAW_NO_PROMPT=1
-export OPENCLAW_SKIP_PROVIDERS=1
-export OPENCLAW_DISABLE_BONJOUR=1
+export NOVA_NO_ONBOARD=1
+export NOVA_NO_PROMPT=1
+export NOVA_SKIP_PROVIDERS=1
+export NOVA_DISABLE_BONJOUR=1
 export npm_config_audit=false
 export npm_config_fund=false
 export npm_config_loglevel=error
 
-SOURCE_VERSION="${OPENCLAW_UPDATE_RUN_SELF_UPGRADE_SOURCE_VERSION:-2026.4.26}"
+SOURCE_VERSION="${NOVA_UPDATE_RUN_SELF_UPGRADE_SOURCE_VERSION:-2026.4.26}"
 SOURCE_SPEC="openclaw@$SOURCE_VERSION"
 TARGET_TAG="latest"
 RESTART_NOTE="QA-UPDATE-RUN-PACKAGE-SELF-UPGRADE"
 PORT=18789
 QA_BUS_PORT=43123
-ARTIFACT_DIR="${OPENCLAW_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR:-/tmp/openclaw-update-run-artifacts}"
-RUNTIME_ROOT="${OPENCLAW_UPDATE_RUN_SELF_UPGRADE_RUNTIME_ROOT:-/tmp/openclaw-update-run-runtime}"
+ARTIFACT_DIR="${NOVA_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR:-/tmp/openclaw-update-run-artifacts}"
+RUNTIME_ROOT="${NOVA_UPDATE_RUN_SELF_UPGRADE_RUNTIME_ROOT:-/tmp/openclaw-update-run-runtime}"
 export HOME="$RUNTIME_ROOT/home"
-export OPENCLAW_STATE_DIR="$HOME/.openclaw"
-export OPENCLAW_CONFIG_PATH="$OPENCLAW_STATE_DIR/openclaw.json"
-export OPENCLAW_TEST_WORKSPACE_DIR="$HOME/workspace"
+export NOVA_STATE_DIR="$HOME/.openclaw"
+export NOVA_CONFIG_PATH="$NOVA_STATE_DIR/openclaw.json"
+export NOVA_TEST_WORKSPACE_DIR="$HOME/workspace"
 export npm_config_prefix="$RUNTIME_ROOT/npm-prefix"
 export NPM_CONFIG_PREFIX="$npm_config_prefix"
 export npm_config_cache="$RUNTIME_ROOT/npm-cache"
@@ -66,9 +66,9 @@ SUPERVISOR_MONITOR_LOG="$ARTIFACT_DIR/supervisor-monitor.log"
 SERVICE_INSTALL_JSON="$ARTIFACT_DIR/gateway-service-install.json"
 SERVICE_INSTALL_ERR="$ARTIFACT_DIR/gateway-service-install.err"
 SERVICE_UNIT_ARTIFACT="$ARTIFACT_DIR/openclaw-gateway.service"
-export OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG="$SYSTEMCTL_SHIM_LOG"
-export OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE="$SYSTEMCTL_SHIM_PID_FILE"
-export OPENCLAW_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG="$SYSTEMCTL_SHIM_DAEMON_LOG"
+export NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_LOG="$SYSTEMCTL_SHIM_LOG"
+export NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_PID_FILE="$SYSTEMCTL_SHIM_PID_FILE"
+export NOVA_UPGRADE_SURVIVOR_SYSTEMCTL_SHIM_DAEMON_LOG="$SYSTEMCTL_SHIM_DAEMON_LOG"
 gateway_pid=""
 qa_bus_pid=""
 supervisor_monitor_pid=""
@@ -76,8 +76,8 @@ supervisor_monitor_pid=""
 mkdir -p \
   "$ARTIFACT_DIR" \
   "$HOME" \
-  "$OPENCLAW_STATE_DIR" \
-  "$OPENCLAW_TEST_WORKSPACE_DIR" \
+  "$NOVA_STATE_DIR" \
+  "$NOVA_TEST_WORKSPACE_DIR" \
   "$npm_config_prefix" \
   "$npm_config_cache"
 rm -f \
@@ -197,7 +197,7 @@ node -e '
   SOURCE_PLUGIN_INDEX_OUT="$SOURCE_PLUGIN_INDEX_JSON" \
   node -e '
     const fs = require("node:fs");
-    const indexPath = `${process.env.OPENCLAW_STATE_DIR}/plugins/installs.json`;
+    const indexPath = `${process.env.NOVA_STATE_DIR}/plugins/installs.json`;
     const index = JSON.parse(fs.readFileSync(indexPath, "utf8"));
     const record = index.installRecords?.["qa-channel"];
     if (
@@ -233,7 +233,7 @@ if [ ! -s "$QA_BUS_READY_FILE" ]; then
   exit 1
 fi
 
-CONFIG_PATH="$OPENCLAW_CONFIG_PATH" \
+CONFIG_PATH="$NOVA_CONFIG_PATH" \
   QA_BUS_PORT="$QA_BUS_PORT" \
   node -e '
     const fs = require("node:fs");
@@ -286,11 +286,11 @@ if [ ! -f "$service_unit" ] || ! grep -q '^ExecStart=' "$service_unit"; then
   echo "historical Gateway install did not create a service unit" >&2
   exit 1
 fi
-if grep -q 'OPENCLAW_SKIP_PROVIDERS' "$service_unit"; then
+if grep -q 'NOVA_SKIP_PROVIDERS' "$service_unit"; then
   echo "service-owned target environment unexpectedly suppresses providers" >&2
   exit 1
 fi
-if ! grep -q 'OPENCLAW_SYSTEMD_UNIT=openclaw-gateway.service' "$service_unit"; then
+if ! grep -q 'NOVA_SYSTEMD_UNIT=openclaw-gateway.service' "$service_unit"; then
   echo "service-owned target environment omitted its systemd marker" >&2
   exit 1
 fi
@@ -308,7 +308,7 @@ cp "$SYSTEMCTL_SHIM_LOG" "$SYSTEMCTL_SHIM_SETUP_LOG"
 : >"$SYSTEMCTL_SHIM_LOG"
 
 env \
-  OPENCLAW_SYSTEMD_UNIT=openclaw-gateway.service \
+  NOVA_SYSTEMD_UNIT=openclaw-gateway.service \
   openclaw gateway --port "$PORT" --bind loopback --allow-unconfigured \
   >"$GATEWAY_LOG" 2>&1 &
 gateway_pid="$!"
@@ -364,7 +364,7 @@ source_gateway_pid="$gateway_pid"
   echo "source Gateway exited through supervised update handoff"
   echo "starting installed service without provider suppression"
   env \
-    -u OPENCLAW_SKIP_PROVIDERS \
+    -u NOVA_SKIP_PROVIDERS \
     systemctl --user start openclaw-gateway.service
   service_pid="$(cat "$SYSTEMCTL_SHIM_PID_FILE" 2>/dev/null || true)"
   [[ "$service_pid" =~ ^[0-9]+$ ]] || exit 1

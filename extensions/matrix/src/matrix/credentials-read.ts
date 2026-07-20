@@ -89,9 +89,9 @@ export function openMatrixCredentialsStore(
 ): PluginStateSyncKeyedStore<MatrixCredentialStateRecord> {
   const runtime = getOptionalMatrixRuntime();
   const resolvedEnv =
-    env.OPENCLAW_STATE_DIR?.trim() || !runtime
+    env.NOVA_STATE_DIR?.trim() || !runtime
       ? env
-      : { ...env, OPENCLAW_STATE_DIR: runtime.state.resolveStateDir(env) };
+      : { ...env, NOVA_STATE_DIR: runtime.state.resolveStateDir(env) };
   return createPluginStateSyncKeyedStore<MatrixCredentialStateRecord>("matrix", {
     namespace: MATRIX_CREDENTIALS_NAMESPACE,
     maxEntries: MATRIX_CREDENTIALS_MAX_ENTRIES,

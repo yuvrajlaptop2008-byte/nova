@@ -5,14 +5,14 @@ import {
   extractInternalRuntimeContext,
   INTERNAL_RUNTIME_CONTEXT_BEGIN,
   INTERNAL_RUNTIME_CONTEXT_END,
-  OPENCLAW_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
-  OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE,
-  OPENCLAW_RUNTIME_CONTEXT_NOTICE,
-  OPENCLAW_RUNTIME_EVENT_HEADER,
+  NOVA_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
+  NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE,
+  NOVA_RUNTIME_CONTEXT_NOTICE,
+  NOVA_RUNTIME_EVENT_HEADER,
 } from "../../internal-runtime-context.js";
 import type { CurrentInboundPromptContext } from "./params.js";
 
-const OPENCLAW_RUNTIME_EVENT_USER_PROMPT = "Continue the Nova runtime event.";
+const NOVA_RUNTIME_EVENT_USER_PROMPT = "Continue the Nova runtime event.";
 
 type RuntimeContextPromptParts = {
   prompt: string;
@@ -201,8 +201,8 @@ export function resolveRuntimeContextPromptParts(params: {
   if (!prompt.trim()) {
     return runtimeContext
       ? {
-          prompt: OPENCLAW_RUNTIME_EVENT_USER_PROMPT,
-          ...(modelPromptText.trim() && modelPromptText !== OPENCLAW_RUNTIME_EVENT_USER_PROMPT
+          prompt: NOVA_RUNTIME_EVENT_USER_PROMPT,
+          ...(modelPromptText.trim() && modelPromptText !== NOVA_RUNTIME_EVENT_USER_PROMPT
             ? { modelPrompt: modelPromptText }
             : {}),
           runtimeContext,
@@ -253,9 +253,9 @@ function buildRuntimeContextMessageContent(params: {
   // into user-visible surfaces (e.g. Feishu streaming cards, #92589).
   return [
     params.kind === "runtime-event"
-      ? OPENCLAW_RUNTIME_EVENT_HEADER
-      : OPENCLAW_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
-    OPENCLAW_RUNTIME_CONTEXT_NOTICE,
+      ? NOVA_RUNTIME_EVENT_HEADER
+      : NOVA_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
+    NOVA_RUNTIME_CONTEXT_NOTICE,
     "",
     INTERNAL_RUNTIME_CONTEXT_BEGIN,
     params.runtimeContext,
@@ -273,7 +273,7 @@ export function buildRuntimeContextCustomMessage(
   }
   return {
     role: "custom",
-    customType: OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE,
+    customType: NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE,
     content: buildRuntimeContextMessageContent({
       runtimeContext: trimmedRuntimeContext,
       kind: "next-turn",

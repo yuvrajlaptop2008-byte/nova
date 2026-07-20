@@ -24,8 +24,8 @@ const AI_RUNTIME_PACKAGE = "@openclaw/ai";
 const AI_RUNTIME_BACKUP_DIR = ".openclaw-ai-package-backup";
 const ACTIVE_CHILD_KILLERS = new Set();
 const PACKAGE_BUILD_PLUGIN_SELECTION_ENV_NAMES = [
-  "OPENCLAW_EXTENSIONS",
-  "OPENCLAW_DOCKER_BUILD_EXTENSIONS",
+  "NOVA_EXTENSIONS",
+  "NOVA_DOCKER_BUILD_EXTENSIONS",
   DOCKER_SELECTED_PLUGIN_BUILD_IDS_ENV,
 ];
 const SIGNAL_EXIT_CODES = {
@@ -370,7 +370,7 @@ const PACKAGE_ARTIFACT_BUILD_STEPS = [
     command: "node",
     // The full profile keeps canonical declaration emission; ciArtifacts is a
     // PR-CI-only profile whose step env forces dts off and would clobber the
-    // OPENCLAW_RUN_NODE_SKIP_DTS_BUILD=0 this packaging path requires.
+    // NOVA_RUN_NODE_SKIP_DTS_BUILD=0 this packaging path requires.
     args: ["scripts/build-all.mjs", "full"],
   },
 ];
@@ -379,8 +379,8 @@ export async function buildPackageArtifacts(sourceDir, options = {}) {
   const runImpl = options.runImpl ?? run;
   const buildEnv = {
     ...process.env,
-    OPENCLAW_BUILD_ALL_NO_PNPM: "1",
-    OPENCLAW_RUN_NODE_SKIP_DTS_BUILD: "0",
+    NOVA_BUILD_ALL_NO_PNPM: "1",
+    NOVA_RUN_NODE_SKIP_DTS_BUILD: "0",
   };
   for (const envName of PACKAGE_BUILD_PLUGIN_SELECTION_ENV_NAMES) {
     delete buildEnv[envName];
@@ -392,7 +392,7 @@ export async function buildPackageArtifacts(sourceDir, options = {}) {
         ...buildEnv,
       },
       timeoutMs: resolveTimeoutMs(
-        "OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS",
+        "NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS",
         DEFAULT_PACKAGE_BUILD_TIMEOUT_MS,
       ),
     });
@@ -522,7 +522,7 @@ export async function prepareBundledAiRuntimePackage(
       // Keep extraction on the system tar contract so only the candidate checkout needs install.
       run("tar", ["-xzf", tarballPath, "-C", destination, "--strip-components=1"], destination, {
         timeoutMs: resolveTimeoutMs(
-          "OPENCLAW_DOCKER_PACKAGE_PACK_TIMEOUT_MS",
+          "NOVA_DOCKER_PACKAGE_PACK_TIMEOUT_MS",
           DEFAULT_PACKAGE_PACK_TIMEOUT_MS,
         ),
       }));
@@ -605,7 +605,7 @@ export async function prepareBundledAiRuntimePackage(
       {
         deferForwardedSignalExit: true,
         timeoutMs: resolveTimeoutMs(
-          "OPENCLAW_DOCKER_PACKAGE_PACK_TIMEOUT_MS",
+          "NOVA_DOCKER_PACKAGE_PACK_TIMEOUT_MS",
           DEFAULT_PACKAGE_PACK_TIMEOUT_MS,
         ),
       },
@@ -699,7 +699,7 @@ export async function packOpenClawPackageForDocker(sourceDir, outputDir, options
     packOutput = await runCaptureImpl(packTool, packArgs, sourceDir, {
       deferForwardedSignalExit: true,
       timeoutMs: resolveTimeoutMs(
-        "OPENCLAW_DOCKER_PACKAGE_PACK_TIMEOUT_MS",
+        "NOVA_DOCKER_PACKAGE_PACK_TIMEOUT_MS",
         DEFAULT_PACKAGE_PACK_TIMEOUT_MS,
       ),
     });
@@ -736,7 +736,7 @@ export async function writePackageInventoryForDocker(sourceDir, runImpl = run) {
     sourceDir,
     {
       timeoutMs: resolveTimeoutMs(
-        "OPENCLAW_DOCKER_PACKAGE_INVENTORY_TIMEOUT_MS",
+        "NOVA_DOCKER_PACKAGE_INVENTORY_TIMEOUT_MS",
         DEFAULT_PACKAGE_INVENTORY_TIMEOUT_MS,
       ),
     },
@@ -778,7 +778,7 @@ async function main() {
     sourceDir,
     {
       timeoutMs: resolveTimeoutMs(
-        "OPENCLAW_DOCKER_PACKAGE_TARBALL_CHECK_TIMEOUT_MS",
+        "NOVA_DOCKER_PACKAGE_TARBALL_CHECK_TIMEOUT_MS",
         DEFAULT_PACKAGE_TARBALL_CHECK_TIMEOUT_MS,
       ),
     },

@@ -377,7 +377,7 @@ describe("cross-OS release checks workflow", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_RELEASE_CHECKS_SCRIPT: SCRIPT_PATH,
+          NOVA_RELEASE_CHECKS_SCRIPT: SCRIPT_PATH,
         },
       },
     );

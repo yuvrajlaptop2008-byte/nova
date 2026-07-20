@@ -83,7 +83,7 @@ const shouldRunAutoDoctor = (deps, autoDoctorAttempted) =>
   !autoDoctorAttempted &&
   isGatewayWatchCommand(deps.args) &&
   !AUTO_DOCTOR_DISABLE_VALUES.has(
-    String(deps.env.OPENCLAW_GATEWAY_WATCH_AUTO_DOCTOR ?? "").toLowerCase(),
+    String(deps.env.NOVA_GATEWAY_WATCH_AUTO_DOCTOR ?? "").toLowerCase(),
   );
 
 const isProcessAlive = (pid, signalProcess) => {
@@ -289,13 +289,13 @@ export async function runWatchMain(params = {}) {
   const childEnv = { ...deps.env };
   const watchSession = `${deps.now()}-${deps.process.pid}`;
   const useChildProcessGroup = process.platform !== "win32" && deps.process.stdin?.isTTY !== true;
-  childEnv.OPENCLAW_WATCH_MODE = "1";
-  childEnv.OPENCLAW_WATCH_SESSION = watchSession;
+  childEnv.NOVA_WATCH_MODE = "1";
+  childEnv.NOVA_WATCH_SESSION = watchSession;
   // The watcher owns process restarts; keep SIGUSR1/config reloads in-process
   // so inherited launchd/systemd markers do not make the child exit and stall.
-  childEnv.OPENCLAW_NO_RESPAWN = "1";
+  childEnv.NOVA_NO_RESPAWN = "1";
   if (deps.args.length > 0) {
-    childEnv.OPENCLAW_WATCH_COMMAND = deps.args.join(" ");
+    childEnv.NOVA_WATCH_COMMAND = deps.args.join(" ");
   }
 
   return await new Promise((resolve, reject) => {

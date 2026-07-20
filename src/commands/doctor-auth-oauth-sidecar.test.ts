@@ -38,8 +38,8 @@ async function makeTestState(seed = "legacy-oauth-seed"): Promise<OpenClawTestSt
     layout: "state-only",
     prefix: "openclaw-doctor-oauth-sidecar-",
     env: {
-      OPENCLAW_AGENT_DIR: undefined,
-      OPENCLAW_AUTH_PROFILE_SECRET_KEY: seed,
+      NOVA_AGENT_DIR: undefined,
+      NOVA_AUTH_PROFILE_SECRET_KEY: seed,
     },
   });
   states.push(state);
@@ -355,9 +355,9 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
     },
   );
 
-  it("scans OPENCLAW_AGENT_DIR before treating sidecars as unreferenced", async () => {
+  it("scans NOVA_AGENT_DIR before treating sidecars as unreferenced", async () => {
     const state = await makeTestState();
-    const previousAgentDir = process.env.OPENCLAW_AGENT_DIR;
+    const previousAgentDir = process.env.NOVA_AGENT_DIR;
     const agentDir = state.path("external-agent");
     const authPath = path.join(agentDir, "auth-profiles.json");
     const profileId = "openai-codex:external";
@@ -379,7 +379,7 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
     try {
       fs.mkdirSync(agentDir, { recursive: true });
       fs.writeFileSync(authPath, `${JSON.stringify(auth, null, 2)}\n`, "utf8");
-      process.env.OPENCLAW_AGENT_DIR = agentDir;
+      process.env.NOVA_AGENT_DIR = agentDir;
       const sidecarPath = await state.writeJson(
         path.join("credentials", "auth-profiles", `${ref.id}.json`),
         {
@@ -416,9 +416,9 @@ describe("maybeRepairLegacyOAuthSidecarProfiles", () => {
       expect(fs.existsSync(sidecarPath)).toBe(false);
     } finally {
       if (previousAgentDir === undefined) {
-        delete process.env.OPENCLAW_AGENT_DIR;
+        delete process.env.NOVA_AGENT_DIR;
       } else {
-        process.env.OPENCLAW_AGENT_DIR = previousAgentDir;
+        process.env.NOVA_AGENT_DIR = previousAgentDir;
       }
     }
   });

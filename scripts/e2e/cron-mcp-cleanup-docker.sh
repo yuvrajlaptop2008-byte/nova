@@ -5,7 +5,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-cron-mcp-cleanup-e2e" OPENCLAW_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-cron-mcp-cleanup-e2e" NOVA_IMAGE)"
 PORT="18789"
 TOKEN="cron-mcp-e2e-$(date +%s)-$$"
 CONTAINER_NAME="openclaw-cron-mcp-e2e-$$"
@@ -18,33 +18,33 @@ cleanup() {
 trap cleanup EXIT
 
 docker_e2e_build_or_reuse "$IMAGE_NAME" cron-mcp-cleanup
-OPENCLAW_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 cron-mcp-cleanup empty)"
+NOVA_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 cron-mcp-cleanup empty)"
 
 echo "Running in-container cron/subagent MCP cleanup smoke..."
 # Harness files are mounted read-only; the app under test comes from /app/dist.
 set +e
 docker_e2e_run_with_harness \
   --name "$CONTAINER_NAME" \
-  -e "OPENCLAW_TEST_FAST=1" \
-  -e "OPENCLAW_GATEWAY_TOKEN=$TOKEN" \
-  -e "OPENCLAW_SKIP_CHANNELS=1" \
-  -e "OPENCLAW_SKIP_GMAIL_WATCHER=1" \
-  -e "OPENCLAW_SKIP_CANVAS_HOST=1" \
-  -e "OPENCLAW_SKIP_ACPX_RUNTIME=1" \
-  -e "OPENCLAW_SKIP_ACPX_RUNTIME_PROBE=1" \
-  -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$OPENCLAW_TEST_STATE_SCRIPT_B64" \
+  -e "NOVA_TEST_FAST=1" \
+  -e "NOVA_GATEWAY_TOKEN=$TOKEN" \
+  -e "NOVA_SKIP_CHANNELS=1" \
+  -e "NOVA_SKIP_GMAIL_WATCHER=1" \
+  -e "NOVA_SKIP_CANVAS_HOST=1" \
+  -e "NOVA_SKIP_ACPX_RUNTIME=1" \
+  -e "NOVA_SKIP_ACPX_RUNTIME_PROBE=1" \
+  -e "NOVA_TEST_STATE_SCRIPT_B64=$NOVA_TEST_STATE_SCRIPT_B64" \
   -e "GW_URL=ws://127.0.0.1:$PORT" \
   -e "GW_TOKEN=$TOKEN" \
-  -e "OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1" \
+  -e "NOVA_ALLOW_INSECURE_PRIVATE_WS=1" \
   "$IMAGE_NAME" \
   bash -lc "set -euo pipefail
     source scripts/lib/openclaw-e2e-instance.sh
-    openclaw_e2e_eval_test_state_from_b64 \"\${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}\"
+    openclaw_e2e_eval_test_state_from_b64 \"\${NOVA_TEST_STATE_SCRIPT_B64:?missing NOVA_TEST_STATE_SCRIPT_B64}\"
     entry=\"\$(openclaw_e2e_resolve_entrypoint)\"
     export MOCK_PORT=44081
-    export SUCCESS_MARKER=OPENCLAW_CRON_MCP_CLEANUP_OK
+    export SUCCESS_MARKER=NOVA_CRON_MCP_CLEANUP_OK
     export MOCK_REQUEST_LOG=/tmp/openclaw-cron-mock-openai-requests.jsonl
-    export OPENCLAW_DOCKER_OPENAI_BASE_URL=\"http://127.0.0.1:\$MOCK_PORT/v1\"
+    export NOVA_DOCKER_OPENAI_BASE_URL=\"http://127.0.0.1:\$MOCK_PORT/v1\"
     mock_pid=\"\$(openclaw_e2e_start_mock_openai \"\$MOCK_PORT\" /tmp/cron-mcp-cleanup-mock-openai.log)\"
     gateway_pid=
     cleanup_inner() {

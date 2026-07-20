@@ -45,8 +45,8 @@ function readPositiveIntEnv(name: string, fallback: number): number {
 
 function shouldLogMcpLoopbackHttp(): boolean {
   return (
-    isTruthyEnvValue(process.env.OPENCLAW_CLI_BACKEND_LOG_OUTPUT) ||
-    isTruthyEnvValue(process.env.OPENCLAW_LIVE_CLI_BACKEND_DEBUG)
+    isTruthyEnvValue(process.env.NOVA_CLI_BACKEND_LOG_OUTPUT) ||
+    isTruthyEnvValue(process.env.NOVA_LIVE_CLI_BACKEND_DEBUG)
   );
 }
 
@@ -385,7 +385,7 @@ export function isMcpHttpBodyTimeoutError(error: unknown): error is Error & { co
 }
 
 export function resolveMcpHttpBodyTimeoutMs(): number {
-  return readPositiveIntEnv("OPENCLAW_MCP_LOOPBACK_BODY_TIMEOUT_MS", DEFAULT_MCP_BODY_TIMEOUT_MS);
+  return readPositiveIntEnv("NOVA_MCP_LOOPBACK_BODY_TIMEOUT_MS", DEFAULT_MCP_BODY_TIMEOUT_MS);
 }
 
 export function resolveMcpCliCaptureKey(

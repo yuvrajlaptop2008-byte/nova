@@ -5,9 +5,9 @@ import {
   runFakeCodexAppServer,
 } from "../../../../scripts/e2e/lib/codex-app-server-fixture.mjs";
 
-const requestLog = process.env.OPENCLAW_QA_CODEX_AUTH_APP_SERVER_LOG;
+const requestLog = process.env.NOVA_QA_CODEX_AUTH_APP_SERVER_LOG;
 if (!requestLog) {
-  throw new Error("missing OPENCLAW_QA_CODEX_AUTH_APP_SERVER_LOG");
+  throw new Error("missing NOVA_QA_CODEX_AUTH_APP_SERVER_LOG");
 }
 
 runFakeCodexAppServer({

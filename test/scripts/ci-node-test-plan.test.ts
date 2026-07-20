@@ -91,7 +91,7 @@ function listAllToolingTestFiles(): string[] {
     return listMatchedTestFiles(
       createToolingVitestConfig({
         ...process.env,
-        OPENCLAW_VITEST_INCLUDE_FILE: undefined,
+        NOVA_VITEST_INCLUDE_FILE: undefined,
       }),
     );
   } finally {
@@ -198,7 +198,7 @@ describe("scripts/lib/ci-node-test-plan.mjs", () => {
     expect(
       bundled.find((shard) => shard.shardName === "agentic-control-plane-startup-health-runtime")
         ?.env,
-    ).toEqual({ OPENCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000" });
+    ).toEqual({ NOVA_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000" });
     expect(
       bundled.find((shard) => shard.shardName === "agentic-control-plane-startup-core")?.runner,
     ).toBe(DEFAULT_NODE_TEST_RUNNER);
@@ -280,10 +280,10 @@ describe("scripts/lib/ci-node-test-plan.mjs", () => {
         .flatMap((shard) => shard.groups)
         .find((group) => group.shard_name === "core-runtime-tui-pty")?.env,
     ).toEqual({
-      OPENCLAW_TUI_PTY_INCLUDE_LOCAL: "1",
+      NOVA_TUI_PTY_INCLUDE_LOCAL: "1",
       // Timing-sensitive groups pin the worker budget while the job-level
       // default scales with the runner class.
-      OPENCLAW_VITEST_MAX_WORKERS: "2",
+      NOVA_VITEST_MAX_WORKERS: "2",
     });
     const startupCoreJob = compact.find((shard) =>
       shard.groups.some((group) => group.shard_name === "agentic-control-plane-startup-core"),
@@ -298,7 +298,7 @@ describe("scripts/lib/ci-node-test-plan.mjs", () => {
       compact
         .flatMap((shard) => shard.groups)
         .find((group) => group.shard_name === "agentic-control-plane-startup-health-runtime")?.env,
-    ).toEqual({ OPENCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000" });
+    ).toEqual({ NOVA_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000" });
     expect(
       compact
         .filter((shard) => shard.groups.some((group) => !group.includePatterns))
@@ -711,7 +711,7 @@ describe("scripts/lib/ci-node-test-plan.mjs", () => {
       checkName: "checks-node-core-runtime-tui-pty",
       configs: ["test/vitest/vitest.tui-pty.config.ts"],
       env: {
-        OPENCLAW_TUI_PTY_INCLUDE_LOCAL: "1",
+        NOVA_TUI_PTY_INCLUDE_LOCAL: "1",
       },
       requiresDist: false,
     });
@@ -819,7 +819,7 @@ describe("scripts/lib/ci-node-test-plan.mjs", () => {
         checkName: `checks-node-${shard.shardName}`,
         configs: ["test/vitest/vitest.gateway-server.config.ts"],
         ...(shard.shardName === "agentic-control-plane-startup-health-runtime"
-          ? { env: { OPENCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000" } }
+          ? { env: { NOVA_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000" } }
           : {}),
         includePatterns: shard.includePatterns,
         requiresDist: false,

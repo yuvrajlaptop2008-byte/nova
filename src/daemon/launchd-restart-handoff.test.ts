@@ -61,7 +61,7 @@ async function executeReloadHandoff(launchctlStub: string): Promise<{
 
     spawnMock.mockReturnValue({ pid: 4242, unref: unrefMock });
     scheduleDetachedLaunchdRestartHandoff({
-      env: { HOME: home, OPENCLAW_PROFILE: "default" },
+      env: { HOME: home, NOVA_PROFILE: "default" },
       mode: "reload",
       waitForPid: noWaitPid,
     });
@@ -122,7 +122,7 @@ describe("scheduleDetachedLaunchdRestartHandoff", () => {
   it("waits for the caller pid before kickstarting launchd", () => {
     const env = {
       HOME: "/Users/test",
-      OPENCLAW_PROFILE: "default",
+      NOVA_PROFILE: "default",
     };
     spawnMock.mockReturnValue({ pid: 4242, unref: unrefMock });
 
@@ -158,7 +158,7 @@ describe("scheduleDetachedLaunchdRestartHandoff", () => {
     scheduleDetachedLaunchdRestartHandoff({
       env: {
         HOME: "/Users/test",
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       },
       mode: "start-after-exit",
     });
@@ -179,7 +179,7 @@ describe("scheduleDetachedLaunchdRestartHandoff", () => {
     scheduleDetachedLaunchdRestartHandoff({
       env: {
         HOME: "/Users/test",
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
       },
       mode: "reload",
       waitForPid: 9876,
@@ -280,7 +280,7 @@ esac`);
     scheduleDetachedLaunchdRestartHandoff({
       env: {
         HOME: "/Users/test",
-        OPENCLAW_PROFILE: "default",
+        NOVA_PROFILE: "default",
         PATH: "/tmp/evil-bin",
         DYLD_INSERT_LIBRARIES: "/tmp/evil.dylib",
         NPM_CONFIG_GLOBALCONFIG: "/tmp/evil-npmrc",
@@ -293,7 +293,7 @@ esac`);
     expect(args[1]).not.toContain("/tmp/evil-bin");
     expect(args[1]).not.toContain("/tmp/evil.dylib");
     expect(args[1]).not.toContain("/tmp/evil-npmrc");
-    expect(options.env.OPENCLAW_PROFILE).toBe("default");
+    expect(options.env.NOVA_PROFILE).toBe("default");
     expect(options.env.PATH).not.toBe("/tmp/evil-bin");
     expect(options.env.DYLD_INSERT_LIBRARIES).toBeUndefined();
     expect(options.env.NPM_CONFIG_GLOBALCONFIG).toBeUndefined();
@@ -304,7 +304,7 @@ esac`);
       scheduleDetachedLaunchdRestartHandoff({
         env: {
           HOME: "/Users/test",
-          OPENCLAW_LAUNCHD_LABEL: "../evil/\n\u001b[31mlabel\u001b[0m",
+          NOVA_LAUNCHD_LABEL: "../evil/\n\u001b[31mlabel\u001b[0m",
         },
         mode: "kickstart",
       });

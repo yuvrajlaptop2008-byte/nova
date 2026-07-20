@@ -93,8 +93,8 @@ describe("runCronIsolatedAgentTurn toolsAllow passthrough", () => {
   let previousFastTestEnv: string | undefined;
 
   beforeEach(() => {
-    previousFastTestEnv = process.env.OPENCLAW_TEST_FAST;
-    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    previousFastTestEnv = process.env.NOVA_TEST_FAST;
+    vi.stubEnv("NOVA_TEST_FAST", "1");
     resetRunCronIsolatedAgentTurnHarness();
     clearActiveRuntimeWebToolsMetadata();
     resolveDeliveryTargetMock.mockResolvedValue({
@@ -113,10 +113,10 @@ describe("runCronIsolatedAgentTurn toolsAllow passthrough", () => {
     clearActiveRuntimeWebToolsMetadata();
     if (previousFastTestEnv == null) {
       vi.unstubAllEnvs();
-      delete process.env.OPENCLAW_TEST_FAST;
+      delete process.env.NOVA_TEST_FAST;
       return;
     }
-    vi.stubEnv("OPENCLAW_TEST_FAST", previousFastTestEnv);
+    vi.stubEnv("NOVA_TEST_FAST", previousFastTestEnv);
   });
 
   it(

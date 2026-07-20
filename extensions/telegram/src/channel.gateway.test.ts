@@ -45,7 +45,7 @@ const startupBotInfo: TelegramBotInfo = {
 async function useTempStateDir(): Promise<string> {
   const stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-tg-channel-"));
   tempRoots.push(stateDir);
-  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+  vi.stubEnv("NOVA_STATE_DIR", stateDir);
   return stateDir;
 }
 

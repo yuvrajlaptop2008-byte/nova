@@ -634,7 +634,7 @@ describe("channel plugin blockers", () => {
           id: "twitch",
           origin: "bundled",
           channels: ["twitch"],
-          packageChannel: createPackageChannelEnv("twitch", ["OPENCLAW_TWITCH_ACCESS_TOKEN"]),
+          packageChannel: createPackageChannelEnv("twitch", ["NOVA_TWITCH_ACCESS_TOKEN"]),
           enabledByDefault: false,
         },
       ],
@@ -642,7 +642,7 @@ describe("channel plugin blockers", () => {
     } as unknown as ReturnType<typeof manifestRegistry.loadPluginManifestRegistry>);
 
     const hits = scanConfiguredChannelPluginBlockers({}, {
-      OPENCLAW_TWITCH_ACCESS_TOKEN: "configured",
+      NOVA_TWITCH_ACCESS_TOKEN: "configured",
     } as NodeJS.ProcessEnv);
 
     expect(hits).toEqual([
@@ -664,7 +664,7 @@ describe("channel plugin blockers", () => {
           id: "twitch",
           origin: "bundled",
           channels: ["twitch"],
-          packageChannel: createPackageChannelEnv("twitch", ["OPENCLAW_TWITCH_ACCESS_TOKEN"]),
+          packageChannel: createPackageChannelEnv("twitch", ["NOVA_TWITCH_ACCESS_TOKEN"]),
           enabledByDefault: false,
         },
       ],
@@ -678,7 +678,7 @@ describe("channel plugin blockers", () => {
         },
       },
       {
-        OPENCLAW_TWITCH_ACCESS_TOKEN: "configured",
+        NOVA_TWITCH_ACCESS_TOKEN: "configured",
       } as NodeJS.ProcessEnv,
     );
 

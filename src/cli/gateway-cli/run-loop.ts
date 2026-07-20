@@ -296,7 +296,7 @@ export async function runGatewayLoop(params: {
         });
       } else {
         gatewayLog.info(
-          `restart mode: in-process restart (${respawn.detail ?? "OPENCLAW_NO_RESPAWN"})`,
+          `restart mode: in-process restart (${respawn.detail ?? "NOVA_NO_RESPAWN"})`,
         );
       }
       if (!(await reacquireLockForInProcessRestart())) {
@@ -367,9 +367,7 @@ export async function runGatewayLoop(params: {
         `full process restart failed (${respawn.detail ?? "unknown error"}); falling back to in-process restart`,
       );
     } else {
-      gatewayLog.info(
-        `restart mode: in-process restart (${respawn.detail ?? "OPENCLAW_NO_RESPAWN"})`,
-      );
+      gatewayLog.info(`restart mode: in-process restart (${respawn.detail ?? "NOVA_NO_RESPAWN"})`);
     }
     if (isUpdateProcessRestartReason(activeRestartRequest?.restartReason)) {
       await handleRestartAfterServerClose();

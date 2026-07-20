@@ -13,12 +13,12 @@ import {
 
 const executablePath = resolvePlaywrightChromiumExecutablePath(chromium.executablePath());
 const available = canRunPlaywrightChromium(executablePath);
-const allowMissing = process.env.OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
+const allowMissing = process.env.NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
 const suite = available || !allowMissing ? describe : describe.skip;
 
 let browser: Browser;
 let server: ControlUiE2eServer;
-const captureUiProofEnabled = process.env.OPENCLAW_CAPTURE_UI_PROOF === "1";
+const captureUiProofEnabled = process.env.NOVA_CAPTURE_UI_PROOF === "1";
 const catalogGroupingStorageKey = "openclaw:sidebar:sessions:catalog-grouping";
 const collapsedSessionSectionsStorageKey = "openclaw:sidebar:sessions:collapsed-sections";
 const uiProofArtifactDir = path.join(

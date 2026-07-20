@@ -55,7 +55,7 @@ const WINDOWS_NODE_REQUIRED_ASSETS = [
 const SHA256_DIGEST_PATTERN = /^sha256:[a-f0-9]{64}$/u;
 const RELEASE_CANDIDATE_STATE_VERSION = 1;
 const RELEASE_CANDIDATE_STATE_FILE = "release-candidate-state.json";
-const TRUSTED_TOOLING_SHA_ENV = "OPENCLAW_RELEASE_CANDIDATE_TRUSTED_TOOLING_SHA";
+const TRUSTED_TOOLING_SHA_ENV = "NOVA_RELEASE_CANDIDATE_TRUSTED_TOOLING_SHA";
 const RELEASE_CANDIDATE_STATE_KEYS = [
   "repo",
   "tag",
@@ -366,16 +366,16 @@ function updateReleaseCandidateState(path, state, phase, runIds = {}) {
 }
 
 function githubApiTimeoutMs() {
-  const raw = process.env.OPENCLAW_RELEASE_CANDIDATE_GITHUB_API_TIMEOUT_MS;
+  const raw = process.env.NOVA_RELEASE_CANDIDATE_GITHUB_API_TIMEOUT_MS;
   if (!raw) {
     return DEFAULT_GITHUB_API_TIMEOUT_MS;
   }
   if (!/^[1-9]\d*$/u.test(raw)) {
-    throw new Error("OPENCLAW_RELEASE_CANDIDATE_GITHUB_API_TIMEOUT_MS must be a positive integer");
+    throw new Error("NOVA_RELEASE_CANDIDATE_GITHUB_API_TIMEOUT_MS must be a positive integer");
   }
   const value = Number(raw);
   if (!Number.isSafeInteger(value)) {
-    throw new Error("OPENCLAW_RELEASE_CANDIDATE_GITHUB_API_TIMEOUT_MS must be a positive integer");
+    throw new Error("NOVA_RELEASE_CANDIDATE_GITHUB_API_TIMEOUT_MS must be a positive integer");
   }
   return value;
 }
@@ -1297,7 +1297,7 @@ async function runParallelsIfNeeded(options, tarballPath, dependencyTarballPaths
   const command = candidateParallelsShellCommand(tarballPath, timeoutBin, dependencyTarballPaths);
   run("bash", ["-lc", command], {
     env: {
-      OPENCLAW_PARALLELS_ARTIFACT_ROOT: join(process.cwd(), ".artifacts", "parallels"),
+      NOVA_PARALLELS_ARTIFACT_ROOT: join(process.cwd(), ".artifacts", "parallels"),
     },
   });
   return {

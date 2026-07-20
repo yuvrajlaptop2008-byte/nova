@@ -7,9 +7,9 @@
   "apkCertificateSha256": "80dbc62315ea216dd6e8a7060735a866ddc464a48ed50fef29ff0550468b9a63",
   "materializedRoot": "apps/android/build/release-signing",
   "gradlePropertyNames": [
-    "OPENCLAW_ANDROID_STORE_FILE",
-    "OPENCLAW_ANDROID_STORE_PASSWORD",
-    "OPENCLAW_ANDROID_KEY_ALIAS",
-    "OPENCLAW_ANDROID_KEY_PASSWORD"
+    "NOVA_ANDROID_STORE_FILE",
+    "NOVA_ANDROID_STORE_PASSWORD",
+    "NOVA_ANDROID_KEY_ALIAS",
+    "NOVA_ANDROID_KEY_PASSWORD"
   ]
 }

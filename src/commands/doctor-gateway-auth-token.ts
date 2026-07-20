@@ -8,7 +8,7 @@ import { trimToUndefined } from "../gateway/credentials.js";
  * Resolves the token a managed gateway service can receive at install/update time.
  *
  * Exec SecretRefs are skipped by default because the service installer cannot safely evaluate
- * arbitrary commands; OPENCLAW_GATEWAY_TOKEN remains an explicit env override.
+ * arbitrary commands; NOVA_GATEWAY_TOKEN remains an explicit env override.
  */
 export async function resolveGatewayAuthTokenForService(
   cfg: OpenClawConfig,
@@ -20,7 +20,7 @@ export async function resolveGatewayAuthTokenForService(
     defaults: cfg.secrets?.defaults,
   }).ref;
   if (tokenRef?.source === "exec" && options.allowExecSecretRefs !== true) {
-    const envToken = trimToUndefined(env.OPENCLAW_GATEWAY_TOKEN);
+    const envToken = trimToUndefined(env.NOVA_GATEWAY_TOKEN);
     return envToken ? { token: envToken } : {};
   }
   const resolved = await resolveGatewayAuthToken({

@@ -78,14 +78,14 @@ describe("gateway startup-migration refusal", () => {
       ...process.env,
       HOME: root,
       USERPROFILE: root,
-      OPENCLAW_CONFIG_PATH: configPath,
-      OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-      OPENCLAW_STATE_DIR: stateDir,
-      OPENCLAW_TEST_FAST: "1",
+      NOVA_CONFIG_PATH: configPath,
+      NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+      NOVA_STATE_DIR: stateDir,
+      NOVA_TEST_FAST: "1",
       NO_COLOR: "1",
     };
     delete env.NODE_ENV;
-    delete env.OPENCLAW_HOME;
+    delete env.NOVA_HOME;
     delete env.VITEST;
 
     try {

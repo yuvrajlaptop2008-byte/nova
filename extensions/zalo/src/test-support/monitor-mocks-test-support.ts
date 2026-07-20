@@ -120,9 +120,9 @@ export async function resetLifecycleTestState() {
     lifecycleStateDir = undefined;
   }
   if (previousLifecycleStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = previousLifecycleStateDir;
+    process.env.NOVA_STATE_DIR = previousLifecycleStateDir;
     previousLifecycleStateDir = undefined;
   }
   vi.clearAllMocks();
@@ -136,9 +136,9 @@ async function installLifecycleWebhookIngressState(): Promise<void> {
     path.join(resolvePreferredOpenClawTmpDir(), "openclaw-zalo-lifecycle-"),
   );
   const stateDir = await fs.realpath(createdDir);
-  previousLifecycleStateDir = process.env.OPENCLAW_STATE_DIR;
+  previousLifecycleStateDir = process.env.NOVA_STATE_DIR;
   lifecycleStateDir = stateDir;
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  process.env.NOVA_STATE_DIR = stateDir;
   runtime.state.openChannelIngressQueue = (<T>(options: { accountId?: string }) =>
     createChannelIngressQueueForTests<T>({
       channelId: "zalo",

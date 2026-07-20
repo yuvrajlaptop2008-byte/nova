@@ -102,9 +102,9 @@ export type SessionWriteLockAcquireTimeoutConfig = OpenClawConfig;
 type SessionWriteLockMsKey = "acquireTimeoutMs" | "staleMs" | "maxHoldMs";
 
 const SESSION_WRITE_LOCK_ENV: Record<SessionWriteLockMsKey, string> = {
-  acquireTimeoutMs: "OPENCLAW_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS",
-  staleMs: "OPENCLAW_SESSION_WRITE_LOCK_STALE_MS",
-  maxHoldMs: "OPENCLAW_SESSION_WRITE_LOCK_MAX_HOLD_MS",
+  acquireTimeoutMs: "NOVA_SESSION_WRITE_LOCK_ACQUIRE_TIMEOUT_MS",
+  staleMs: "NOVA_SESSION_WRITE_LOCK_STALE_MS",
+  maxHoldMs: "NOVA_SESSION_WRITE_LOCK_MAX_HOLD_MS",
 };
 
 function readPositiveMsEnv(

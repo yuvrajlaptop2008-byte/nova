@@ -214,13 +214,13 @@ async function main() {
   const tempState = await createE2eStateDir("openclaw-system-agent-first-run-");
   tempState.registerExitCleanup();
   const stateDir = tempState.stateDir;
-  const configPath = process.env.OPENCLAW_CONFIG_PATH ?? path.join(stateDir, "openclaw.json");
+  const configPath = process.env.NOVA_CONFIG_PATH ?? path.join(stateDir, "openclaw.json");
   // Keep mutable logs/config outside the hashed package tree. Every file below
   // this root is part of the durable CLI owner checked before persistent setup.
   const fakeBinDir = path.join(stateDir, "fake-claude-package", "bin");
   const promptLogPath = path.join(stateDir, "fake-claude-prompts.jsonl");
-  setEnvValue("OPENCLAW_STATE_DIR", stateDir);
-  setEnvValue("OPENCLAW_CONFIG_PATH", configPath);
+  setEnvValue("NOVA_STATE_DIR", stateDir);
+  setEnvValue("NOVA_CONFIG_PATH", configPath);
   setEnvValue("PATH", `${fakeBinDir}:${process.env.PATH ?? ""}`);
   Reflect.deleteProperty(process.env, "OPENAI_API_KEY");
   Reflect.deleteProperty(process.env, "ANTHROPIC_API_KEY");

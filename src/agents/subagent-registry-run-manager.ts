@@ -64,7 +64,7 @@ import { updateSwarmCollectorCompletion } from "./swarm-collector.js";
 import { isSwarmRunQueued, removeQueuedSwarmRun } from "./swarm-scheduler.js";
 
 const log = createSubsystemLogger("agents/subagent-registry");
-const RECOVERABLE_WAIT_RETRY_DELAY_MS = process.env.OPENCLAW_TEST_FAST === "1" ? 25 : 5_000;
+const RECOVERABLE_WAIT_RETRY_DELAY_MS = process.env.NOVA_TEST_FAST === "1" ? 25 : 5_000;
 const WAIT_TIMEOUT_DEADLINE_SKEW_MS = 250;
 
 function shouldDeleteAttachments(entry: SubagentRunRecord) {

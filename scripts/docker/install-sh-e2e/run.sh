@@ -47,19 +47,19 @@ read_boolean_env() {
   esac
 }
 
-INSTALL_URL="${OPENCLAW_INSTALL_URL:-https://openclaw.bot/install.sh}"
-MODELS_MODE="${OPENCLAW_E2E_MODELS:-both}" # both|openai|anthropic
-INSTALL_TAG="${OPENCLAW_INSTALL_TAG:-latest}"
-E2E_PREVIOUS_VERSION="${OPENCLAW_INSTALL_E2E_PREVIOUS:-}"
-SKIP_PREVIOUS="${OPENCLAW_INSTALL_E2E_SKIP_PREVIOUS:-0}"
+INSTALL_URL="${NOVA_INSTALL_URL:-https://openclaw.bot/install.sh}"
+MODELS_MODE="${NOVA_E2E_MODELS:-both}" # both|openai|anthropic
+INSTALL_TAG="${NOVA_INSTALL_TAG:-latest}"
+E2E_PREVIOUS_VERSION="${NOVA_INSTALL_E2E_PREVIOUS:-}"
+SKIP_PREVIOUS="${NOVA_INSTALL_E2E_SKIP_PREVIOUS:-0}"
 OPENAI_API_KEY="${OPENAI_API_KEY:-}"
 ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
 ANTHROPIC_API_TOKEN="${ANTHROPIC_API_TOKEN:-}"
-AGENT_TURN_TIMEOUT_SECONDS="$(read_positive_int_env OPENCLAW_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS 300)"
-AGENT_TURNS_PARALLEL="$(read_boolean_env OPENCLAW_INSTALL_E2E_AGENT_TURNS_PARALLEL 1)"
-AGENT_TOOL_SMOKE="$(read_boolean_env OPENCLAW_INSTALL_E2E_AGENT_TOOL_SMOKE 1)"
-OPENAI_AGENT_MODEL="${OPENCLAW_INSTALL_E2E_OPENAI_MODEL:-openai/gpt-5.6-luna}"
-OPENAI_PROVIDER_TIMEOUT_SECONDS="$(read_positive_int_env OPENCLAW_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS "$AGENT_TURN_TIMEOUT_SECONDS")"
+AGENT_TURN_TIMEOUT_SECONDS="$(read_positive_int_env NOVA_INSTALL_E2E_AGENT_TURN_TIMEOUT_SECONDS 300)"
+AGENT_TURNS_PARALLEL="$(read_boolean_env NOVA_INSTALL_E2E_AGENT_TURNS_PARALLEL 1)"
+AGENT_TOOL_SMOKE="$(read_boolean_env NOVA_INSTALL_E2E_AGENT_TOOL_SMOKE 1)"
+OPENAI_AGENT_MODEL="${NOVA_INSTALL_E2E_OPENAI_MODEL:-openai/gpt-5.6-luna}"
+OPENAI_PROVIDER_TIMEOUT_SECONDS="$(read_positive_int_env NOVA_INSTALL_E2E_OPENAI_PROVIDER_TIMEOUT_SECONDS "$AGENT_TURN_TIMEOUT_SECONDS")"
 
 time_phase() {
   local name="$1"
@@ -101,24 +101,24 @@ mkdir -p "$NPM_CONFIG_PREFIX"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
 
 if [[ "$MODELS_MODE" != "both" && "$MODELS_MODE" != "openai" && "$MODELS_MODE" != "anthropic" ]]; then
-  echo "ERROR: OPENCLAW_E2E_MODELS must be one of: both|openai|anthropic" >&2
+  echo "ERROR: NOVA_E2E_MODELS must be one of: both|openai|anthropic" >&2
   exit 2
 fi
 
 if [[ "$MODELS_MODE" == "both" ]]; then
   if [[ -z "$OPENAI_API_KEY" ]]; then
-    echo "ERROR: OPENCLAW_E2E_MODELS=both requires OPENAI_API_KEY." >&2
+    echo "ERROR: NOVA_E2E_MODELS=both requires OPENAI_API_KEY." >&2
     exit 2
   fi
   if [[ -z "$ANTHROPIC_API_TOKEN" && -z "$ANTHROPIC_API_KEY" ]]; then
-    echo "ERROR: OPENCLAW_E2E_MODELS=both requires ANTHROPIC_API_TOKEN or ANTHROPIC_API_KEY." >&2
+    echo "ERROR: NOVA_E2E_MODELS=both requires ANTHROPIC_API_TOKEN or ANTHROPIC_API_KEY." >&2
     exit 2
   fi
 elif [[ "$MODELS_MODE" == "openai" && -z "$OPENAI_API_KEY" ]]; then
-  echo "ERROR: OPENCLAW_E2E_MODELS=openai requires OPENAI_API_KEY." >&2
+  echo "ERROR: NOVA_E2E_MODELS=openai requires OPENAI_API_KEY." >&2
   exit 2
 elif [[ "$MODELS_MODE" == "anthropic" && -z "$ANTHROPIC_API_TOKEN" && -z "$ANTHROPIC_API_KEY" ]]; then
-  echo "ERROR: OPENCLAW_E2E_MODELS=anthropic requires ANTHROPIC_API_TOKEN or ANTHROPIC_API_KEY." >&2
+  echo "ERROR: NOVA_E2E_MODELS=anthropic requires ANTHROPIC_API_TOKEN or ANTHROPIC_API_KEY." >&2
   exit 2
 fi
 
@@ -143,7 +143,7 @@ NODE
 
 preinstall_previous_version() {
   if [[ "$SKIP_PREVIOUS" == "1" ]]; then
-    echo "Skip preinstall previous (OPENCLAW_INSTALL_E2E_SKIP_PREVIOUS=1)"
+    echo "Skip preinstall previous (NOVA_INSTALL_E2E_SKIP_PREVIOUS=1)"
   else
     echo "Preinstall previous (forces installer upgrade path; avoids read() prompt)"
     quiet_npm install -g "openclaw@${PREVIOUS_VERSION}"
@@ -158,9 +158,9 @@ run_official_installer() (
 
   curl -fsSL --connect-timeout 10 --max-time 120 "$INSTALL_URL" -o "$installer" || return
   if [[ "$INSTALL_TAG" == "beta" ]]; then
-    OPENCLAW_BETA=1 bash "$installer"
+    NOVA_BETA=1 bash "$installer"
   elif [[ "$INSTALL_TAG" != "latest" ]]; then
-    OPENCLAW_VERSION="$INSTALL_TAG" bash "$installer"
+    NOVA_VERSION="$INSTALL_TAG" bash "$installer"
   else
     bash "$installer"
   fi
@@ -628,10 +628,10 @@ function readPositiveIntEnv(name, fallback) {
   }
   return Number(raw);
 }
-const maxBytes = readPositiveIntEnv("OPENCLAW_INSTALL_E2E_SESSION_SCAN_BYTES", 16 * 1024 * 1024);
-const maxLineBytes = readPositiveIntEnv("OPENCLAW_INSTALL_E2E_SESSION_LINE_BYTES", 1024 * 1024);
-const maxDepth = readPositiveIntEnv("OPENCLAW_INSTALL_E2E_SESSION_SCAN_DEPTH", 64);
-const maxNodes = readPositiveIntEnv("OPENCLAW_INSTALL_E2E_SESSION_SCAN_NODES", 100000);
+const maxBytes = readPositiveIntEnv("NOVA_INSTALL_E2E_SESSION_SCAN_BYTES", 16 * 1024 * 1024);
+const maxLineBytes = readPositiveIntEnv("NOVA_INSTALL_E2E_SESSION_LINE_BYTES", 1024 * 1024);
+const maxDepth = readPositiveIntEnv("NOVA_INSTALL_E2E_SESSION_SCAN_DEPTH", 64);
+const maxNodes = readPositiveIntEnv("NOVA_INSTALL_E2E_SESSION_SCAN_NODES", 100000);
 
 function missingTools() {
   return [...required].filter((t) => !seen.has(t));
@@ -935,7 +935,7 @@ run_profile() {
   phase_mark_passed "Wait for health ($profile)"
 
   if [[ "$AGENT_TOOL_SMOKE" == "0" ]]; then
-    echo "Skip agent tool smoke ($profile, OPENCLAW_INSTALL_E2E_AGENT_TOOL_SMOKE=0)"
+    echo "Skip agent tool smoke ($profile, NOVA_INSTALL_E2E_AGENT_TOOL_SMOKE=0)"
     cleanup_profile
     trap - EXIT
     return 0

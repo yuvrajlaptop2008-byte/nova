@@ -96,7 +96,7 @@ describe("iOS release shell wrapper arguments", () => {
       ["--version", "2026.6.11", "--build-number", "7"],
       {
         IOS_DEVELOPMENT_TEAM: "FWJYW4S8P8",
-        OPENCLAW_PUSH_RELAY_BASE_URL: "https://relay.example.com",
+        NOVA_PUSH_RELAY_BASE_URL: "https://relay.example.com",
       },
     );
 
@@ -109,7 +109,7 @@ describe("iOS release shell wrapper arguments", () => {
   it("requires stamped build metadata for App Store release preparation", () => {
     const script = readFileSync(path.join(process.cwd(), "scripts/ios-release-prepare.sh"), "utf8");
 
-    expect(script).toContain("OPENCLAW_REQUIRE_BUILD_METADATA=1");
+    expect(script).toContain("NOVA_REQUIRE_BUILD_METADATA=1");
     expect(script).toContain(
       'RELEASE_SOURCE_HELPER="${ROOT_DIR}/scripts/apple-release-source-check.sh"',
     );

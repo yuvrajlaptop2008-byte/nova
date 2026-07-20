@@ -66,7 +66,7 @@ const LOGGED_OUT_STATUS = 401;
 const WHATSAPP_WEBSOCKET_PROXY_TARGET = "https://mmg.whatsapp.net/";
 const CREDS_FLUSH_TIMEOUT_MESSAGE =
   "Queued WhatsApp creds save did not finish before auth bootstrap; skipping repair and continuing with primary creds.";
-const OPENCLAW_WHATSAPP_WEB_SOCKET_URL_ENV = "OPENCLAW_WHATSAPP_WEB_SOCKET_URL";
+const NOVA_WHATSAPP_WEB_SOCKET_URL_ENV = "NOVA_WHATSAPP_WEB_SOCKET_URL";
 
 async function rejectUnsafeWebCredsPath(authDir: string): Promise<void> {
   await assertWebCredsPathRegularFileOrMissing(resolveWebCredsPath(authDir));
@@ -179,7 +179,7 @@ function resolveWaWebSocketUrl(value: string | URL | undefined): string | URL | 
 }
 
 function resolveEnvWaWebSocketUrl(): string | undefined {
-  const value = resolveWaWebSocketUrl(process.env[OPENCLAW_WHATSAPP_WEB_SOCKET_URL_ENV]);
+  const value = resolveWaWebSocketUrl(process.env[NOVA_WHATSAPP_WEB_SOCKET_URL_ENV]);
   if (!value) {
     return undefined;
   }
@@ -187,10 +187,10 @@ function resolveEnvWaWebSocketUrl(): string | undefined {
   try {
     url = new URL(value);
   } catch {
-    throw new Error(`${OPENCLAW_WHATSAPP_WEB_SOCKET_URL_ENV} must be a valid URL.`);
+    throw new Error(`${NOVA_WHATSAPP_WEB_SOCKET_URL_ENV} must be a valid URL.`);
   }
   if (url.protocol !== "ws:" && url.protocol !== "wss:") {
-    throw new Error(`${OPENCLAW_WHATSAPP_WEB_SOCKET_URL_ENV} must use ws:// or wss://.`);
+    throw new Error(`${NOVA_WHATSAPP_WEB_SOCKET_URL_ENV} must use ws:// or wss://.`);
   }
   return url.toString();
 }

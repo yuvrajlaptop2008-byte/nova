@@ -55,8 +55,8 @@ describe("gateway client capability tool filtering", () => {
     ).toBe(false);
   });
 
-  it("keeps the core widget tool out when OPENCLAW_SKIP_CANVAS_HOST is set", () => {
-    withEnv({ OPENCLAW_SKIP_CANVAS_HOST: "1" }, () => {
+  it("keeps the core widget tool out when NOVA_SKIP_CANVAS_HOST is set", () => {
+    withEnv({ NOVA_SKIP_CANVAS_HOST: "1" }, () => {
       expect(hasWidget(createOpenClawTools({ clientCaps: ["inline-widgets"] }))).toBe(false);
     });
   });

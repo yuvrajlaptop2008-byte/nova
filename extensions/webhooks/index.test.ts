@@ -54,7 +54,7 @@ describe("webhooks plugin registration", () => {
               secret: {
                 source: "env",
                 provider: "default",
-                id: "OPENCLAW_WEBHOOK_SECRET",
+                id: "NOVA_WEBHOOK_SECRET",
               },
             },
           },

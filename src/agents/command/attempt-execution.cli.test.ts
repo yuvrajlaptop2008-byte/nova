@@ -318,7 +318,7 @@ describe("CLI attempt execution", () => {
   }
 
   beforeEach(async () => {
-    homeEnvSnapshot = captureEnv(["HOME", "OPENCLAW_STATE_DIR"]);
+    homeEnvSnapshot = captureEnv(["HOME", "NOVA_STATE_DIR"]);
     tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-cli-attempt-"));
     storePath = path.join(tmpDir, "sessions.json");
     runCliAgentMock.mockReset();
@@ -1374,7 +1374,7 @@ describe("CLI attempt execution", () => {
       const sessionId = `internal-${visibleSessionId}`;
       const sessionKey = `agent:main:internal-session-effects:${visibleSessionId}`;
       setTestEnvValue("HOME", tmpDir);
-      setTestEnvValue("OPENCLAW_STATE_DIR", path.join(tmpDir, "state"));
+      setTestEnvValue("NOVA_STATE_DIR", path.join(tmpDir, "state"));
       const internalStorePath = path.join(tmpDir, "sessions.json");
       const internalSessionFile = formatSqliteSessionFileMarker({
         agentId: "main",
@@ -1862,9 +1862,9 @@ describe("CLI attempt execution", () => {
 
     const updatedEntry = await persistCliTranscriptEntry({
       body: [
-        "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+        "<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>",
         "secret runtime context",
-        "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+        "<<<END_NOVA_INTERNAL_CONTEXT>>>",
         "",
         "visible ask",
       ].join("\n"),

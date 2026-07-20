@@ -8,8 +8,8 @@ const MCP_CONFIG = {
       type: "http",
       url: "http://127.0.0.1:54321/mcp",
       headers: {
-        Authorization: "Bearer ${OPENCLAW_MCP_TOKEN}",
-        "x-session-key": "${OPENCLAW_MCP_SESSION_KEY}",
+        Authorization: "Bearer ${NOVA_MCP_TOKEN}",
+        "x-session-key": "${NOVA_MCP_SESSION_KEY}",
       },
     },
   },

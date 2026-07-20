@@ -208,8 +208,8 @@ async function withMediaAutoDetectEnv<T>(
       GROQ_API_KEY: undefined,
       DEEPGRAM_API_KEY: undefined,
       GEMINI_API_KEY: undefined,
-      OPENCLAW_ANTIGRAVITY_CLI: undefined,
-      OPENCLAW_AGENT_DIR: undefined,
+      NOVA_ANTIGRAVITY_CLI: undefined,
+      NOVA_AGENT_DIR: undefined,
       ...env,
     },
     run,
@@ -985,7 +985,7 @@ describe("applyMediaUnderstanding", () => {
     await withMediaAutoDetectEnv(
       {
         PATH: emptyBinDir,
-        OPENCLAW_AGENT_DIR: isolatedAgentDir,
+        NOVA_AGENT_DIR: isolatedAgentDir,
       },
       async () => {
         const result = await applyMediaUnderstanding({ ctx, cfg });
@@ -1017,7 +1017,7 @@ describe("applyMediaUnderstanding", () => {
     await withMediaAutoDetectEnv(
       {
         PATH: binDir,
-        OPENCLAW_AGENT_DIR: isolatedAgentDir,
+        NOVA_AGENT_DIR: isolatedAgentDir,
       },
       async () => {
         const result = await applyMediaUnderstanding({ ctx, cfg });

@@ -7,8 +7,8 @@ import {
   readSqliteUserVersion,
 } from "../infra/sqlite-user-version.js";
 import {
-  OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_SQLITE_BUSY_TIMEOUT_MS,
+  NOVA_STATE_SCHEMA_VERSION,
   type OpenClawStateDatabaseOptions,
 } from "./openclaw-state-db.js";
 import { resolveOpenClawStateSqlitePath } from "./openclaw-state-db.paths.js";
@@ -20,12 +20,12 @@ type OpenClawStateReadOnlyDatabase = {
 
 function assertSupportedSchemaVersion(db: DatabaseSync, pathname: string): void {
   const userVersion = readSqliteUserVersion(db);
-  if (userVersion > OPENCLAW_STATE_SCHEMA_VERSION) {
+  if (userVersion > NOVA_STATE_SCHEMA_VERSION) {
     throw createNewerSqliteSchemaVersionError(
       "Nova state database",
       pathname,
       userVersion,
-      OPENCLAW_STATE_SCHEMA_VERSION,
+      NOVA_STATE_SCHEMA_VERSION,
     );
   }
 }
@@ -46,7 +46,7 @@ export function withOpenClawStateDatabaseReadOnly<T>(
   const sqlite = requireNodeSqlite();
   const db = new sqlite.DatabaseSync(pathname, { readOnly: true });
   try {
-    db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+    db.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
     assertSupportedSchemaVersion(db, pathname);
     return operation({ db, path: pathname });
   } finally {

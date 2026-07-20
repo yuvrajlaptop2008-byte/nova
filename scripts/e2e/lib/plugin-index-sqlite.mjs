@@ -7,17 +7,14 @@ import { readTextFileBounded } from "./text-file-utils.mjs";
 
 const INDEX_KEY = "installed-plugin-index";
 const ERROR_DETAIL_TAIL_BYTES = 16 * 1024;
-const JSON_ARTIFACT_MAX_BYTES = readPositiveIntEnv(
-  "OPENCLAW_PLUGIN_INDEX_JSON_MAX_BYTES",
-  1024 * 1024,
-);
+const JSON_ARTIFACT_MAX_BYTES = readPositiveIntEnv("NOVA_PLUGIN_INDEX_JSON_MAX_BYTES", 1024 * 1024);
 
 function stateDir() {
-  return process.env.OPENCLAW_STATE_DIR || path.join(process.env.HOME, ".openclaw");
+  return process.env.NOVA_STATE_DIR || path.join(process.env.HOME, ".openclaw");
 }
 
 function configPath() {
-  return process.env.OPENCLAW_CONFIG_PATH || path.join(stateDir(), "openclaw.json");
+  return process.env.NOVA_CONFIG_PATH || path.join(stateDir(), "openclaw.json");
 }
 
 function readJsonMaybe(file) {

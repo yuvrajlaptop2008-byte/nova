@@ -121,19 +121,17 @@ describe("warning filter", () => {
         ),
       ).toBeUndefined();
 
-      emitWarning("Visible warning", { type: "Warning", code: "OPENCLAW_TEST_WARNING" });
+      emitWarning("Visible warning", { type: "Warning", code: "NOVA_TEST_WARNING" });
       emitWarning(
         Object.assign(new Error("The punycode module is deprecated."), {
           name: "DeprecationWarning",
           code: "DEP0040",
         }),
-        { type: "Warning", code: "OPENCLAW_VISIBLE_OVERRIDE" },
+        { type: "Warning", code: "NOVA_VISIBLE_OVERRIDE" },
       );
       await flushWarnings();
-      expect(
-        seenWarnings.find((warning) => warning.code === "OPENCLAW_TEST_WARNING"),
-      ).toStrictEqual({
-        code: "OPENCLAW_TEST_WARNING",
+      expect(seenWarnings.find((warning) => warning.code === "NOVA_TEST_WARNING")).toStrictEqual({
+        code: "NOVA_TEST_WARNING",
         name: "Warning",
         message: "Visible warning",
       });

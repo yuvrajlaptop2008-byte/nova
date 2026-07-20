@@ -103,7 +103,7 @@ function hasManagedServiceHandoffContext(
 ): boolean {
   if (supervisor === "launchd") {
     return Boolean(
-      env.OPENCLAW_LAUNCHD_LABEL?.trim() ||
+      env.NOVA_LAUNCHD_LABEL?.trim() ||
       env.LAUNCH_JOB_LABEL?.trim() ||
       env.LAUNCH_JOB_NAME?.trim() ||
       env.XPC_SERVICE_NAME?.trim(),
@@ -113,13 +113,13 @@ function hasManagedServiceHandoffContext(
     // Ambient systemd markers only prove that a service manager started this
     // process. The detached CLI needs the durable unit name to stop the same
     // gateway before mutating the install root.
-    return Boolean(env.OPENCLAW_SYSTEMD_UNIT?.trim());
+    return Boolean(env.NOVA_SYSTEMD_UNIT?.trim());
   }
   if (supervisor === "schtasks") {
     return Boolean(
-      env.OPENCLAW_WINDOWS_TASK_NAME?.trim() ||
-      (env.OPENCLAW_SERVICE_MARKER?.trim() === GATEWAY_SERVICE_MARKER &&
-        env.OPENCLAW_SERVICE_KIND?.trim() === GATEWAY_SERVICE_KIND),
+      env.NOVA_WINDOWS_TASK_NAME?.trim() ||
+      (env.NOVA_SERVICE_MARKER?.trim() === GATEWAY_SERVICE_MARKER &&
+        env.NOVA_SERVICE_KIND?.trim() === GATEWAY_SERVICE_KIND),
     );
   }
   return false;

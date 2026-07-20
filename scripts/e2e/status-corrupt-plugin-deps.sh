@@ -70,7 +70,7 @@ cat > "$PLUGIN_DIR/setup-entry.cjs" <<'JS'
 const fs = require("node:fs");
 const path = require("node:path");
 
-const stageDir = process.env.OPENCLAW_PLUGIN_STAGE_DIR || "";
+const stageDir = process.env.NOVA_PLUGIN_STAGE_DIR || "";
 const renameResidue = path.join(stageDir, "node_modules", "ansi-escapes", ".openclaw-rename-tmp");
 if (fs.existsSync(renameResidue)) {
   const err = new Error("ENOTEMPTY: directory not empty, rename 'ansi-escapes'");
@@ -117,15 +117,15 @@ JSON
 
 run_openclaw() {
   HOME="$HOME_DIR" \
-  OPENCLAW_HOME="$STATE_DIR" \
-  OPENCLAW_STATE_DIR="$STATE_DIR" \
-  OPENCLAW_CONFIG_PATH="$CONFIG_PATH" \
-  OPENCLAW_PLUGIN_STAGE_DIR="$STAGE_DIR" \
-  OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 \
-  OPENCLAW_NO_ONBOARD=1 \
-  OPENCLAW_NO_PROMPT=1 \
-  OPENCLAW_SKIP_CHANNELS=1 \
-  OPENCLAW_SKIP_PROVIDERS=1 \
+  NOVA_HOME="$STATE_DIR" \
+  NOVA_STATE_DIR="$STATE_DIR" \
+  NOVA_CONFIG_PATH="$CONFIG_PATH" \
+  NOVA_PLUGIN_STAGE_DIR="$STAGE_DIR" \
+  NOVA_DISABLE_BUNDLED_PLUGINS=1 \
+  NOVA_NO_ONBOARD=1 \
+  NOVA_NO_PROMPT=1 \
+  NOVA_SKIP_CHANNELS=1 \
+  NOVA_SKIP_PROVIDERS=1 \
   COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
   NO_COLOR=1 \
     node "$ROOT_DIR/scripts/run-node.mjs" "$@"

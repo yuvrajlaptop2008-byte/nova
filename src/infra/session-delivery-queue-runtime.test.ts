@@ -35,7 +35,7 @@ describe("session delivery queue runtime", () => {
   it("drains a newly scheduled durable entry", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const id = await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -60,7 +60,7 @@ describe("session delivery queue runtime", () => {
   it("retries a transient initial queue lookup failure", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const id = await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -91,7 +91,7 @@ describe("session delivery queue runtime", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-15T00:00:00.000Z"));
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const { id } = await enqueueClaimedSessionDelivery(
           {
             kind: "agentTurn",
@@ -122,7 +122,7 @@ describe("session delivery queue runtime", () => {
   it("coalesces duplicate schedules while the same entry is draining", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const id = await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -158,7 +158,7 @@ describe("session delivery queue runtime", () => {
   it("retries a failed agent turn after durable backoff", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const id = await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -191,7 +191,7 @@ describe("session delivery queue runtime", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-15T00:00:00.000Z"));
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const id = await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -226,7 +226,7 @@ describe("session delivery queue runtime", () => {
   it("backs off after a drain-level failure leaves retry metadata unchanged", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const id = await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -257,7 +257,7 @@ describe("session delivery queue runtime", () => {
   it("backs off after a no-op drain leaves an immediately due row pending", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         const id = await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -287,7 +287,7 @@ describe("session delivery queue runtime", () => {
   it("reschedules pending entries after the runtime owner restarts", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",
@@ -313,7 +313,7 @@ describe("session delivery queue runtime", () => {
   it("retries a transient startup pending-entry scan failure", async () => {
     vi.useFakeTimers();
     await withTempDir({ prefix: "openclaw-session-delivery-runtime-" }, async (tempDir) => {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: tempDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: tempDir }, async () => {
         await enqueueSessionDelivery({
           kind: "agentTurn",
           sessionKey: "agent:main:main",

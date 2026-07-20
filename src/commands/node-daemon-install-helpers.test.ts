@@ -42,7 +42,7 @@ describe("buildNodeInstallPlan", () => {
     });
     mocks.renderSystemNodeWarning.mockReturnValue(undefined);
     mocks.buildNodeServiceEnvironment.mockReturnValue({
-      OPENCLAW_SERVICE_VERSION: "2026.3.22",
+      NOVA_SERVICE_VERSION: "2026.3.22",
     });
 
     const plan = await buildNodeInstallPlan({
@@ -54,11 +54,11 @@ describe("buildNodeInstallPlan", () => {
     });
 
     expect(plan.environment).toEqual({
-      OPENCLAW_SERVICE_VERSION: "2026.3.22",
+      NOVA_SERVICE_VERSION: "2026.3.22",
     });
     expect(plan.environmentValueSources).toEqual({
-      OPENCLAW_GATEWAY_TOKEN: "file",
-      OPENCLAW_GATEWAY_PASSWORD: "file", // pragma: allowlist secret
+      NOVA_GATEWAY_TOKEN: "file",
+      NOVA_GATEWAY_PASSWORD: "file", // pragma: allowlist secret
     });
     expect(mocks.resolvePreferredNodePath).not.toHaveBeenCalled();
     expect(mocks.buildNodeServiceEnvironment).toHaveBeenCalledWith({
@@ -79,7 +79,7 @@ describe("buildNodeInstallPlan", () => {
     });
     mocks.renderSystemNodeWarning.mockReturnValue(undefined);
     mocks.buildNodeServiceEnvironment.mockReturnValue({
-      OPENCLAW_SERVICE_VERSION: "2026.3.22",
+      NOVA_SERVICE_VERSION: "2026.3.22",
     });
 
     await buildNodeInstallPlan({
@@ -108,26 +108,26 @@ describe("buildNodeInstallPlan", () => {
     });
     mocks.renderSystemNodeWarning.mockReturnValue(undefined);
     mocks.buildNodeServiceEnvironment.mockReturnValue({
-      OPENCLAW_GATEWAY_TOKEN: "node-token",
-      OPENCLAW_GATEWAY_PASSWORD: "node-password",
-      OPENCLAW_SERVICE_VERSION: "2026.3.22",
+      NOVA_GATEWAY_TOKEN: "node-token",
+      NOVA_GATEWAY_PASSWORD: "node-password",
+      NOVA_SERVICE_VERSION: "2026.3.22",
     });
 
     const plan = await buildNodeInstallPlan({
       env: {
-        OPENCLAW_GATEWAY_TOKEN: "node-token",
-        OPENCLAW_GATEWAY_PASSWORD: "node-password",
+        NOVA_GATEWAY_TOKEN: "node-token",
+        NOVA_GATEWAY_PASSWORD: "node-password",
       },
       host: "127.0.0.1",
       port: 18789,
       runtime: "node",
     });
 
-    expect(plan.environment.OPENCLAW_GATEWAY_TOKEN).toBe("node-token");
-    expect(plan.environment.OPENCLAW_GATEWAY_PASSWORD).toBe("node-password");
+    expect(plan.environment.NOVA_GATEWAY_TOKEN).toBe("node-token");
+    expect(plan.environment.NOVA_GATEWAY_PASSWORD).toBe("node-password");
     expect(plan.environmentValueSources).toEqual({
-      OPENCLAW_GATEWAY_TOKEN: "file",
-      OPENCLAW_GATEWAY_PASSWORD: "file", // pragma: allowlist secret
+      NOVA_GATEWAY_TOKEN: "file",
+      NOVA_GATEWAY_PASSWORD: "file", // pragma: allowlist secret
     });
   });
 });

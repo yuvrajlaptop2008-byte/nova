@@ -65,7 +65,7 @@ export function resolveConfigPathTarget(root: unknown, pathLocal: Array<string |
 }
 
 function isUpdateInProgress(): boolean {
-  const value = process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+  const value = process.env.NOVA_UPDATE_IN_PROGRESS;
   return value === "1" || value === "true";
 }
 

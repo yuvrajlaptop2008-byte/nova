@@ -20,10 +20,10 @@ import { loadSessionEntry } from "./session-utils.js";
 import { extractPayloadText } from "./test-helpers.agent-results.js";
 
 const LIVE = isLiveTestEnabled();
-const CODEX_HARNESS_LIVE = process.env.OPENCLAW_LIVE_CODEX_HARNESS === "1";
-const CODEX_HARNESS_DEBUG = process.env.OPENCLAW_LIVE_CODEX_HARNESS_DEBUG === "1";
+const CODEX_HARNESS_LIVE = process.env.NOVA_LIVE_CODEX_HARNESS === "1";
+const CODEX_HARNESS_DEBUG = process.env.NOVA_LIVE_CODEX_HARNESS_DEBUG === "1";
 const CODEX_HARNESS_AUTH_MODE =
-  process.env.OPENCLAW_LIVE_CODEX_HARNESS_AUTH === "api-key" ? "api-key" : "codex-auth";
+  process.env.NOVA_LIVE_CODEX_HARNESS_AUTH === "api-key" ? "api-key" : "codex-auth";
 const describeLive = LIVE && CODEX_HARNESS_LIVE ? describe : describe.skip;
 const LIVE_TIMEOUT_MS = 420_000;
 const GATEWAY_CONNECT_TIMEOUT_MS = 60_000;
@@ -65,7 +65,7 @@ function logLiveStep(step: string, details?: Record<string, unknown>): void {
 }
 
 function snapshotEnv(): LiveEnvSnapshot {
-  return snapshotLiveEnv(["OPENCLAW_TRAJECTORY", "OPENCLAW_TRAJECTORY_DIR"]);
+  return snapshotLiveEnv(["NOVA_TRAJECTORY", "NOVA_TRAJECTORY_DIR"]);
 }
 
 function restoreEnv(snapshot: LiveEnvSnapshot): void {
@@ -471,10 +471,10 @@ describeLive("gateway live trajectory export", () => {
       const configPath = path.join(tempDir, "openclaw.json");
       const token = `test-${randomUUID()}`;
       const port = await getFreeGatewayPort();
-      const modelKey = process.env.OPENCLAW_LIVE_CODEX_HARNESS_MODEL ?? DEFAULT_CODEX_MODEL;
+      const modelKey = process.env.NOVA_LIVE_CODEX_HARNESS_MODEL ?? DEFAULT_CODEX_MODEL;
 
       clearRuntimeConfigSnapshot();
-      process.env.OPENCLAW_AGENT_RUNTIME = "codex";
+      process.env.NOVA_AGENT_RUNTIME = "codex";
       // API-key CI lanes intentionally pass OPENAI_API_KEY through to the Codex
       // app-server harness; only stored Codex-auth runs should clear OpenAI env.
       if (CODEX_HARNESS_AUTH_MODE !== "api-key") {
@@ -483,16 +483,16 @@ describeLive("gateway live trajectory export", () => {
       } else if (!process.env.OPENAI_BASE_URL?.trim()) {
         delete process.env.OPENAI_BASE_URL;
       }
-      setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
-      process.env.OPENCLAW_GATEWAY_TOKEN = token;
-      process.env.OPENCLAW_SKIP_BROWSER_CONTROL_SERVER = "1";
-      process.env.OPENCLAW_SKIP_CANVAS_HOST = "1";
-      process.env.OPENCLAW_SKIP_CHANNELS = "1";
-      process.env.OPENCLAW_SKIP_CRON = "1";
-      process.env.OPENCLAW_SKIP_GMAIL_WATCHER = "1";
-      setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
-      process.env.OPENCLAW_TRAJECTORY = "1";
-      process.env.OPENCLAW_TRAJECTORY_DIR = trajectoryDir;
+      setTestEnvValue("NOVA_CONFIG_PATH", configPath);
+      process.env.NOVA_GATEWAY_TOKEN = token;
+      process.env.NOVA_SKIP_BROWSER_CONTROL_SERVER = "1";
+      process.env.NOVA_SKIP_CANVAS_HOST = "1";
+      process.env.NOVA_SKIP_CHANNELS = "1";
+      process.env.NOVA_SKIP_CRON = "1";
+      process.env.NOVA_SKIP_GMAIL_WATCHER = "1";
+      setTestEnvValue("NOVA_STATE_DIR", stateDir);
+      process.env.NOVA_TRAJECTORY = "1";
+      process.env.NOVA_TRAJECTORY_DIR = trajectoryDir;
 
       await fs.mkdir(stateDir, { recursive: true });
       await fs.mkdir(trajectoryDir, { recursive: true });

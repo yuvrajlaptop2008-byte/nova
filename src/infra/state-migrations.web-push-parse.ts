@@ -99,7 +99,7 @@ export function parseLegacyVapidKeys(raw: string, env: NodeJS.ProcessEnv): Vapid
   }
   const subject =
     normalizeOptionalString(parsed.subject) ??
-    normalizeOptionalString(env.OPENCLAW_VAPID_SUBJECT) ??
+    normalizeOptionalString(env.NOVA_VAPID_SUBJECT) ??
     DEFAULT_WEB_PUSH_VAPID_SUBJECT;
   if (
     !isValidWebPushKey(parsed.publicKey) ||

@@ -19,7 +19,7 @@ import { cleanupTrackedTempDirs, makeTrackedTempDir } from "./test-helpers/fs-fi
 
 const tempDirs: string[] = [];
 const tempRoot = makeTrackedTempDir("openclaw-plugin-binding", tempDirs);
-const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+const previousStateDir = process.env.NOVA_STATE_DIR;
 
 type PluginBindingApprovalsDatabase = Pick<OpenClawStateKyselyDatabase, "plugin_binding_approvals">;
 
@@ -161,9 +161,9 @@ function createAdapter(channel: string, accountId: string): SessionBindingAdapte
 afterAll(() => {
   closeOpenClawStateDatabaseForTest();
   if (previousStateDir == null) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = previousStateDir;
+    process.env.NOVA_STATE_DIR = previousStateDir;
   }
   cleanupTrackedTempDirs(tempDirs);
 });
@@ -464,7 +464,7 @@ function insertPluginBindingApprovalRow(params: {
 
 describe("plugin conversation binding approvals", () => {
   beforeEach(() => {
-    process.env.OPENCLAW_STATE_DIR = tempRoot;
+    process.env.NOVA_STATE_DIR = tempRoot;
     clearPluginBindingApprovalRows();
     sessionBindingState.reset();
     resetPluginConversationBindingStateForTest();

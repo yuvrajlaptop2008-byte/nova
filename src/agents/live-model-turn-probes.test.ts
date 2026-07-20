@@ -32,18 +32,15 @@ function createImageProbeRunner(responses: string[]) {
 
 describe("live model turn probes", () => {
   it("defaults probes on and accepts common opt-out values", () => {
-    expect(isLiveModelProbeEnabled({}, "OPENCLAW_LIVE_MODEL_IMAGE_PROBE")).toBe(true);
+    expect(isLiveModelProbeEnabled({}, "NOVA_LIVE_MODEL_IMAGE_PROBE")).toBe(true);
     expect(
       isLiveModelProbeEnabled(
-        { OPENCLAW_LIVE_MODEL_IMAGE_PROBE: "false" },
-        "OPENCLAW_LIVE_MODEL_IMAGE_PROBE",
+        { NOVA_LIVE_MODEL_IMAGE_PROBE: "false" },
+        "NOVA_LIVE_MODEL_IMAGE_PROBE",
       ),
     ).toBe(false);
     expect(
-      isLiveModelProbeEnabled(
-        { OPENCLAW_LIVE_MODEL_IMAGE_PROBE: "1" },
-        "OPENCLAW_LIVE_MODEL_IMAGE_PROBE",
-      ),
+      isLiveModelProbeEnabled({ NOVA_LIVE_MODEL_IMAGE_PROBE: "1" }, "NOVA_LIVE_MODEL_IMAGE_PROBE"),
     ).toBe(true);
   });
 

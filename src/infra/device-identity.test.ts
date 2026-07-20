@@ -6,7 +6,7 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   closeOpenClawStateDatabaseForTest,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
 } from "../state/openclaw-state-db.js";
 import { withTempDir } from "../test-utils/temp-dir.js";
 import { acquireDeviceIdentityCoordinator } from "./device-identity-coordinator.js";
@@ -35,7 +35,7 @@ afterEach(() => {
 
 function storeOptions(rootDir: string, identityKey?: string): DeviceIdentityStoreOptions {
   return {
-    env: { ...process.env, OPENCLAW_STATE_DIR: rootDir },
+    env: { ...process.env, NOVA_STATE_DIR: rootDir },
     path: path.join(rootDir, "state", "openclaw.sqlite"),
     ...(identityKey ? { identityKey } : {}),
   };
@@ -68,10 +68,10 @@ async function runConcurrentIdentityLoads(rootDir: string): Promise<DeviceIdenti
   const moduleUrl = new URL("./device-identity.ts", import.meta.url).href;
   const workerSource = `
     import fs from "node:fs";
-    const { loadOrCreateDeviceIdentity } = await import(process.env.OPENCLAW_IDENTITY_MODULE);
-    fs.writeFileSync(process.env.OPENCLAW_IDENTITY_READY_PATH, "ready");
+    const { loadOrCreateDeviceIdentity } = await import(process.env.NOVA_IDENTITY_MODULE);
+    fs.writeFileSync(process.env.NOVA_IDENTITY_READY_PATH, "ready");
     const deadline = Date.now() + 15_000;
-    while (!fs.existsSync(process.env.OPENCLAW_IDENTITY_START_PATH)) {
+    while (!fs.existsSync(process.env.NOVA_IDENTITY_START_PATH)) {
       if (Date.now() >= deadline) {
         throw new Error("timed out waiting for concurrent identity start");
       }
@@ -80,8 +80,8 @@ async function runConcurrentIdentityLoads(rootDir: string): Promise<DeviceIdenti
       });
     }
     const identity = loadOrCreateDeviceIdentity({
-      env: { ...process.env, OPENCLAW_STATE_DIR: process.env.OPENCLAW_IDENTITY_STATE_DIR },
-      path: process.env.OPENCLAW_IDENTITY_DATABASE_PATH,
+      env: { ...process.env, NOVA_STATE_DIR: process.env.NOVA_IDENTITY_STATE_DIR },
+      path: process.env.NOVA_IDENTITY_DATABASE_PATH,
     });
     console.log(JSON.stringify(identity));
   `;
@@ -93,11 +93,11 @@ async function runConcurrentIdentityLoads(rootDir: string): Promise<DeviceIdenti
       {
         env: {
           ...process.env,
-          OPENCLAW_IDENTITY_DATABASE_PATH: path.join(rootDir, "state", "openclaw.sqlite"),
-          OPENCLAW_IDENTITY_MODULE: moduleUrl,
-          OPENCLAW_IDENTITY_READY_PATH: readyPath,
-          OPENCLAW_IDENTITY_START_PATH: startPath,
-          OPENCLAW_IDENTITY_STATE_DIR: rootDir,
+          NOVA_IDENTITY_DATABASE_PATH: path.join(rootDir, "state", "openclaw.sqlite"),
+          NOVA_IDENTITY_MODULE: moduleUrl,
+          NOVA_IDENTITY_READY_PATH: readyPath,
+          NOVA_IDENTITY_START_PATH: startPath,
+          NOVA_IDENTITY_STATE_DIR: rootDir,
         },
         stdio: ["ignore", "pipe", "pipe"],
       },
@@ -240,13 +240,13 @@ describe("device identity SQLite store", () => {
       closeOpenClawStateDatabaseForTest();
       const verified = new sqlite.DatabaseSync(options.path!, { readOnly: true });
       expect(verified.prepare("PRAGMA user_version").get()).toEqual({
-        user_version: OPENCLAW_STATE_SCHEMA_VERSION,
+        user_version: NOVA_STATE_SCHEMA_VERSION,
       });
       expect(
         verified
           .prepare("SELECT role, schema_version FROM schema_meta WHERE meta_key = 'primary'")
           .get(),
-      ).toEqual({ role: "global", schema_version: OPENCLAW_STATE_SCHEMA_VERSION });
+      ).toEqual({ role: "global", schema_version: NOVA_STATE_SCHEMA_VERSION });
       verified.close();
     });
   });

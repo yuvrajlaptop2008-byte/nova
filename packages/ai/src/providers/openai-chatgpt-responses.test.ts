@@ -788,7 +788,7 @@ describe("streamOpenAICodexResponses transport", () => {
 
     expect(result.stopReason).toBe("error");
     expect(capturedPayload?.instructions).toBe("Stable\nDynamic");
-    expect(JSON.stringify(capturedPayload)).not.toContain("OPENCLAW_CACHE_BOUNDARY");
+    expect(JSON.stringify(capturedPayload)).not.toContain("NOVA_CACHE_BOUNDARY");
   });
 
   it("falls back to the default instructions when no system prompt is set", async () => {

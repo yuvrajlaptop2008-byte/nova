@@ -49,9 +49,9 @@ describe("Docker plugin selection", () => {
     writePlugin(extensionsRoot, "other-source", "shared");
 
     for (const [selection, message] of [
-      ["missing-plugin", "unknown OPENCLAW_EXTENSIONS plugin id: missing-plugin"],
-      ["../invalid", "invalid OPENCLAW_EXTENSIONS plugin id: ../invalid"],
-      ["shared", "ambiguous OPENCLAW_EXTENSIONS plugin id: shared"],
+      ["missing-plugin", "unknown NOVA_EXTENSIONS plugin id: missing-plugin"],
+      ["../invalid", "invalid NOVA_EXTENSIONS plugin id: ../invalid"],
+      ["shared", "ambiguous NOVA_EXTENSIONS plugin id: shared"],
     ] as const) {
       const result = runSelector(extensionsRoot, selection);
       expect(result.status).toBe(1);

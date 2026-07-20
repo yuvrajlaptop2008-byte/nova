@@ -21,10 +21,10 @@ function writeExecutable(filePath: string, contents: string) {
 function runDockerRunArgs(pathPrefix: string) {
   const script = [
     "source scripts/lib/live-docker-auth.sh",
-    "unset OPENCLAW_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS OPENCLAW_DOCKER_E2E_DISABLE_RESOURCE_LIMITS",
-    "unset OPENCLAW_LIVE_DOCKER_MEMORY OPENCLAW_DOCKER_E2E_MEMORY",
-    "unset OPENCLAW_LIVE_DOCKER_CPUS OPENCLAW_DOCKER_E2E_CPUS",
-    "unset OPENCLAW_LIVE_DOCKER_PIDS_LIMIT OPENCLAW_DOCKER_E2E_PIDS_LIMIT",
+    "unset NOVA_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS NOVA_DOCKER_E2E_DISABLE_RESOURCE_LIMITS",
+    "unset NOVA_LIVE_DOCKER_MEMORY NOVA_DOCKER_E2E_MEMORY",
+    "unset NOVA_LIVE_DOCKER_CPUS NOVA_DOCKER_E2E_CPUS",
+    "unset NOVA_LIVE_DOCKER_PIDS_LIMIT NOVA_DOCKER_E2E_PIDS_LIMIT",
     "ARGS=()",
     "openclaw_live_init_docker_run_args ARGS 42s || exit $?",
     "printf '%s\\n' \"${ARGS[@]}\"",
@@ -62,8 +62,8 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         "-c",
         [
           "source scripts/lib/live-docker-auth.sh",
-          'fallback="$(openclaw_live_read_positive_int_env OPENCLAW_LIVE_SAMPLE_SECONDS 180)"',
-          'leading_zero="$(OPENCLAW_LIVE_SAMPLE_SECONDS=008 openclaw_live_read_positive_int_env OPENCLAW_LIVE_SAMPLE_SECONDS 180)"',
+          'fallback="$(openclaw_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180)"',
+          'leading_zero="$(NOVA_LIVE_SAMPLE_SECONDS=008 openclaw_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180)"',
           'printf "%s\\n%s\\n" "$fallback" "$leading_zero"',
         ].join("\n"),
       ],
@@ -75,7 +75,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         "-c",
         [
           "source scripts/lib/live-docker-auth.sh",
-          "OPENCLAW_LIVE_SAMPLE_SECONDS=30s openclaw_live_read_positive_int_env OPENCLAW_LIVE_SAMPLE_SECONDS 180",
+          "NOVA_LIVE_SAMPLE_SECONDS=30s openclaw_live_read_positive_int_env NOVA_LIVE_SAMPLE_SECONDS 180",
         ].join("\n"),
       ],
       { cwd: process.cwd(), encoding: "utf8" },
@@ -84,7 +84,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
     expect(result.status).toBe(0);
     expect(result.stdout.trimEnd().split("\n")).toEqual(["180", "008"]);
     expect(invalid.status).toBe(2);
-    expect(invalid.stderr).toContain("invalid OPENCLAW_LIVE_SAMPLE_SECONDS: 30s");
+    expect(invalid.stderr).toContain("invalid NOVA_LIVE_SAMPLE_SECONDS: 30s");
   });
 
   it("adds a kill-after grace period when timeout supports it", () => {
@@ -137,7 +137,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         [
           "source scripts/lib/live-docker-auth.sh",
           "ARGS=()",
-          "OPENCLAW_LIVE_DOCKER_AVAILABLE_CPUS=8 openclaw_live_init_docker_run_args ARGS 42s",
+          "NOVA_LIVE_DOCKER_AVAILABLE_CPUS=8 openclaw_live_init_docker_run_args ARGS 42s",
           "printf '%s\\n' \"${ARGS[@]}\"",
         ].join("\n"),
       ],
@@ -240,7 +240,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         [
           "source scripts/lib/live-docker-auth.sh",
           "ARGS=()",
-          "OPENCLAW_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS=1 openclaw_live_init_docker_run_args ARGS 42s",
+          "NOVA_LIVE_DOCKER_DISABLE_RESOURCE_LIMITS=1 openclaw_live_init_docker_run_args ARGS 42s",
           "printf '%s\\n' \"${ARGS[@]}\"",
         ].join("\n"),
       ],
@@ -285,7 +285,7 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         [
           "source scripts/lib/live-docker-auth.sh",
           "ARGS=()",
-          "OPENCLAW_LIVE_DOCKER_PIDS_LIMIT=0008 openclaw_live_init_docker_run_args ARGS 42s",
+          "NOVA_LIVE_DOCKER_PIDS_LIMIT=0008 openclaw_live_init_docker_run_args ARGS 42s",
           "printf '%s\\n' \"${ARGS[@]}\"",
         ].join("\n"),
       ],
@@ -304,8 +304,8 @@ describe("scripts/lib/live-docker-auth.sh", () => {
   });
 
   it.each([
-    ["live", "OPENCLAW_LIVE_DOCKER_PIDS_LIMIT"],
-    ["shared", "OPENCLAW_DOCKER_E2E_PIDS_LIMIT"],
+    ["live", "NOVA_LIVE_DOCKER_PIDS_LIMIT"],
+    ["shared", "NOVA_DOCKER_E2E_PIDS_LIMIT"],
   ])("rejects invalid %s Docker pids limits before live Docker setup", (_label, envName) => {
     const binDir = makeTempBin("openclaw-live-docker-auth-invalid-pids-");
     writeExecutable(
@@ -335,10 +335,8 @@ describe("scripts/lib/live-docker-auth.sh", () => {
         encoding: "utf8",
         env: {
           ...process.env,
-          OPENCLAW_DOCKER_E2E_PIDS_LIMIT:
-            envName === "OPENCLAW_DOCKER_E2E_PIDS_LIMIT" ? "many" : "",
-          OPENCLAW_LIVE_DOCKER_PIDS_LIMIT:
-            envName === "OPENCLAW_LIVE_DOCKER_PIDS_LIMIT" ? "many" : "",
+          NOVA_DOCKER_E2E_PIDS_LIMIT: envName === "NOVA_DOCKER_E2E_PIDS_LIMIT" ? "many" : "",
+          NOVA_LIVE_DOCKER_PIDS_LIMIT: envName === "NOVA_LIVE_DOCKER_PIDS_LIMIT" ? "many" : "",
           PATH: binDir,
         },
       },

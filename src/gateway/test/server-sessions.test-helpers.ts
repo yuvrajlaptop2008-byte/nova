@@ -466,9 +466,9 @@ export function setupGatewaySessionsTestHarness() {
       });
     }
 
-    const configPath = process.env.OPENCLAW_CONFIG_PATH;
+    const configPath = process.env.NOVA_CONFIG_PATH;
     if (!configPath) {
-      throw new Error("OPENCLAW_CONFIG_PATH is required");
+      throw new Error("NOVA_CONFIG_PATH is required");
     }
     await fs.writeFile(
       configPath,

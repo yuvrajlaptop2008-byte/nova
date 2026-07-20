@@ -80,7 +80,7 @@ const { mockExecApprovals, supervisorSpawnMock } = vi.hoisted(() => {
 beforeAll(async () => {
   await withEnvAsync(
     {
-      OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(os.tmpdir(), "openclaw-test-no-bundled-extensions"),
+      NOVA_BUNDLED_PLUGINS_DIR: path.join(os.tmpdir(), "openclaw-test-no-bundled-extensions"),
     },
     async () => {
       ({ createOpenClawCodingTools } = await import("./agent-tools.js"));
@@ -239,7 +239,7 @@ async function withSafeBinsExecTool(
   try {
     await withEnvAsync(
       {
-        OPENCLAW_SHELL_ENV_TIMEOUT_MS: "1",
+        NOVA_SHELL_ENV_TIMEOUT_MS: "1",
         PATH: "/usr/bin:/bin",
         SHELL: "/bin/sh",
       },

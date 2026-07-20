@@ -159,9 +159,9 @@ const child = spawn(script, args, {
   detached: true,
   env: {
     ...process.env,
-    OPENCLAW_PR_DEDICATED_PROCESS_GROUP: "1",
-    OPENCLAW_PR_LOCK_NOTIFY_FD: "3",
-    OPENCLAW_PR_LOCK_SUPERVISOR_PID: String(process.pid),
+    NOVA_PR_DEDICATED_PROCESS_GROUP: "1",
+    NOVA_PR_LOCK_NOTIFY_FD: "3",
+    NOVA_PR_LOCK_SUPERVISOR_PID: String(process.pid),
   },
   stdio: ["inherit", "inherit", "inherit", "pipe"],
 });
@@ -334,7 +334,7 @@ async function waitForOperationDrain() {
 
 function releaseLock({ lockRef, ownerOid }) {
   const env = { ...process.env };
-  delete env.OPENCLAW_PR_LOCK_NOTIFY_FD;
+  delete env.NOVA_PR_LOCK_NOTIFY_FD;
   const result = spawnSync(
     "bash",
     [

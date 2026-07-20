@@ -12,7 +12,7 @@ import { discoverAuthStorage, discoverModels } from "./agent-model-discovery.js"
 // authored models.json api values, making these assertions machine-dependent.
 // The ambient plugin metadata snapshot is cleared for the same reason.
 beforeEach(() => {
-  vi.stubEnv("OPENCLAW_DISABLE_BUNDLED_PLUGINS", "1");
+  vi.stubEnv("NOVA_DISABLE_BUNDLED_PLUGINS", "1");
   clearCurrentPluginMetadataSnapshot();
 });
 

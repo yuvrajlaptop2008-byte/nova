@@ -104,14 +104,14 @@ describe("parseCliContainerArgs", () => {
 });
 
 describe("resolveCliContainerTarget", () => {
-  it("uses argv first and falls back to OPENCLAW_CONTAINER", () => {
+  it("uses argv first and falls back to NOVA_CONTAINER", () => {
     expect(
       resolveCliContainerTarget(["node", "openclaw", "--container", "demo", "status"], {}),
     ).toBe("demo");
     expect(resolveCliContainerTarget(["node", "openclaw", "status"], {})).toBeNull();
     expect(
       resolveCliContainerTarget(["node", "openclaw", "status"], {
-        OPENCLAW_CONTAINER: "demo",
+        NOVA_CONTAINER: "demo",
       } as NodeJS.ProcessEnv),
     ).toBe("demo");
   });
@@ -125,7 +125,7 @@ describe("maybeRunCliInContainer", () => {
     });
   });
 
-  it("uses OPENCLAW_CONTAINER when the flag is absent", () => {
+  it("uses NOVA_CONTAINER when the flag is absent", () => {
     const spawnSync = vi
       .fn()
       .mockReturnValueOnce({
@@ -143,7 +143,7 @@ describe("maybeRunCliInContainer", () => {
 
     expect(
       maybeRunCliInContainer(["node", "openclaw", "status"], {
-        env: { OPENCLAW_CONTAINER: "demo" } as NodeJS.ProcessEnv,
+        env: { NOVA_CONTAINER: "demo" } as NodeJS.ProcessEnv,
         spawnSync,
       }),
     ).toEqual({
@@ -158,9 +158,9 @@ describe("maybeRunCliInContainer", () => {
         "exec",
         "-i",
         "--env",
-        "OPENCLAW_CONTAINER_HINT=demo",
+        "NOVA_CONTAINER_HINT=demo",
         "--env",
-        "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+        "NOVA_CLI_CONTAINER_BYPASS=1",
         "demo",
         "openclaw",
         "status",
@@ -168,7 +168,7 @@ describe("maybeRunCliInContainer", () => {
       {
         stdio: "inherit",
         env: {
-          OPENCLAW_CONTAINER: "",
+          NOVA_CONTAINER: "",
         },
       },
     );
@@ -192,12 +192,12 @@ describe("maybeRunCliInContainer", () => {
 
     maybeRunCliInContainer(["node", "openclaw", "status"], {
       env: {
-        OPENCLAW_CONTAINER: "demo",
-        OPENCLAW_PROFILE: "work",
-        OPENCLAW_GATEWAY_PORT: "19001",
-        OPENCLAW_GATEWAY_URL: "ws://127.0.0.1:18789",
-        OPENCLAW_GATEWAY_TOKEN: "token",
-        OPENCLAW_GATEWAY_PASSWORD: "password",
+        NOVA_CONTAINER: "demo",
+        NOVA_PROFILE: "work",
+        NOVA_GATEWAY_PORT: "19001",
+        NOVA_GATEWAY_URL: "ws://127.0.0.1:18789",
+        NOVA_GATEWAY_TOKEN: "token",
+        NOVA_GATEWAY_PASSWORD: "password",
       } as NodeJS.ProcessEnv,
       spawnSync,
     });
@@ -209,9 +209,9 @@ describe("maybeRunCliInContainer", () => {
         "exec",
         "-i",
         "--env",
-        "OPENCLAW_CONTAINER_HINT=demo",
+        "NOVA_CONTAINER_HINT=demo",
         "--env",
-        "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+        "NOVA_CLI_CONTAINER_BYPASS=1",
         "demo",
         "openclaw",
         "status",
@@ -219,7 +219,7 @@ describe("maybeRunCliInContainer", () => {
       {
         stdio: "inherit",
         env: {
-          OPENCLAW_CONTAINER: "",
+          NOVA_CONTAINER: "",
         },
       },
     );
@@ -243,8 +243,8 @@ describe("maybeRunCliInContainer", () => {
 
     maybeRunCliInContainer(["node", "openclaw", "status"], {
       env: {
-        OPENCLAW_CONTAINER: "demo",
-        OPENCLAW_PROXY_URL: " http://proxy.internal:3128 ",
+        NOVA_CONTAINER: "demo",
+        NOVA_PROXY_URL: " http://proxy.internal:3128 ",
       } as NodeJS.ProcessEnv,
       spawnSync,
     });
@@ -256,11 +256,11 @@ describe("maybeRunCliInContainer", () => {
         "exec",
         "-i",
         "--env",
-        "OPENCLAW_CONTAINER_HINT=demo",
+        "NOVA_CONTAINER_HINT=demo",
         "--env",
-        "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+        "NOVA_CLI_CONTAINER_BYPASS=1",
         "--env",
-        "OPENCLAW_PROXY_URL=http://proxy.internal:3128",
+        "NOVA_PROXY_URL=http://proxy.internal:3128",
         "demo",
         "openclaw",
         "status",
@@ -268,8 +268,8 @@ describe("maybeRunCliInContainer", () => {
       {
         stdio: "inherit",
         env: {
-          OPENCLAW_CONTAINER: "",
-          OPENCLAW_PROXY_URL: " http://proxy.internal:3128 ",
+          NOVA_CONTAINER: "",
+          NOVA_PROXY_URL: " http://proxy.internal:3128 ",
         },
       },
     );
@@ -297,8 +297,8 @@ describe("maybeRunCliInContainer", () => {
     expect(() =>
       maybeRunCliInContainer(["node", "openclaw", "status"], {
         env: {
-          OPENCLAW_CONTAINER: "demo",
-          OPENCLAW_PROXY_URL: ` ${proxyUrl} `,
+          NOVA_CONTAINER: "demo",
+          NOVA_PROXY_URL: ` ${proxyUrl} `,
         } as NodeJS.ProcessEnv,
         spawnSync,
       }),
@@ -323,8 +323,8 @@ describe("maybeRunCliInContainer", () => {
     try {
       maybeRunCliInContainer(["node", "openclaw", "status"], {
         env: {
-          OPENCLAW_CONTAINER: "demo",
-          OPENCLAW_PROXY_URL:
+          NOVA_CONTAINER: "demo",
+          NOVA_PROXY_URL:
             "http://proxy-user:proxy-secret@127.1:3128?token=proxy-query-secret#proxy-fragment-secret",
         } as NodeJS.ProcessEnv,
         spawnSync,
@@ -333,7 +333,7 @@ describe("maybeRunCliInContainer", () => {
       message = err instanceof Error ? err.message : String(err);
     }
 
-    expect(message).toContain("OPENCLAW_PROXY_URL=http://redacted:redacted@127.0.0.1:3128/");
+    expect(message).toContain("NOVA_PROXY_URL=http://redacted:redacted@127.0.0.1:3128/");
     expect(message).not.toContain("proxy-user");
     expect(message).not.toContain("proxy-secret");
     expect(message).not.toContain("proxy-query-secret");
@@ -361,16 +361,16 @@ describe("maybeRunCliInContainer", () => {
 
     maybeRunCliInContainer(["node", "openclaw", "status"], {
       env: {
-        OPENCLAW_CONTAINER: "demo",
-        OPENCLAW_PROXY_URL: " http://127.0.0.1:3128 ",
-        OPENCLAW_CONTAINER_ALLOW_LOOPBACK_PROXY_URL: "1",
+        NOVA_CONTAINER: "demo",
+        NOVA_PROXY_URL: " http://127.0.0.1:3128 ",
+        NOVA_CONTAINER_ALLOW_LOOPBACK_PROXY_URL: "1",
       } as NodeJS.ProcessEnv,
       spawnSync,
     });
 
     const podmanCall = requireSpawnCall(spawnSync, 2);
     expect(podmanCall[0]).toBe("podman");
-    expect(podmanCall[1]).toContain("OPENCLAW_PROXY_URL=http://127.0.0.1:3128");
+    expect(podmanCall[1]).toContain("NOVA_PROXY_URL=http://127.0.0.1:3128");
     if (podmanCall[2] === undefined) {
       throw new Error("Expected podman spawn options");
     }
@@ -415,16 +415,16 @@ describe("maybeRunCliInContainer", () => {
         "exec",
         "-i",
         "--env",
-        "OPENCLAW_CONTAINER_HINT=demo",
+        "NOVA_CONTAINER_HINT=demo",
         "--env",
-        "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+        "NOVA_CLI_CONTAINER_BYPASS=1",
         "demo",
         "openclaw",
         "status",
       ],
       {
         stdio: "inherit",
-        env: { OPENCLAW_CONTAINER: "" },
+        env: { NOVA_CONTAINER: "" },
       },
     );
   });
@@ -468,16 +468,16 @@ describe("maybeRunCliInContainer", () => {
         "exec",
         "-i",
         "-e",
-        "OPENCLAW_CONTAINER_HINT=demo",
+        "NOVA_CONTAINER_HINT=demo",
         "-e",
-        "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+        "NOVA_CLI_CONTAINER_BYPASS=1",
         "demo",
         "openclaw",
         "health",
       ],
       {
         stdio: "inherit",
-        env: { USER: "openclaw", OPENCLAW_CONTAINER: "" },
+        env: { USER: "openclaw", NOVA_CONTAINER: "" },
       },
     );
   });
@@ -531,16 +531,16 @@ describe("maybeRunCliInContainer", () => {
         "exec",
         "-i",
         "-e",
-        "OPENCLAW_CONTAINER_HINT=demo",
+        "NOVA_CONTAINER_HINT=demo",
         "-e",
-        "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+        "NOVA_CLI_CONTAINER_BYPASS=1",
         "demo",
         "openclaw",
         "status",
       ],
       {
         stdio: "inherit",
-        env: { USER: "somalley", OPENCLAW_CONTAINER: "" },
+        env: { USER: "somalley", NOVA_CONTAINER: "" },
       },
     );
     expect(spawnSync).toHaveBeenCalledTimes(3);
@@ -637,21 +637,21 @@ describe("maybeRunCliInContainer", () => {
         "-i",
         "-t",
         "--env",
-        "OPENCLAW_CONTAINER_HINT=demo",
+        "NOVA_CONTAINER_HINT=demo",
         "--env",
-        "OPENCLAW_CLI_CONTAINER_BYPASS=1",
+        "NOVA_CLI_CONTAINER_BYPASS=1",
         "demo",
         "openclaw",
         "setup",
       ],
       {
         stdio: "inherit",
-        env: { OPENCLAW_CONTAINER: "" },
+        env: { NOVA_CONTAINER: "" },
       },
     );
   });
 
-  it("prefers --container over OPENCLAW_CONTAINER", () => {
+  it("prefers --container over NOVA_CONTAINER", () => {
     const spawnSync = vi
       .fn()
       .mockReturnValueOnce({
@@ -669,7 +669,7 @@ describe("maybeRunCliInContainer", () => {
 
     expect(
       maybeRunCliInContainer(["node", "openclaw", "--container", "flag-demo", "health"], {
-        env: { OPENCLAW_CONTAINER: "env-demo" } as NodeJS.ProcessEnv,
+        env: { NOVA_CONTAINER: "env-demo" } as NodeJS.ProcessEnv,
         spawnSync,
       }),
     ).toEqual({
@@ -702,7 +702,7 @@ describe("maybeRunCliInContainer", () => {
   it("skips recursion when the bypass env is set", () => {
     expect(
       maybeRunCliInContainer(["node", "openclaw", "--container", "demo", "status"], {
-        env: { OPENCLAW_CLI_CONTAINER_BYPASS: "1" } as NodeJS.ProcessEnv,
+        env: { NOVA_CLI_CONTAINER_BYPASS: "1" } as NodeJS.ProcessEnv,
       }),
     ).toEqual({
       handled: false,

@@ -127,8 +127,8 @@ describe("setup migration import options", () => {
   });
 
   it("offers official installable Codex when bundled plugins are unavailable", async () => {
-    const previousDisableBundled = process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";
+    const previousDisableBundled = process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
+    process.env.NOVA_DISABLE_BUNDLED_PLUGINS = "1";
     try {
       const options = await listSetupMigrationOptions({
         baseConfig: {},
@@ -140,9 +140,9 @@ describe("setup migration import options", () => {
       );
     } finally {
       if (previousDisableBundled === undefined) {
-        delete process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS;
+        delete process.env.NOVA_DISABLE_BUNDLED_PLUGINS;
       } else {
-        process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = previousDisableBundled;
+        process.env.NOVA_DISABLE_BUNDLED_PLUGINS = previousDisableBundled;
       }
     }
   });

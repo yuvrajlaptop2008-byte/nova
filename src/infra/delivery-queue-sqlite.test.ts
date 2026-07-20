@@ -33,7 +33,7 @@ describe("delivery-queue-sqlite corrupt JSON resilience", () => {
 
   function insertCorruptRow(id: string, json: string) {
     const { db } = openOpenClawStateDatabase({
-      env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+      env: { ...process.env, NOVA_STATE_DIR: stateDir },
     });
     db.prepare(
       `INSERT INTO delivery_queue_entries
@@ -196,7 +196,7 @@ describe("delivery-queue-sqlite corrupt JSON resilience", () => {
       expect(getDeliveryQueueEntryStatus(QUEUE, "rt-completed", stateDir)).toBe("completed");
       expect(getDeliveryQueueEntryStatus(QUEUE, "rt-expired-completed", stateDir)).toBeUndefined();
       const { db } = openOpenClawStateDatabase({
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       });
       const row = db
         .prepare(
@@ -234,7 +234,7 @@ describe("delivery-queue-sqlite corrupt JSON resilience", () => {
       });
       completeDeliveryQueueEntry(QUEUE, "rt-permanent", stateDir);
       const { db } = openOpenClawStateDatabase({
-        env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+        env: { ...process.env, NOVA_STATE_DIR: stateDir },
       });
       db.prepare(
         `UPDATE delivery_queue_entries

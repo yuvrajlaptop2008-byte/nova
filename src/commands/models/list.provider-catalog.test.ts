@@ -98,7 +98,7 @@ describe("lifecycle-owned model-list provider catalog", () => {
   });
 
   it("activates one prepared owner when no generation is published", async () => {
-    const env = { OPENCLAW_STATE_DIR: "/tmp/model-list-state" };
+    const env = { NOVA_STATE_DIR: "/tmp/model-list-state" };
     mocks.loadOwner.mockResolvedValue(
       ownerSnapshot({
         entries: [{ provider: "moonshot", id: "kimi-k2.6", name: "Kimi K2.6" }],

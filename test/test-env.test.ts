@@ -165,18 +165,18 @@ describe("installTestEnv", () => {
 
     setTestEnvValue("HOME", realHome);
     setTestEnvValue("USERPROFILE", realHome);
-    setTestEnvValue("OPENCLAW_LIVE_TEST", "1");
-    setTestEnvValue("OPENCLAW_LIVE_TEST_QUIET", "1");
-    setTestEnvValue("OPENCLAW_CONFIG_PATH", "~/custom-openclaw.json5");
-    setTestEnvValue("OPENCLAW_TEST_HOME", priorIsolatedHome);
-    setTestEnvValue("OPENCLAW_STATE_DIR", path.join(priorIsolatedHome, ".openclaw"));
+    setTestEnvValue("NOVA_LIVE_TEST", "1");
+    setTestEnvValue("NOVA_LIVE_TEST_QUIET", "1");
+    setTestEnvValue("NOVA_CONFIG_PATH", "~/custom-openclaw.json5");
+    setTestEnvValue("NOVA_TEST_HOME", priorIsolatedHome);
+    setTestEnvValue("NOVA_STATE_DIR", path.join(priorIsolatedHome, ".openclaw"));
 
     const testEnv = installTestEnv();
     cleanupFns.push(testEnv.cleanup);
 
     expect(testEnv.tempHome).not.toBe(realHome);
     expect(process.env.HOME).toBe(testEnv.tempHome);
-    expect(process.env.OPENCLAW_TEST_HOME).toBe(testEnv.tempHome);
+    expect(process.env.NOVA_TEST_HOME).toBe(testEnv.tempHome);
     expect(process.env.TEST_PROFILE_ONLY).toBe("from-profile");
 
     const copiedConfigPath = path.join(testEnv.tempHome, ".openclaw", "openclaw.json");
@@ -271,9 +271,9 @@ describe("installTestEnv", () => {
 
     setTestEnvValue("HOME", realHome);
     setTestEnvValue("USERPROFILE", realHome);
-    setTestEnvValue("OPENCLAW_LIVE_TEST", "1");
-    setTestEnvValue("OPENCLAW_LIVE_USE_REAL_HOME", "1");
-    setTestEnvValue("OPENCLAW_LIVE_TEST_QUIET", "1");
+    setTestEnvValue("NOVA_LIVE_TEST", "1");
+    setTestEnvValue("NOVA_LIVE_USE_REAL_HOME", "1");
+    setTestEnvValue("NOVA_LIVE_TEST_QUIET", "1");
 
     const testEnv = installTestEnv();
 
@@ -291,14 +291,14 @@ describe("installTestEnv", () => {
     setTestEnvValue("HOME", realHome);
     setTestEnvValue("USERPROFILE", realHome);
     setTestEnvValue("LIVE", "1");
-    setTestEnvValue("OPENCLAW_LIVE_TEST", "1");
-    setTestEnvValue("OPENCLAW_LIVE_GATEWAY", "1");
-    setTestEnvValue("OPENCLAW_LIVE_USE_REAL_HOME", "1");
+    setTestEnvValue("NOVA_LIVE_TEST", "1");
+    setTestEnvValue("NOVA_LIVE_GATEWAY", "1");
+    setTestEnvValue("NOVA_LIVE_USE_REAL_HOME", "1");
     const callerPluginDir = path.join(realHome, "caller-plugins");
-    setTestEnvValue("OPENCLAW_BUNDLED_PLUGINS_DIR", callerPluginDir);
-    setTestEnvValue("OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR", "1");
-    setTestEnvValue("OPENCLAW_DISABLE_BUNDLED_PLUGINS", "1");
-    setTestEnvValue("OPENCLAW_HOME", realHome);
+    setTestEnvValue("NOVA_BUNDLED_PLUGINS_DIR", callerPluginDir);
+    setTestEnvValue("NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR", "1");
+    setTestEnvValue("NOVA_DISABLE_BUNDLED_PLUGINS", "1");
+    setTestEnvValue("NOVA_HOME", realHome);
 
     const testEnv = installTestEnv({ mode: "hermetic" });
     cleanupFns.push(testEnv.cleanup);
@@ -307,14 +307,14 @@ describe("installTestEnv", () => {
     expect(process.env.HOME).toBe(testEnv.tempHome);
     expect(process.env.TEST_PROFILE_ONLY).toBeUndefined();
     expect(process.env.LIVE).toBeUndefined();
-    expect(process.env.OPENCLAW_LIVE_TEST).toBeUndefined();
-    expect(process.env.OPENCLAW_LIVE_GATEWAY).toBeUndefined();
-    expect(process.env.OPENCLAW_LIVE_USE_REAL_HOME).toBeUndefined();
-    expect(process.env.OPENCLAW_BUNDLED_PLUGINS_DIR).not.toBe(callerPluginDir);
-    expect(path.basename(process.env.OPENCLAW_BUNDLED_PLUGINS_DIR ?? "")).toBe("extensions");
-    expect(process.env.OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR).toBe("1");
-    expect(process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS).toBeUndefined();
-    expect(process.env.OPENCLAW_HOME).toBeUndefined();
+    expect(process.env.NOVA_LIVE_TEST).toBeUndefined();
+    expect(process.env.NOVA_LIVE_GATEWAY).toBeUndefined();
+    expect(process.env.NOVA_LIVE_USE_REAL_HOME).toBeUndefined();
+    expect(process.env.NOVA_BUNDLED_PLUGINS_DIR).not.toBe(callerPluginDir);
+    expect(path.basename(process.env.NOVA_BUNDLED_PLUGINS_DIR ?? "")).toBe("extensions");
+    expect(process.env.NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR).toBe("1");
+    expect(process.env.NOVA_DISABLE_BUNDLED_PLUGINS).toBeUndefined();
+    expect(process.env.NOVA_HOME).toBeUndefined();
     expect(fs.existsSync(path.join(testEnv.tempHome, ".openclaw", "openclaw.json"))).toBe(false);
     expect(
       fs.existsSync(path.join(testEnv.tempHome, ".openclaw", "credentials", "token.txt")),
@@ -328,10 +328,10 @@ describe("installTestEnv", () => {
     setTestEnvValue("HOME", realHome);
     setTestEnvValue("USERPROFILE", realHome);
     deleteTestEnvValue("LIVE");
-    deleteTestEnvValue("OPENCLAW_LIVE_TEST");
-    deleteTestEnvValue("OPENCLAW_LIVE_GATEWAY");
-    deleteTestEnvValue("OPENCLAW_LIVE_USE_REAL_HOME");
-    deleteTestEnvValue("OPENCLAW_LIVE_TEST_QUIET");
+    deleteTestEnvValue("NOVA_LIVE_TEST");
+    deleteTestEnvValue("NOVA_LIVE_GATEWAY");
+    deleteTestEnvValue("NOVA_LIVE_USE_REAL_HOME");
+    deleteTestEnvValue("NOVA_LIVE_TEST_QUIET");
 
     const testEnv = installTestEnv();
     cleanupFns.push(testEnv.cleanup);
@@ -346,9 +346,9 @@ describe("installTestEnv", () => {
 
     setTestEnvValue("HOME", realHome);
     setTestEnvValue("USERPROFILE", realHome);
-    setTestEnvValue("OPENCLAW_LIVE_TEST", "1");
-    setTestEnvValue("OPENCLAW_LIVE_USE_REAL_HOME", "1");
-    setTestEnvValue("OPENCLAW_LIVE_TEST_QUIET", "1");
+    setTestEnvValue("NOVA_LIVE_TEST", "1");
+    setTestEnvValue("NOVA_LIVE_USE_REAL_HOME", "1");
+    setTestEnvValue("NOVA_LIVE_TEST_QUIET", "1");
 
     vi.doMock("node:child_process", () => ({
       execFileSync: () => {

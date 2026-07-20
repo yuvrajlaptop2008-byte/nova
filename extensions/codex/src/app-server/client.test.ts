@@ -1,5 +1,5 @@
 // Codex tests cover client plugin behavior.
-import { embeddedAgentLog, OPENCLAW_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
+import { embeddedAgentLog, NOVA_VERSION } from "openclaw/plugin-sdk/agent-harness-runtime";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CodexAppServerClient,
@@ -310,7 +310,7 @@ describe("CodexAppServerClient", () => {
         clientInfo: {
           name: "openclaw",
           title: "Nova",
-          version: OPENCLAW_VERSION,
+          version: NOVA_VERSION,
         },
         capabilities: {
           experimentalApi: true,

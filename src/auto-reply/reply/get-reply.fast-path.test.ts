@@ -131,7 +131,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   beforeEach(() => {
-    vi.stubEnv("OPENCLAW_TEST_FAST", "1");
+    vi.stubEnv("NOVA_TEST_FAST", "1");
     cliBackendsTesting.setDepsForTest({
       resolvePluginSetupRegistry: () => ({
         providers: [],
@@ -237,7 +237,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("still merges partial config overrides against getRuntimeConfig()", async () => {
-    vi.stubEnv("OPENCLAW_ALLOW_SLOW_REPLY_TESTS", "1");
+    vi.stubEnv("NOVA_ALLOW_SLOW_REPLY_TESTS", "1");
     vi.mocked(loadConfigMock).mockReturnValue({
       channels: {
         telegram: {
@@ -260,7 +260,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("reports the prepared session binding after session bootstrap", async () => {
-    vi.stubEnv("OPENCLAW_ALLOW_SLOW_REPLY_TESTS", "1");
+    vi.stubEnv("NOVA_ALLOW_SLOW_REPLY_TESTS", "1");
     mocks.initSessionState.mockResolvedValue(
       createGetReplySessionState({
         sessionKey: "agent:main:slack:channel:C123",
@@ -288,7 +288,7 @@ describe("getReplyFromConfig fast test bootstrap", () => {
   });
 
   it("returns a clean rejection when session bootstrap rejects a locked reset", async () => {
-    vi.stubEnv("OPENCLAW_ALLOW_SLOW_REPLY_TESTS", "1");
+    vi.stubEnv("NOVA_ALLOW_SLOW_REPLY_TESTS", "1");
     const sessionKey = "agent:main:telegram:123";
     mocks.initSessionState.mockRejectedValueOnce(
       new ModelSelectionLockedError(MODEL_SELECTION_LOCKED_RESET_MESSAGE),

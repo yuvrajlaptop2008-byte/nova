@@ -205,8 +205,8 @@ describe("Integration: saveSessionStore with pruning", () => {
     testDir = testState.sessionsDir();
     await fs.mkdir(testDir, { recursive: true });
     storePath = path.join(testDir, "sessions.json");
-    savedCacheTtl = process.env.OPENCLAW_SESSION_CACHE_TTL_MS;
-    process.env.OPENCLAW_SESSION_CACHE_TTL_MS = "0";
+    savedCacheTtl = process.env.NOVA_SESSION_CACHE_TTL_MS;
+    process.env.NOVA_SESSION_CACHE_TTL_MS = "0";
     clearSessionStoreCacheForTest();
   });
 
@@ -223,9 +223,9 @@ describe("Integration: saveSessionStore with pruning", () => {
     clearSessionStoreCacheForTest();
     closeOpenClawAgentDatabasesForTest();
     if (savedCacheTtl === undefined) {
-      delete process.env.OPENCLAW_SESSION_CACHE_TTL_MS;
+      delete process.env.NOVA_SESSION_CACHE_TTL_MS;
     } else {
-      process.env.OPENCLAW_SESSION_CACHE_TTL_MS = savedCacheTtl;
+      process.env.NOVA_SESSION_CACHE_TTL_MS = savedCacheTtl;
     }
     await testState.cleanup();
   });

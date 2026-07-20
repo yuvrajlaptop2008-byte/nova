@@ -106,8 +106,8 @@ describe("backup commands", () => {
     await fs.writeFile(path.join(stateDir, "openclaw.json"), JSON.stringify({}), "utf8");
     await fs.writeFile(configPath, '{"agents": { defaults: { workspace: ', "utf8");
 
-    const envSnapshot = captureEnv(["OPENCLAW_CONFIG_PATH"]);
-    setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
+    const envSnapshot = captureEnv(["NOVA_CONFIG_PATH"]);
+    setTestEnvValue("NOVA_CONFIG_PATH", configPath);
     const runtime = createBackupTestRuntime();
     try {
       return await fn(runtime);
@@ -237,9 +237,9 @@ describe("backup commands", () => {
     let capturedManifest: CapturedBackupManifest | null = null;
     let capturedEntryPaths: string[] = [];
     let capturedOnWriteEntry: ((entry: { path: string }) => void) | null = null;
-    const envSnapshot = captureEnv(["OPENCLAW_CONFIG_PATH"]);
+    const envSnapshot = captureEnv(["NOVA_CONFIG_PATH"]);
     try {
-      setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
+      setTestEnvValue("NOVA_CONFIG_PATH", configPath);
       await fs.writeFile(
         configPath,
         JSON.stringify({

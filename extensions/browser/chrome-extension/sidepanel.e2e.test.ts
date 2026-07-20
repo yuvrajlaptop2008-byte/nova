@@ -40,7 +40,7 @@ declare const chrome: {
   };
 };
 
-const runE2E = process.env.OPENCLAW_BROWSER_COPILOT_E2E === "1";
+const runE2E = process.env.NOVA_BROWSER_COPILOT_E2E === "1";
 const extensionDir = path.dirname(fileURLToPath(import.meta.url));
 
 type RequestFrame = {
@@ -655,7 +655,7 @@ describe.runIf(runE2E)("browser copilot Chromium side panel", () => {
     await expect.poll(() => relay.hellos.length, { timeout: 10_000 }).toBe(1);
 
     const artifactDir =
-      process.env.OPENCLAW_BROWSER_COPILOT_ARTIFACT_DIR ??
+      process.env.NOVA_BROWSER_COPILOT_ARTIFACT_DIR ??
       path.join(os.tmpdir(), "openclaw-browser-copilot-artifacts");
     await fs.mkdir(artifactDir, { recursive: true });
 

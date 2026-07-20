@@ -41,7 +41,7 @@ describe("createLazyGatewayCronState", () => {
     const stateRoot = "/tmp/openclaw-candidate-state";
     const lazy = createLazyGatewayCronState({
       ...createParams(),
-      env: { ...process.env, OPENCLAW_STATE_DIR: stateRoot },
+      env: { ...process.env, NOVA_STATE_DIR: stateRoot },
     });
 
     expect(lazy.storePath).toBe(`${stateRoot}/cron/jobs.json`);
@@ -165,7 +165,7 @@ describe("createLazyGatewayCronState", () => {
   });
 
   it("preserves the startup cron enabled flag without loading cron runtime", () => {
-    vi.stubEnv("OPENCLAW_SKIP_CRON", "1");
+    vi.stubEnv("NOVA_SKIP_CRON", "1");
 
     const lazy = createLazyGatewayCronState(createParams());
 

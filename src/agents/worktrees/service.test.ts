@@ -99,7 +99,7 @@ describe("ManagedWorktreeService", () => {
       recursive: true,
     });
     repo = await fs.realpath(repo);
-    env = { ...process.env, OPENCLAW_STATE_DIR: path.join(root, "openclaw-state") };
+    env = { ...process.env, NOVA_STATE_DIR: path.join(root, "openclaw-state") };
     now = 1_700_000_000_000;
     service = new ManagedWorktreeService({ env, now: () => now });
   });
@@ -302,7 +302,7 @@ describe("ManagedWorktreeService", () => {
       expect(await git(repo, "worktree", "list", "--porcelain")).toBe(before);
       expect(await git(repo, "branch", "--list", `openclaw/${name}`)).toBe("");
       expect(await service.list()).toEqual([]);
-      await expect(fs.stat(path.join(env.OPENCLAW_STATE_DIR!, "worktrees"))).rejects.toMatchObject({
+      await expect(fs.stat(path.join(env.NOVA_STATE_DIR!, "worktrees"))).rejects.toMatchObject({
         code: "ENOENT",
       });
     },
@@ -465,7 +465,7 @@ describe("ManagedWorktreeService", () => {
     const script = path.join(repo, ".openclaw", "worktree-setup.sh");
     await fs.writeFile(
       script,
-      '#!/bin/sh\nprintf "%s\\n%s\\n" "$OPENCLAW_SOURCE_TREE_PATH" "$OPENCLAW_WORKTREE_PATH" > setup-paths.txt\n',
+      '#!/bin/sh\nprintf "%s\\n%s\\n" "$NOVA_SOURCE_TREE_PATH" "$NOVA_WORKTREE_PATH" > setup-paths.txt\n',
       { mode: 0o755 },
     );
     const created = await service.create({ repoRoot: repo, name: "setup" });
@@ -937,10 +937,10 @@ describe("ManagedWorktreeService", () => {
   });
 
   it("deletes unregistered orphan debris but preserves git-listed worktrees", async () => {
-    const debris = path.join(env.OPENCLAW_STATE_DIR!, "worktrees", "orphan-fingerprint", "debris");
+    const debris = path.join(env.NOVA_STATE_DIR!, "worktrees", "orphan-fingerprint", "debris");
     await fs.mkdir(debris, { recursive: true });
     await fs.writeFile(path.join(debris, "file"), "debris");
-    const foreign = path.join(env.OPENCLAW_STATE_DIR!, "worktrees", "foreign-fingerprint", "live");
+    const foreign = path.join(env.NOVA_STATE_DIR!, "worktrees", "foreign-fingerprint", "live");
     await fs.mkdir(path.dirname(foreign), { recursive: true });
     await git(repo, "worktree", "add", "--detach", foreign, "HEAD");
 

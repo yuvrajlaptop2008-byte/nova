@@ -500,7 +500,7 @@ function runResolver(args: {
         FAKE_GH_FIXTURES: args.fixtures,
         FAKE_VALIDATOR_FIXTURES: args.fixtures,
         GITHUB_OUTPUT: "",
-        OPENCLAW_RELEASE_CI_SUMMARY_VALIDATOR: args.validatorPath,
+        NOVA_RELEASE_CI_SUMMARY_VALIDATOR: args.validatorPath,
         PATH: `${args.binDir}:${process.env.PATH}`,
       },
     },

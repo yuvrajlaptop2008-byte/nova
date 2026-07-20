@@ -531,7 +531,7 @@ function isSafeGatewayProbeTarget(target: GatewayProbeTarget): boolean {
     return isSafeRemoteGatewayProbeUrl(target.url);
   }
   return isSecureWebSocketUrl(target.url, {
-    allowPrivateWs: process.env.OPENCLAW_ALLOW_INSECURE_PRIVATE_WS === "1",
+    allowPrivateWs: process.env.NOVA_ALLOW_INSECURE_PRIVATE_WS === "1",
   });
 }
 
@@ -554,7 +554,7 @@ function isSafeRemoteGatewayProbeUrl(url: string): boolean {
     return true;
   }
   return (
-    process.env.OPENCLAW_ALLOW_INSECURE_PRIVATE_WS === "1" &&
+    process.env.NOVA_ALLOW_INSECURE_PRIVATE_WS === "1" &&
     isSecureWebSocketUrl(url, { allowPrivateWs: true })
   );
 }
@@ -598,7 +598,7 @@ async function resolveLocalGatewayProbeTargets(
   ]);
   const gateway = config.gateway;
   const configuredPort = resolveGatewayPort(config);
-  const hasExplicitPort = Boolean(normalizeOptionalString(process.env.OPENCLAW_GATEWAY_PORT));
+  const hasExplicitPort = Boolean(normalizeOptionalString(process.env.NOVA_GATEWAY_PORT));
   const activePort = hasExplicitPort ? undefined : await readActiveGatewayLockPort();
   const port = activePort ?? configuredPort;
   // Supplying the selected local port keeps inherited remote URL overrides out
@@ -811,8 +811,8 @@ async function ensureCliEnvProxyDispatcher(): Promise<void> {
 
 function shouldBootstrapCliProxyBeforeFastPath(env: NodeJS.ProcessEnv = process.env): boolean {
   if (
-    isTruthyEnvValue(env.OPENCLAW_DEBUG_PROXY_ENABLED) ||
-    isTruthyEnvValue(env.OPENCLAW_DEBUG_PROXY_REQUIRE)
+    isTruthyEnvValue(env.NOVA_DEBUG_PROXY_ENABLED) ||
+    isTruthyEnvValue(env.NOVA_DEBUG_PROXY_REQUIRE)
   ) {
     return true;
   }
@@ -978,7 +978,7 @@ export async function runCli(argv: string[] = process.argv) {
     applyCliProfileEnv({ profile: parsedProfile.profile });
   }
   const containerTargetName =
-    parsedContainer.container ?? normalizeOptionalString(process.env.OPENCLAW_CONTAINER) ?? null;
+    parsedContainer.container ?? normalizeOptionalString(process.env.NOVA_CONTAINER) ?? null;
   if (containerTargetName && parsedProfile.profile) {
     throw new Error("--container cannot be combined with --profile/--dev");
   }

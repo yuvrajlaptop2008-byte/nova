@@ -116,7 +116,7 @@ async function resolveGatewayHealthProbeToken(
       value: nextConfig.gateway.auth.password,
       path: "gateway.auth.password",
       unresolvedReasonStyle: "detailed",
-      readFallback: () => process.env.OPENCLAW_GATEWAY_PASSWORD,
+      readFallback: () => process.env.NOVA_GATEWAY_PASSWORD,
     });
     return {
       password: resolved.value,

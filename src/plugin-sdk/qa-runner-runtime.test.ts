@@ -47,8 +47,8 @@ function firstPublicSurfaceCall(): PublicSurfaceCall | undefined {
 
 describe("plugin-sdk qa-runner-runtime", () => {
   const tempDirs: string[] = [];
-  const originalPrivateQaCli = process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI;
-  const originalBundledPluginsDir = process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+  const originalPrivateQaCli = process.env.NOVA_ENABLE_PRIVATE_QA_CLI;
+  const originalBundledPluginsDir = process.env.NOVA_BUNDLED_PLUGINS_DIR;
 
   beforeEach(() => {
     vi.resetModules();
@@ -63,17 +63,17 @@ describe("plugin-sdk qa-runner-runtime", () => {
     loadBundledPluginPublicSurfaceModuleSync.mockReset();
     tryLoadActivatedBundledPluginPublicSurfaceModuleSync.mockReset();
     resolveOpenClawPackageRootSync.mockReset().mockReturnValue(null);
-    delete process.env.OPENCLAW_ENABLE_PRIVATE_QA_CLI;
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+    delete process.env.NOVA_ENABLE_PRIVATE_QA_CLI;
+    delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
   });
 
   afterEach(() => {
     cleanupTempDirs(tempDirs);
     restorePrivateQaCliEnv(originalPrivateQaCli);
     if (originalBundledPluginsDir === undefined) {
-      delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+      delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
     } else {
-      process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = originalBundledPluginsDir;
+      process.env.NOVA_BUNDLED_PLUGINS_DIR = originalBundledPluginsDir;
     }
   });
 
@@ -114,10 +114,8 @@ describe("plugin-sdk qa-runner-runtime", () => {
     const testApiCall = firstPublicSurfaceCall();
     expect(testApiCall?.dirName).toBe("matrix");
     expect(testApiCall?.artifactBasename).toBe("test-api.js");
-    expect(testApiCall?.env?.OPENCLAW_ENABLE_PRIVATE_QA_CLI).toBe("1");
-    expect(testApiCall?.env?.OPENCLAW_BUNDLED_PLUGINS_DIR).toBe(
-      path.join(sourceRoot, "extensions"),
-    );
+    expect(testApiCall?.env?.NOVA_ENABLE_PRIVATE_QA_CLI).toBe("1");
+    expect(testApiCall?.env?.NOVA_BUNDLED_PLUGINS_DIR).toBe(path.join(sourceRoot, "extensions"));
   });
 
   it("reports the qa runtime as unavailable when the qa-lab surface is missing", async () => {
@@ -266,16 +264,14 @@ describe("plugin-sdk qa-runner-runtime", () => {
     const manifestCall = loadBundledPluginManifestRegistry.mock.calls[0]?.[0] as
       | ManifestRegistryCall
       | undefined;
-    expect(manifestCall?.env?.OPENCLAW_ENABLE_PRIVATE_QA_CLI).toBe("1");
-    expect(manifestCall?.env?.OPENCLAW_BUNDLED_PLUGINS_DIR).toBe(
-      path.join(sourceRoot, "extensions"),
-    );
+    expect(manifestCall?.env?.NOVA_ENABLE_PRIVATE_QA_CLI).toBe("1");
+    expect(manifestCall?.env?.NOVA_BUNDLED_PLUGINS_DIR).toBe(path.join(sourceRoot, "extensions"));
 
     const publicSurfaceCall = firstPublicSurfaceCall();
     expect(publicSurfaceCall?.dirName).toBe("qa-example");
     expect(publicSurfaceCall?.artifactBasename).toBe("runtime-api.js");
-    expect(publicSurfaceCall?.env?.OPENCLAW_ENABLE_PRIVATE_QA_CLI).toBe("1");
-    expect(publicSurfaceCall?.env?.OPENCLAW_BUNDLED_PLUGINS_DIR).toBe(
+    expect(publicSurfaceCall?.env?.NOVA_ENABLE_PRIVATE_QA_CLI).toBe("1");
+    expect(publicSurfaceCall?.env?.NOVA_BUNDLED_PLUGINS_DIR).toBe(
       path.join(sourceRoot, "extensions"),
     );
   });

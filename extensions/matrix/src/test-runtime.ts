@@ -62,8 +62,8 @@ export function installMatrixTestRuntime(options: MatrixTestRuntimeOptions = {})
   ) => options.stateDir ?? (homeDir ?? (() => "/tmp"))();
   const resolvePluginStateEnv = (storeOptions: OpenKeyedStoreOptions): NodeJS.ProcessEnv => ({
     ...(storeOptions.env ?? process.env),
-    OPENCLAW_STATE_DIR:
-      storeOptions.env?.OPENCLAW_STATE_DIR?.trim() ||
+    NOVA_STATE_DIR:
+      storeOptions.env?.NOVA_STATE_DIR?.trim() ||
       defaultStateDirResolver(storeOptions.env, osHomedirForTest),
   });
   const getRuntimeConfig = () => options.cfg ?? {};

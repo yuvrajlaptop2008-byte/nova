@@ -133,9 +133,7 @@ function normalizeApnsRelayBaseUrlWithPolicy(
     }
     // Plain HTTP is only for local relay development; production relay URLs must use TLS.
     if (parsed.protocol === "http:" && !allowLoopbackHttpWithoutEnvOptIn) {
-      throw new Error(
-        "http relay URLs require OPENCLAW_APNS_RELAY_ALLOW_HTTP=true (development only)",
-      );
+      throw new Error("http relay URLs require NOVA_APNS_RELAY_ALLOW_HTTP=true (development only)");
     }
     // Persisted development URLs may bypass only the current env opt-in;
     // the loopback boundary remains mandatory during every decode.
@@ -161,7 +159,7 @@ export function normalizeApnsRelayBaseUrl(
 ): { ok: true; value: string } | { ok: false; error: string } {
   return normalizeApnsRelayBaseUrlWithPolicy(
     baseUrl,
-    readAllowHttp(env.OPENCLAW_APNS_RELAY_ALLOW_HTTP),
+    readAllowHttp(env.NOVA_APNS_RELAY_ALLOW_HTTP),
   );
 }
 
@@ -195,7 +193,7 @@ export function resolveApnsRelayConfigFromEnv(
   options: ApnsRelayConfigResolutionOptions = {},
 ): ApnsRelayConfigResolution {
   const configuredRelay = gatewayConfig?.push?.apns?.relay;
-  const envBaseUrl = normalizeNonEmptyString(env.OPENCLAW_APNS_RELAY_BASE_URL);
+  const envBaseUrl = normalizeNonEmptyString(env.NOVA_APNS_RELAY_BASE_URL);
   const configBaseUrl = normalizeNonEmptyString(configuredRelay?.baseUrl);
   const explicitBaseUrl = envBaseUrl ?? configBaseUrl;
   const normalizedRegistrationOrigin = options.registrationRelayOrigin
@@ -216,7 +214,7 @@ export function resolveApnsRelayConfigFromEnv(
         : undefined;
   const baseUrl = explicitBaseUrl ?? hostedRelayBaseUrl;
   const baseUrlSource = envBaseUrl
-    ? "OPENCLAW_APNS_RELAY_BASE_URL"
+    ? "NOVA_APNS_RELAY_BASE_URL"
     : configBaseUrl
       ? "gateway.push.apns.relay.baseUrl"
       : "default APNs relay base URL";
@@ -224,7 +222,7 @@ export function resolveApnsRelayConfigFromEnv(
     return {
       ok: false,
       error:
-        "APNs relay config missing: set gateway.push.apns.relay.baseUrl or OPENCLAW_APNS_RELAY_BASE_URL for relay registrations without the hosted relay origin",
+        "APNs relay config missing: set gateway.push.apns.relay.baseUrl or NOVA_APNS_RELAY_BASE_URL for relay registrations without the hosted relay origin",
     };
   }
 
@@ -249,7 +247,7 @@ export function resolveApnsRelayConfigFromEnv(
     value: {
       baseUrl: normalizedBaseUrl.value,
       timeoutMs: normalizeTimeoutMs(
-        normalizeNonEmptyString(env.OPENCLAW_APNS_RELAY_TIMEOUT_MS) ?? configuredRelay?.timeoutMs,
+        normalizeNonEmptyString(env.NOVA_APNS_RELAY_TIMEOUT_MS) ?? configuredRelay?.timeoutMs,
       ),
     },
   };

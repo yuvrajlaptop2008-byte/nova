@@ -200,8 +200,8 @@ describe("release validation no-push transport", () => {
         candidate.run?.includes("test-live-build-docker.sh"),
       );
 
-      expect(runStep?.run, jobName).toContain("OPENCLAW_SKIP_DOCKER_BUILD=0");
-      expect(runStep?.run, jobName).not.toContain("OPENCLAW_DOCKER_BUILD_ON_MISSING=1");
+      expect(runStep?.run, jobName).toContain("NOVA_SKIP_DOCKER_BUILD=0");
+      expect(runStep?.run, jobName).not.toContain("NOVA_DOCKER_BUILD_ON_MISSING=1");
     }
   });
 
@@ -661,9 +661,7 @@ describe("release validation no-push transport", () => {
     expect(packDockerArtifact.run).toContain(
       "docker-e2e-shared-images-${SHARED_IMAGE_ARTIFACT_NAMESPACE}-${TARGET_SHA:0:12}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}",
     );
-    expect(packDockerArtifact.run).toContain(
-      'OPENCLAW_SHARED_IMAGE_PACKAGE_SHA256="$PACKAGE_SHA256"',
-    );
+    expect(packDockerArtifact.run).toContain('NOVA_SHARED_IMAGE_PACKAGE_SHA256="$PACKAGE_SHA256"');
     expect(packDockerArtifact.run).toContain("archive_sha256=");
     const validatePackage = step(dockerProducer, "Validate Nova Docker E2E package");
     expect(validatePackage.env).toMatchObject({
@@ -757,7 +755,7 @@ describe("release validation no-push transport", () => {
     ]) {
       const consumer = job(workflow, name);
       expect(consumer.needs).toContain("docker_e2e_image_ready");
-      expect(consumer.env?.OPENCLAW_DOCKER_E2E_REQUIRE_LOCAL_IMAGE).toContain("no-push-artifact");
+      expect(consumer.env?.NOVA_DOCKER_E2E_REQUIRE_LOCAL_IMAGE).toContain("no-push-artifact");
       expect(step(consumer, "Download Nova Docker E2E package").with).toMatchObject({
         "artifact-ids": "${{ needs.prepare_docker_e2e_image.outputs.package_artifact_id }}",
         "github-token": "${{ github.token }}",
@@ -794,15 +792,15 @@ describe("release validation no-push transport", () => {
       expect(loadArtifact.env?.PACKAGE_SHA256).toBe(
         "${{ needs.prepare_docker_e2e_image.outputs.package_sha256 }}",
       );
-      expect(loadArtifact.env?.OPENCLAW_SHARED_IMAGE_RUN_ATTEMPT).toBe(
+      expect(loadArtifact.env?.NOVA_SHARED_IMAGE_RUN_ATTEMPT).toBe(
         "${{ needs.prepare_docker_e2e_image.outputs.image_artifact_run_attempt }}",
       );
-      expect(loadArtifact.env?.OPENCLAW_SHARED_IMAGE_RUN_ID).toBe(
+      expect(loadArtifact.env?.NOVA_SHARED_IMAGE_RUN_ID).toBe(
         "${{ needs.prepare_docker_e2e_image.outputs.image_artifact_run_id }}",
       );
       expect(loadArtifact.run).toContain("shared-image-artifact.sh");
-      expect(loadArtifact.run).toContain('OPENCLAW_SHARED_IMAGE_ARCHIVE_SHA256="$ARCHIVE_SHA256"');
-      expect(loadArtifact.run).toContain('OPENCLAW_SHARED_IMAGE_PACKAGE_SHA256="$PACKAGE_SHA256"');
+      expect(loadArtifact.run).toContain('NOVA_SHARED_IMAGE_ARCHIVE_SHA256="$ARCHIVE_SHA256"');
+      expect(loadArtifact.run).toContain('NOVA_SHARED_IMAGE_PACKAGE_SHA256="$PACKAGE_SHA256"');
       expect(step(consumer, "Log in to GHCR for shared Docker E2E image").if).toContain(
         "shared_image_policy != 'no-push-artifact'",
       );
@@ -821,7 +819,7 @@ describe("release validation no-push transport", () => {
     ]) {
       const consumer = job(workflow, name);
       expect(consumer.needs).toContain("live_test_image_ready");
-      expect(consumer.env?.OPENCLAW_LIVE_REQUIRE_LOCAL_IMAGE).toContain("no-push-artifact");
+      expect(consumer.env?.NOVA_LIVE_REQUIRE_LOCAL_IMAGE).toContain("no-push-artifact");
       const binding = step(consumer, "Validate live-test image artifact binding");
       expect(binding.if).toContain("shared_image_policy == 'no-push-artifact'");
       expect(binding.env).toMatchObject({
@@ -850,21 +848,21 @@ describe("release validation no-push transport", () => {
       expect(loadArtifact.env?.ARCHIVE_SHA256).toBe(
         "${{ needs.prepare_live_test_image.outputs.image_archive_sha256 }}",
       );
-      expect(loadArtifact.env?.OPENCLAW_SHARED_IMAGE_RUN_ATTEMPT).toBe(
+      expect(loadArtifact.env?.NOVA_SHARED_IMAGE_RUN_ATTEMPT).toBe(
         "${{ needs.prepare_live_test_image.outputs.image_artifact_run_attempt }}",
       );
-      expect(loadArtifact.env?.OPENCLAW_SHARED_IMAGE_RUN_ID).toBe(
+      expect(loadArtifact.env?.NOVA_SHARED_IMAGE_RUN_ID).toBe(
         "${{ needs.prepare_live_test_image.outputs.image_artifact_run_id }}",
       );
       expect(loadArtifact.run).toContain("shared-image-artifact.sh");
-      expect(loadArtifact.run).toContain('OPENCLAW_SHARED_IMAGE_ARCHIVE_SHA256="$ARCHIVE_SHA256"');
+      expect(loadArtifact.run).toContain('NOVA_SHARED_IMAGE_ARCHIVE_SHA256="$ARCHIVE_SHA256"');
       expect(step(consumer, "Log in to GHCR").if).toContain(
         "shared_image_policy != 'no-push-artifact'",
       );
     }
 
     const liveBuild = readFileSync(LIVE_BUILD, "utf8");
-    const requireLocalIndex = liveBuild.indexOf("OPENCLAW_LIVE_REQUIRE_LOCAL_IMAGE");
+    const requireLocalIndex = liveBuild.indexOf("NOVA_LIVE_REQUIRE_LOCAL_IMAGE");
     const pullIndex = liveBuild.indexOf("Live-test image not found locally; pulling");
     expect(requireLocalIndex).toBeGreaterThanOrEqual(0);
     expect(pullIndex).toBeGreaterThan(requireLocalIndex);
@@ -991,9 +989,9 @@ exit 2
           ...process.env,
           DOCKER_COMMAND_TIMEOUT: "5s",
           FAKE_DOCKER_LOG: calls,
-          OPENCLAW_LIVE_IMAGE: "openclaw-live-test:required-local",
-          OPENCLAW_LIVE_REQUIRE_LOCAL_IMAGE: "1",
-          OPENCLAW_SKIP_DOCKER_BUILD: "1",
+          NOVA_LIVE_IMAGE: "openclaw-live-test:required-local",
+          NOVA_LIVE_REQUIRE_LOCAL_IMAGE: "1",
+          NOVA_SKIP_DOCKER_BUILD: "1",
           PATH: `${bin}:${process.env.PATH ?? ""}`,
         },
       });
@@ -1045,9 +1043,9 @@ docker_e2e_build_or_reuse "openclaw-e2e:required-local" "required local image te
           env: {
             ...process.env,
             FAKE_DOCKER_LOG: calls,
-            OPENCLAW_DOCKER_BUILD_ON_MISSING: "1",
-            OPENCLAW_DOCKER_E2E_REQUIRE_LOCAL_IMAGE: "1",
-            OPENCLAW_SKIP_DOCKER_BUILD: "1",
+            NOVA_DOCKER_BUILD_ON_MISSING: "1",
+            NOVA_DOCKER_E2E_REQUIRE_LOCAL_IMAGE: "1",
+            NOVA_SKIP_DOCKER_BUILD: "1",
             PATH: `${bin}:${process.env.PATH ?? ""}`,
           },
         },

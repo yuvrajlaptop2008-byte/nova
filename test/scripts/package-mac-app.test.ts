@@ -199,7 +199,7 @@ describe("package-mac-app plist stamping", () => {
       source scripts/lib/build-metadata.sh
       node() { echo "unexpected Node invocation" >&2; return 97; }
       GIT_COMMIT=${JSON.stringify(commit)}
-      OPENCLAW_BUILD_TIMESTAMP=2026-07-10T12:34:56.7Z
+      NOVA_BUILD_TIMESTAMP=2026-07-10T12:34:56.7Z
       printf '%s\n%s\n' "$(openclaw_resolve_git_commit "$PWD")" "$(openclaw_resolve_build_timestamp)"
     `);
     const invalidCommit = runHelper(`
@@ -215,7 +215,7 @@ describe("package-mac-app plist stamping", () => {
     `);
     const invalidTimestamp = runHelper(`
       source scripts/lib/build-metadata.sh
-      OPENCLAW_BUILD_TIMESTAMP=2026-99-99T12:34:56Z
+      NOVA_BUILD_TIMESTAMP=2026-99-99T12:34:56Z
       openclaw_resolve_build_timestamp
     `);
     const missingLocalCommit = runHelper(`
@@ -228,7 +228,7 @@ describe("package-mac-app plist stamping", () => {
       source scripts/lib/build-metadata.sh
       unset GIT_COMMIT GIT_SHA GITHUB_SHA
       empty_root="$(mktemp -d)"
-      OPENCLAW_REQUIRE_BUILD_METADATA=1 openclaw_resolve_git_commit "$empty_root"
+      NOVA_REQUIRE_BUILD_METADATA=1 openclaw_resolve_git_commit "$empty_root"
     `);
     const ambientGithubCommit = runHelper(`
       source scripts/lib/build-metadata.sh
@@ -258,7 +258,7 @@ describe("package-mac-app plist stamping", () => {
     expect(validAlias.stdout).toBe(commit.toLowerCase());
     expect(invalidTimestamp.status).toBe(1);
     expect(invalidTimestamp.stderr).toContain(
-      "OPENCLAW_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp",
+      "NOVA_BUILD_TIMESTAMP must be an ISO-8601 UTC timestamp",
     );
     expect(missingLocalCommit.status).toBe(0);
     expect(missingLocalCommit.stdout).toBe("unknown");
@@ -281,7 +281,7 @@ describe("package-mac-app plist stamping", () => {
         2000-02-29T23:59:59.7Z \
         2024-02-29T12:34:56.78Z \
         2026-07-10T12:34:56.789Z; do
-        OPENCLAW_BUILD_TIMESTAMP="$value" openclaw_resolve_build_timestamp
+        NOVA_BUILD_TIMESTAMP="$value" openclaw_resolve_build_timestamp
         printf '\n'
       done
       for value in \
@@ -293,11 +293,11 @@ describe("package-mac-app plist stamping", () => {
         2026-01-01T00:60:00Z \
         2026-01-01T00:00:60Z \
         2026-01-01T00:00:00+00:00; do
-        if OPENCLAW_BUILD_TIMESTAMP="$value" openclaw_resolve_build_timestamp >/dev/null 2>&1; then
+        if NOVA_BUILD_TIMESTAMP="$value" openclaw_resolve_build_timestamp >/dev/null 2>&1; then
           exit 1
         fi
       done
-      unset OPENCLAW_BUILD_TIMESTAMP
+      unset NOVA_BUILD_TIMESTAMP
       generated="$(openclaw_resolve_build_timestamp)"
       [[ "$generated" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]000Z$ ]]
     `);
@@ -321,7 +321,7 @@ describe("package-mac-app plist stamping", () => {
     expect(script).toContain('source "$ROOT_DIR/scripts/lib/build-metadata.sh"');
     expect(script).toContain('BUILD_GIT_COMMIT="$(openclaw_resolve_git_commit "$ROOT_DIR")"');
     expect(script).toContain('BUILD_TS="$(openclaw_resolve_build_timestamp)"');
-    expect(script).toContain('export OPENCLAW_BUILD_TIMESTAMP="$BUILD_TS"');
+    expect(script).toContain('export NOVA_BUILD_TIMESTAMP="$BUILD_TS"');
     expect(script).toContain('export GIT_COMMIT="$BUILD_GIT_COMMIT"');
     expect(script).not.toContain("git rev-parse --short HEAD");
   });
@@ -395,7 +395,7 @@ describe("package-mac-app plist stamping", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'printf \'%s|%s\\n\' "$PWD" "$*" >> "$OPENCLAW_TEST_LOG"',
+        'printf \'%s|%s\\n\' "$PWD" "$*" >> "$NOVA_TEST_LOG"',
         'if [[ "${1:-}" == "pnpm" && "${2:-}" == "--version" ]]; then',
         "  echo '11.2.2'",
         "fi",
@@ -408,8 +408,8 @@ describe("package-mac-app plist stamping", () => {
     const result = runHelper(`
       set -euo pipefail
       ROOT_DIR=${JSON.stringify(tempRoot)}
-      OPENCLAW_TEST_LOG=${JSON.stringify(logPath)}
-      export OPENCLAW_TEST_LOG
+      NOVA_TEST_LOG=${JSON.stringify(logPath)}
+      export NOVA_TEST_LOG
       PATH=${JSON.stringify(`${toolsDir}:/usr/bin:/bin`)}
       ${helperBlock}
       run_pnpm install --frozen-lockfile --config.node-linker=hoisted
@@ -444,7 +444,7 @@ describe("package-mac-app plist stamping", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'printf "global|%s|%s\\n" "$PWD" "$*" >> "$OPENCLAW_TEST_LOG"',
+        'printf "global|%s|%s\\n" "$PWD" "$*" >> "$NOVA_TEST_LOG"',
         'if [[ "${1:-}" == "--version" ]]; then echo "11.8.0"; fi',
         "",
       ].join("\n"),
@@ -455,7 +455,7 @@ describe("package-mac-app plist stamping", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'printf "corepack|%s|%s\\n" "$PWD" "$*" >> "$OPENCLAW_TEST_LOG"',
+        'printf "corepack|%s|%s\\n" "$PWD" "$*" >> "$NOVA_TEST_LOG"',
         'if [[ "${1:-}" == "pnpm" && "${2:-}" == "--version" ]]; then',
         '  if grep -q "pnpm@11.2.2" package.json 2>/dev/null; then echo "11.2.2"; else echo "11.8.0"; fi',
         "fi",
@@ -469,8 +469,8 @@ describe("package-mac-app plist stamping", () => {
     const result = runHelper(`
       set -euo pipefail
       ROOT_DIR=${JSON.stringify(tempRoot)}
-      OPENCLAW_TEST_LOG=${JSON.stringify(logPath)}
-      export OPENCLAW_TEST_LOG
+      NOVA_TEST_LOG=${JSON.stringify(logPath)}
+      export NOVA_TEST_LOG
       PATH=${JSON.stringify(`${toolsDir}:/usr/bin:/bin`)}
       cd ${JSON.stringify(outerRoot)}
       ${helperBlock}
@@ -577,7 +577,7 @@ describe("package-mac-app plist stamping", () => {
       [
         "#!/usr/bin/env bash",
         "set -euo pipefail",
-        'if [[ "$PWD" != "$OPENCLAW_ROOT" ]]; then',
+        'if [[ "$PWD" != "$NOVA_ROOT" ]]; then',
         '  echo "node ran outside repo root: $PWD" >&2',
         "  exit 1",
         "fi",
@@ -591,9 +591,9 @@ describe("package-mac-app plist stamping", () => {
     const result = runHelper(`
       set -euo pipefail
       ROOT_DIR=${JSON.stringify(tempRoot)}
-      OPENCLAW_ROOT=${JSON.stringify(tempRoot)}
+      NOVA_ROOT=${JSON.stringify(tempRoot)}
       PATH=${JSON.stringify(`${toolsDir}:/usr/bin:/bin`)}
-      export OPENCLAW_ROOT PATH
+      export NOVA_ROOT PATH
       cd /tmp
       ${helperBlock}
       sparkle_canonical_build_from_version 2026.6.2

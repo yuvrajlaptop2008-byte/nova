@@ -101,7 +101,7 @@ type IncludeBoundary = {
 type ResolveConfigIncludesOptions = {
   /**
    * Additional directories outside the config directory that `$include` paths
-   * may resolve into. Typically populated from `OPENCLAW_INCLUDE_ROOTS`.
+   * may resolve into. Typically populated from `NOVA_INCLUDE_ROOTS`.
    * Each entry must be an absolute path; symlinks are resolved before the
    * containment check, consistent with the config-directory boundary check.
    */
@@ -271,7 +271,7 @@ class IncludeProcessor {
 
     // SECURITY: Reject paths outside the config directory and any caller-allowed
     // roots (CWE-22: Path Traversal). Allowed roots come from
-    // OPENCLAW_INCLUDE_ROOTS and let operators opt into shared include trees
+    // NOVA_INCLUDE_ROOTS and let operators opt into shared include trees
     // without weakening the default lock-down.
     const lexicalMatch = this.findContainingRoot(normalized, "rootDir");
     if (!lexicalMatch) {

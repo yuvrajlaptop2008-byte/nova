@@ -136,12 +136,9 @@ function readManifest(manifestPath) {
 }
 
 function writeXcconfig(manifest) {
-  const lines = [
-    "OPENCLAW_CODE_SIGN_STYLE = Manual",
-    "OPENCLAW_CODE_SIGN_IDENTITY = Apple Distribution",
-  ];
+  const lines = ["NOVA_CODE_SIGN_STYLE = Manual", "NOVA_CODE_SIGN_IDENTITY = Apple Distribution"];
   if (typeof manifest.appGroupId === "string") {
-    lines.push(`OPENCLAW_APP_GROUP_ID = ${manifest.appGroupId}`);
+    lines.push(`NOVA_APP_GROUP_ID = ${manifest.appGroupId}`);
   }
 
   for (const target of manifest.targets) {

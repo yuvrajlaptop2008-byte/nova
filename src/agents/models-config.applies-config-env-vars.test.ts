@@ -49,7 +49,7 @@ vi.mock("./model-auth-env-vars.js", () => ({
   }),
 }));
 
-const TEST_ENV_VAR = "OPENCLAW_MODELS_CONFIG_TEST_ENV";
+const TEST_ENV_VAR = "NOVA_MODELS_CONFIG_TEST_ENV";
 
 function createImplicitOpenRouterProvider(): ProviderConfig {
   return {

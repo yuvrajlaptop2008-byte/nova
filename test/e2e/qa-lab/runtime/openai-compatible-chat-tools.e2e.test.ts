@@ -44,8 +44,8 @@ function runClient(
       env: {
         ...process.env,
         MODEL_REF: "openai/gpt-5.4-mini",
-        OPENCLAW_GATEWAY_TOKEN: "test-token",
-        OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "1",
+        NOVA_GATEWAY_TOKEN: "test-token",
+        NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "1",
         PORT: String(port),
         ...env,
       },
@@ -87,11 +87,11 @@ function runWriteConfig(root: string, env: Record<string, string> = {}) {
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_CONFIG_PATH: path.join(root, "openclaw.json"),
-      OPENCLAW_GATEWAY_TOKEN: "test-token",
-      OPENCLAW_OPENAI_CHAT_TOOLS_MODEL: "openai/gpt-5.6-luna",
-      OPENCLAW_STATE_DIR: path.join(root, "state"),
-      OPENCLAW_TEST_WORKSPACE_DIR: path.join(root, "workspace"),
+      NOVA_CONFIG_PATH: path.join(root, "openclaw.json"),
+      NOVA_GATEWAY_TOKEN: "test-token",
+      NOVA_OPENAI_CHAT_TOOLS_MODEL: "openai/gpt-5.6-luna",
+      NOVA_STATE_DIR: path.join(root, "state"),
+      NOVA_TEST_WORKSPACE_DIR: path.join(root, "workspace"),
       PORT: "18789",
       ...env,
     },
@@ -106,7 +106,7 @@ function runDockerRunnerAuthPreflight(root: string, env: Record<string, string> 
       HOME: root,
       OPENAI_API_KEY: "",
       OPENAI_BASE_URL: "",
-      OPENCLAW_OPENAI_CHAT_TOOLS_PROFILE_FILE: path.join(root, "missing.profile"),
+      NOVA_OPENAI_CHAT_TOOLS_PROFILE_FILE: path.join(root, "missing.profile"),
       ...env,
     },
   });
@@ -196,7 +196,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
       const profile = path.join(root, "profile");
       writeFileSync(profile, "OPENAI_API_KEY=undefined\n");
       const result = runDockerRunnerAuthPreflight(root, {
-        OPENCLAW_OPENAI_CHAT_TOOLS_PROFILE_FILE: profile,
+        NOVA_OPENAI_CHAT_TOOLS_PROFILE_FILE: profile,
       });
       const output = `${result.stdout}\n${result.stderr}`;
 
@@ -211,8 +211,8 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
   });
 
   it.each([
-    ["timeout", "OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS", "1e3"],
-    ["body limit", "OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES", "64bytes"],
+    ["timeout", "NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS", "1e3"],
+    ["body limit", "NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES", "64bytes"],
   ])(
     "rejects invalid Docker runner %s before auth or Docker build work starts",
     (_label, envName, value) => {
@@ -238,31 +238,31 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
     const runner = readFileSync(dockerRunnerPath, "utf8");
 
     expect(runner).toContain(
-      "docker_e2e_read_positive_int_env OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS 180",
+      "docker_e2e_read_positive_int_env NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS 180",
     );
     expect(runner).toContain(
-      "docker_e2e_read_positive_int_env OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES 1048576",
+      "docker_e2e_read_positive_int_env NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES 1048576",
     );
-    expect(runner).toContain('-e "OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS=$TIMEOUT_SECONDS"');
-    expect(runner).toContain('-e "OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES=$MAX_BODY_BYTES"');
+    expect(runner).toContain('-e "NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS=$TIMEOUT_SECONDS"');
+    expect(runner).toContain('-e "NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES=$MAX_BODY_BYTES"');
   });
 
   it("rejects loose timeout env values instead of parsing numeric prefixes", async () => {
     const result = await runClient(1, {
-      OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "1e3",
+      NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "1e3",
     });
 
     expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain("invalid OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: 1e3");
+    expect(result.stderr).toContain("invalid NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: 1e3");
   });
 
   it("rejects loose body limit env values instead of parsing numeric prefixes", async () => {
     const result = await runClient(1, {
-      OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64bytes",
+      NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64bytes",
     });
 
     expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain("invalid OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: 64bytes");
+    expect(result.stderr).toContain("invalid NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: 64bytes");
   });
 
   it("rejects out-of-range client gateway ports", async () => {
@@ -276,11 +276,11 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
     const root = mkdtempSync(path.join(tmpdir(), "openclaw-openai-chat-tools-"));
     try {
       const result = runWriteConfig(root, {
-        OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "1e3",
+        NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "1e3",
       });
 
       expect(result.status).not.toBe(0);
-      expect(result.stderr).toContain("invalid OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: 1e3");
+      expect(result.stderr).toContain("invalid NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: 1e3");
     } finally {
       rmSync(root, { force: true, recursive: true });
     }
@@ -302,7 +302,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
     const root = mkdtempSync(path.join(tmpdir(), "openclaw-openai-chat-tools-"));
     try {
       const result = runWriteConfig(root, {
-        OPENCLAW_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "240",
+        NOVA_OPENAI_CHAT_TOOLS_TIMEOUT_SECONDS: "240",
         PORT: "19001",
       });
 
@@ -372,7 +372,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
     });
     const port = await listen(server);
     try {
-      const result = await runClient(port, { OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64" });
+      const result = await runClient(port, { NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64" });
 
       expect(result.status).not.toBe(0);
       expect(result.stderr).toContain("chat completions response body exceeded 64 bytes");
@@ -392,7 +392,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
     const port = await listen(server);
     try {
       const startedAt = Date.now();
-      const result = await runClient(port, { OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64" });
+      const result = await runClient(port, { NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64" });
 
       expect(result.error).toBeUndefined();
       expect(result.status).not.toBe(0);
@@ -414,7 +414,7 @@ describe("scripts/e2e/lib/openai-chat-tools/client.mjs", () => {
     const port = await listen(server);
     try {
       const startedAt = Date.now();
-      const result = await runClient(port, { OPENCLAW_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64" });
+      const result = await runClient(port, { NOVA_OPENAI_CHAT_TOOLS_MAX_BODY_BYTES: "64" });
 
       expect(result.error).toBeUndefined();
       expect(result.status).not.toBe(0);

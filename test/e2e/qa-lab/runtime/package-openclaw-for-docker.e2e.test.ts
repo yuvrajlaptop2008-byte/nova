@@ -258,15 +258,15 @@ describe("package-openclaw-for-docker", () => {
       skipDts: string | undefined;
       timeoutMs: number | undefined;
     }> = [];
-    const previousTimeout = process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
-    const previousSkipDts = process.env.OPENCLAW_RUN_NODE_SKIP_DTS_BUILD;
-    const previousPackageExtensions = process.env.OPENCLAW_EXTENSIONS;
-    const previousDockerBuildExtensions = process.env.OPENCLAW_DOCKER_BUILD_EXTENSIONS;
+    const previousTimeout = process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
+    const previousSkipDts = process.env.NOVA_RUN_NODE_SKIP_DTS_BUILD;
+    const previousPackageExtensions = process.env.NOVA_EXTENSIONS;
+    const previousDockerBuildExtensions = process.env.NOVA_DOCKER_BUILD_EXTENSIONS;
     const previousInternalPluginIds = process.env[DOCKER_SELECTED_PLUGIN_BUILD_IDS_ENV];
-    process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = "1234";
-    process.env.OPENCLAW_RUN_NODE_SKIP_DTS_BUILD = "1";
-    process.env.OPENCLAW_EXTENSIONS = "clickclack";
-    process.env.OPENCLAW_DOCKER_BUILD_EXTENSIONS = "slack";
+    process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = "1234";
+    process.env.NOVA_RUN_NODE_SKIP_DTS_BUILD = "1";
+    process.env.NOVA_EXTENSIONS = "clickclack";
+    process.env.NOVA_DOCKER_BUILD_EXTENSIONS = "slack";
     process.env[DOCKER_SELECTED_PLUGIN_BUILD_IDS_ENV] = "msteams";
 
     try {
@@ -281,29 +281,29 @@ describe("package-openclaw-for-docker", () => {
             command,
             args,
             cwd,
-            noPnpm: options.env?.OPENCLAW_BUILD_ALL_NO_PNPM,
-            packageExtensions: options.env?.OPENCLAW_EXTENSIONS,
-            dockerBuildExtensions: options.env?.OPENCLAW_DOCKER_BUILD_EXTENSIONS,
+            noPnpm: options.env?.NOVA_BUILD_ALL_NO_PNPM,
+            packageExtensions: options.env?.NOVA_EXTENSIONS,
+            dockerBuildExtensions: options.env?.NOVA_DOCKER_BUILD_EXTENSIONS,
             internalDockerBuildPluginIds: options.env?.[DOCKER_SELECTED_PLUGIN_BUILD_IDS_ENV],
-            skipDts: options.env?.OPENCLAW_RUN_NODE_SKIP_DTS_BUILD,
+            skipDts: options.env?.NOVA_RUN_NODE_SKIP_DTS_BUILD,
             timeoutMs: options.timeoutMs,
           });
         },
       });
     } finally {
       if (previousTimeout === undefined) {
-        delete process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
+        delete process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
       } else {
-        process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = previousTimeout;
+        process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = previousTimeout;
       }
       if (previousSkipDts === undefined) {
-        delete process.env.OPENCLAW_RUN_NODE_SKIP_DTS_BUILD;
+        delete process.env.NOVA_RUN_NODE_SKIP_DTS_BUILD;
       } else {
-        process.env.OPENCLAW_RUN_NODE_SKIP_DTS_BUILD = previousSkipDts;
+        process.env.NOVA_RUN_NODE_SKIP_DTS_BUILD = previousSkipDts;
       }
       for (const [envName, previousValue] of [
-        ["OPENCLAW_EXTENSIONS", previousPackageExtensions],
-        ["OPENCLAW_DOCKER_BUILD_EXTENSIONS", previousDockerBuildExtensions],
+        ["NOVA_EXTENSIONS", previousPackageExtensions],
+        ["NOVA_DOCKER_BUILD_EXTENSIONS", previousDockerBuildExtensions],
         [DOCKER_SELECTED_PLUGIN_BUILD_IDS_ENV, previousInternalPluginIds],
       ] as const) {
         if (previousValue === undefined) {
@@ -330,24 +330,24 @@ describe("package-openclaw-for-docker", () => {
   });
 
   it("rejects loose package artifact timeout env values", async () => {
-    const previousTimeout = process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
+    const previousTimeout = process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
     try {
       for (const value of ["1e3", "123.9", "9007199254740993", "0"]) {
-        process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = value;
+        process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = value;
 
         await expect(
           buildPackageArtifacts("/repo", {
             runImpl: async () => undefined,
           }),
         ).rejects.toThrow(
-          "OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS must be a positive timeout in milliseconds",
+          "NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS must be a positive timeout in milliseconds",
         );
       }
     } finally {
       if (previousTimeout === undefined) {
-        delete process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
+        delete process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS;
       } else {
-        process.env.OPENCLAW_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = previousTimeout;
+        process.env.NOVA_DOCKER_PACKAGE_BUILD_TIMEOUT_MS = previousTimeout;
       }
     }
   });
@@ -774,13 +774,13 @@ describe("package-openclaw-for-docker", () => {
         "const { spawn } = require('node:child_process');",
         "const fs = require('node:fs');",
         `const child = spawn(process.execPath, ['-e', ${JSON.stringify(childScript)}], { stdio: 'ignore' });`,
-        "fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_PID, String(child.pid));",
+        "fs.writeFileSync(process.env.NOVA_TEST_CHILD_PID, String(child.pid));",
         "process.on('SIGTERM', () => {});",
         "setInterval(() => {}, 1000);",
       ].join("");
 
       const runPromise = runCommandForTest(process.execPath, ["-e", parentScript], process.cwd(), {
-        env: { ...process.env, OPENCLAW_TEST_CHILD_PID: childPidPath },
+        env: { ...process.env, NOVA_TEST_CHILD_PID: childPidPath },
         killAfterMs: 25,
         timeoutMs: 500,
       });
@@ -847,13 +847,13 @@ describe("package-openclaw-for-docker", () => {
         "const { spawn } = require('node:child_process');",
         "const fs = require('node:fs');",
         `const child = spawn(process.execPath, ['-e', ${JSON.stringify(childScript)}], { stdio: 'ignore' });`,
-        "fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_PID, String(child.pid));",
+        "fs.writeFileSync(process.env.NOVA_TEST_CHILD_PID, String(child.pid));",
         "setInterval(() => {}, 1000);",
       ].join("");
 
       await expect(
         runCommandForTest(process.execPath, ["-e", parentScript], process.cwd(), {
-          env: { ...process.env, OPENCLAW_TEST_CHILD_PID: childPidPath },
+          env: { ...process.env, NOVA_TEST_CHILD_PID: childPidPath },
           killAfterMs: 25,
           timeoutMs: 500,
         }),
@@ -933,7 +933,7 @@ describe("package-openclaw-for-docker", () => {
         "const { spawn } = require('node:child_process');",
         "const fs = require('node:fs');",
         `const child = spawn(process.execPath, ['-e', ${JSON.stringify(childScript)}], { stdio: 'ignore' });`,
-        "fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_PID, String(child.pid));",
+        "fs.writeFileSync(process.env.NOVA_TEST_CHILD_PID, String(child.pid));",
         "setInterval(() => {}, 1000);",
       ].join("");
       const runnerScript = [
@@ -942,7 +942,7 @@ describe("package-openclaw-for-docker", () => {
       ].join("\n");
       const runner = spawn(process.execPath, ["--input-type=module", "-e", runnerScript], {
         cwd: process.cwd(),
-        env: { ...process.env, OPENCLAW_TEST_CHILD_PID: childPidPath },
+        env: { ...process.env, NOVA_TEST_CHILD_PID: childPidPath },
         stdio: ["ignore", "ignore", "pipe"],
       });
       runnerPid = runner.pid ?? 0;

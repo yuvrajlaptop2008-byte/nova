@@ -18,7 +18,7 @@ export type { LegacyOAuthRef } from "../../../agents/auth-profiles/legacy-oauth-
 const LEGACY_OAUTH_SECRET_DIRNAME = "auth-profiles";
 const LEGACY_OAUTH_SECRET_VERSION = 1;
 const LEGACY_OAUTH_SECRET_ALGORITHM = "aes-256-gcm";
-const LEGACY_OAUTH_SECRET_KEY_ENV = "OPENCLAW_AUTH_PROFILE_SECRET_KEY";
+const LEGACY_OAUTH_SECRET_KEY_ENV = "NOVA_AUTH_PROFILE_SECRET_KEY";
 const LEGACY_OAUTH_SECRET_KEYCHAIN_SERVICE = "Nova Auth Profile Secrets";
 const LEGACY_OAUTH_SECRET_KEYCHAIN_ACCOUNT = "oauth-profile-master-key";
 const LEGACY_OAUTH_SECRET_KEY_FILE_NAME = "auth-profile-secret-key";

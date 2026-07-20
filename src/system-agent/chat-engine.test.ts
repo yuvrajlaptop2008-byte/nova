@@ -100,7 +100,7 @@ let sharedVerifiedInferenceDeps: SystemAgentVerifiedInferenceDeps | undefined;
 function useTempStateDir(): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-engine-"));
   tempDirs.push(dir);
-  vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+  vi.stubEnv("NOVA_STATE_DIR", dir);
   return dir;
 }
 

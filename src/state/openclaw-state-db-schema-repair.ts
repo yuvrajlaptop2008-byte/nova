@@ -7,8 +7,8 @@ import {
   hasCanonicalAuditEventsSchema,
 } from "./openclaw-state-db-audit-migration.js";
 import {
-  OPENCLAW_STATE_SCHEMA_VERSION,
-  OPENCLAW_STATE_STRICT_SCHEMA_VERSION,
+  NOVA_STATE_SCHEMA_VERSION,
+  NOVA_STATE_STRICT_SCHEMA_VERSION,
   type OpenClawStateDatabaseOptions,
   type OpenClawStateDatabaseSchemaMigration,
 } from "./openclaw-state-db-contract.js";
@@ -113,7 +113,7 @@ export function markCurrentStateSchemaVersion(db: DatabaseSync): void {
   if (!tableExists(db, "audit_events")) {
     return;
   }
-  db.exec(`PRAGMA user_version = ${OPENCLAW_STATE_SCHEMA_VERSION};`);
+  db.exec(`PRAGMA user_version = ${NOVA_STATE_SCHEMA_VERSION};`);
   if (
     tableExists(db, "schema_meta") &&
     ["meta_key", "schema_version", "updated_at"].every((column) =>
@@ -122,7 +122,7 @@ export function markCurrentStateSchemaVersion(db: DatabaseSync): void {
   ) {
     db.prepare(
       "UPDATE schema_meta SET schema_version = ?, updated_at = ? WHERE meta_key = 'primary'",
-    ).run(OPENCLAW_STATE_SCHEMA_VERSION, Date.now());
+    ).run(NOVA_STATE_SCHEMA_VERSION, Date.now());
   }
 }
 
@@ -162,7 +162,7 @@ export function detectOpenClawStateDatabaseSchemaMigrations(
     if (!hasCanonicalAuditEventsSchema(db)) {
       migrations.push({ kind: "audit-events-v2", path: pathname });
     }
-    if (tableExists(db, "audit_events") && userVersion < OPENCLAW_STATE_STRICT_SCHEMA_VERSION) {
+    if (tableExists(db, "audit_events") && userVersion < NOVA_STATE_STRICT_SCHEMA_VERSION) {
       migrations.push({ kind: "strict-tables-v3", path: pathname });
     }
     if (sessionWatchMigration.needsSessionWatchCursorProvenanceMigration(db, userVersion)) {

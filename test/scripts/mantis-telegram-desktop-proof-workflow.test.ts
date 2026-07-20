@@ -138,22 +138,18 @@ describe("Mantis Telegram Desktop proof workflow", () => {
       (step) => step.name === "Inspect Mantis evidence manifest",
     );
 
-    expect(codexStep.env?.OPENCLAW_QA_CREDENTIAL_OWNER_ID).toContain(
+    expect(codexStep.env?.NOVA_QA_CREDENTIAL_OWNER_ID).toContain(
       "mantis-telegram-desktop-${{ github.run_id }}-${{ github.run_attempt }}",
     );
-    expect(workflowStep("Prepare Codex user").run).toContain("OPENCLAW_QA_CREDENTIAL_OWNER_ID");
+    expect(workflowStep("Prepare Codex user").run).toContain("NOVA_QA_CREDENTIAL_OWNER_ID");
     expect(cleanupIndex).toBeGreaterThan(steps.findIndex((step) => step.name === codexStep.name));
     expect(cleanupIndex).toBeGreaterThanOrEqual(0);
     expect(inspectIndex).toBeGreaterThan(cleanupIndex);
 
     const cleanupStep = workflowStep("Release leaked Telegram proof leases");
     expect(cleanupStep.if).toBe("${{ always() }}");
-    expect(cleanupStep.env?.OPENCLAW_QA_CONVEX_SECRET_CI).toContain(
-      "secrets.OPENCLAW_QA_CONVEX_SECRET_CI",
-    );
-    expect(cleanupStep.env?.OPENCLAW_QA_CONVEX_SITE_URL).toContain(
-      "secrets.OPENCLAW_QA_CONVEX_SITE_URL",
-    );
+    expect(cleanupStep.env?.NOVA_QA_CONVEX_SECRET_CI).toContain("secrets.NOVA_QA_CONVEX_SECRET_CI");
+    expect(cleanupStep.env?.NOVA_QA_CONVEX_SITE_URL).toContain("secrets.NOVA_QA_CONVEX_SITE_URL");
     expect(cleanupStep.env?.CRABBOX_PROVIDER).toContain(
       "needs.resolve_request.outputs.crabbox_provider",
     );
@@ -265,9 +261,7 @@ describe("Mantis Telegram Desktop proof workflow", () => {
     expect(readFileSync(TELEGRAM_PROOF_SKILL, "utf8")).not.toContain(
       "pnpm qa:telegram-user:crabbox",
     );
-    expect(readFileSync(TELEGRAM_PROOF_SKILL, "utf8")).toContain(
-      "OPENCLAW_TELEGRAM_USER_PROOF_CMD",
-    );
+    expect(readFileSync(TELEGRAM_PROOF_SKILL, "utf8")).toContain("NOVA_TELEGRAM_USER_PROOF_CMD");
     expect(readFileSync(PROOF_SCRIPT, "utf8")).not.toContain("pnpm qa:telegram-user:crabbox");
     expect(readFileSync(CREDENTIAL_SCRIPT, "utf8")).toContain(
       'const TELEGRAM_USER_QA_CREDENTIAL_KIND = "telegram-user";',
@@ -309,28 +303,28 @@ describe("Mantis Telegram Desktop proof workflow", () => {
     expect(install.run).not.toContain("apt-get install");
 
     const agent = workflowStep("Run Codex Mantis Telegram agent");
-    expect(agent.env?.OPENCLAW_TELEGRAM_USER_DRIVER_SCRIPT).toBe(
+    expect(agent.env?.NOVA_TELEGRAM_USER_DRIVER_SCRIPT).toBe(
       "${{ github.workspace }}/scripts/e2e/telegram-user-driver.py",
     );
-    expect(agent.env?.OPENCLAW_TELEGRAM_USER_PROOF_CMD).toBe(
+    expect(agent.env?.NOVA_TELEGRAM_USER_PROOF_CMD).toBe(
       "/usr/local/bin/openclaw-telegram-user-crabbox-proof",
     );
-    expect(agent.env?.OPENCLAW_TELEGRAM_USER_CRABBOX_BIN).toBe("/usr/local/bin/crabbox");
+    expect(agent.env?.NOVA_TELEGRAM_USER_CRABBOX_BIN).toBe("/usr/local/bin/crabbox");
     expect(agent.env?.CRABBOX_COORDINATOR).toContain(
-      "secrets.CRABBOX_COORDINATOR || secrets.OPENCLAW_QA_MANTIS_CRABBOX_COORDINATOR",
+      "secrets.CRABBOX_COORDINATOR || secrets.NOVA_QA_MANTIS_CRABBOX_COORDINATOR",
     );
     expect(agent.env?.CRABBOX_COORDINATOR_TOKEN).toContain(
-      "secrets.CRABBOX_COORDINATOR_TOKEN || secrets.OPENCLAW_QA_MANTIS_CRABBOX_COORDINATOR_TOKEN",
+      "secrets.CRABBOX_COORDINATOR_TOKEN || secrets.NOVA_QA_MANTIS_CRABBOX_COORDINATOR_TOKEN",
     );
 
     const prepare = workflowStep("Prepare Codex user");
     expect(prepare.run).toContain(
-      "OPENCLAW_TELEGRAM_USER_CRABBOX_BIN OPENCLAW_TELEGRAM_USER_CRABBOX_PROVIDER OPENCLAW_TELEGRAM_USER_DRIVER_SCRIPT OPENCLAW_TELEGRAM_USER_PROOF_CMD",
+      "NOVA_TELEGRAM_USER_CRABBOX_BIN NOVA_TELEGRAM_USER_CRABBOX_PROVIDER NOVA_TELEGRAM_USER_DRIVER_SCRIPT NOVA_TELEGRAM_USER_PROOF_CMD",
     );
     expect(prepare.run).toContain("MANTIS_CANDIDATE_TRUST");
 
     const prompt = readFileSync(PROMPT, "utf8");
-    expect(prompt).toContain("$OPENCLAW_TELEGRAM_USER_PROOF_CMD");
+    expect(prompt).toContain("$NOVA_TELEGRAM_USER_PROOF_CMD");
     expect(prompt).toContain("do not run\n   `pnpm qa:telegram-user:crabbox` directly");
     expect(prompt).toContain("Let `start` return or fail on its\n   own");
     expect(prompt).toContain("`--mcp-app-fixture` option");
@@ -458,19 +452,19 @@ describe("Mantis Telegram Desktop proof workflow", () => {
     expect(proofScript).toContain('timeout --kill-after="$setup_step_timeout_kill_after"');
     expect(proofScript).not.toContain("timeout --foreground");
     expect(proofScript).toContain(
-      'apt_timeout="\\${OPENCLAW_TELEGRAM_USER_APT_TIMEOUT_SECONDS:-900}s"',
+      'apt_timeout="\\${NOVA_TELEGRAM_USER_APT_TIMEOUT_SECONDS:-900}s"',
     );
     expect(proofScript).toContain(
-      'download_connect_timeout="\\${OPENCLAW_TELEGRAM_USER_DOWNLOAD_CONNECT_TIMEOUT_SECONDS:-15}"',
+      'download_connect_timeout="\\${NOVA_TELEGRAM_USER_DOWNLOAD_CONNECT_TIMEOUT_SECONDS:-15}"',
     );
     expect(proofScript).toContain(
-      'download_timeout="\\${OPENCLAW_TELEGRAM_USER_DOWNLOAD_TIMEOUT_SECONDS:-600}"',
+      'download_timeout="\\${NOVA_TELEGRAM_USER_DOWNLOAD_TIMEOUT_SECONDS:-600}"',
     );
     expect(proofScript).toContain('run_setup_step "apt-get update" "$apt_timeout"');
     expect(proofScript).toContain("download_file https://telegram.org/dl/desktop/linux");
     expect(proofScript).toContain('download_file "$tdlib_url" "$root/tdlib-linux.tgz"');
     expect(proofScript).toContain(
-      'tdlib_clone_timeout="\\${OPENCLAW_TELEGRAM_USER_TDLIB_CLONE_TIMEOUT_SECONDS:-600}s"',
+      'tdlib_clone_timeout="\\${NOVA_TELEGRAM_USER_TDLIB_CLONE_TIMEOUT_SECONDS:-600}s"',
     );
     expect(proofScript).toContain('run_setup_step "tdlib clone" "$tdlib_clone_timeout"');
     expect(proofScript).toContain('run_setup_step "tdlib build" "$tdlib_build_timeout"');

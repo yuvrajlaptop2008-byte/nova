@@ -20,12 +20,12 @@ function normalizeUpstreamRegistry(raw) {
     url.search ||
     url.hash
   ) {
-    throw new Error("OPENCLAW_NPM_REGISTRY_UPSTREAM must be an HTTP(S) origin");
+    throw new Error("NOVA_NPM_REGISTRY_UPSTREAM must be an HTTP(S) origin");
   }
   return url.origin;
 }
 
-const upstreamRegistry = normalizeUpstreamRegistry(process.env.OPENCLAW_NPM_REGISTRY_UPSTREAM);
+const upstreamRegistry = normalizeUpstreamRegistry(process.env.NOVA_NPM_REGISTRY_UPSTREAM);
 // Match other E2E package-download budgets while keeping public-registry hops
 // inside the install deadline and decoded bodies inside a fixed memory budget.
 const UPSTREAM_REQUEST_TIMEOUT_MS = 120_000;
@@ -218,8 +218,8 @@ const server = http.createServer((request, response) => {
   });
 });
 
-const bindHost = process.env.OPENCLAW_NPM_REGISTRY_BIND_HOST || "127.0.0.1";
-const requestedPort = Number(process.env.OPENCLAW_NPM_REGISTRY_PORT || 0);
+const bindHost = process.env.NOVA_NPM_REGISTRY_BIND_HOST || "127.0.0.1";
+const requestedPort = Number(process.env.NOVA_NPM_REGISTRY_PORT || 0);
 server.listen(requestedPort, bindHost, () => {
   fs.writeFileSync(portFile, String(server.address().port));
 });

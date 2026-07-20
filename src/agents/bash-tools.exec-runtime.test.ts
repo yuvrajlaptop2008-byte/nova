@@ -809,7 +809,7 @@ describe("runExecProcess POSIX command wrapper", () => {
     expect(supervisorMock.spawn.mock.calls[1]?.[0].timeoutMs).toBe(MAX_SAFE_TIMEOUT_DELAY_MS);
   });
 
-  it("wraps command with PATH export if OPENCLAW_PREPEND_PATH is present", async () => {
+  it("wraps command with PATH export if NOVA_PREPEND_PATH is present", async () => {
     if (process.platform === "win32") {
       return;
     }
@@ -852,7 +852,7 @@ describe("runExecProcess POSIX command wrapper", () => {
 
     const commandStr = spawnCall.argv.join(" ");
     expect(commandStr).toContain(
-      'export PATH="${OPENCLAW_PREPEND_PATH}${PATH:+:$PATH}"; unset OPENCLAW_PREPEND_PATH; echo test',
+      'export PATH="${NOVA_PREPEND_PATH}${PATH:+:$PATH}"; unset NOVA_PREPEND_PATH; echo test',
     );
   });
 

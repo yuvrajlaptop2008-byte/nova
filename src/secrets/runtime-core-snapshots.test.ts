@@ -45,12 +45,12 @@ type SecretsRuntimeEnvSnapshot = ReturnType<typeof captureEnv>;
 
 function beginSecretsRuntimeIsolationForTest(): SecretsRuntimeEnvSnapshot {
   const envSnapshot = captureEnv([
-    "OPENCLAW_BUNDLED_PLUGINS_DIR",
-    "OPENCLAW_DISABLE_BUNDLED_PLUGINS",
-    "OPENCLAW_VERSION",
+    "NOVA_BUNDLED_PLUGINS_DIR",
+    "NOVA_DISABLE_BUNDLED_PLUGINS",
+    "NOVA_VERSION",
   ]);
-  delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-  delete process.env.OPENCLAW_VERSION;
+  delete process.env.NOVA_BUNDLED_PLUGINS_DIR;
+  delete process.env.NOVA_VERSION;
   return envSnapshot;
 }
 
@@ -80,8 +80,8 @@ describe("secrets runtime snapshot core lanes", () => {
   async function prepareOpenAiRuntimeSnapshot(params?: { includeAuthStoreRefs?: boolean }) {
     return withEnvAsync(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-        OPENCLAW_VERSION: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: undefined,
+        NOVA_VERSION: undefined,
       },
       async () =>
         prepareSecretsRuntimeSnapshot({

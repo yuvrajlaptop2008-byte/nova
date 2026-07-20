@@ -15,9 +15,9 @@ import {
 describe("resolveEffectiveHomeDir", () => {
   it.each([
     {
-      name: "prefers OPENCLAW_HOME over HOME and USERPROFILE",
+      name: "prefers NOVA_HOME over HOME and USERPROFILE",
       env: {
-        OPENCLAW_HOME: " /srv/openclaw-home ",
+        NOVA_HOME: " /srv/openclaw-home ",
         HOME: "/home/other",
         USERPROFILE: "C:/Users/other",
       } as NodeJS.ProcessEnv,
@@ -40,7 +40,7 @@ describe("resolveEffectiveHomeDir", () => {
     {
       name: "falls back to homedir when env values are blank",
       env: {
-        OPENCLAW_HOME: " ",
+        NOVA_HOME: " ",
         HOME: " ",
         USERPROFILE: "\t",
       } as NodeJS.ProcessEnv,
@@ -50,7 +50,7 @@ describe("resolveEffectiveHomeDir", () => {
     {
       name: "treats literal undefined env values as unset",
       env: {
-        OPENCLAW_HOME: "undefined",
+        NOVA_HOME: "undefined",
         HOME: "undefined",
         USERPROFILE: "null",
       } as NodeJS.ProcessEnv,
@@ -65,7 +65,7 @@ describe("resolveEffectiveHomeDir", () => {
     {
       name: "expands ~/ using HOME",
       env: {
-        OPENCLAW_HOME: "~/svc",
+        NOVA_HOME: "~/svc",
         HOME: "/home/alice",
       } as NodeJS.ProcessEnv,
       expected: "/home/alice/svc",
@@ -73,7 +73,7 @@ describe("resolveEffectiveHomeDir", () => {
     {
       name: "expands ~\\\\ using USERPROFILE",
       env: {
-        OPENCLAW_HOME: "~\\svc",
+        NOVA_HOME: "~\\svc",
         HOME: " ",
         USERPROFILE: "C:/Users/alice",
       } as NodeJS.ProcessEnv,
@@ -120,7 +120,7 @@ describe("resolveEffectiveHomeDir", () => {
 
   it("uses Termux PREFIX for tilde expansion when HOME is unset", () => {
     const env = {
-      OPENCLAW_HOME: "~/workspace",
+      NOVA_HOME: "~/workspace",
       PREFIX: "/data/data/com.termux/files/usr",
       ANDROID_DATA: "/data",
     } as NodeJS.ProcessEnv;
@@ -131,9 +131,9 @@ describe("resolveEffectiveHomeDir", () => {
     ).toBe(path.resolve("/data/data/com.termux/files/home/workspace"));
   });
 
-  it("expands OPENCLAW_HOME when set to ~", () => {
+  it("expands NOVA_HOME when set to ~", () => {
     const env = {
-      OPENCLAW_HOME: "~/svc",
+      NOVA_HOME: "~/svc",
       HOME: "/home/alice",
     } as NodeJS.ProcessEnv;
 
@@ -152,14 +152,14 @@ describe("resolveRequiredHomeDir", () => {
       expected: process.cwd(),
     },
     {
-      name: "returns a fully resolved path for OPENCLAW_HOME",
-      env: { OPENCLAW_HOME: "/custom/home" } as NodeJS.ProcessEnv,
+      name: "returns a fully resolved path for NOVA_HOME",
+      env: { NOVA_HOME: "/custom/home" } as NodeJS.ProcessEnv,
       homedir: () => "/fallback",
       expected: path.resolve("/custom/home"),
     },
     {
-      name: "returns cwd when OPENCLAW_HOME is tilde-only and no fallback home exists",
-      env: { OPENCLAW_HOME: "~" } as NodeJS.ProcessEnv,
+      name: "returns cwd when NOVA_HOME is tilde-only and no fallback home exists",
+      env: { NOVA_HOME: "~" } as NodeJS.ProcessEnv,
       homedir: () => {
         throw new Error("no home");
       },
@@ -178,7 +178,7 @@ describe("resolveRequiredHomeDir", () => {
     };
 
     try {
-      expect(() => resolveRequiredHomeDir({}, noHome)).toThrow(/set OPENCLAW_HOME/i);
+      expect(() => resolveRequiredHomeDir({}, noHome)).toThrow(/set NOVA_HOME/i);
       expect(() => resolveRequiredOsHomeDir({}, noHome)).toThrow(/set HOME/i);
     } finally {
       cwdSpy.mockRestore();
@@ -187,11 +187,11 @@ describe("resolveRequiredHomeDir", () => {
 });
 
 describe("resolveOsHomeDir", () => {
-  it("ignores OPENCLAW_HOME and uses HOME", () => {
+  it("ignores NOVA_HOME and uses HOME", () => {
     expect(
       resolveOsHomeDir(
         {
-          OPENCLAW_HOME: "/srv/openclaw-home",
+          NOVA_HOME: "/srv/openclaw-home",
           HOME: "/home/alice",
           USERPROFILE: "C:/Users/alice",
         } as NodeJS.ProcessEnv,
@@ -207,7 +207,7 @@ describe("expandHomePrefix", () => {
       name: "expands ~/ using effective home",
       input: "~/x",
       opts: {
-        env: { OPENCLAW_HOME: "/srv/openclaw-home" } as NodeJS.ProcessEnv,
+        env: { NOVA_HOME: "/srv/openclaw-home" } as NodeJS.ProcessEnv,
       },
       expected: `${path.resolve("/srv/openclaw-home")}/x`,
     },
@@ -256,7 +256,7 @@ describe("resolveHomeRelativePath", () => {
       name: "expands tilde paths using the resolved home directory",
       input: "~/docs",
       opts: {
-        env: { OPENCLAW_HOME: "/srv/openclaw-home" } as NodeJS.ProcessEnv,
+        env: { NOVA_HOME: "/srv/openclaw-home" } as NodeJS.ProcessEnv,
       },
       expected: path.resolve("/srv/openclaw-home/docs"),
     },
@@ -284,11 +284,11 @@ describe("resolveUserPath", () => {
 });
 
 describe("resolveOsHomeRelativePath", () => {
-  it("expands tilde paths using the OS home instead of OPENCLAW_HOME", () => {
+  it("expands tilde paths using the OS home instead of NOVA_HOME", () => {
     expect(
       resolveOsHomeRelativePath("~/docs", {
         env: {
-          OPENCLAW_HOME: "/srv/openclaw-home",
+          NOVA_HOME: "/srv/openclaw-home",
           HOME: "/home/alice",
         } as NodeJS.ProcessEnv,
       }),

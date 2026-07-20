@@ -396,11 +396,9 @@ export async function maybeRunDiscordRoundtrip(params: {
   logPath: string;
 }) {
   const token =
-    process.env.OPENCLAW_DISCORD_SMOKE_BOT_TOKEN?.trim() ||
-    process.env.DISCORD_BOT_TOKEN?.trim() ||
-    "";
-  const guildId = process.env.OPENCLAW_DISCORD_SMOKE_GUILD_ID?.trim() || "";
-  const channelId = process.env.OPENCLAW_DISCORD_SMOKE_CHANNEL_ID?.trim() || "";
+    process.env.NOVA_DISCORD_SMOKE_BOT_TOKEN?.trim() || process.env.DISCORD_BOT_TOKEN?.trim() || "";
+  const guildId = process.env.NOVA_DISCORD_SMOKE_GUILD_ID?.trim() || "";
+  const channelId = process.env.NOVA_DISCORD_SMOKE_CHANNEL_ID?.trim() || "";
   if (!token || !guildId || !channelId) {
     return "skipped-missing-config";
   }

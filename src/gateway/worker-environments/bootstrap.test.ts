@@ -15,7 +15,7 @@ const BUNDLE_HASH = "a".repeat(64);
 const TARBALL_SHA256 = "b".repeat(64);
 const VERSION = "2026.7.11";
 const NPM_INTEGRITY = `sha512-${Buffer.alloc(64).toString("base64")}`;
-const OUTPUT_TAG = "OPENCLAW_WORKER_BOOTSTRAP_V1";
+const OUTPUT_TAG = "NOVA_WORKER_BOOTSTRAP_V1";
 const REMOTE_TARBALL = `/home/worker/.openclaw-worker/.incoming/${BUNDLE_HASH}.tgz.ABCDEFGH`;
 const HOST_KEY = ["ssh-ed25519", "AAAA"].join(" ");
 const RECEIPT_JSON = JSON.stringify({
@@ -181,7 +181,7 @@ describe("bootstrapWorker", () => {
     const runner = fakeRunner([
       result({
         code: 42,
-        stderr: "OPENCLAW_WORKER_NODE_MISSING\n",
+        stderr: "NOVA_WORKER_NODE_MISSING\n",
       }),
     ]);
 
@@ -198,7 +198,7 @@ describe("bootstrapWorker", () => {
     const runner = fakeRunner([
       result({
         code: 45,
-        stderr: "OPENCLAW_WORKER_NODE_UNSUPPORTED: v24.14.1\n",
+        stderr: "NOVA_WORKER_NODE_UNSUPPORTED: v24.14.1\n",
       }),
     ]);
 

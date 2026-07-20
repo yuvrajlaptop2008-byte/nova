@@ -67,7 +67,7 @@ describe("loadSystemAgentOverview", () => {
       legacyIssues: [],
     };
     const overview = await loadSystemAgentOverview({
-      env: { OPENCLAW_TEST_FAST: "1" },
+      env: { NOVA_TEST_FAST: "1" },
       deps: {
         readConfigFileSnapshot: async () => snapshot,
         resolveConfigPath: () => "/tmp/openclaw.json",

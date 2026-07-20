@@ -77,9 +77,9 @@ describe("mantis Telegram desktop builder runtime", () => {
       credentialSource: "env",
       env: {
         OPENAI_API_KEY: "openai-runtime-key",
-        OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver-token",
-        OPENCLAW_QA_TELEGRAM_GROUP_ID: "-1001234567890",
-        OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN: "sut-token",
+        NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN: "driver-token",
+        NOVA_QA_TELEGRAM_GROUP_ID: "-1001234567890",
+        NOVA_QA_TELEGRAM_SUT_BOT_TOKEN: "sut-token",
         PATH: process.env.PATH,
         TELEGRAM_PROFILE_TGZ_B64: "profile-archive",
       },
@@ -100,13 +100,11 @@ describe("mantis Telegram desktop builder runtime", () => {
     const runCommand = commands.find(
       (entry) => entry.command === "/tmp/crabbox" && entry.args[0] === "run",
     );
-    expect(runCommand?.env?.OPENCLAW_LIVE_OPENAI_KEY).toBe("openai-runtime-key");
-    expect(runCommand?.env?.OPENCLAW_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64).toBe(
-      "profile-archive",
-    );
-    expect(runCommand?.env?.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN).toBe("driver-token");
-    expect(runCommand?.env?.OPENCLAW_MANTIS_TELEGRAM_GROUP_ID).toBe("-1001234567890");
-    expect(runCommand?.env?.OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN).toBe("sut-token");
+    expect(runCommand?.env?.NOVA_LIVE_OPENAI_KEY).toBe("openai-runtime-key");
+    expect(runCommand?.env?.NOVA_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64).toBe("profile-archive");
+    expect(runCommand?.env?.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN).toBe("driver-token");
+    expect(runCommand?.env?.NOVA_MANTIS_TELEGRAM_GROUP_ID).toBe("-1001234567890");
+    expect(runCommand?.env?.NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN).toBe("sut-token");
     const remoteScript = runCommand?.args.at(-1);
     expect(remoteScript).toContain(
       'curl -fsSL --connect-timeout 10 --max-time 120 https://deb.nodesource.com/setup_22.x -o "$out/nodesource-setup.sh"',
@@ -123,7 +121,7 @@ describe("mantis Telegram desktop builder runtime", () => {
     expect(remoteScript?.match(/--max-time 600/gu)?.length).toBe(1);
     expect(remoteScript?.match(/--retry 2 --retry-delay 2/gu)?.length).toBe(1);
     expect(remoteScript).toContain('-workdir "$telegram_profile_dir"');
-    expect(remoteScript).toContain("OPENCLAW_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64");
+    expect(remoteScript).toContain("NOVA_MANTIS_TELEGRAM_DESKTOP_PROFILE_TGZ_B64");
     expect(remoteScript).toContain(
       'botToken: { source: "env", provider: "default", id: "TELEGRAM_BOT_TOKEN" }',
     );
@@ -237,8 +235,8 @@ describe("mantis Telegram desktop builder runtime", () => {
       credentialSource: "convex",
       env: {
         CI: "1",
-        OPENCLAW_QA_CONVEX_SECRET_CI: "convex-secret",
-        OPENCLAW_QA_CONVEX_SITE_URL: "https://example.convex.site",
+        NOVA_QA_CONVEX_SECRET_CI: "convex-secret",
+        NOVA_QA_CONVEX_SITE_URL: "https://example.convex.site",
         PATH: process.env.PATH,
       },
       keepLease: false,
@@ -252,12 +250,12 @@ describe("mantis Telegram desktop builder runtime", () => {
     const runCommand = commands.find(
       (entry) => entry.command === "/tmp/crabbox" && entry.args[0] === "run",
     );
-    expect(runCommand?.env?.OPENCLAW_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN).toBe("driver-leased");
-    expect(runCommand?.env?.OPENCLAW_MANTIS_TELEGRAM_GROUP_ID).toBe("-100222333444");
-    expect(runCommand?.env?.OPENCLAW_MANTIS_TELEGRAM_SUT_BOT_TOKEN).toBe("sut-leased");
-    expect(runCommand?.env?.OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN).toBe("driver-leased");
-    expect(runCommand?.env?.OPENCLAW_QA_TELEGRAM_GROUP_ID).toBe("-100222333444");
-    expect(runCommand?.env?.OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN).toBe("sut-leased");
+    expect(runCommand?.env?.NOVA_MANTIS_TELEGRAM_DRIVER_BOT_TOKEN).toBe("driver-leased");
+    expect(runCommand?.env?.NOVA_MANTIS_TELEGRAM_GROUP_ID).toBe("-100222333444");
+    expect(runCommand?.env?.NOVA_MANTIS_TELEGRAM_SUT_BOT_TOKEN).toBe("sut-leased");
+    expect(runCommand?.env?.NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN).toBe("driver-leased");
+    expect(runCommand?.env?.NOVA_QA_TELEGRAM_GROUP_ID).toBe("-100222333444");
+    expect(runCommand?.env?.NOVA_QA_TELEGRAM_SUT_BOT_TOKEN).toBe("sut-leased");
     expect(
       commands.some((entry) => entry.command === "/tmp/crabbox" && entry.args[0] === "stop"),
     ).toBe(true);

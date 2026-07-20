@@ -27,7 +27,7 @@ import { expandPackageDistImportClosure } from "./lib/package-dist-imports.mjs";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_PACKAGE_ROOT = join(scriptDir, "..");
-const DISABLE_POSTINSTALL_ENV = "OPENCLAW_DISABLE_BUNDLED_PLUGIN_POSTINSTALL";
+const DISABLE_POSTINSTALL_ENV = "NOVA_DISABLE_BUNDLED_PLUGIN_POSTINSTALL";
 const DIST_INVENTORY_PATH = "dist/postinstall-inventory.json";
 // One budget covers all three prune walks (legacy-deps prepass, file listing,
 // empty-dir sweep). npm upgrades transiently hold old+new content-hashed dist
@@ -135,7 +135,7 @@ function resolvePostinstallTildePath(input, homeDir) {
 
 function resolvePostinstallOpenClawHomeDir(env, getHomedir = homedir) {
   const osHome = resolvePostinstallOsHomeDir(env, getHomedir);
-  const override = env?.OPENCLAW_HOME?.trim();
+  const override = env?.NOVA_HOME?.trim();
   return override ? pathResolve(resolvePostinstallTildePath(override, osHome)) : osHome;
 }
 
@@ -418,11 +418,11 @@ export function collectLegacyPluginRuntimeDepsStateRoots(params = {}) {
     }
   };
 
-  const stateOverride = env?.OPENCLAW_STATE_DIR?.trim();
+  const stateOverride = env?.NOVA_STATE_DIR?.trim();
   if (stateOverride) {
     addStateRoot(resolvePostinstallUserPath(stateOverride, openClawHome));
   }
-  const configPath = env?.OPENCLAW_CONFIG_PATH?.trim();
+  const configPath = env?.NOVA_CONFIG_PATH?.trim();
   if (configPath) {
     addStateRoot(dirname(resolvePostinstallUserPath(configPath, openClawHome)));
   }

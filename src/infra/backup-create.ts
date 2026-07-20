@@ -634,7 +634,7 @@ async function createStateSqliteBackupPlan(params: {
   const globalStateSqlitePath = path.resolve(
     resolveOpenClawStateSqlitePath({
       ...process.env,
-      OPENCLAW_STATE_DIR: params.stateDir,
+      NOVA_STATE_DIR: params.stateDir,
     }),
   );
   const discovery = await listStateSqlitePaths({

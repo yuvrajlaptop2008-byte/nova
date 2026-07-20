@@ -780,11 +780,11 @@ describe("loadPluginLookUpTable", () => {
     } as OpenClawConfig;
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     await expectStaleMetadataSnapshotRebuild({
       config,
@@ -805,11 +805,11 @@ describe("loadPluginLookUpTable", () => {
     const config = {} as OpenClawConfig;
     const snapshotEnv = {
       HOME: "/home/snapshot",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     const requestedEnv = {
       HOME: "/home/requested",
-      OPENCLAW_HOME: undefined,
+      NOVA_HOME: undefined,
     } as NodeJS.ProcessEnv;
     await expectStaleMetadataSnapshotRebuild({
       config,

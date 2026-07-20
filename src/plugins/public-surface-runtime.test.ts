@@ -13,8 +13,8 @@ import {
 const tempDirs: string[] = [];
 const noBundledPluginOverrideEnv = {
   ...process.env,
-  OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-  OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+  NOVA_BUNDLED_PLUGINS_DIR: undefined,
+  NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
 } satisfies NodeJS.ProcessEnv;
 
 afterEach(() => {

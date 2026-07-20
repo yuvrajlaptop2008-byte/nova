@@ -139,7 +139,7 @@ vi.mock("../config/paths.js", async () => {
     resolveConfigPath: vi.fn(() => "/tmp/openclaw-state/openclaw.json"),
     resolveGatewayPort: vi.fn(() => 18789),
     resolveStateDir: vi.fn((env: NodeJS.ProcessEnv = process.env) =>
-      env.OPENCLAW_STATE_DIR?.trim() ? actual.resolveStateDir(env) : "/tmp/openclaw-state",
+      env.NOVA_STATE_DIR?.trim() ? actual.resolveStateDir(env) : "/tmp/openclaw-state",
     ),
   };
 });
@@ -317,8 +317,8 @@ describe("startGatewayPostAttachRuntime", () => {
   beforeEach(() => {
     resetGatewayWorkAdmission();
     closeOpenClawStateDatabaseForTest();
-    vi.stubEnv("OPENCLAW_SKIP_CHANNELS", "0");
-    vi.stubEnv("OPENCLAW_SKIP_PROVIDERS", "0");
+    vi.stubEnv("NOVA_SKIP_CHANNELS", "0");
+    vi.stubEnv("NOVA_SKIP_PROVIDERS", "0");
     hoisted.startPluginServices.mockClear();
     hoisted.startGmailWatcherWithLogs.mockClear();
     hoisted.loadInternalHooks.mockClear();
@@ -681,7 +681,7 @@ describe("startGatewayPostAttachRuntime", () => {
   it("skips heavy restart sentinel refresh when no sentinel file exists", async () => {
     const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-no-sentinel-"));
     try {
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         hoisted.refreshLatestUpdateRestartSentinel.mockClear();
 
         const result = await testing.refreshLatestUpdateRestartSentinelIfPresent();
@@ -704,9 +704,9 @@ describe("startGatewayPostAttachRuntime", () => {
           status: "ok",
           ts: 1,
         },
-        { OPENCLAW_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
+        { NOVA_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
       );
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         const sentinel = { kind: "update", status: "ok", ts: 1 } as const;
         hoisted.refreshLatestUpdateRestartSentinel.mockClear();
         hoisted.refreshLatestUpdateRestartSentinel.mockResolvedValue(sentinel);
@@ -731,12 +731,12 @@ describe("startGatewayPostAttachRuntime", () => {
           status: "ok",
           ts: 1,
         },
-        { OPENCLAW_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
+        { NOVA_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
       );
 
       expect(
         await testing.hasRestartSentinelFast({
-          OPENCLAW_STATE_DIR: stateDir,
+          NOVA_STATE_DIR: stateDir,
         } as NodeJS.ProcessEnv),
       ).toBe(true);
     } finally {
@@ -754,7 +754,7 @@ describe("startGatewayPostAttachRuntime", () => {
           status: "ok",
           ts: 1,
         },
-        { OPENCLAW_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
+        { NOVA_STATE_DIR: stateDir } as NodeJS.ProcessEnv,
       );
       const actualExistsSync = fs.existsSync;
       const existsSync = vi.spyOn(fs, "existsSync").mockImplementation((candidate) => {
@@ -766,7 +766,7 @@ describe("startGatewayPostAttachRuntime", () => {
       try {
         await expect(
           testing.hasRestartSentinelFast({
-            OPENCLAW_STATE_DIR: stateDir,
+            NOVA_STATE_DIR: stateDir,
           } as NodeJS.ProcessEnv),
         ).resolves.toBe(true);
         expect(
@@ -1469,8 +1469,8 @@ describe("startGatewayPostAttachRuntime", () => {
   it("starts channels when channel startup is enabled", async () => {
     await withEnvAsync(
       {
-        OPENCLAW_SKIP_CHANNELS: undefined,
-        OPENCLAW_SKIP_PROVIDERS: undefined,
+        NOVA_SKIP_CHANNELS: undefined,
+        NOVA_SKIP_PROVIDERS: undefined,
       },
       async () => {
         const startChannels = vi.fn(async () => {});
@@ -1503,7 +1503,7 @@ describe("startGatewayPostAttachRuntime", () => {
 
   it("starts and reports plugin services after channel startup completes", async () => {
     await withEnvAsync(
-      { OPENCLAW_SKIP_CHANNELS: undefined, OPENCLAW_SKIP_PROVIDERS: undefined },
+      { NOVA_SKIP_CHANNELS: undefined, NOVA_SKIP_PROVIDERS: undefined },
       async () => {
         let releaseChannels: (() => void) | undefined;
         const events: string[] = [];
@@ -1566,7 +1566,7 @@ describe("startGatewayPostAttachRuntime", () => {
 
   it("does not start plugin services after deferred close starts during channel startup", async () => {
     await withEnvAsync(
-      { OPENCLAW_SKIP_CHANNELS: undefined, OPENCLAW_SKIP_PROVIDERS: undefined },
+      { NOVA_SKIP_CHANNELS: undefined, NOVA_SKIP_PROVIDERS: undefined },
       async () => {
         let closing = false;
         let releaseChannels: (() => void) | undefined;
@@ -1610,7 +1610,7 @@ describe("startGatewayPostAttachRuntime", () => {
 
   it("stops plugin services that finish starting after deferred close begins", async () => {
     await withEnvAsync(
-      { OPENCLAW_SKIP_CHANNELS: undefined, OPENCLAW_SKIP_PROVIDERS: undefined },
+      { NOVA_SKIP_CHANNELS: undefined, NOVA_SKIP_PROVIDERS: undefined },
       async () => {
         let shouldStartPluginServices = true;
         let releasePluginServices: (() => void) | undefined;
@@ -1662,7 +1662,7 @@ describe("startGatewayPostAttachRuntime", () => {
 
   it("returns plugin services already reported by deferred sidecars", async () => {
     await withEnvAsync(
-      { OPENCLAW_SKIP_CHANNELS: undefined, OPENCLAW_SKIP_PROVIDERS: undefined },
+      { NOVA_SKIP_CHANNELS: undefined, NOVA_SKIP_PROVIDERS: undefined },
       async () => {
         let releaseStartupLog: (() => void) | undefined;
         let releaseChannels: (() => void) | undefined;
@@ -1727,30 +1727,27 @@ describe("startGatewayPostAttachRuntime", () => {
     const logChannels = { info: vi.fn(), error: vi.fn() };
     const prewarmPrimaryModel = vi.fn(async () => {});
 
-    await withEnvAsync(
-      { OPENCLAW_SKIP_CHANNELS: "1", OPENCLAW_SKIP_PROVIDERS: undefined },
-      async () => {
-        await startGatewaySidecars({
-          cfg: {
-            hooks: { internal: { enabled: false } },
-            agents: { defaults: { model: "openai/gpt-5.6" } },
-          } as never,
-          pluginRegistry: createPostAttachParams().pluginRegistry,
-          defaultWorkspaceDir: "/tmp/openclaw-workspace",
-          deps: {} as never,
-          startChannels: vi.fn(async () => {}),
-          log: { warn: vi.fn() },
-          logHooks: {
-            info: vi.fn(),
-            warn: vi.fn(),
-            error: vi.fn(),
-          },
-          logChannels,
-          startupTrace: trace.startupTrace,
-          prewarmPrimaryModel,
-        });
-      },
-    );
+    await withEnvAsync({ NOVA_SKIP_CHANNELS: "1", NOVA_SKIP_PROVIDERS: undefined }, async () => {
+      await startGatewaySidecars({
+        cfg: {
+          hooks: { internal: { enabled: false } },
+          agents: { defaults: { model: "openai/gpt-5.6" } },
+        } as never,
+        pluginRegistry: createPostAttachParams().pluginRegistry,
+        defaultWorkspaceDir: "/tmp/openclaw-workspace",
+        deps: {} as never,
+        startChannels: vi.fn(async () => {}),
+        log: { warn: vi.fn() },
+        logHooks: {
+          info: vi.fn(),
+          warn: vi.fn(),
+          error: vi.fn(),
+        },
+        logChannels,
+        startupTrace: trace.startupTrace,
+        prewarmPrimaryModel,
+      });
+    });
 
     await waitForGatewayTestState(() => {
       expect(prewarmPrimaryModel).toHaveBeenCalledOnce();
@@ -1758,7 +1755,7 @@ describe("startGatewayPostAttachRuntime", () => {
     expect(trace.measures).toContain("sidecars.channels");
     expect(trace.measures).toContain("sidecars.channel-skip");
     expect(logChannels.info).toHaveBeenCalledWith(
-      "skipping channel start (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)",
+      "skipping channel start (NOVA_SKIP_CHANNELS=1 or NOVA_SKIP_PROVIDERS=1)",
     );
   });
 

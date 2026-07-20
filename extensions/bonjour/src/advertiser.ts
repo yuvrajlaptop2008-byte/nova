@@ -47,7 +47,7 @@ const defaultLogger = {
 };
 
 function readBonjourDisableOverride(): boolean | null {
-  const raw = process.env.OPENCLAW_DISABLE_BONJOUR;
+  const raw = process.env.NOVA_DISABLE_BONJOUR;
   const normalized = raw?.trim().toLowerCase();
   if (!normalized) {
     return null;
@@ -238,7 +238,7 @@ export async function startGatewayBonjourAdvertiser(
     cleanupUncaughtException = deps.registerUncaughtExceptionHandler(handleCiaoProcessError);
 
     const hostnameRaw =
-      process.env.OPENCLAW_MDNS_HOSTNAME?.trim() || resolveSystemMdnsHostname() || "openclaw";
+      process.env.NOVA_MDNS_HOSTNAME?.trim() || resolveSystemMdnsHostname() || "openclaw";
     const hostnameWithoutLocal = hostnameRaw.replace(/\.local$/i, "");
     const dotIndex = hostnameWithoutLocal.indexOf(".");
     const labelEnd = dotIndex === -1 ? hostnameWithoutLocal.length : dotIndex;

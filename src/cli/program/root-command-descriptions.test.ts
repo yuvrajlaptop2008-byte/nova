@@ -10,7 +10,7 @@ import { getSubCliEntries } from "./subcli-descriptors.js";
 
 describe("root command descriptions", () => {
   beforeEach(() => {
-    vi.stubEnv("OPENCLAW_ENABLE_PRIVATE_QA_CLI", "");
+    vi.stubEnv("NOVA_ENABLE_PRIVATE_QA_CLI", "");
   });
 
   afterEach(() => {

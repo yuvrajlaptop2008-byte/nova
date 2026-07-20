@@ -552,8 +552,8 @@ describe("qa scenario catalog", () => {
         primaryModel: "mock-openai/gpt-5.6-luna",
         scenarios: [readQaScenarioById("update-run-package-self-upgrade")],
         env: {
-          OPENCLAW_QA_ALLOW_UPDATE_RUN_SELF: "0",
-          OPENCLAW_QA_REF: "blocked-evidence-test",
+          NOVA_QA_ALLOW_UPDATE_RUN_SELF: "0",
+          NOVA_QA_REF: "blocked-evidence-test",
         },
       });
 
@@ -567,7 +567,7 @@ describe("qa scenario catalog", () => {
                 status: "blocked",
                 failure: {
                   reason:
-                    "blocked destructive package self-upgrade; set OPENCLAW_QA_ALLOW_UPDATE_RUN_SELF=1 to run",
+                    "blocked destructive package self-upgrade; set NOVA_QA_ALLOW_UPDATE_RUN_SELF=1 to run",
                 },
               },
             },

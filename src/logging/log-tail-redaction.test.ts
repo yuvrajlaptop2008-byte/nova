@@ -49,7 +49,7 @@ describe("readConfiguredLogTail redaction", () => {
     setLoggerOverride({ file: logFile });
 
     const payload = await withEnvAsync(
-      { OPENCLAW_CONFIG_PATH: configFile },
+      { NOVA_CONFIG_PATH: configFile },
       async () => await readConfiguredLogTail({ limit: 10 }),
     );
     const text = payload.lines.join("\n");

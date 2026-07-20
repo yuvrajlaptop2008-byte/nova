@@ -118,7 +118,7 @@ describe("memory wiki source sync state", () => {
   it("persists source sync entries in plugin state", async () => {
     const stateDir = await makeTempDir();
     const vaultRoot = path.join(stateDir, "vault");
-    const store = openStore({ ...process.env, OPENCLAW_STATE_DIR: stateDir });
+    const store = openStore({ ...process.env, NOVA_STATE_DIR: stateDir });
 
     await writeMemoryWikiSourceSyncState(
       vaultRoot,
@@ -299,7 +299,7 @@ describe("memory wiki source sync state", () => {
   it("rejects writes beyond the source-sync state row cap", async () => {
     const stateDir = await makeTempDir();
     const vaultRoot = path.join(stateDir, "vault");
-    const store = openStore({ ...process.env, OPENCLAW_STATE_DIR: stateDir });
+    const store = openStore({ ...process.env, NOVA_STATE_DIR: stateDir });
     const entries = Object.fromEntries(
       Array.from({ length: MEMORY_WIKI_SOURCE_SYNC_STATE_MAX_ENTRIES + 1 }, (_, index) => [
         `source-${index}`,

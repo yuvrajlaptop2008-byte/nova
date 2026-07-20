@@ -46,11 +46,11 @@ import type {
 } from "./service-types.js";
 
 function resolveTaskName(env: GatewayServiceEnv): string {
-  const override = env.OPENCLAW_WINDOWS_TASK_NAME?.trim();
+  const override = env.NOVA_WINDOWS_TASK_NAME?.trim();
   if (override) {
     return override;
   }
-  return resolveGatewayWindowsTaskName(env.OPENCLAW_PROFILE);
+  return resolveGatewayWindowsTaskName(env.NOVA_PROFILE);
 }
 
 function shouldFallbackToStartupEntry(params: { code: number; detail: string }): boolean {
@@ -237,7 +237,7 @@ function resolveSchtasksCreateUser(env: GatewayServiceEnv, taskUser: string | nu
 }
 
 function shouldUseHiddenWindowsTaskLauncher(env: GatewayServiceEnv): boolean {
-  const value = normalizeLowercaseStringOrEmpty(env.OPENCLAW_WINDOWS_TASK_HIDDEN_LAUNCHER);
+  const value = normalizeLowercaseStringOrEmpty(env.NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER);
   return value === "1" || value === "true" || value === "yes";
 }
 
@@ -555,7 +555,7 @@ async function launchFallbackTaskScript(
 }
 
 function resolveConfiguredGatewayPort(env: GatewayServiceEnv): number | null {
-  return parseTcpPort(env.OPENCLAW_GATEWAY_PORT);
+  return parseTcpPort(env.NOVA_GATEWAY_PORT);
 }
 
 function parsePositivePort(raw: string | undefined): number | null {
@@ -630,7 +630,7 @@ async function resolveScheduledTaskProcess(
   }
   const port =
     parseTcpPortFromArgs(installedArguments) ??
-    parsePositivePort(command?.environment?.OPENCLAW_GATEWAY_PORT) ??
+    parsePositivePort(command?.environment?.NOVA_GATEWAY_PORT) ??
     resolveConfiguredGatewayPort(env);
   if (!port) {
     return null;
@@ -665,14 +665,14 @@ async function resolveScheduledTaskGatewayProcess(env: GatewayServiceEnv): Promi
 }
 
 function shouldManageGatewayListenerPort(env: GatewayServiceEnv): boolean {
-  return normalizeLowercaseStringOrEmpty(env.OPENCLAW_SERVICE_KIND) !== NODE_SERVICE_KIND;
+  return normalizeLowercaseStringOrEmpty(env.NOVA_SERVICE_KIND) !== NODE_SERVICE_KIND;
 }
 
 async function resolveScheduledTaskPort(env: GatewayServiceEnv): Promise<number | null> {
   const command = await readScheduledTaskCommand(env).catch(() => null);
   return (
     parseTcpPortFromArgs(command?.programArguments) ??
-    parsePositivePort(command?.environment?.OPENCLAW_GATEWAY_PORT) ??
+    parsePositivePort(command?.environment?.NOVA_GATEWAY_PORT) ??
     resolveConfiguredGatewayPort(env)
   );
 }
@@ -933,7 +933,7 @@ async function resolveFallbackRuntime(
     const installedArguments = command?.programArguments;
     const port =
       parseTcpPortFromArgs(installedArguments) ??
-      parsePositivePort(command?.environment?.OPENCLAW_GATEWAY_PORT) ??
+      parsePositivePort(command?.environment?.NOVA_GATEWAY_PORT) ??
       resolveConfiguredGatewayPort(env);
     if (!port) {
       return {
@@ -965,7 +965,7 @@ async function resolveFallbackRuntime(
   }
   const port =
     parseTcpPortFromArgs(command?.programArguments) ??
-    parsePositivePort(command?.environment?.OPENCLAW_GATEWAY_PORT) ??
+    parsePositivePort(command?.environment?.NOVA_GATEWAY_PORT) ??
     resolveConfiguredGatewayPort(env);
   if (!port) {
     return {
@@ -1063,7 +1063,7 @@ async function assertReplacementPortAvailableForTakeover(params: {
   }
   const port =
     parseTcpPortFromArgs(params.programArguments) ??
-    parsePositivePort(params.environment?.OPENCLAW_GATEWAY_PORT) ??
+    parsePositivePort(params.environment?.NOVA_GATEWAY_PORT) ??
     resolveConfiguredGatewayPort(params.env);
   if (!port) {
     throw new Error("Could not verify the replacement Windows Scheduled Task port.");
@@ -1215,9 +1215,9 @@ async function startStartupEntry(
 }
 
 const CALLER_OWNED_SERVICE_IDENTITY_KEYS = [
-  "OPENCLAW_LAUNCHD_LABEL",
-  "OPENCLAW_SYSTEMD_UNIT",
-  "OPENCLAW_WINDOWS_TASK_NAME",
+  "NOVA_LAUNCHD_LABEL",
+  "NOVA_SYSTEMD_UNIT",
+  "NOVA_WINDOWS_TASK_NAME",
 ] as const;
 
 function resolveScheduledTaskRenderEnv(
@@ -1252,13 +1252,13 @@ function resolveScheduledTaskScriptEnvironment(
 }
 
 const SCHEDULED_TASK_ACTIVATION_KEYS = [
-  "OPENCLAW_WINDOWS_TASK_HIDDEN_LAUNCHER",
-  "OPENCLAW_TASK_SCRIPT_NAME",
-  "OPENCLAW_TASK_SCRIPT",
-  "OPENCLAW_SERVICE_KIND",
-  "OPENCLAW_GATEWAY_PORT",
-  "OPENCLAW_STATE_DIR",
-  "OPENCLAW_PROFILE",
+  "NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER",
+  "NOVA_TASK_SCRIPT_NAME",
+  "NOVA_TASK_SCRIPT",
+  "NOVA_SERVICE_KIND",
+  "NOVA_GATEWAY_PORT",
+  "NOVA_STATE_DIR",
+  "NOVA_PROFILE",
 ] as const;
 
 function resolveScheduledTaskActivationEnv(
@@ -1434,7 +1434,7 @@ async function shouldFallbackScheduledTaskLaunch(params: {
     const installedArguments = command?.programArguments;
     const taskPort =
       parseTcpPortFromArgs(installedArguments) ??
-      parsePositivePort(command?.environment?.OPENCLAW_GATEWAY_PORT) ??
+      parsePositivePort(command?.environment?.NOVA_GATEWAY_PORT) ??
       resolveConfiguredGatewayPort(params.env);
     const manageGatewayPort = shouldManageGatewayListenerPort(params.env);
     if (manageGatewayPort && taskPort) {

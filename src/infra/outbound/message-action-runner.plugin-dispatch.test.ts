@@ -541,7 +541,7 @@ describe("runMessageAction plugin dispatch", () => {
       const stateDir = path.join("/tmp", "openclaw-plugin-dispatch-media-roots");
       const expectedWorkspaceRoot = path.resolve(stateDir, "workspace-alpha");
 
-      await withEnvAsync({ OPENCLAW_STATE_DIR: stateDir }, async () => {
+      await withEnvAsync({ NOVA_STATE_DIR: stateDir }, async () => {
         await runMessageAction({
           cfg: {
             channels: {

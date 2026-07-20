@@ -2122,7 +2122,7 @@ describe("startGatewayConfigReloader", () => {
   });
 
   it("prepares a superseding config against the env owner committed at the runtime edge", async () => {
-    const envKey = "OPENCLAW_TEST_COMMITTED_ENV_SOURCE";
+    const envKey = "NOVA_TEST_COMMITTED_ENV_SOURCE";
     const targetEnv: NodeJS.ProcessEnv = { [envKey]: "old" };
     const initialConfig = {
       gateway: { reload: {} },
@@ -3262,7 +3262,7 @@ describe("startGatewayConfigReloader", () => {
   ] as const)(
     "publishes config env only for a runtime-applied $label transaction",
     async (testCase) => {
-      const envKey = "OPENCLAW_TEST_RELOAD_TRANSACTION_ENV";
+      const envKey = "NOVA_TEST_RELOAD_TRANSACTION_ENV";
       const targetEnv: NodeJS.ProcessEnv = { [envKey]: "old" };
       const initialConfig = {
         gateway: { reload: { mode: testCase.reloadMode } },
@@ -3305,7 +3305,7 @@ describe("startGatewayConfigReloader", () => {
     { label: "rejected before runtime commit", markCommitted: false, expected: "old" },
     { label: "failed after runtime commit", markCommitted: true, expected: "candidate" },
   ] as const)("$label handles published config env ownership", async (testCase) => {
-    const envKey = "OPENCLAW_TEST_RELOAD_ENV_COMMIT_EDGE";
+    const envKey = "NOVA_TEST_RELOAD_ENV_COMMIT_EDGE";
     const targetEnv: NodeJS.ProcessEnv = { [envKey]: "old" };
     const initialConfig = {
       gateway: { reload: {} },
@@ -3357,7 +3357,7 @@ describe("startGatewayConfigReloader", () => {
   });
 
   it("keeps a deferred config env candidate isolated when a watcher supersedes it", async () => {
-    const envKey = "OPENCLAW_TEST_SUPERSEDED_RELOAD_ENV";
+    const envKey = "NOVA_TEST_SUPERSEDED_RELOAD_ENV";
     const targetEnv: NodeJS.ProcessEnv = { [envKey]: "old" };
     const initialConfig = {
       gateway: { reload: {} },
@@ -3409,7 +3409,7 @@ describe("startGatewayConfigReloader", () => {
   });
 
   it("reprepares a stale managed-write env candidate after another transaction accepts", async () => {
-    const envKey = "OPENCLAW_TEST_INTERLEAVED_RELOAD_ENV";
+    const envKey = "NOVA_TEST_INTERLEAVED_RELOAD_ENV";
     const targetEnv: NodeJS.ProcessEnv = { [envKey]: "a" };
     const makeConfig = (value: string, port: number): OpenClawConfig => ({
       gateway: { reload: {}, port },

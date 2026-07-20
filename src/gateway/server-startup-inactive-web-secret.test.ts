@@ -73,8 +73,8 @@ vi.mock("../secrets/runtime-web-tools-fallback.runtime.js", () => ({
   },
 }));
 
-const INACTIVE_SECRET_ENV = "OPENCLAW_TEST_INACTIVE_WEB_SEARCH_SECRET";
-const ACTIVE_SECRET_ENV = "OPENCLAW_TEST_ACTIVE_WEB_SEARCH_SECRET";
+const INACTIVE_SECRET_ENV = "NOVA_TEST_INACTIVE_WEB_SEARCH_SECRET";
+const ACTIVE_SECRET_ENV = "NOVA_TEST_ACTIVE_WEB_SEARCH_SECRET";
 const SECRET_PATH = "plugins.entries.google.config.webSearch.apiKey";
 
 installGatewayTestHooks({ scope: "suite" });

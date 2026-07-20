@@ -36,7 +36,7 @@ export const EventType = {
   RoomMessage: "m.room.message",
 } as const;
 
-export const MATRIX_OPENCLAW_FINALIZED_PREVIEW_KEY = "com.openclaw.finalized_preview" as const;
+export const MATRIX_NOVA_FINALIZED_PREVIEW_KEY = "com.openclaw.finalized_preview" as const;
 
 export type MatrixDirectAccountData = Record<string, string[]>;
 

@@ -5,7 +5,7 @@ import { readTextFileTail } from "../text-file-utils.mjs";
 import { assert, readJson, requireArg, write, writeJson } from "./common.mjs";
 
 const AGENTS_DELETE_OUTPUT_MAX_BYTES = readPositiveIntEnv(
-  "OPENCLAW_FIXTURE_AGENTS_DELETE_OUTPUT_MAX_BYTES",
+  "NOVA_FIXTURE_AGENTS_DELETE_OUTPUT_MAX_BYTES",
   1024 * 1024,
 );
 const ERROR_DETAIL_TAIL_BYTES = 16 * 1024;
@@ -24,7 +24,7 @@ function readPositiveIntEnv(name, fallback) {
 
 function writeOpenWebUiWorkspace() {
   const workspace =
-    process.env.OPENCLAW_WORKSPACE_DIR || path.join(process.env.HOME, ".openclaw", "workspace");
+    process.env.NOVA_WORKSPACE_DIR || path.join(process.env.HOME, ".openclaw", "workspace");
   write(
     path.join(workspace, "IDENTITY.md"),
     "# Identity\n\n- Name: Nova\n- Purpose: Open WebUI Docker compatibility smoke test assistant.\n",
@@ -37,9 +37,9 @@ function writeOpenWebUiWorkspace() {
 }
 
 function writeAgentsDeleteConfig() {
-  const stateDir = requireArg(process.env.OPENCLAW_STATE_DIR, "OPENCLAW_STATE_DIR");
+  const stateDir = requireArg(process.env.NOVA_STATE_DIR, "NOVA_STATE_DIR");
   const sharedWorkspace = requireArg(process.env.SHARED_WORKSPACE, "SHARED_WORKSPACE");
-  const gatewayToken = process.env.OPENCLAW_GATEWAY_TOKEN?.trim();
+  const gatewayToken = process.env.NOVA_GATEWAY_TOKEN?.trim();
   fs.mkdirSync(sharedWorkspace, { recursive: true });
   writeJson(path.join(stateDir, "openclaw.json"), {
     agents: {
@@ -88,7 +88,7 @@ function assertAgentsDeleteResult([outputPath]) {
   );
   assert(fs.existsSync(process.env.SHARED_WORKSPACE), "shared workspace was removed");
   const remaining =
-    readJson(path.join(process.env.OPENCLAW_STATE_DIR, "openclaw.json"))?.agents?.list ?? [];
+    readJson(path.join(process.env.NOVA_STATE_DIR, "openclaw.json"))?.agents?.list ?? [];
   assert(Array.isArray(remaining), "agents list missing after delete");
   assert(!remaining.some((entry) => entry?.id === "ops"), "deleted agent remained in config");
   assert(

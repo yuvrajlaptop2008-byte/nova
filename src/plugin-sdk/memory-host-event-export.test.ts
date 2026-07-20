@@ -114,7 +114,7 @@ describe("memory host event export recovery", () => {
       results: [],
     };
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+      vi.stubEnv("NOVA_STATE_DIR", stateDir);
       await fs.mkdir(workspaceDir);
       await appendMemoryHostEvent(workspaceDir, event);
       const stateHash = createHash("sha256")
@@ -181,7 +181,7 @@ describe("memory host event export recovery", () => {
       results: [],
     };
     try {
-      vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+      vi.stubEnv("NOVA_STATE_DIR", stateDir);
       await fs.mkdir(workspaceDir);
       await appendMemoryHostEvent(workspaceDir, event);
       const stateHash = createHash("sha256")

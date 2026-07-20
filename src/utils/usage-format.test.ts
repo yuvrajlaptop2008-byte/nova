@@ -68,11 +68,11 @@ describe("usage-format", () => {
   let stateDir: string;
 
   beforeEach(async () => {
-    envSnapshot = captureEnv(["OPENCLAW_AGENT_DIR", "OPENCLAW_STATE_DIR"]);
+    envSnapshot = captureEnv(["NOVA_AGENT_DIR", "NOVA_STATE_DIR"]);
     stateDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-usage-format-"));
     agentDir = path.join(stateDir, "agents", "main", "agent");
-    process.env.OPENCLAW_STATE_DIR = stateDir;
-    delete process.env.OPENCLAW_AGENT_DIR;
+    process.env.NOVA_STATE_DIR = stateDir;
+    delete process.env.NOVA_AGENT_DIR;
     await fs.mkdir(agentDir, { recursive: true });
     resetUsageFormatCachesForTest();
     clearGatewayModelPricingState();

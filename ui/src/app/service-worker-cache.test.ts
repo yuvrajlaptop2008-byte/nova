@@ -20,7 +20,7 @@ describe("Control UI service worker cache versioning", () => {
     expect(mainSource).toContain('navigator.serviceWorker.addEventListener("message"');
     expect(mainSource).toContain("event.data.version !== currentControlUiBuildId");
     expect(serviceWorkerSource).toContain(
-      'const EMBEDDED_CACHE_VERSION = "__OPENCLAW_CONTROL_UI_BUILD_ID__"',
+      'const EMBEDDED_CACHE_VERSION = "__NOVA_CONTROL_UI_BUILD_ID__"',
     );
     expect(serviceWorkerSource).toContain("URL_CACHE_VERSION");
     expect(serviceWorkerSource).toContain("CONTROL_CACHE_LIMIT = 3");
@@ -32,10 +32,10 @@ describe("Control UI service worker cache versioning", () => {
     );
     expect(viteConfigSource).toContain("source.replace(placeholder, JSON.stringify(buildId))");
     expect(viteConfigSource).toContain(
-      '"globalThis.OPENCLAW_CONTROL_UI_BUILD_INFO": JSON.stringify(buildInfo)',
+      '"globalThis.NOVA_CONTROL_UI_BUILD_INFO": JSON.stringify(buildInfo)',
     );
     expect(viteConfigSource).not.toContain(
-      "OPENCLAW_CONTROL_UI_BUILD_ID: JSON.stringify(controlUiBuildId)",
+      "NOVA_CONTROL_UI_BUILD_ID: JSON.stringify(controlUiBuildId)",
     );
     expect(serviceWorkerSource).not.toContain('const CACHE_NAME = "openclaw-control-v1"');
   });

@@ -19,7 +19,7 @@ import { join, resolve } from "node:path";
  *   - Reads optional explicit overrides from the harness attempt params
  *     (`auth.useLoggedInUser`, `auth.gitHubToken`) for direct CLI / test
  *     use cases.
- *   - Falls back to OPENCLAW_GITHUB_TOKEN, COPILOT_GITHUB_TOKEN,
+ *   - Falls back to NOVA_GITHUB_TOKEN, COPILOT_GITHUB_TOKEN,
  *     GH_TOKEN, or GITHUB_TOKEN env vars (in that precedence) when
  *     no contract-resolved token is given; synthesises a stable,
  *     non-reversible pool fingerprint so token rotation busts the
@@ -27,7 +27,7 @@ import { join, resolve } from "node:path";
  *   - Computes a per-agent `copilotHome` default
  *     (`<openClawHome>/.openclaw/agents/<agentId>/copilot`, or
  *     `<agentDir>/copilot` when an agent directory is supplied) that
- *     respects `OPENCLAW_HOME` for the home directory root.
+ *     respects `NOVA_HOME` for the home directory root.
  *   - Defaults to `useLoggedInUser` when no token signal is available.
  *
  * Precedence (highest to lowest):
@@ -37,7 +37,7 @@ import { join, resolve } from "node:path";
  *   3. `resolvedApiKey` + `authProfileId` from the contract (core's
  *      AuthProfileStore-resolved token — the production main path for
  *      a configured `github-copilot` auth profile)
- *   4. OPENCLAW_GITHUB_TOKEN, then COPILOT_GITHUB_TOKEN, then
+ *   4. NOVA_GITHUB_TOKEN, then COPILOT_GITHUB_TOKEN, then
  *      GH_TOKEN, then GITHUB_TOKEN env vars (mirrors the
  *      shipped `github-copilot` provider precedence so headless
  *      users who already follow the documented
@@ -268,7 +268,7 @@ function resolveCopilotHome(args: {
     return resolve(join(args.agentDir, "copilot"));
   }
 
-  const openClawHome = readString(args.env.OPENCLAW_HOME);
+  const openClawHome = readString(args.env.NOVA_HOME);
   const rootHome = openClawHome ? resolve(openClawHome) : safeHomeDir(args.homeDir);
   // Per-agent isolation per proposal section 3.6:
   //   <openClawHome>/.openclaw/agents/<agentId>/copilot
@@ -290,7 +290,7 @@ function safeHomeDir(homeDir: () => string): string {
 function readEnvTokenFallback(
   env: NodeJS.ProcessEnv,
 ): { token: string; profileId: string; profileVersion: string } | undefined {
-  // OPENCLAW_GITHUB_TOKEN is the harness-specific override and stays at
+  // NOVA_GITHUB_TOKEN is the harness-specific override and stays at
   // the top so operators can pin a token without disturbing system-wide
   // gh / Copilot CLI config. The remaining entries mirror the shipped
   // `github-copilot` provider precedence
@@ -301,7 +301,7 @@ function readEnvTokenFallback(
   // agentRuntime.id: "copilot" gets the token they configured rather
   // than silently falling through to the logged-in CLI user.
   const candidates: Array<{ name: string; value: string | undefined }> = [
-    { name: "OPENCLAW_GITHUB_TOKEN", value: readString(env.OPENCLAW_GITHUB_TOKEN) },
+    { name: "NOVA_GITHUB_TOKEN", value: readString(env.NOVA_GITHUB_TOKEN) },
     { name: "COPILOT_GITHUB_TOKEN", value: readString(env.COPILOT_GITHUB_TOKEN) },
     { name: "GH_TOKEN", value: readString(env.GH_TOKEN) },
     { name: "GITHUB_TOKEN", value: readString(env.GITHUB_TOKEN) },

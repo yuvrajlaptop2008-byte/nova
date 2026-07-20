@@ -47,7 +47,7 @@ describe("extended-stable startup update integration", () => {
       env: {
         NODE_ENV: "test",
         NPM_CONFIG_REGISTRY: undefined,
-        OPENCLAW_UPDATE_PACKAGE_SPEC: undefined,
+        NOVA_UPDATE_PACKAGE_SPEC: undefined,
         VITEST: undefined,
       },
     });
@@ -79,7 +79,7 @@ describe("extended-stable startup update integration", () => {
     if (!address || typeof address === "string") {
       throw new Error("expected loopback registry address");
     }
-    process.env.OPENCLAW_UPDATE_PACKAGE_SPEC = "openclaw";
+    process.env.NOVA_UPDATE_PACKAGE_SPEC = "openclaw";
     process.env.NPM_CONFIG_REGISTRY = `http://127.0.0.1:${address.port}/`;
 
     const { runGatewayUpdateCheck, resetUpdateAvailableStateForTest } =

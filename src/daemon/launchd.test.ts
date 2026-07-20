@@ -90,7 +90,7 @@ function readPlistProgramArgumentStrings(plist: string): string[] {
 function createDefaultLaunchdEnv(): Record<string, string | undefined> {
   return {
     HOME: "/Users/test",
-    OPENCLAW_PROFILE: "default",
+    NOVA_PROFILE: "default",
   };
 }
 
@@ -618,7 +618,7 @@ describe("launchctl list detection", () => {
         env,
         label: updaterLabel,
         programArguments: ["/opt/homebrew/bin/openclaw", "gateway", "run"],
-        environment: { OPENCLAW_UPDATE_RUN_HANDOFF: "1" },
+        environment: { NOVA_UPDATE_RUN_HANDOFF: "1" },
       });
 
       const jobs = await findStaleOpenClawUpdateLaunchdJobs(env as NodeJS.ProcessEnv);
@@ -677,7 +677,7 @@ describe("launchctl list detection", () => {
       const wrapperPath = `${envDir}/${label}-env-wrapper.sh`;
       const envFilePath = `${envDir}/${label}.env`;
       state.listOutput = `4321 0 ${label}`;
-      state.files.set(envFilePath, "export OPENCLAW_UPDATE_RUN_HANDOFF='1'\n");
+      state.files.set(envFilePath, "export NOVA_UPDATE_RUN_HANDOFF='1'\n");
       setLaunchAgentPlist({
         env,
         label,
@@ -708,7 +708,7 @@ describe("launchctl list detection", () => {
     async () => {
       const env = {
         ...createDefaultLaunchdEnv(),
-        OPENCLAW_UPDATE_RUN_HANDOFF: "1",
+        NOVA_UPDATE_RUN_HANDOFF: "1",
       };
       const gatewayLikeLabel = "ai.openclaw.dev.team.update.20260625T201026-0400";
       state.listOutput = `9876 0 ${gatewayLikeLabel}`;
@@ -734,10 +734,10 @@ describe("launchctl list detection", () => {
       ].join("\n");
 
       const jobs = await findStaleOpenClawUpdateLaunchdJobs({
-        OPENCLAW_PROFILE: "manual-update.profile",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.manual-update.custom-label",
-        OPENCLAW_SERVICE_MARKER: GATEWAY_SERVICE_MARKER,
-        OPENCLAW_SERVICE_KIND: GATEWAY_SERVICE_KIND,
+        NOVA_PROFILE: "manual-update.profile",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.manual-update.custom-label",
+        NOVA_SERVICE_MARKER: GATEWAY_SERVICE_MARKER,
+        NOVA_SERVICE_KIND: GATEWAY_SERVICE_KIND,
       } as NodeJS.ProcessEnv);
 
       expect(jobs).toEqual([
@@ -790,7 +790,7 @@ describe("launchctl list detection", () => {
     async () => {
       await expect(
         disableCurrentOpenClawUpdateLaunchdJob({
-          OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
+          NOVA_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
         }),
       ).resolves.toBe(true);
 
@@ -808,7 +808,7 @@ describe("launchctl list detection", () => {
       await expect(
         disableCurrentOpenClawUpdateLaunchdJob({
           XPC_SERVICE_NAME: "0",
-          OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
+          NOVA_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
         }),
       ).resolves.toBe(true);
 
@@ -839,7 +839,7 @@ describe("launchctl list detection", () => {
       await expect(
         disableCurrentOpenClawUpdateLaunchdJob({
           LAUNCH_JOB_LABEL: "ai.openclaw.update.2026.5.12",
-          OPENCLAW_PROFILE: "update.2026.5.12",
+          NOVA_PROFILE: "update.2026.5.12",
         }),
       ).resolves.toBe(false);
 
@@ -853,7 +853,7 @@ describe("launchctl list detection", () => {
       await expect(
         disableCurrentOpenClawUpdateLaunchdJob({
           LAUNCH_JOB_LABEL: "ai.openclaw.manual-update.1717168800",
-          OPENCLAW_PROFILE: "manual-update.1717168800",
+          NOVA_PROFILE: "manual-update.1717168800",
         }),
       ).resolves.toBe(false);
 
@@ -894,7 +894,7 @@ describe("launchctl list detection", () => {
         disableCurrentOpenClawUpdateLaunchdJob({
           ...env,
           LAUNCH_JOB_LABEL: label,
-          OPENCLAW_UPDATE_RUN_HANDOFF: "1",
+          NOVA_UPDATE_RUN_HANDOFF: "1",
         }),
       ).resolves.toBe(true);
 
@@ -917,8 +917,8 @@ describe("launchctl list detection", () => {
       await expect(
         disableCurrentOpenClawUpdateLaunchdJob({
           ...env,
-          OPENCLAW_LAUNCHD_LABEL: label,
-          OPENCLAW_UPDATE_RUN_HANDOFF: "1",
+          NOVA_LAUNCHD_LABEL: label,
+          NOVA_UPDATE_RUN_HANDOFF: "1",
         }),
       ).resolves.toBe(false);
 
@@ -940,8 +940,8 @@ describe("launchctl list detection", () => {
       await expect(
         disableCurrentOpenClawUpdateLaunchdJob({
           ...env,
-          OPENCLAW_LAUNCHD_LABEL: label,
-          OPENCLAW_UPDATE_RUN_HANDOFF: "1",
+          NOVA_LAUNCHD_LABEL: label,
+          NOVA_UPDATE_RUN_HANDOFF: "1",
         }),
       ).resolves.toBe(true);
 
@@ -991,9 +991,9 @@ describe("launchctl list detection", () => {
       await expect(
         disableCurrentOpenClawUpdateLaunchdJob({
           LAUNCH_JOB_LABEL: "ai.openclaw.update.2026.5.12",
-          OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
-          OPENCLAW_SERVICE_MARKER: "openclaw",
-          OPENCLAW_SERVICE_KIND: "gateway",
+          NOVA_LAUNCHD_LABEL: "ai.openclaw.update.2026.5.12",
+          NOVA_SERVICE_MARKER: "openclaw",
+          NOVA_SERVICE_KIND: "gateway",
         }),
       ).resolves.toBe(false);
 
@@ -1034,7 +1034,7 @@ describe("launchctl list detection", () => {
       await expect(
         disableOpenClawUpdateLaunchdJob(label, {
           ...env,
-          OPENCLAW_UPDATE_RUN_HANDOFF: "1",
+          NOVA_UPDATE_RUN_HANDOFF: "1",
         }),
       ).resolves.toBe(false);
 
@@ -1237,7 +1237,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "18789" },
+      environment: { NOVA_GATEWAY_PORT: "18789" },
     });
     const generatedWrapper = state.files.get(wrapperPath);
     if (!generatedWrapper) {
@@ -1258,13 +1258,13 @@ describe("launchd install", () => {
       env,
       stdout,
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "18789" },
+      environment: { NOVA_GATEWAY_PORT: "18789" },
     });
 
     expect(output).toContain("Warning:");
     expect(output).toContain("contains custom behavior and will be overwritten");
     expect(output).toContain("openclaw gateway install --wrapper <path>");
-    expect(output).toContain("OPENCLAW_WRAPPER");
+    expect(output).toContain("NOVA_WRAPPER");
     expect(state.files.get(wrapperPath)).toBe(generatedWrapper);
   });
 
@@ -1275,7 +1275,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "18789" },
+      environment: { NOVA_GATEWAY_PORT: "18789" },
     });
     const generatedWrapper = state.files.get(wrapperPath);
     if (!generatedWrapper) {
@@ -1301,7 +1301,7 @@ describe("launchd install", () => {
     expect(output).toContain("Warning:");
     expect(output).toContain("contains custom behavior and will be overwritten");
     expect(output).toContain("openclaw gateway install --wrapper <path>");
-    expect(output).toContain("OPENCLAW_WRAPPER");
+    expect(output).toContain("NOVA_WRAPPER");
     expect(state.files.get(wrapperPath)).toBe(generatedWrapper);
   });
 
@@ -1313,7 +1313,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "19007" },
+      environment: { NOVA_GATEWAY_PORT: "19007" },
     });
 
     const plistPath = resolveLaunchAgentPlistPath(env);
@@ -1352,15 +1352,15 @@ describe("launchd install", () => {
     const callerEnv = createDefaultLaunchdEnv();
     const serviceEnv = {
       ...callerEnv,
-      OPENCLAW_STATE_DIR: "/Users/test/service-env/custom-state",
+      NOVA_STATE_DIR: "/Users/test/service-env/custom-state",
     };
     await installLaunchAgent({
       env: serviceEnv,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
       environment: {
-        OPENCLAW_GATEWAY_PORT: "18789",
-        OPENCLAW_STATE_DIR: serviceEnv.OPENCLAW_STATE_DIR,
+        NOVA_GATEWAY_PORT: "18789",
+        NOVA_STATE_DIR: serviceEnv.NOVA_STATE_DIR,
       },
     });
 
@@ -1384,9 +1384,9 @@ describe("launchd install", () => {
 
     const command = await readLaunchAgentProgramArguments(callerEnv);
     expect(command?.programArguments).toEqual(defaultProgramArguments);
-    expect(command?.environment?.OPENCLAW_GATEWAY_PORT).toBe("18789");
-    expect(command?.environment?.OPENCLAW_STATE_DIR).toBe(serviceEnv.OPENCLAW_STATE_DIR);
-    expect(command?.environmentValueSources?.OPENCLAW_GATEWAY_PORT).toBe("file");
+    expect(command?.environment?.NOVA_GATEWAY_PORT).toBe("18789");
+    expect(command?.environment?.NOVA_STATE_DIR).toBe(serviceEnv.NOVA_STATE_DIR);
+    expect(command?.environmentValueSources?.NOVA_GATEWAY_PORT).toBe("file");
 
     await restartLaunchAgent({
       env: callerEnv,
@@ -1403,10 +1403,8 @@ describe("launchd install", () => {
     expect(rewritten).not.toContain(mangledEnvFilePath);
     expect(rewritten).not.toContain(mangledWrapperPath);
     const rewrittenEnv = state.files.get(callerEnvFilePath) ?? "";
-    expect(rewrittenEnv).toContain("export OPENCLAW_GATEWAY_PORT='18789'");
-    expect(rewrittenEnv).toContain(
-      "export OPENCLAW_STATE_DIR='/Users/test/service-env/custom-state'",
-    );
+    expect(rewrittenEnv).toContain("export NOVA_GATEWAY_PORT='18789'");
+    expect(rewrittenEnv).toContain("export NOVA_STATE_DIR='/Users/test/service-env/custom-state'");
   });
 
   it("creates the LaunchAgent TMPDIR before bootstrap", async () => {
@@ -1555,9 +1553,9 @@ describe("launchd install", () => {
         LAUNCH_JOB_LABEL: undefined,
         LAUNCH_JOB_NAME: undefined,
         XPC_SERVICE_NAME: "0",
-        OPENCLAW_SERVICE_MARKER: "openclaw",
-        OPENCLAW_SERVICE_KIND: "gateway",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_SERVICE_MARKER: "openclaw",
+        NOVA_SERVICE_KIND: "gateway",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
       },
       async () => {
         await expect(stopLaunchAgent({ env, stdout: new PassThrough() })).rejects.toThrow(
@@ -1572,7 +1570,7 @@ describe("launchd install", () => {
   it("allows external LaunchAgent label overrides to stop the selected target", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_LAUNCHD_LABEL: "com.example.openclaw.gateway",
+      NOVA_LAUNCHD_LABEL: "com.example.openclaw.gateway",
     };
     const stdout = new PassThrough();
     let output = "";
@@ -1585,9 +1583,9 @@ describe("launchd install", () => {
         LAUNCH_JOB_LABEL: undefined,
         LAUNCH_JOB_NAME: undefined,
         XPC_SERVICE_NAME: undefined,
-        OPENCLAW_LAUNCHD_LABEL: undefined,
-        OPENCLAW_SERVICE_MARKER: undefined,
-        OPENCLAW_SERVICE_KIND: undefined,
+        NOVA_LAUNCHD_LABEL: undefined,
+        NOVA_SERVICE_MARKER: undefined,
+        NOVA_SERVICE_KIND: undefined,
       },
       async () => {
         await stopLaunchAgent({ env, stdout });
@@ -1603,7 +1601,7 @@ describe("launchd install", () => {
   it("verifies the configured gateway port is released before reporting stop success", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19003",
+      NOVA_GATEWAY_PORT: "19003",
     };
     const stdout = new PassThrough();
     let output = "";
@@ -1621,7 +1619,7 @@ describe("launchd install", () => {
   it("waits for the configured gateway port to finish releasing after bootout", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19009",
+      NOVA_GATEWAY_PORT: "19009",
     };
     inspectPortUsage.mockResolvedValueOnce({
       port: 19009,
@@ -1639,7 +1637,7 @@ describe("launchd install", () => {
   it("keeps waiting until a bind probe explicitly confirms port release", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19010",
+      NOVA_GATEWAY_PORT: "19010",
     };
     inspectPortUsage.mockResolvedValueOnce({
       port: 19010,
@@ -1660,7 +1658,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "19006" },
+      environment: { NOVA_GATEWAY_PORT: "19006" },
     });
     state.launchctlCalls.length = 0;
 
@@ -1673,7 +1671,7 @@ describe("launchd install", () => {
   it("fails stop when the verified gateway port remains busy after cleanup", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19004",
+      NOVA_GATEWAY_PORT: "19004",
     };
     const stdout = new PassThrough();
     const onMutation = vi.fn();
@@ -1723,7 +1721,7 @@ describe("launchd install", () => {
   it("verifies the configured gateway port is released before reporting disable stop success", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19005",
+      NOVA_GATEWAY_PORT: "19005",
     };
     const stdout = new PassThrough();
     let output = "";
@@ -1820,7 +1818,7 @@ describe("launchd install", () => {
   it("does not report degraded stop success when fallback cleanup leaves the port busy", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19008",
+      NOVA_GATEWAY_PORT: "19008",
     };
     const stdout = new PassThrough();
     const onMutation = vi.fn();
@@ -1976,7 +1974,7 @@ describe("launchd install", () => {
   it("restarts LaunchAgent with kickstart and no bootout", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      NOVA_GATEWAY_PORT: "18789",
     };
     const onMutation = vi.fn();
     const result = await restartLaunchAgent({
@@ -2062,7 +2060,7 @@ describe("launchd install", () => {
   it("audits kickstart before a later output failure", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      NOVA_GATEWAY_PORT: "18789",
     };
     const onMutation = vi.fn();
     const stdout = {
@@ -2079,7 +2077,7 @@ describe("launchd install", () => {
   it("reloads launchd after rewriting an existing plist", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      NOVA_GATEWAY_PORT: "18789",
     };
     const plistPath = resolveLaunchAgentPlistPath(env);
     state.files.set(
@@ -2126,7 +2124,7 @@ describe("launchd install", () => {
   it("audits reload bootout before a later bootstrap failure", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      NOVA_GATEWAY_PORT: "18789",
     };
     setLaunchAgentPlist({
       env,
@@ -2152,7 +2150,7 @@ describe("launchd install", () => {
   it("completes reload when the mutation observer fails after bootout", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      NOVA_GATEWAY_PORT: "18789",
     };
     setLaunchAgentPlist({
       env,
@@ -2177,7 +2175,7 @@ describe("launchd install", () => {
   it("treats a concurrent launchd bootstrap as success when the service is loaded", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "18789",
+      NOVA_GATEWAY_PORT: "18789",
     };
     const plistPath = resolveLaunchAgentPlistPath(env);
     state.files.set(
@@ -2215,7 +2213,7 @@ describe("launchd install", () => {
   it("uses the configured gateway port for stale cleanup", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19001",
+      NOVA_GATEWAY_PORT: "19001",
     };
 
     await restartLaunchAgent({
@@ -2229,7 +2227,7 @@ describe("launchd install", () => {
   it("ignores invalid configured gateway ports for stale cleanup", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "65536",
+      NOVA_GATEWAY_PORT: "65536",
     };
     state.files.clear();
 
@@ -2248,7 +2246,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "19007" },
+      environment: { NOVA_GATEWAY_PORT: "19007" },
     });
     state.launchctlCalls.length = 0;
 
@@ -2286,7 +2284,7 @@ describe("launchd install", () => {
       env,
       stdout: new PassThrough(),
       programArguments: defaultProgramArguments,
-      environment: { OPENCLAW_GATEWAY_PORT: "65536" },
+      environment: { NOVA_GATEWAY_PORT: "65536" },
     });
     state.launchctlCalls.length = 0;
 
@@ -2302,7 +2300,7 @@ describe("launchd install", () => {
   it("fails restart before kickstart when the configured gateway port remains busy", async () => {
     const env = {
       ...createDefaultLaunchdEnv(),
-      OPENCLAW_GATEWAY_PORT: "19002",
+      NOVA_GATEWAY_PORT: "19002",
     };
     const plistPath = resolveLaunchAgentPlistPath(env);
     const originalPlist = [
@@ -2499,9 +2497,9 @@ describe("launchd install", () => {
         LAUNCH_JOB_LABEL: undefined,
         LAUNCH_JOB_NAME: undefined,
         XPC_SERVICE_NAME: "0",
-        OPENCLAW_SERVICE_MARKER: "openclaw",
-        OPENCLAW_SERVICE_KIND: "gateway",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.gateway",
+        NOVA_SERVICE_MARKER: "openclaw",
+        NOVA_SERVICE_KIND: "gateway",
+        NOVA_LAUNCHD_LABEL: "ai.openclaw.gateway",
       },
       async () =>
         restartLaunchAgent({
@@ -2527,9 +2525,9 @@ describe("launchd install", () => {
         LAUNCH_JOB_LABEL: undefined,
         LAUNCH_JOB_NAME: undefined,
         XPC_SERVICE_NAME: "0",
-        OPENCLAW_SERVICE_MARKER: undefined,
-        OPENCLAW_SERVICE_KIND: undefined,
-        OPENCLAW_LAUNCHD_LABEL: undefined,
+        NOVA_SERVICE_MARKER: undefined,
+        NOVA_SERVICE_KIND: undefined,
+        NOVA_LAUNCHD_LABEL: undefined,
       },
       async () =>
         restartLaunchAgent({
@@ -2577,38 +2575,38 @@ describe("launchd install", () => {
 describe("resolveLaunchAgentPlistPath", () => {
   it.each([
     {
-      name: "uses default label when OPENCLAW_PROFILE is unset",
+      name: "uses default label when NOVA_PROFILE is unset",
       env: { HOME: "/Users/test" },
       expected: "/Users/test/Library/LaunchAgents/ai.openclaw.gateway.plist",
     },
     {
-      name: "uses profile-specific label when OPENCLAW_PROFILE is set to a custom value",
-      env: { HOME: "/Users/test", OPENCLAW_PROFILE: "jbphoenix" },
+      name: "uses profile-specific label when NOVA_PROFILE is set to a custom value",
+      env: { HOME: "/Users/test", NOVA_PROFILE: "jbphoenix" },
       expected: "/Users/test/Library/LaunchAgents/ai.openclaw.jbphoenix.plist",
     },
     {
-      name: "prefers OPENCLAW_LAUNCHD_LABEL over OPENCLAW_PROFILE",
+      name: "prefers NOVA_LAUNCHD_LABEL over NOVA_PROFILE",
       env: {
         HOME: "/Users/test",
-        OPENCLAW_PROFILE: "jbphoenix",
-        OPENCLAW_LAUNCHD_LABEL: "com.custom.label",
+        NOVA_PROFILE: "jbphoenix",
+        NOVA_LAUNCHD_LABEL: "com.custom.label",
       },
       expected: "/Users/test/Library/LaunchAgents/com.custom.label.plist",
     },
     {
-      name: "trims whitespace from OPENCLAW_LAUNCHD_LABEL",
+      name: "trims whitespace from NOVA_LAUNCHD_LABEL",
       env: {
         HOME: "/Users/test",
-        OPENCLAW_LAUNCHD_LABEL: "  com.custom.label  ",
+        NOVA_LAUNCHD_LABEL: "  com.custom.label  ",
       },
       expected: "/Users/test/Library/LaunchAgents/com.custom.label.plist",
     },
     {
-      name: "ignores empty OPENCLAW_LAUNCHD_LABEL and falls back to profile",
+      name: "ignores empty NOVA_LAUNCHD_LABEL and falls back to profile",
       env: {
         HOME: "/Users/test",
-        OPENCLAW_PROFILE: "myprofile",
-        OPENCLAW_LAUNCHD_LABEL: "   ",
+        NOVA_PROFILE: "myprofile",
+        NOVA_LAUNCHD_LABEL: "   ",
       },
       expected: "/Users/test/Library/LaunchAgents/ai.openclaw.myprofile.plist",
     },
@@ -2620,7 +2618,7 @@ describe("resolveLaunchAgentPlistPath", () => {
     expect(() =>
       resolveLaunchAgentPlistPath({
         HOME: "/Users/test",
-        OPENCLAW_LAUNCHD_LABEL: "../evil/label",
+        NOVA_LAUNCHD_LABEL: "../evil/label",
       }),
     ).toThrow("Invalid launchd label");
   });

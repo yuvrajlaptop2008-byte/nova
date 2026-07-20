@@ -6,12 +6,12 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 source "$ROOT_DIR/scripts/lib/docker-e2e-package.sh"
 
-ALLOW_ENV="OPENCLAW_QA_ALLOW_UPDATE_RUN_SELF"
+ALLOW_ENV="NOVA_QA_ALLOW_UPDATE_RUN_SELF"
 SOURCE_VERSION="2026.4.26"
 SOURCE_TAG="v$SOURCE_VERSION"
 SOURCE_COMMIT="be8c24633aaa7ef0425ae1178f096ee8dd6226c0"
 
-if [ "${OPENCLAW_QA_ALLOW_UPDATE_RUN_SELF:-0}" != "1" ]; then
+if [ "${NOVA_QA_ALLOW_UPDATE_RUN_SELF:-0}" != "1" ]; then
   echo "blocked destructive package self-upgrade; set $ALLOW_ENV=1 to run" >&2
   exit 2
 fi
@@ -19,11 +19,11 @@ fi
 IMAGE_NAME="$(
   docker_e2e_resolve_image \
     "openclaw-update-run-package-self-upgrade-e2e" \
-    OPENCLAW_UPDATE_RUN_SELF_UPGRADE_E2E_IMAGE
+    NOVA_UPDATE_RUN_SELF_UPGRADE_E2E_IMAGE
 )"
-SKIP_BUILD="${OPENCLAW_UPDATE_RUN_SELF_UPGRADE_E2E_SKIP_BUILD:-0}"
-DOCKER_RUN_TIMEOUT="${OPENCLAW_UPDATE_RUN_SELF_UPGRADE_DOCKER_RUN_TIMEOUT:-1800s}"
-ARTIFACT_DIR="${OPENCLAW_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR:-$ROOT_DIR/.artifacts/update-run-package-self-upgrade}"
+SKIP_BUILD="${NOVA_UPDATE_RUN_SELF_UPGRADE_E2E_SKIP_BUILD:-0}"
+DOCKER_RUN_TIMEOUT="${NOVA_UPDATE_RUN_SELF_UPGRADE_DOCKER_RUN_TIMEOUT:-1800s}"
+ARTIFACT_DIR="${NOVA_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR:-$ROOT_DIR/.artifacts/update-run-package-self-upgrade}"
 QA_CHANNEL_FIXTURE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/openclaw-update-run-qa-channel.XXXXXX")"
 
 cleanup() {
@@ -71,7 +71,7 @@ prepare_qa_channel_fixture() {
           tag: process.env.SOURCE_TAG,
           tagObject: process.env.TAG_OBJECT,
           commit: process.env.SOURCE_COMMIT,
-          buildCommand: "OPENCLAW_BUILD_PRIVATE_QA=1 corepack pnpm build:docker",
+          buildCommand: "NOVA_BUILD_PRIVATE_QA=1 corepack pnpm build:docker",
         }, null, 2)}\n`,
       );
     ' "$ARTIFACT_DIR/qa-channel-fixture-provenance.json"
@@ -92,7 +92,7 @@ prepare_qa_channel_fixture() {
   (
     cd "$checkout_root"
     COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack pnpm install --frozen-lockfile
-    COREPACK_ENABLE_DOWNLOAD_PROMPT=0 OPENCLAW_BUILD_PRIVATE_QA=1 corepack pnpm build:docker
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0 NOVA_BUILD_PRIVATE_QA=1 corepack pnpm build:docker
   ) >>"$ARTIFACT_DIR/historical-qa-channel-build.log" 2>&1
 
   local compiled_plugin="$checkout_root/dist/extensions/qa-channel"
@@ -119,9 +119,9 @@ docker_e2e_build_or_reuse \
 echo "Running Gateway update.run package self-upgrade Docker E2E..."
 docker_e2e_run_with_harness \
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
-  -e OPENCLAW_QA_ALLOW_UPDATE_RUN_SELF=1 \
-  -e OPENCLAW_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR=/tmp/openclaw-update-run-artifacts \
-  -e OPENCLAW_UPDATE_RUN_SELF_UPGRADE_SOURCE_VERSION="$SOURCE_VERSION" \
+  -e NOVA_QA_ALLOW_UPDATE_RUN_SELF=1 \
+  -e NOVA_UPDATE_RUN_SELF_UPGRADE_ARTIFACT_DIR=/tmp/openclaw-update-run-artifacts \
+  -e NOVA_UPDATE_RUN_SELF_UPGRADE_SOURCE_VERSION="$SOURCE_VERSION" \
   -v "$ARTIFACT_DIR:/tmp/openclaw-update-run-artifacts" \
   -v "$QA_CHANNEL_FIXTURE_ROOT/checkout:/tmp/openclaw-update-run-build:ro" \
   "$IMAGE_NAME" \

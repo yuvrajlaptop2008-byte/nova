@@ -71,7 +71,7 @@ beforeEach(async () => {
   mocks.external = false;
   mocks.upstreamFork.mockReset();
   mocks.queueClear.mockReset();
-  vi.stubEnv("OPENCLAW_STATE_DIR", tempDirs.make("openclaw-rewind-handler-"));
+  vi.stubEnv("NOVA_STATE_DIR", tempDirs.make("openclaw-rewind-handler-"));
   await upsertSessionEntry(
     { agentId: "main", sessionKey },
     {

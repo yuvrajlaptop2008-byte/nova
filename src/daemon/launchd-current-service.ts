@@ -24,13 +24,13 @@ export function isCurrentProcessLaunchdServiceLabel(
     }
   }
 
-  const configuredLabel = normalizeOptionalString(env.OPENCLAW_LAUNCHD_LABEL);
+  const configuredLabel = normalizeOptionalString(env.NOVA_LAUNCHD_LABEL);
   if (!configuredLabel || configuredLabel !== label) {
     return false;
   }
   if (
-    normalizeOptionalString(env.OPENCLAW_SERVICE_MARKER) === "openclaw" &&
-    Boolean(normalizeOptionalString(env.OPENCLAW_SERVICE_KIND))
+    normalizeOptionalString(env.NOVA_SERVICE_MARKER) === "openclaw" &&
+    Boolean(normalizeOptionalString(env.NOVA_SERVICE_KIND))
   ) {
     // Managed wrappers inject service metadata; trust it when launchd's own
     // label variables are absent or renamed by the host environment.

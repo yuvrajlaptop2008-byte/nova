@@ -514,7 +514,7 @@ function detectTelegramMessageDispatchLegacyStateMigration(params: {
 }): ChannelLegacyStateMigrationPlan[] {
   const storePath = resolveStorePath(params.cfg.session?.store, { env: params.env });
   const legacyStorePath = resolveLegacySessionStorePath(params);
-  const env = params.stateDir ? { ...params.env, OPENCLAW_STATE_DIR: params.stateDir } : params.env;
+  const env = params.stateDir ? { ...params.env, NOVA_STATE_DIR: params.stateDir } : params.env;
   const namespace = resolvePersistentDedupePluginStateNamespace({
     namespace: TELEGRAM_MESSAGE_DISPATCH_DEDUPE_NAMESPACE,
     namespacePrefix: TELEGRAM_MESSAGE_DISPATCH_DEDUPE_NAMESPACE_PREFIX,

@@ -87,10 +87,10 @@ describe("loadOpenClawPlugins", () => {
               ...options,
               env: {
                 ...process.env,
-                OPENCLAW_HOME: openclawHome,
+                NOVA_HOME: openclawHome,
                 HOME: ignoredHome,
-                OPENCLAW_STATE_DIR: stateDir,
-                OPENCLAW_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
+                NOVA_STATE_DIR: stateDir,
+                NOVA_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
               },
             }),
           loadVariant: () =>
@@ -98,10 +98,10 @@ describe("loadOpenClawPlugins", () => {
               ...options,
               env: {
                 ...process.env,
-                OPENCLAW_HOME: secondHome,
+                NOVA_HOME: secondHome,
                 HOME: ignoredHome,
-                OPENCLAW_STATE_DIR: stateDir,
-                OPENCLAW_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
+                NOVA_STATE_DIR: stateDir,
+                NOVA_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
               },
             }),
         };
@@ -192,8 +192,8 @@ describe("loadOpenClawPlugins", () => {
       env: {
         ...process.env,
         HOME: homeDir,
-        OPENCLAW_HOME: undefined,
-        OPENCLAW_BUNDLED_PLUGINS_DIR: override,
+        NOVA_HOME: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: override,
       },
       config: {
         plugins: {
@@ -210,7 +210,7 @@ describe("loadOpenClawPlugins", () => {
     ).toBe(fs.realpathSync(plugin.file));
   });
 
-  it("prefers OPENCLAW_HOME over HOME for env-expanded load paths", () => {
+  it("prefers NOVA_HOME over HOME for env-expanded load paths", () => {
     const ignoredHome = makeTempDir();
     const openclawHome = makeTempDir();
     const stateDir = makeTempDir();
@@ -226,9 +226,9 @@ describe("loadOpenClawPlugins", () => {
       env: {
         ...process.env,
         HOME: ignoredHome,
-        OPENCLAW_HOME: openclawHome,
-        OPENCLAW_STATE_DIR: stateDir,
-        OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
+        NOVA_HOME: openclawHome,
+        NOVA_STATE_DIR: stateDir,
+        NOVA_BUNDLED_PLUGINS_DIR: bundledDir,
       },
       config: {
         plugins: {
@@ -428,7 +428,7 @@ describe("loadOpenClawPlugins", () => {
       body: `module.exports = { default: { default: { id: "missing-register-shape" } } };`,
     });
 
-    const registry = withEnv({ OPENCLAW_PLUGIN_LOAD_DEBUG: "1" }, () =>
+    const registry = withEnv({ NOVA_PLUGIN_LOAD_DEBUG: "1" }, () =>
       loadRegistryFromSinglePlugin({
         plugin,
         pluginConfig: {

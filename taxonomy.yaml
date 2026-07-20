@@ -6705,7 +6705,7 @@ surfaces:
             description: Host CLI routing into running Docker/Podman containers
           - name: Container Targeting
             coverageIds: [docker.container-targeting]
-            description: Covers Container Targeting across Host CLI routing into running Docker/Podman containers. `--container` and `OPENCLAW_CONTAINER` behavior, env handling, ambiguous runtime detection, loopback proxy guard, and related host cli container targeting and update lifecycle behavior.
+            description: Covers Container Targeting across Host CLI routing into running Docker/Podman containers. `--container` and `NOVA_CONTAINER` behavior, env handling, ambiguous runtime detection, loopback proxy guard, and related host cli container targeting and update lifecycle behavior.
           - name: Container update/rebuild/restart guidance for Docker
             coverageIds: [docker.container-update-rebuild-restart-guidance-for-docker]
             description: Container update/rebuild/restart guidance for Docker and Podman hosts
@@ -6784,7 +6784,7 @@ surfaces:
         features:
           - name: Docker gateway setup
             coverageIds: [docker.gateway-setup]
-            description: Docker gateway setup with OPENCLAW_SANDBOX, Docker CLI build arg, socket mount, sandbox config writes, and rollback behavior
+            description: Docker gateway setup with NOVA_SANDBOX, Docker CLI build arg, socket mount, sandbox config writes, and rollback behavior
           - name: Docker-backed agent sandbox support
             coverageIds: [docker.backed-agent-sandbox-support]
             description: Docker-backed agent sandbox docs, source behavior, and tests that affect container-hosted Gateway operators.
@@ -7044,13 +7044,13 @@ surfaces:
         features:
           - name: Immutable config guard
             coverageIds: [nix.immutable-config-guard]
-            description: Covers Immutable config guard across `OPENCLAW_NIX_MODE_CONFIG_IMMUTABLE` guard, source-edit guidance, config writer integration, and the agent-first Nix source instruction.
+            description: Covers Immutable config guard across `NOVA_NIX_MODE_CONFIG_IMMUTABLE` guard, source-edit guidance, config writer integration, and the agent-first Nix source instruction.
           - name: Config writer refusal
             coverageIds: [nix.config-writer-refusal]
-            description: Covers Config writer refusal across `OPENCLAW_NIX_MODE_CONFIG_IMMUTABLE` guard, source-edit guidance, config writer integration, and the agent-first Nix source instruction.
+            description: Covers Config writer refusal across `NOVA_NIX_MODE_CONFIG_IMMUTABLE` guard, source-edit guidance, config writer integration, and the agent-first Nix source instruction.
           - name: Agent-first Nix edits
             coverageIds: [nix.agent-first-nix-edits]
-            description: Covers Agent-first Nix edits across `OPENCLAW_NIX_MODE_CONFIG_IMMUTABLE` guard, source-edit guidance, config writer integration, and the agent-first Nix source instruction.
+            description: Covers Agent-first Nix edits across `NOVA_NIX_MODE_CONFIG_IMMUTABLE` guard, source-edit guidance, config writer integration, and the agent-first Nix source instruction.
           - name: Explicit config path
             coverageIds: [nix.explicit-config-path]
             description: Covers Explicit config path across config/state path environment variables, immutable store expectations, path resolution, state integrity checks around `/nix/store`, and runtime guidance that state should stay writable.

@@ -36,7 +36,7 @@ export const isBunBinary =
  */
 function getPackageDir(): string {
   // Allow override via environment variable (useful for Nix/Guix where store paths tokenize poorly)
-  const envDir = process.env.OPENCLAW_PACKAGE_DIR;
+  const envDir = process.env.NOVA_PACKAGE_DIR;
   if (envDir) {
     if (envDir === "~") {
       return homedir();

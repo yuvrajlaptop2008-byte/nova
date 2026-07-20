@@ -23,7 +23,7 @@ function createSpawnMock() {
 }
 
 function signalHandoffReady(child: ReturnType<typeof createSpawnMock>): void {
-  child.stdout.write("OPENCLAW_UPDATE_HANDOFF_READY\n");
+  child.stdout.write("NOVA_UPDATE_HANDOFF_READY\n");
 }
 
 vi.mock("node:child_process", async () => {
@@ -63,7 +63,7 @@ describe("managed service update handoff single-flight", () => {
       execPath: "/usr/local/bin/node",
       argv1: "/opt/openclaw/openclaw.mjs",
       supervisor: "launchd",
-      env: { OPENCLAW_LAUNCHD_LABEL: "com.example.openclaw.test" },
+      env: { NOVA_LAUNCHD_LABEL: "com.example.openclaw.test" },
       handoffId: "handoff-first",
       meta: { handoffId: "handoff-first" },
     });
@@ -76,7 +76,7 @@ describe("managed service update handoff single-flight", () => {
       execPath: "/usr/local/bin/node",
       argv1: "/opt/openclaw/openclaw.mjs",
       supervisor: "launchd",
-      env: { OPENCLAW_LAUNCHD_LABEL: "com.example.openclaw.test" },
+      env: { NOVA_LAUNCHD_LABEL: "com.example.openclaw.test" },
       handoffId: "handoff-second",
       meta: { handoffId: "handoff-second" },
     });

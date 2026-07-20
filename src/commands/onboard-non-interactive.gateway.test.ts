@@ -52,13 +52,13 @@ let waitForGatewayReachableMock:
   | undefined;
 
 function resolveTestConfigPath() {
-  const override = process.env.OPENCLAW_CONFIG_PATH?.trim();
+  const override = process.env.NOVA_CONFIG_PATH?.trim();
   if (override) {
     return override;
   }
-  const stateDir = process.env.OPENCLAW_STATE_DIR?.trim();
+  const stateDir = process.env.NOVA_STATE_DIR?.trim();
   if (!stateDir) {
-    throw new Error("OPENCLAW_STATE_DIR must be set before config IO in this test");
+    throw new Error("NOVA_STATE_DIR must be set before config IO in this test");
   }
   return path.join(stateDir, "openclaw.json");
 }
@@ -340,8 +340,8 @@ describe("onboard (non-interactive): gateway and remote auth", () => {
       throw new Error("temp home not initialized");
     }
     const stateDir = await fs.mkdtemp(path.join(tempHome, prefix));
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
-    deleteTestEnvValue("OPENCLAW_CONFIG_PATH");
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
+    deleteTestEnvValue("NOVA_CONFIG_PATH");
     return stateDir;
   };
   const withStateDir = async (
@@ -358,23 +358,23 @@ describe("onboard (non-interactive): gateway and remote auth", () => {
   beforeAll(async () => {
     envSnapshot = captureEnv([
       "HOME",
-      "OPENCLAW_STATE_DIR",
-      "OPENCLAW_CONFIG_PATH",
-      "OPENCLAW_SKIP_CHANNELS",
-      "OPENCLAW_SKIP_GMAIL_WATCHER",
-      "OPENCLAW_SKIP_CRON",
-      "OPENCLAW_SKIP_CANVAS_HOST",
-      "OPENCLAW_SKIP_BROWSER_CONTROL_SERVER",
-      "OPENCLAW_GATEWAY_TOKEN",
-      "OPENCLAW_GATEWAY_PASSWORD",
+      "NOVA_STATE_DIR",
+      "NOVA_CONFIG_PATH",
+      "NOVA_SKIP_CHANNELS",
+      "NOVA_SKIP_GMAIL_WATCHER",
+      "NOVA_SKIP_CRON",
+      "NOVA_SKIP_CANVAS_HOST",
+      "NOVA_SKIP_BROWSER_CONTROL_SERVER",
+      "NOVA_GATEWAY_TOKEN",
+      "NOVA_GATEWAY_PASSWORD",
     ]);
-    setTestEnvValue("OPENCLAW_SKIP_CHANNELS", "1");
-    setTestEnvValue("OPENCLAW_SKIP_GMAIL_WATCHER", "1");
-    setTestEnvValue("OPENCLAW_SKIP_CRON", "1");
-    setTestEnvValue("OPENCLAW_SKIP_CANVAS_HOST", "1");
-    setTestEnvValue("OPENCLAW_SKIP_BROWSER_CONTROL_SERVER", "1");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_TOKEN");
-    deleteTestEnvValue("OPENCLAW_GATEWAY_PASSWORD");
+    setTestEnvValue("NOVA_SKIP_CHANNELS", "1");
+    setTestEnvValue("NOVA_SKIP_GMAIL_WATCHER", "1");
+    setTestEnvValue("NOVA_SKIP_CRON", "1");
+    setTestEnvValue("NOVA_SKIP_CANVAS_HOST", "1");
+    setTestEnvValue("NOVA_SKIP_BROWSER_CONTROL_SERVER", "1");
+    deleteTestEnvValue("NOVA_GATEWAY_TOKEN");
+    deleteTestEnvValue("NOVA_GATEWAY_PASSWORD");
 
     tempHome = await makeTempWorkspace("openclaw-onboard-");
     setTestEnvValue("HOME", tempHome);
@@ -752,7 +752,7 @@ describe("onboard (non-interactive): gateway and remote auth", () => {
       const passwordRef = {
         source: "env" as const,
         provider: "default",
-        id: "OPENCLAW_REMOTE_GATEWAY_PASSWORD",
+        id: "NOVA_REMOTE_GATEWAY_PASSWORD",
       };
       const tokenRef = { source: "env" as const, provider: "default", id: "REMOTE_TOKEN" };
       const seededAgents = [
@@ -1060,8 +1060,8 @@ describe("onboard (non-interactive): gateway and remote auth", () => {
       return;
     }
     await withStateDir("state-lan-", async (stateDir) => {
-      setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
-      setTestEnvValue("OPENCLAW_CONFIG_PATH", path.join(stateDir, "openclaw.json"));
+      setTestEnvValue("NOVA_STATE_DIR", stateDir);
+      setTestEnvValue("NOVA_CONFIG_PATH", path.join(stateDir, "openclaw.json"));
 
       const port = getPseudoPort(40_000);
       const workspace = path.join(stateDir, "openclaw");

@@ -401,10 +401,10 @@ describe("Hermes migration file and skill items", () => {
     const copiedAgentsItem = result.items.find((item) => item.id === "workspace:AGENTS.md");
     expect(String(copiedAgentsItem?.details?.backupPath)).toContain("AGENTS.md");
     const agentDir = path.join(stateDir, "agents", "main", "agent");
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    const previousAgentDir = process.env.OPENCLAW_AGENT_DIR;
-    process.env.OPENCLAW_STATE_DIR = stateDir;
-    process.env.OPENCLAW_AGENT_DIR = agentDir;
+    const previousStateDir = process.env.NOVA_STATE_DIR;
+    const previousAgentDir = process.env.NOVA_AGENT_DIR;
+    process.env.NOVA_STATE_DIR = stateDir;
+    process.env.NOVA_AGENT_DIR = agentDir;
     try {
       const authStore = loadAuthProfileStoreWithoutExternalProfiles(agentDir);
       expect(authStore.profiles?.["openai:hermes-import"]).toEqual(
@@ -416,14 +416,14 @@ describe("Hermes migration file and skill items", () => {
       );
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.NOVA_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.NOVA_STATE_DIR = previousStateDir;
       }
       if (previousAgentDir === undefined) {
-        delete process.env.OPENCLAW_AGENT_DIR;
+        delete process.env.NOVA_AGENT_DIR;
       } else {
-        process.env.OPENCLAW_AGENT_DIR = previousAgentDir;
+        process.env.NOVA_AGENT_DIR = previousAgentDir;
       }
     }
   });

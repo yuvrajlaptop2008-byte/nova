@@ -8,14 +8,14 @@ import { runExec } from "openclaw/plugin-sdk/process-runtime";
 import { CODEX_ACP_PACKAGE, LEGACY_CODEX_ACP_PACKAGE } from "./codex-adapter.js";
 import { splitCommandParts } from "./command-line.js";
 import { resolveAcpxPluginRoot } from "./config.js";
-import { OPENCLAW_ACPX_LEASE_ID_ARG, OPENCLAW_GATEWAY_INSTANCE_ID_ARG } from "./process-lease.js";
+import { NOVA_ACPX_LEASE_ID_ARG, NOVA_GATEWAY_INSTANCE_ID_ARG } from "./process-lease.js";
 
 const requireFromHere = createRequire(import.meta.url);
 const GENERATED_WRAPPER_BASENAMES = new Set([
   "codex-acp-wrapper.mjs",
   "claude-agent-acp-wrapper.mjs",
 ]);
-const OPENCLAW_PLUGIN_DEPS_MARKER = "/plugin-runtime-deps/";
+const NOVA_PLUGIN_DEPS_MARKER = "/plugin-runtime-deps/";
 const ACPX_PROCESS_LIST_TIMEOUT_MS = 2_000;
 const OWNED_ACP_PACKAGE_NAMES = [
   CODEX_ACP_PACKAGE,
@@ -177,8 +177,8 @@ function liveCommandMatchesLeaseIdentity(params: {
   }
   const parts = splitCommandParts(params.command ?? "");
   return (
-    commandOptionEquals(parts, OPENCLAW_ACPX_LEASE_ID_ARG, params.expectedLeaseId) &&
-    commandOptionEquals(parts, OPENCLAW_GATEWAY_INSTANCE_ID_ARG, params.expectedGatewayInstanceId)
+    commandOptionEquals(parts, NOVA_ACPX_LEASE_ID_ARG, params.expectedLeaseId) &&
+    commandOptionEquals(parts, NOVA_GATEWAY_INSTANCE_ID_ARG, params.expectedGatewayInstanceId)
   );
 }
 
@@ -203,7 +203,7 @@ function isOpenClawOwnedAcpxProcessCommand(params: {
   if (commandBelongsToResolvedAcpPackage(normalized)) {
     return true;
   }
-  if (!normalized.includes(OPENCLAW_PLUGIN_DEPS_MARKER)) {
+  if (!normalized.includes(NOVA_PLUGIN_DEPS_MARKER)) {
     return false;
   }
   return ACP_PACKAGE_MARKERS.some((marker) => normalized.includes(marker));

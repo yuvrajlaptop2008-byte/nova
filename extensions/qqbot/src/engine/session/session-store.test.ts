@@ -31,7 +31,7 @@ async function useMockHome(homeDir: string): Promise<void> {
 async function useStateAndHome(): Promise<{ stateDir: string; homeDir: string }> {
   const stateDir = createTempDir("qqbot-state-");
   const homeDir = createTempDir("qqbot-home-");
-  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+  vi.stubEnv("NOVA_STATE_DIR", stateDir);
   vi.stubEnv("HOME", homeDir);
   await useMockHome(homeDir);
   installQQBotRuntimeForStateTests(stateDir);

@@ -663,7 +663,7 @@ describe("plugin state SQLite leases", () => {
     await withOpenClawTestState({ label: "plugin-lease-storage-error" }, async (state) => {
       const blockedStatePath = state.path("not-a-directory");
       await fs.writeFile(blockedStatePath, "blocked", "utf8");
-      process.env.OPENCLAW_STATE_DIR = blockedStatePath;
+      process.env.NOVA_STATE_DIR = blockedStatePath;
       await expect(
         withPluginStateLease(
           "memory-core",

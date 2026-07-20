@@ -6,13 +6,13 @@ import type { DiffViewerPayload, DiffLayout, DiffTheme } from "./types.js";
 import { parseViewerPayloadJson } from "./viewer-payload.js";
 
 // oxlint-disable-next-line eslint/no-underscore-dangle -- Bundled builds replace this compile-time define identifier.
-declare const __OPENCLAW_DIFFS_LANGUAGE_PACK__: boolean | undefined;
+declare const __NOVA_DIFFS_LANGUAGE_PACK__: boolean | undefined;
 
 // Build-time esbuild define; typeof guard keeps the module loadable where the
-// define is absent (vitest/node), matching the __OPENCLAW_VERSION__ pattern.
+// define is absent (vitest/node), matching the __NOVA_VERSION__ pattern.
 function readInjectedLanguagePackFlag(): boolean | undefined {
-  return typeof __OPENCLAW_DIFFS_LANGUAGE_PACK__ === "boolean"
-    ? __OPENCLAW_DIFFS_LANGUAGE_PACK__
+  return typeof __NOVA_DIFFS_LANGUAGE_PACK__ === "boolean"
+    ? __NOVA_DIFFS_LANGUAGE_PACK__
     : undefined;
 }
 

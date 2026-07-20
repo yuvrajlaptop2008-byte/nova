@@ -113,7 +113,7 @@ describe("ensure-extension-memory-build", () => {
 
     ensureExtensionMemoryBuild({
       rootDir: root,
-      env: { OPENCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "1234" },
+      env: { NOVA_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "1234" },
       requiredExtensionIds: ["discord"],
       spawnSync: (command, args, options) => {
         calls.push({ command, args, options });
@@ -148,18 +148,18 @@ describe("resolveExtensionMemoryBuildTimeoutMs", () => {
   it("parses only positive integer environment timeouts", () => {
     expect(resolveExtensionMemoryBuildTimeoutMs({})).toBe(10 * 60 * 1000);
     expect(
-      resolveExtensionMemoryBuildTimeoutMs({ OPENCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "" }),
+      resolveExtensionMemoryBuildTimeoutMs({ NOVA_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "" }),
     ).toBe(10 * 60 * 1000);
     expect(
-      resolveExtensionMemoryBuildTimeoutMs({ OPENCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "4321" }),
+      resolveExtensionMemoryBuildTimeoutMs({ NOVA_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: "4321" }),
     ).toBe(4321);
 
     for (const raw of ["nope", "10m", "1e3", "0", "-1", "9007199254740992"]) {
       expect(() =>
         resolveExtensionMemoryBuildTimeoutMs({
-          OPENCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: raw,
+          NOVA_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: raw,
         }),
-      ).toThrow(`invalid OPENCLAW_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: ${raw}`);
+      ).toThrow(`invalid NOVA_EXTENSION_MEMORY_BUILD_TIMEOUT_MS: ${raw}`);
     }
   });
 });

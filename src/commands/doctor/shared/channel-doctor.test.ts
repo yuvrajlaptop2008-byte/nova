@@ -294,7 +294,7 @@ describe("channel doctor compatibility mutations", () => {
 
   it("passes explicit env into read-only channel plugin discovery", () => {
     const cfg = createMatrixEnabledConfig();
-    const env = { OPENCLAW_HOME: "/tmp/openclaw-test-home" };
+    const env = { NOVA_HOME: "/tmp/openclaw-test-home" };
 
     collectChannelDoctorCompatibilityMutations(cfg as never, { env });
 
@@ -384,7 +384,7 @@ describe("channel doctor compatibility mutations", () => {
         },
       },
     };
-    const env = { OPENCLAW_HOME: "/tmp/openclaw-test-home" };
+    const env = { NOVA_HOME: "/tmp/openclaw-test-home" };
     mocks.resolveReadOnlyChannelPluginsForConfig.mockReturnValue({
       plugins: [
         {

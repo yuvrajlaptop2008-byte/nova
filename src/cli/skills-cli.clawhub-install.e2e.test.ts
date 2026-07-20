@@ -112,14 +112,14 @@ describe("openclaw skills install ClawHub GitHub-backed E2E", () => {
         cwd: process.cwd(),
         env: {
           ...process.env,
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
-          OPENCLAW_CLAWHUB_URL: registry,
+          NOVA_STATE_DIR: stateDir,
+          NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+          NOVA_CLAWHUB_URL: registry,
           CLAWHUB_TOKEN: "test-token",
           CLAWHUB_GITHUB_CODELOAD_BASE_URL: registry,
           CLAWHUB_DISABLE_TELEMETRY: "",
           CLAWDHUB_DISABLE_TELEMETRY: "",
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
+          NOVA_DISABLE_BUNDLED_PLUGINS: "1",
         },
       });
 

@@ -149,7 +149,7 @@ describe("matrix thread bindings", () => {
     }>("matrix", {
       namespace: "thread-bindings",
       maxEntries: 10_000,
-      env: { ...process.env, OPENCLAW_STATE_DIR: path.dirname(bindingsPath) },
+      env: { ...process.env, NOVA_STATE_DIR: path.dirname(bindingsPath) },
     });
     return {
       version: 1,

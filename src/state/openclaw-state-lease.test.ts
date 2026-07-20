@@ -40,12 +40,12 @@ describe("Nova state lease", () => {
                   .where("lease_key", "=", "credential-write"),
               );
               expect(() => lease.assertOwnedInTransaction(db)).toThrowError(
-                expect.objectContaining({ code: "OPENCLAW_STATE_LEASE_LOST" }),
+                expect.objectContaining({ code: "NOVA_STATE_LEASE_LOST" }),
               );
             });
           },
         ),
-      ).rejects.toMatchObject({ code: "OPENCLAW_STATE_LEASE_LOST" });
+      ).rejects.toMatchObject({ code: "NOVA_STATE_LEASE_LOST" });
     });
   });
 });

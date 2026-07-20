@@ -82,7 +82,7 @@ describe("pinAndroidVersion", () => {
         path.join(rootDir, "apps", "android", "Config", "Version.properties"),
         "utf8",
       ),
-    ).toContain("OPENCLAW_ANDROID_VERSION_NAME=2026.6.5");
+    ).toContain("NOVA_ANDROID_VERSION_NAME=2026.6.5");
     expect(result.syncedPaths).toHaveLength(1);
   });
 

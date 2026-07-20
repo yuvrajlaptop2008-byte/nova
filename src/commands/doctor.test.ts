@@ -199,7 +199,7 @@ describe("doctorCommand", () => {
         throw new Error(`exit:${code}`);
       }),
     };
-    const stateDir = path.resolve(process.env.OPENCLAW_STATE_DIR ?? ".openclaw");
+    const stateDir = path.resolve(process.env.NOVA_STATE_DIR ?? ".openclaw");
     const storePath = path.join(stateDir, "agents", "main", "sessions", "sessions.json");
     const sqlitePath = path.join(stateDir, "agents", "main", "agent", "openclaw-agent.sqlite");
 

@@ -70,8 +70,8 @@ beforeEach(() => {
   testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-qqbot-effect-once-"));
   const stateDir = path.join(testRoot, "state");
   fs.mkdirSync(stateDir, { recursive: true });
-  vi.stubEnv("OPENCLAW_HOME", testRoot);
-  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+  vi.stubEnv("NOVA_HOME", testRoot);
+  vi.stubEnv("NOVA_STATE_DIR", stateDir);
   vi.mocked(sendText).mockClear();
 });
 

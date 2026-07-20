@@ -32,14 +32,14 @@ import { restoreLiveEnv, snapshotLiveEnv, type LiveEnvSnapshot } from "./live-en
 import { startGatewayServer } from "./server.js";
 
 const LIVE = isLiveTestEnabled();
-const CODEX_BIND_LIVE = isTruthyEnvValue(process.env.OPENCLAW_LIVE_CODEX_BIND);
+const CODEX_BIND_LIVE = isTruthyEnvValue(process.env.NOVA_LIVE_CODEX_BIND);
 const describeLive = LIVE && CODEX_BIND_LIVE ? describe : describe.skip;
 const CODEX_BIND_TIMEOUT_MS = resolveLiveTimeoutMs(
-  process.env.OPENCLAW_LIVE_CODEX_BIND_TIMEOUT_MS,
+  process.env.NOVA_LIVE_CODEX_BIND_TIMEOUT_MS,
   900_000,
 );
 const CODEX_BIND_REQUEST_TIMEOUT_MS = resolveLiveTimeoutMs(
-  process.env.OPENCLAW_LIVE_CODEX_BIND_REQUEST_TIMEOUT_MS,
+  process.env.NOVA_LIVE_CODEX_BIND_REQUEST_TIMEOUT_MS,
   300_000,
 );
 const DEFAULT_CODEX_BIND_MODEL = "gpt-5.6-luna";
@@ -384,11 +384,11 @@ async function writeGatewayConfig(params: {
 }
 
 function resolveCodexBindModelProvider(): string | undefined {
-  const configured = process.env.OPENCLAW_LIVE_CODEX_BIND_PROVIDER?.trim();
+  const configured = process.env.NOVA_LIVE_CODEX_BIND_PROVIDER?.trim();
   if (configured) {
     return configured;
   }
-  return process.env.OPENCLAW_LIVE_CODEX_HARNESS_AUTH === "api-key" ? "openai" : undefined;
+  return process.env.NOVA_LIVE_CODEX_HARNESS_AUTH === "api-key" ? "openai" : undefined;
 }
 
 describeLive("gateway live (native Codex conversation binding)", () => {
@@ -407,8 +407,7 @@ describeLive("gateway live (native Codex conversation binding)", () => {
       const accountId = "default";
       const slackUserId = `U${randomUUID().replace(/-/g, "").slice(0, 10).toUpperCase()}`;
       const conversationId = `user:${slackUserId}`;
-      const bindModel =
-        process.env.OPENCLAW_LIVE_CODEX_BIND_MODEL?.trim() || DEFAULT_CODEX_BIND_MODEL;
+      const bindModel = process.env.NOVA_LIVE_CODEX_BIND_MODEL?.trim() || DEFAULT_CODEX_BIND_MODEL;
       const bindProvider = resolveCodexBindModelProvider();
       const outboundReplies: CapturedOutboundReply[] = [];
 
@@ -445,13 +444,13 @@ describeLive("gateway live (native Codex conversation binding)", () => {
         deleteTestEnvValue("CODEX_HOME");
       }
       setTestEnvValue("HOME", tempHome);
-      setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
-      setTestEnvValue("OPENCLAW_GATEWAY_TOKEN", token);
-      setTestEnvValue("OPENCLAW_SKIP_CANVAS_HOST", "1");
-      setTestEnvValue("OPENCLAW_SKIP_CHANNELS", "1");
-      setTestEnvValue("OPENCLAW_SKIP_CRON", "1");
-      setTestEnvValue("OPENCLAW_SKIP_GMAIL_WATCHER", "1");
-      setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+      setTestEnvValue("NOVA_CONFIG_PATH", configPath);
+      setTestEnvValue("NOVA_GATEWAY_TOKEN", token);
+      setTestEnvValue("NOVA_SKIP_CANVAS_HOST", "1");
+      setTestEnvValue("NOVA_SKIP_CHANNELS", "1");
+      setTestEnvValue("NOVA_SKIP_CRON", "1");
+      setTestEnvValue("NOVA_SKIP_GMAIL_WATCHER", "1");
+      setTestEnvValue("NOVA_STATE_DIR", stateDir);
       let server: Awaited<ReturnType<typeof startGatewayServer>> | undefined;
       let client: Awaited<ReturnType<typeof connectTestGatewayClient>> | undefined;
       let pinnedChannelRegistry:

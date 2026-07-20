@@ -56,7 +56,7 @@ vi.mock("../../config/paths.js", () => ({
 }));
 
 vi.mock("../../daemon/program-args.js", () => ({
-  OPENCLAW_WRAPPER_ENV_KEY: "OPENCLAW_WRAPPER",
+  NOVA_WRAPPER_ENV_KEY: "NOVA_WRAPPER",
   resolveOpenClawWrapperPath: resolveOpenClawWrapperPathMock,
 }));
 
@@ -110,11 +110,11 @@ describe("repairLoadedGatewayServiceForStart", () => {
       isLoaded: isLoadedMock,
     } as unknown as GatewayService;
     const existingEnvironment = {
-      OPENCLAW_SERVICE_VERSION: "2026.4.24",
+      NOVA_SERVICE_VERSION: "2026.4.24",
       TELEGRAM_DEFAULT_BOTTOKEN: "existing-env-file-token",
     };
     const existingEnvironmentValueSources = {
-      OPENCLAW_SERVICE_VERSION: "inline" as const,
+      NOVA_SERVICE_VERSION: "inline" as const,
       TELEGRAM_DEFAULT_BOTTOKEN: "file" as const,
     };
     const state: GatewayServiceState = {

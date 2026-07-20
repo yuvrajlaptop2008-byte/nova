@@ -88,7 +88,7 @@ export function resolveCanvasHostConfig(params: {
 
 /** Returns whether the Canvas hosted route/server surface should be active. */
 export function isCanvasHostEnabled(config?: OpenClawConfig): boolean {
-  if (isTruthyEnvValue(process.env.OPENCLAW_SKIP_CANVAS_HOST)) {
+  if (isTruthyEnvValue(process.env.NOVA_SKIP_CANVAS_HOST)) {
     return false;
   }
   if (!isCanvasPluginEnabled(config)) {

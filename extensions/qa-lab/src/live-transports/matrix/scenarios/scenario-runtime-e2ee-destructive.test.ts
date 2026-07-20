@@ -26,7 +26,7 @@ const storageMetadataRuntime = vi.hoisted(() => ({
     return {
       namespace: "storage-meta",
       maxEntries: 10,
-      env: { ...process.env, OPENCLAW_STATE_DIR: storageRootDir },
+      env: { ...process.env, NOVA_STATE_DIR: storageRootDir },
     };
   },
 }));
@@ -37,7 +37,7 @@ vi.mock("../substrate/e2ee-client.js", () => ({
     openMatrixRecoveryKeyStoreOptions: (storageRootDir: string) => ({
       namespace: "recovery-key",
       maxEntries: 10,
-      env: { ...process.env, OPENCLAW_STATE_DIR: storageRootDir },
+      env: { ...process.env, NOVA_STATE_DIR: storageRootDir },
     }),
   }),
 }));

@@ -602,7 +602,7 @@ function telegramTestQueueName(spoolDir: string): string {
 
 function openTelegramSpoolTestKysely(spoolDir: string) {
   const database = openOpenClawStateDatabase({
-    env: { ...process.env, OPENCLAW_STATE_DIR: spoolDir },
+    env: { ...process.env, NOVA_STATE_DIR: spoolDir },
   });
   return {
     database,

@@ -86,7 +86,7 @@ type FeishuHttpInstanceLike = Pick<
 >;
 
 function isManagedProxyActive() {
-  return process.env["OPENCLAW_PROXY_ACTIVE"] === "1";
+  return process.env["NOVA_PROXY_ACTIVE"] === "1";
 }
 
 let cachedFeishuProxyAgent: Agent | undefined;

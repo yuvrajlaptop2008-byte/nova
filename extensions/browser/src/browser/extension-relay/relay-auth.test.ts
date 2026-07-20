@@ -10,17 +10,17 @@ import {
 } from "./relay-auth.js";
 
 let stateDir = "";
-const prevStateDir = process.env.OPENCLAW_STATE_DIR;
+const prevStateDir = process.env.NOVA_STATE_DIR;
 
 beforeEach(() => {
   stateDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-relay-auth-")));
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  process.env.NOVA_STATE_DIR = stateDir;
 });
 afterEach(() => {
   if (prevStateDir === undefined) {
-    delete process.env.OPENCLAW_STATE_DIR;
+    delete process.env.NOVA_STATE_DIR;
   } else {
-    process.env.OPENCLAW_STATE_DIR = prevStateDir;
+    process.env.NOVA_STATE_DIR = prevStateDir;
   }
   fs.rmSync(stateDir, { recursive: true, force: true });
 });
@@ -53,7 +53,7 @@ describe("extension relay host-local secret", () => {
       fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-relay-auth-2-")),
     );
     try {
-      const b = ensureExtensionRelayToken({ ...process.env, OPENCLAW_STATE_DIR: otherDir });
+      const b = ensureExtensionRelayToken({ ...process.env, NOVA_STATE_DIR: otherDir });
       expect(b).not.toBe(a);
     } finally {
       fs.rmSync(otherDir, { recursive: true, force: true });

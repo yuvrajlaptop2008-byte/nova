@@ -9,14 +9,14 @@ import {
   readSqliteUserVersion,
 } from "../infra/sqlite-user-version.js";
 import {
-  OPENCLAW_DATABASE_SCHEMA_DOCS_URL,
-  OPENCLAW_STATE_SCHEMA_VERSION,
+  NOVA_DATABASE_SCHEMA_DOCS_URL,
+  NOVA_STATE_SCHEMA_VERSION,
   type OpenClawStateDatabaseOptions,
 } from "./openclaw-state-db-contract.js";
 import { resolveOpenClawStateSqlitePath } from "./openclaw-state-db.paths.js";
-import { OPENCLAW_STATE_SCHEMA_SQL } from "./openclaw-state-schema.generated.js";
+import { NOVA_STATE_SCHEMA_SQL } from "./openclaw-state-schema.generated.js";
 
-const OPENCLAW_STATE_MAINTENANCE_SCHEMA_COMPATIBILITY = {
+const NOVA_STATE_MAINTENANCE_SCHEMA_COMPATIBILITY = {
   allowedColumnDefinitions: {
     "diagnostic_events.sequence": ["sequence INTEGER NOT NULL DEFAULT 0"],
     "commitments.attempts": ["attempts INTEGER NOT NULL DEFAULT 0"],
@@ -55,7 +55,7 @@ export function createOpenClawDatabaseVerificationError(
   // Doctor's clearing hooks run after a full integrity assertion, so a still-
   // corrupt file cannot be cleared directly: the file must be healthy first.
   const error = new Error(
-    `Nova ${kind} database ${pathname} is quarantined after integrity verification failed: ${storedError ?? "unknown integrity error"}. Restore the database from a backup or repair it, then run openclaw doctor --fix to clear the quarantine. See ${OPENCLAW_DATABASE_SCHEMA_DOCS_URL}.`,
+    `Nova ${kind} database ${pathname} is quarantined after integrity verification failed: ${storedError ?? "unknown integrity error"}. Restore the database from a backup or repair it, then run openclaw doctor --fix to clear the quarantine. See ${NOVA_DATABASE_SCHEMA_DOCS_URL}.`,
   );
   error.name = "SqliteIntegrityError";
   return error;
@@ -63,12 +63,12 @@ export function createOpenClawDatabaseVerificationError(
 
 export function assertSupportedSchemaVersion(db: DatabaseSync, pathname: string): void {
   const userVersion = readSqliteUserVersion(db);
-  if (userVersion > OPENCLAW_STATE_SCHEMA_VERSION) {
+  if (userVersion > NOVA_STATE_SCHEMA_VERSION) {
     throw createNewerSqliteSchemaVersionError(
       "Nova state database",
       pathname,
       userVersion,
-      OPENCLAW_STATE_SCHEMA_VERSION,
+      NOVA_STATE_SCHEMA_VERSION,
     );
   }
 }
@@ -78,15 +78,15 @@ export function assertOpenClawStateDatabaseForMaintenance(
   options: { pathname: string },
 ): void {
   const userVersion = readSqliteUserVersion(database);
-  if (userVersion > OPENCLAW_STATE_SCHEMA_VERSION) {
+  if (userVersion > NOVA_STATE_SCHEMA_VERSION) {
     throw createNewerSqliteSchemaVersionError(
       "Nova state database",
       options.pathname,
       userVersion,
-      OPENCLAW_STATE_SCHEMA_VERSION,
+      NOVA_STATE_SCHEMA_VERSION,
     );
   }
-  if (userVersion !== OPENCLAW_STATE_SCHEMA_VERSION) {
+  if (userVersion !== NOVA_STATE_SCHEMA_VERSION) {
     throw new Error(
       `Nova state database ${options.pathname} uses schema version ${userVersion}; run openclaw doctor --fix before compacting it.`,
     );
@@ -101,18 +101,18 @@ export function assertOpenClawStateDatabaseForMaintenance(
       `Nova state database ${options.pathname} has schema role ${role}; expected global.`,
     );
   }
-  if (metadata.schema_version !== OPENCLAW_STATE_SCHEMA_VERSION) {
+  if (metadata.schema_version !== NOVA_STATE_SCHEMA_VERSION) {
     const schemaVersion =
       typeof metadata.schema_version === "number" ? metadata.schema_version : "invalid";
     throw new Error(
-      `Nova state database ${options.pathname} metadata schema version ${schemaVersion} does not match ${OPENCLAW_STATE_SCHEMA_VERSION}; run openclaw doctor --fix before compacting it.`,
+      `Nova state database ${options.pathname} metadata schema version ${schemaVersion} does not match ${NOVA_STATE_SCHEMA_VERSION}; run openclaw doctor --fix before compacting it.`,
     );
   }
   assertSqliteSchemaContains(
     database,
     options.pathname,
-    OPENCLAW_STATE_SCHEMA_SQL,
-    OPENCLAW_STATE_MAINTENANCE_SCHEMA_COMPATIBILITY,
+    NOVA_STATE_SCHEMA_SQL,
+    NOVA_STATE_MAINTENANCE_SCHEMA_COMPATIBILITY,
   );
 }
 

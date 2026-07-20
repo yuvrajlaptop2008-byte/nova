@@ -128,8 +128,8 @@ async function createApplyFixture(): Promise<ApplyFixture> {
   return {
     ...paths,
     env: {
-      OPENCLAW_STATE_DIR: paths.stateDir,
-      OPENCLAW_CONFIG_PATH: paths.configPath,
+      NOVA_STATE_DIR: paths.stateDir,
+      NOVA_CONFIG_PATH: paths.configPath,
       OPENAI_API_KEY: "sk-live-env", // pragma: allowlist secret
     },
   };
@@ -1579,7 +1579,7 @@ describe("secrets apply", () => {
   });
 
   it("scrubs .env in legacy .clawdbot state directory via automatic fallback", async () => {
-    // Do NOT set OPENCLAW_STATE_DIR — rely on resolveStateDir's automatic
+    // Do NOT set NOVA_STATE_DIR — rely on resolveStateDir's automatic
     // legacy-directory fallback. A controlled HOME that contains only
     // .clawdbot (no .openclaw) exercises the scrub path so the old
     // resolveConfigDir call (which always returns $HOME/.openclaw) would
@@ -1754,7 +1754,7 @@ describe("secrets apply", () => {
     await fs.mkdir(configDir, { recursive: true });
     await fs.copyFile(fixture.configPath, configPath);
     await fs.copyFile(fixture.envPath, configEnvPath);
-    fixture.env.OPENCLAW_CONFIG_PATH = configPath;
+    fixture.env.NOVA_CONFIG_PATH = configPath;
 
     const applied = await runSecretsApply({
       plan: createPlan({

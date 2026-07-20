@@ -5177,7 +5177,7 @@ describe("verifySetupInference", () => {
 
   it("binds a runtime-only Codex profile after activation and runs the first Nova turn", async () => {
     const stateDir = await makeTempDir();
-    vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+    vi.stubEnv("NOVA_STATE_DIR", stateDir);
     const profileId = "openai:default";
     const credential = {
       type: "oauth" as const,

@@ -3,12 +3,12 @@ set -euo pipefail
 
 usage() {
   echo "Usage: $0 <device-udid> <bundle-id> [dest]" >&2
-  echo "       OPENCLAW_IOS_DEVICE_UDID=... OPENCLAW_IOS_BUNDLE_ID=... $0" >&2
+  echo "       NOVA_IOS_DEVICE_UDID=... NOVA_IOS_BUNDLE_ID=... $0" >&2
 }
 
-DEVICE_UDID="${1:-${OPENCLAW_IOS_DEVICE_UDID:-}}"
-BUNDLE_ID="${2:-${OPENCLAW_IOS_BUNDLE_ID:-}}"
-DEST="${3:-${OPENCLAW_IOS_GATEWAY_LOG_DEST:-}}"
+DEVICE_UDID="${1:-${NOVA_IOS_DEVICE_UDID:-}}"
+BUNDLE_ID="${2:-${NOVA_IOS_BUNDLE_ID:-}}"
+DEST="${3:-${NOVA_IOS_GATEWAY_LOG_DEST:-}}"
 
 if [[ -z "$DEVICE_UDID" || -z "$BUNDLE_ID" ]]; then
   usage

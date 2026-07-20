@@ -13,8 +13,8 @@ const AGENT_RUN_ABORTED_STOP_REASON = "aborted" as const;
 export const AGENT_RUN_ABORTED_ERROR = "agent run aborted" as const;
 export const AGENT_RUN_RESTART_ABORT_STOP_REASON = "restart" as const;
 
-const AGENT_RUN_RESTART_ABORT_ERROR_CODE = "OPENCLAW_RESTART_ABORT";
-const AGENT_RUN_DIRECT_ABORT_ERROR_CODE = "OPENCLAW_DIRECT_ABORT";
+const AGENT_RUN_RESTART_ABORT_ERROR_CODE = "NOVA_RESTART_ABORT";
+const AGENT_RUN_DIRECT_ABORT_ERROR_CODE = "NOVA_DIRECT_ABORT";
 
 export function createAgentRunDirectAbortError(): Error {
   const error = new Error(AGENT_RUN_ABORTED_ERROR) as Error & { code: string };

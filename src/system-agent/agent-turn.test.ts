@@ -61,7 +61,7 @@ const tempDirs: string[] = [];
 function useTempStateDir(): string {
   const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-turn-"));
   tempDirs.push(stateDir);
-  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+  vi.stubEnv("NOVA_STATE_DIR", stateDir);
   return stateDir;
 }
 

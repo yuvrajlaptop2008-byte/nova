@@ -77,8 +77,8 @@ describe("handleSystemRunInvoke mac app exec host routing", () => {
   }
 
   beforeEach(() => {
-    previousOpenClawHome = process.env.OPENCLAW_HOME;
-    process.env.OPENCLAW_HOME = sharedOpenClawHome;
+    previousOpenClawHome = process.env.NOVA_HOME;
+    process.env.NOVA_HOME = sharedOpenClawHome;
     fs.rmSync(resolveExecApprovalsPath(), { force: true });
     clearRuntimeConfigSnapshot();
   });
@@ -86,9 +86,9 @@ describe("handleSystemRunInvoke mac app exec host routing", () => {
   afterEach(() => {
     clearRuntimeConfigSnapshot();
     if (previousOpenClawHome === undefined) {
-      delete process.env.OPENCLAW_HOME;
+      delete process.env.NOVA_HOME;
     } else {
-      process.env.OPENCLAW_HOME = previousOpenClawHome;
+      process.env.NOVA_HOME = previousOpenClawHome;
     }
   });
 
@@ -383,7 +383,7 @@ describe("handleSystemRunInvoke mac app exec host routing", () => {
     run: (ctx: { tempHome: string }) => Promise<T>;
   }): Promise<T> {
     const tempHome = sharedOpenClawHome;
-    return await withEnvAsync({ OPENCLAW_HOME: tempHome }, async () => {
+    return await withEnvAsync({ NOVA_HOME: tempHome }, async () => {
       saveExecApprovals(params.approvals);
       return await params.run({ tempHome });
     });
@@ -1078,8 +1078,8 @@ describe("handleSystemRunInvoke mac app exec host routing", () => {
         preferMacAppExecHost: false,
         security: "allowlist",
         ask: "off",
-        command: ["/bin/sh", "-lc", "head -c${IFS}16${IFS}${OPENCLAW_CONFIG_PATH}"],
-        rawCommand: "head -c${IFS}16${IFS}${OPENCLAW_CONFIG_PATH}",
+        command: ["/bin/sh", "-lc", "head -c${IFS}16${IFS}${NOVA_CONFIG_PATH}"],
+        rawCommand: "head -c${IFS}16${IFS}${NOVA_CONFIG_PATH}",
       });
 
       expect(runCommand).not.toHaveBeenCalled();
@@ -1738,7 +1738,7 @@ describe("handleSystemRunInvoke mac app exec host routing", () => {
       ask: "off",
       command: ["/bin/sh", "./script.sh"],
       env: {
-        OPENCLAW_TEST: "1",
+        NOVA_TEST: "1",
         LANG: "C",
         LC_TIME: "C",
       },

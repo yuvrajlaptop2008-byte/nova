@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source scripts/lib/openclaw-e2e-instance.sh
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_FUNCTION_B64:?missing OPENCLAW_TEST_STATE_FUNCTION_B64}"
+openclaw_e2e_eval_test_state_from_b64 "${NOVA_TEST_STATE_FUNCTION_B64:?missing NOVA_TEST_STATE_FUNCTION_B64}"
 
 # Keep logs focused; the npm global install step can emit noisy deprecation warnings.
 export npm_config_loglevel=error
 export npm_config_fund=false
 export npm_config_audit=false
-export OPENCLAW_DISABLE_BUNDLED_PLUGINS=1
+export NOVA_DISABLE_BUNDLED_PLUGINS=1
 
 # Stub systemd/loginctl so doctor + daemon flows work in Docker.
 export PATH="/tmp/openclaw-bin:$PATH"
@@ -16,7 +16,7 @@ cp scripts/e2e/lib/doctor-install-switch/shims/systemctl /tmp/openclaw-bin/syste
 cp scripts/e2e/lib/doctor-install-switch/shims/loginctl /tmp/openclaw-bin/loginctl
 chmod +x /tmp/openclaw-bin/systemctl /tmp/openclaw-bin/loginctl
 
-package_tgz="${OPENCLAW_CURRENT_PACKAGE_TGZ:?missing OPENCLAW_CURRENT_PACKAGE_TGZ}"
+package_tgz="${NOVA_CURRENT_PACKAGE_TGZ:?missing NOVA_CURRENT_PACKAGE_TGZ}"
 git_root="/tmp/openclaw-git"
 mkdir -p "$git_root"
 # The git-style install fixture is unpacked from the tarball so this lane does
@@ -25,7 +25,7 @@ tar -xzf "$package_tgz" -C "$git_root" --strip-components=1
 node scripts/e2e/lib/package-git-fixture.mjs prepare "$git_root"
 (
   cd "$git_root"
-  openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit >/tmp/openclaw-git-install.log 2>&1
+  openclaw_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install --omit=optional --no-fund --no-audit >/tmp/openclaw-git-install.log 2>&1
   git init -q
   git config user.email "docker-e2e@openclaw.local"
   git config user.name "OpenClaw Docker E2E"
@@ -33,7 +33,7 @@ node scripts/e2e/lib/package-git-fixture.mjs prepare "$git_root"
   git commit -qm "test fixture"
 )
 npm_log="/tmp/openclaw-doctor-switch-npm-install.log"
-if ! openclaw_e2e_maybe_timeout "${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$package_tgz" >"$npm_log" 2>&1; then
+if ! openclaw_e2e_maybe_timeout "${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" npm install -g --prefix /tmp/npm-prefix --omit=optional "$package_tgz" >"$npm_log" 2>&1; then
   openclaw_e2e_print_log "$npm_log"
   exit 1
 fi
@@ -54,11 +54,11 @@ fi
 git_cli="$git_root/openclaw.mjs"
 
 package_version="$(node -p "require(\"$npm_root/package.json\").version")"
-update_doctor_env="OPENCLAW_UPDATE_IN_PROGRESS=1"
-update_doctor_env+=" OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE=1"
-update_doctor_env+=" OPENCLAW_UPDATE_PARENT_SUPPORTS_GATEWAY_RESTART=1"
-update_doctor_env+=" OPENCLAW_UPDATE_PARENT_ALLOWS_GATEWAY_SERVICE_REPAIR=1"
-update_doctor_env+=" OPENCLAW_UPDATE_PARENT_ALLOWS_GATEWAY_ACTIVATION=0"
+update_doctor_env="NOVA_UPDATE_IN_PROGRESS=1"
+update_doctor_env+=" NOVA_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE=1"
+update_doctor_env+=" NOVA_UPDATE_PARENT_SUPPORTS_GATEWAY_RESTART=1"
+update_doctor_env+=" NOVA_UPDATE_PARENT_ALLOWS_GATEWAY_SERVICE_REPAIR=1"
+update_doctor_env+=" NOVA_UPDATE_PARENT_ALLOWS_GATEWAY_ACTIVATION=0"
 is_legacy_package_acceptance_compat() {
   [ "$(node scripts/e2e/lib/package-compat.mjs "$1")" = "1" ]
 }
@@ -135,7 +135,7 @@ run_flow() {
   local doctor_expected="$5"
   local install_log="/tmp/openclaw-doctor-switch-${name}-install.log"
   local doctor_log="/tmp/openclaw-doctor-switch-${name}-doctor.log"
-  local command_timeout="${OPENCLAW_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
+  local command_timeout="${NOVA_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
 
   echo "== Flow: $name =="
   openclaw_test_state_create "switch-${name}" empty
@@ -201,7 +201,7 @@ run_cross_state_approval_flow() {
   local name="cross-state-approvals"
   local automated_log="/tmp/openclaw-doctor-switch-${name}-automated.log"
   local direct_log="/tmp/openclaw-doctor-switch-${name}-direct.log"
-  local command_timeout="${OPENCLAW_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
+  local command_timeout="${NOVA_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
 
   echo "== Flow: $name =="
   openclaw_test_state_create "switch-${name}" empty
@@ -221,9 +221,9 @@ run_cross_state_approval_flow() {
   plugin_source_hash="$(sha256sum "$plugin_source" | awk '{print $1}')"
 
   if ! openclaw_e2e_maybe_timeout "$command_timeout" env \
-    OPENCLAW_STATE_DIR="$custom_state_dir" \
-    OPENCLAW_CONFIG_PATH="$custom_state_dir/openclaw.json" \
-    OPENCLAW_UPDATE_IN_PROGRESS=1 \
+    NOVA_STATE_DIR="$custom_state_dir" \
+    NOVA_CONFIG_PATH="$custom_state_dir/openclaw.json" \
+    NOVA_UPDATE_IN_PROGRESS=1 \
     "$npm_bin" doctor --repair --yes --non-interactive >"$automated_log" 2>&1; then
     openclaw_e2e_print_log "$automated_log"
     exit 1
@@ -237,9 +237,9 @@ run_cross_state_approval_flow() {
   test "$(plugin_binding_approval_count "$state_database")" = "0"
 
   if ! openclaw_e2e_maybe_timeout "$command_timeout" env \
-    -u OPENCLAW_UPDATE_IN_PROGRESS \
-    OPENCLAW_STATE_DIR="$custom_state_dir" \
-    OPENCLAW_CONFIG_PATH="$custom_state_dir/openclaw.json" \
+    -u NOVA_UPDATE_IN_PROGRESS \
+    NOVA_STATE_DIR="$custom_state_dir" \
+    NOVA_CONFIG_PATH="$custom_state_dir/openclaw.json" \
     "$npm_bin" doctor --repair --yes --non-interactive >"$direct_log" 2>&1; then
     openclaw_e2e_print_log "$direct_log"
     exit 1
@@ -259,7 +259,7 @@ run_proxy_env_flow() {
   local name="proxy-env-cleanup"
   local install_log="/tmp/openclaw-doctor-switch-${name}-install.log"
   local doctor_log="/tmp/openclaw-doctor-switch-${name}-doctor.log"
-  local command_timeout="${OPENCLAW_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
+  local command_timeout="${NOVA_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
 
   echo "== Flow: $name =="
   openclaw_test_state_create "switch-${name}" empty
@@ -283,11 +283,11 @@ run_proxy_env_flow() {
     printf "%s\n" "Environment=HTTPS_PROXY=https://stale-proxy.local:7890"
   } >>"$unit_path"
   if ! openclaw_e2e_maybe_timeout "$command_timeout" env \
-    OPENCLAW_UPDATE_IN_PROGRESS=1 \
-    OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE=1 \
-    OPENCLAW_UPDATE_PARENT_SUPPORTS_GATEWAY_RESTART=1 \
-    OPENCLAW_UPDATE_PARENT_ALLOWS_GATEWAY_SERVICE_REPAIR=1 \
-    OPENCLAW_UPDATE_PARENT_ALLOWS_GATEWAY_ACTIVATION=0 \
+    NOVA_UPDATE_IN_PROGRESS=1 \
+    NOVA_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE=1 \
+    NOVA_UPDATE_PARENT_SUPPORTS_GATEWAY_RESTART=1 \
+    NOVA_UPDATE_PARENT_ALLOWS_GATEWAY_SERVICE_REPAIR=1 \
+    NOVA_UPDATE_PARENT_ALLOWS_GATEWAY_ACTIVATION=0 \
     node "$git_cli" doctor --repair --force --yes --non-interactive >"$doctor_log" 2>&1; then
     openclaw_e2e_print_log "$doctor_log"
     exit 1
@@ -305,7 +305,7 @@ run_wrapper_flow() {
   local env_repair_log="/tmp/openclaw-doctor-switch-${name}-env-repair.log"
   local doctor_log="/tmp/openclaw-doctor-switch-${name}-doctor.log"
   local clear_log="/tmp/openclaw-doctor-switch-${name}-clear.log"
-  local command_timeout="${OPENCLAW_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
+  local command_timeout="${NOVA_DOCKER_DOCTOR_SWITCH_COMMAND_TIMEOUT:-900s}"
 
   echo "== Flow: $name =="
   openclaw_test_state_create "switch-${name}" empty
@@ -325,7 +325,7 @@ run_wrapper_flow() {
   fi
   assert_exec_arg "$unit_path" 1 "$wrapper"
   assert_exec_arg "$unit_path" 2 "gateway"
-  assert_env_value "$unit_path" "OPENCLAW_WRAPPER" "$wrapper"
+  assert_env_value "$unit_path" "NOVA_WRAPPER" "$wrapper"
 
   if ! openclaw_e2e_maybe_timeout "$command_timeout" "$npm_bin" gateway install --force >"$reinstall_log" 2>&1; then
     openclaw_e2e_print_log "$reinstall_log"
@@ -333,41 +333,41 @@ run_wrapper_flow() {
   fi
   assert_exec_arg "$unit_path" 1 "$wrapper"
   assert_exec_arg "$unit_path" 2 "gateway"
-  assert_env_value "$unit_path" "OPENCLAW_WRAPPER" "$wrapper"
+  assert_env_value "$unit_path" "NOVA_WRAPPER" "$wrapper"
 
-  sed -i "/^Environment=OPENCLAW_WRAPPER=/d" "$unit_path"
+  sed -i "/^Environment=NOVA_WRAPPER=/d" "$unit_path"
   if ! openclaw_e2e_maybe_timeout "$command_timeout" "$npm_bin" gateway install --wrapper "$wrapper" >"$env_repair_log" 2>&1; then
     openclaw_e2e_print_log "$env_repair_log"
     exit 1
   fi
   assert_exec_arg "$unit_path" 1 "$wrapper"
-  assert_env_value "$unit_path" "OPENCLAW_WRAPPER" "$wrapper"
+  assert_env_value "$unit_path" "NOVA_WRAPPER" "$wrapper"
 
-  sed -i "s#^Environment=OPENCLAW_WRAPPER=.*#Environment=OPENCLAW_WRAPPER=/tmp/stale-openclaw-wrapper#" "$unit_path"
+  sed -i "s#^Environment=NOVA_WRAPPER=.*#Environment=NOVA_WRAPPER=/tmp/stale-openclaw-wrapper#" "$unit_path"
   if ! openclaw_e2e_maybe_timeout "$command_timeout" "$npm_bin" gateway install --wrapper "$wrapper" >"$env_repair_log" 2>&1; then
     openclaw_e2e_print_log "$env_repair_log"
     exit 1
   fi
   assert_exec_arg "$unit_path" 1 "$wrapper"
-  assert_env_value "$unit_path" "OPENCLAW_WRAPPER" "$wrapper"
+  assert_env_value "$unit_path" "NOVA_WRAPPER" "$wrapper"
 
   if ! openclaw_e2e_maybe_timeout "$command_timeout" node "$git_cli" doctor --repair --force --yes >"$doctor_log" 2>&1; then
     openclaw_e2e_print_log "$doctor_log"
     exit 1
   fi
-  if ! grep -Fq "Gateway service invokes OPENCLAW_WRAPPER:" "$doctor_log"; then
+  if ! grep -Fq "Gateway service invokes NOVA_WRAPPER:" "$doctor_log"; then
     echo "Expected doctor to report active wrapper"
     openclaw_e2e_print_log "$doctor_log"
     exit 1
   fi
   assert_exec_arg "$unit_path" 1 "$wrapper"
-  assert_env_value "$unit_path" "OPENCLAW_WRAPPER" "$wrapper"
+  assert_env_value "$unit_path" "NOVA_WRAPPER" "$wrapper"
 
-  if ! openclaw_e2e_maybe_timeout "$command_timeout" env OPENCLAW_WRAPPER= "$npm_bin" gateway install --force >"$clear_log" 2>&1; then
+  if ! openclaw_e2e_maybe_timeout "$command_timeout" env NOVA_WRAPPER= "$npm_bin" gateway install --force >"$clear_log" 2>&1; then
     openclaw_e2e_print_log "$clear_log"
     exit 1
   fi
-  assert_no_env_key "$unit_path" "OPENCLAW_WRAPPER"
+  assert_no_env_key "$unit_path" "NOVA_WRAPPER"
   assert_entrypoint "$unit_path" "$npm_entry"
 }
 

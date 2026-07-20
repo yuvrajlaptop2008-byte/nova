@@ -110,10 +110,10 @@ const DEFAULT_TIMEOUT_KILL_GRACE_MS = 1_000;
 const TIMEOUT_KILL_GRACE_MS = resolveTimeoutKillGraceMs(process.env);
 const PROCESS_GROUP_EXIT_POLL_MS = 25;
 const DEFAULT_ENTRY = "openclaw.mjs";
-const MAX_RSS_MARKER = "__OPENCLAW_MAX_RSS_KB__=";
+const MAX_RSS_MARKER = "__NOVA_MAX_RSS_KB__=";
 
 function resolveTimeoutKillGraceMs(env: NodeJS.ProcessEnv): number {
-  const raw = env.VITEST ? env.OPENCLAW_TEST_CLI_STARTUP_TIMEOUT_KILL_GRACE_MS : undefined;
+  const raw = env.VITEST ? env.NOVA_TEST_CLI_STARTUP_TIMEOUT_KILL_GRACE_MS : undefined;
   if (!raw || !/^\d+$/u.test(raw)) {
     return DEFAULT_TIMEOUT_KILL_GRACE_MS;
   }
@@ -521,7 +521,7 @@ function parseGatewayPortEnv(raw: string | undefined): number {
   }
   const bracketHostMatch = /^\[[^\]]+\]:(\d+)$/u.exec(value);
   if (bracketHostMatch) {
-    return parsePositiveInt(bracketHostMatch[1], 32123, "OPENCLAW_GATEWAY_PORT");
+    return parsePositiveInt(bracketHostMatch[1], 32123, "NOVA_GATEWAY_PORT");
   }
   if (value.startsWith("[") && value.endsWith("]")) {
     return 32123;
@@ -531,7 +531,7 @@ function parseGatewayPortEnv(raw: string | undefined): number {
     return 32123;
   }
   const portRaw = colonCount === 1 ? value.split(":")[1] : value;
-  return parsePositiveInt(portRaw, 32123, "OPENCLAW_GATEWAY_PORT");
+  return parsePositiveInt(portRaw, 32123, "NOVA_GATEWAY_PORT");
 }
 
 function parsePresets(raw: string | undefined): string[] {
@@ -654,7 +654,7 @@ function buildConfigFixture(commandCase: CommandCase): Record<string, unknown> |
   ) {
     return null;
   }
-  const port = parseGatewayPortEnv(process.env.OPENCLAW_GATEWAY_PORT);
+  const port = parseGatewayPortEnv(process.env.NOVA_GATEWAY_PORT);
   return {
     gateway: {
       auth: { mode: "none" },
@@ -756,10 +756,10 @@ async function runSample(params: {
           ...process.env,
           HOME: runRoot,
           USERPROFILE: runRoot,
-          OPENCLAW_HOME: runRoot,
-          OPENCLAW_STATE_DIR: stateDir,
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_HIDE_BANNER: "1",
+          NOVA_HOME: runRoot,
+          NOVA_STATE_DIR: stateDir,
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_HIDE_BANNER: "1",
           NO_COLOR: "1",
           FORCE_COLOR: "0",
         },

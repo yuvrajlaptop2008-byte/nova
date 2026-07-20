@@ -44,8 +44,8 @@ let disposeHeartbeatWakeHandler: (() => void) | undefined;
 
 function createDatabaseOptions() {
   const stateDir = makeTempDir(tempDirs, "openclaw-session-state-");
-  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
-  return { env: { ...process.env, OPENCLAW_STATE_DIR: stateDir } };
+  vi.stubEnv("NOVA_STATE_DIR", stateDir);
+  return { env: { ...process.env, NOVA_STATE_DIR: stateDir } };
 }
 
 function eventInput(

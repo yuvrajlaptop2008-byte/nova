@@ -810,7 +810,7 @@ describe("applyPluginAutoEnable core", () => {
   it("ignores agent harness runtime env when auto-enabling plugins", () => {
     const result = applyPluginAutoEnable({
       config: {},
-      env: makeIsolatedEnv({ OPENCLAW_AGENT_RUNTIME: "codex" }),
+      env: makeIsolatedEnv({ NOVA_AGENT_RUNTIME: "codex" }),
       manifestRegistry: makeRegistry([
         {
           id: "codex",
@@ -914,7 +914,7 @@ describe("applyPluginAutoEnable core", () => {
   it("does not auto-enable WhatsApp from persisted auth state alone", () => {
     const persistedEnv = makeIsolatedEnv();
     const authDir = path.join(
-      persistedEnv.OPENCLAW_STATE_DIR ?? "",
+      persistedEnv.NOVA_STATE_DIR ?? "",
       "credentials",
       "whatsapp",
       "default",
@@ -1131,13 +1131,13 @@ describe("applyPluginAutoEnable core", () => {
     const firstEnv = applyPluginAutoEnable({
       config: envConfig,
       discovery,
-      env: makeIsolatedEnv({ OPENCLAW_TEST_CACHE_INPUT: "one" }),
+      env: makeIsolatedEnv({ NOVA_TEST_CACHE_INPUT: "one" }),
       manifestRegistry,
     });
     const secondEnv = applyPluginAutoEnable({
       config: envConfig,
       discovery,
-      env: makeIsolatedEnv({ OPENCLAW_TEST_CACHE_INPUT: "two" }),
+      env: makeIsolatedEnv({ NOVA_TEST_CACHE_INPUT: "two" }),
       manifestRegistry,
     });
 
@@ -1253,7 +1253,7 @@ describe("applyPluginAutoEnable core", () => {
       env: mutableEnv,
       manifestRegistry,
     });
-    mutableEnv.OPENCLAW_TEST_CACHE_INPUT = "changed";
+    mutableEnv.NOVA_TEST_CACHE_INPUT = "changed";
     const second = applyPluginAutoEnable({
       config,
       discovery: emptyDiscovery,

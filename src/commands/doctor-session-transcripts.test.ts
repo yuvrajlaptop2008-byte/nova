@@ -131,9 +131,9 @@ describe("doctor session transcript repair", () => {
           content: [
             "visible ask",
             "",
-            "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>",
             "secret",
-            "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "<<<END_NOVA_INTERNAL_CONTEXT>>>",
           ].join("\n"),
         },
       },
@@ -187,7 +187,7 @@ describe("doctor session transcript repair", () => {
         message: {
           role: "user",
           content:
-            "visible ask\n\n<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>\nsecret\n<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "visible ask\n\n<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>\nsecret\n<<<END_NOVA_INTERNAL_CONTEXT>>>",
         },
       },
       {
@@ -262,7 +262,7 @@ describe("doctor session transcript repair", () => {
         validatedTranscriptEvents: 0,
       },
     });
-    const env = { ...process.env, OPENCLAW_STATE_DIR: root };
+    const env = { ...process.env, NOVA_STATE_DIR: root };
     const cfg = {};
 
     await noteSessionTranscriptHealth({
@@ -309,7 +309,7 @@ describe("doctor session transcript repair", () => {
         validatedTranscriptEvents: 0,
       },
     });
-    const env = { ...process.env, OPENCLAW_STATE_DIR: root };
+    const env = { ...process.env, NOVA_STATE_DIR: root };
     const cfg = {};
 
     await noteSessionTranscriptHealth({
@@ -330,7 +330,7 @@ describe("doctor session transcript repair", () => {
   });
 
   it("skips session SQLite import when the Gateway owns the state lock", async () => {
-    const env = { ...process.env, OPENCLAW_STATE_DIR: root };
+    const env = { ...process.env, NOVA_STATE_DIR: root };
     withDoctorSqliteMaintenanceLock.mockRejectedValueOnce(
       new DoctorSqliteMaintenanceLockUnavailableError(
         "session SQLite import",
@@ -366,7 +366,7 @@ describe("doctor session transcript repair", () => {
     await expect(
       noteSessionTranscriptHealth({
         cfg: {},
-        env: { ...process.env, OPENCLAW_STATE_DIR: root },
+        env: { ...process.env, NOVA_STATE_DIR: root },
         sessionSqlite: true,
         shouldRepair: true,
       }),
@@ -383,7 +383,7 @@ describe("doctor session transcript repair", () => {
         message: {
           role: "user",
           content:
-            "visible ask\n\n<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>\nsecret\n<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "visible ask\n\n<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>\nsecret\n<<<END_NOVA_INTERNAL_CONTEXT>>>",
         },
       },
       {
@@ -420,7 +420,7 @@ describe("doctor session transcript repair", () => {
         message: {
           role: "user",
           content:
-            "visible ask\n\n<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>\nsecret\n<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "visible ask\n\n<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>\nsecret\n<<<END_NOVA_INTERNAL_CONTEXT>>>",
         },
       },
       {
@@ -518,7 +518,7 @@ describe("doctor session transcript repair", () => {
         message: {
           role: "user",
           content:
-            "visible ask\n\n<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>\nsecret\n<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "visible ask\n\n<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>\nsecret\n<<<END_NOVA_INTERNAL_CONTEXT>>>",
         },
       },
       {
@@ -576,7 +576,7 @@ describe("doctor session transcript repair", () => {
         message: {
           role: "user",
           content:
-            "visible ask\n\n<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>\nsecret\n<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+            "visible ask\n\n<<<BEGIN_NOVA_INTERNAL_CONTEXT>>>\nsecret\n<<<END_NOVA_INTERNAL_CONTEXT>>>",
         },
       },
       {

@@ -83,7 +83,7 @@ async function runPolicyCompareJson(options: PolicyCompareCliOptions) {
 describe("policy commands", () => {
   beforeEach(async () => {
     workspaceDir = await fs.mkdtemp(join(tmpdir(), "policy-cli-"));
-    vi.stubEnv("OPENCLAW_WORKSPACE_DIR", workspaceDir);
+    vi.stubEnv("NOVA_WORKSPACE_DIR", workspaceDir);
   });
 
   afterEach(async () => {
@@ -208,7 +208,7 @@ describe("policy commands", () => {
 
   it("links policy findings to evidence and policy requirement refs", async () => {
     const configPath = join(workspaceDir, "openclaw.jsonc");
-    vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+    vi.stubEnv("NOVA_CONFIG_PATH", configPath);
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -284,7 +284,7 @@ describe("policy commands", () => {
 
   it("attests underlying policy findings when the accepted attestation is stale", async () => {
     const configPath = join(workspaceDir, "openclaw.jsonc");
-    vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+    vi.stubEnv("NOVA_CONFIG_PATH", configPath);
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -329,7 +329,7 @@ describe("policy commands", () => {
 
   it("reports stale accepted attestations in policy watch", async () => {
     const configPath = join(workspaceDir, "openclaw.jsonc");
-    vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+    vi.stubEnv("NOVA_CONFIG_PATH", configPath);
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -396,7 +396,7 @@ describe("policy commands", () => {
 
   it("reports findings before stale when accepted attestation exists", async () => {
     const configPath = join(workspaceDir, "openclaw.jsonc");
-    vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+    vi.stubEnv("NOVA_CONFIG_PATH", configPath);
     await fs.writeFile(
       configPath,
       JSON.stringify({
@@ -438,7 +438,7 @@ describe("policy commands", () => {
 
   it("fails closed when the Nova config is invalid", async () => {
     const configPath = join(workspaceDir, "openclaw.jsonc");
-    vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+    vi.stubEnv("NOVA_CONFIG_PATH", configPath);
     await fs.writeFile(configPath, "{", "utf-8");
     const { exitCode, parsed } = await runPolicyCheckJson();
 
@@ -880,7 +880,7 @@ describe("policy commands", () => {
     const agentWorkspace = join(workspaceDir, "agent-workspace");
     await fs.mkdir(agentWorkspace, { recursive: true });
     const configPath = join(workspaceDir, "openclaw.jsonc");
-    vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+    vi.stubEnv("NOVA_CONFIG_PATH", configPath);
     await fs.writeFile(
       configPath,
       JSON.stringify({

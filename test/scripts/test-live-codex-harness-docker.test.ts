@@ -32,13 +32,13 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      "OPENCLAW_LIVE_CODEX_HARNESS_AUTH=codex-auth requires ~/.codex/auth.json before building the live Docker image",
+      "NOVA_LIVE_CODEX_HARNESS_AUTH=codex-auth requires ~/.codex/auth.json before building the live Docker image",
     );
     expect(script).toContain(
-      "If this is a Testbox/API-key run, set OPENCLAW_LIVE_CODEX_HARNESS_AUTH=api-key and run through openclaw-testbox-env.",
+      "If this is a Testbox/API-key run, set NOVA_LIVE_CODEX_HARNESS_AUTH=api-key and run through openclaw-testbox-env.",
     );
     expect(script.indexOf("requires ~/.codex/auth.json before building")).toBeLessThan(
-      script.indexOf('OPENCLAW_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR"'),
+      script.indexOf('NOVA_LIVE_DOCKER_REPO_ROOT="$ROOT_DIR"'),
     );
   });
 
@@ -91,7 +91,7 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_BIND_PROVIDER="${OPENCLAW_LIVE_CODEX_BIND_PROVIDER:-}"',
+      '-e NOVA_LIVE_CODEX_BIND_PROVIDER="${NOVA_LIVE_CODEX_BIND_PROVIDER:-}"',
     );
   });
 
@@ -99,34 +99,34 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
     const script = fs.readFileSync(SCRIPT_PATH, "utf8");
 
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS="${OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS:-0}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS="${NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS:-0}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_EXPECTED_EFFORT="${OPENCLAW_LIVE_CODEX_HARNESS_EXPECTED_EFFORT:-}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_EXPECTED_EFFORT="${NOVA_LIVE_CODEX_HARNESS_EXPECTED_EFFORT:-}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS="${OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS:-4}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS="${NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_HISTORY_TURNS:-4}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS="${OPENCLAW_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS:-3}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS="${NOVA_LIVE_CODEX_HARNESS_RESUME_STRESS_RESTARTS:-3}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_SUBAGENT_COUNT="${OPENCLAW_LIVE_CODEX_HARNESS_SUBAGENT_COUNT:-1}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_SUBAGENT_COUNT="${NOVA_LIVE_CODEX_HARNESS_SUBAGENT_COUNT:-1}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_COMPACTION_STRESS="${OPENCLAW_LIVE_CODEX_HARNESS_COMPACTION_STRESS:-0}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_COMPACTION_STRESS="${NOVA_LIVE_CODEX_HARNESS_COMPACTION_STRESS:-0}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS="${OPENCLAW_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS:-4}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS="${NOVA_LIVE_CODEX_HARNESS_COMPACTION_STRESS_TURNS:-4}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES="${OPENCLAW_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES:-300000}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES="${NOVA_LIVE_CODEX_HARNESS_LARGE_OUTPUT_BYTES:-300000}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_CODE_MODE_ONLY="${OPENCLAW_LIVE_CODEX_HARNESS_CODE_MODE_ONLY:-0}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_CODE_MODE_ONLY="${NOVA_LIVE_CODEX_HARNESS_CODE_MODE_ONLY:-0}"',
     );
     expect(script).toContain(
-      '-e OPENCLAW_LIVE_CODEX_HARNESS_DISABLE_LOOP_RELAY="${OPENCLAW_LIVE_CODEX_HARNESS_DISABLE_LOOP_RELAY:-0}"',
+      '-e NOVA_LIVE_CODEX_HARNESS_DISABLE_LOOP_RELAY="${NOVA_LIVE_CODEX_HARNESS_DISABLE_LOOP_RELAY:-0}"',
     );
   });
 
@@ -135,9 +135,9 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
 
     expect(script).toContain('"$ROOT_DIR/extensions/codex/package.json"');
     expect(script).toContain("process.stdout.write(`@openai/codex@${version}`);");
-    expect(script).toContain('-e OPENCLAW_LIVE_CODEX_CLI_PACKAGE_SPEC="$CODEX_CLI_PACKAGE_SPEC"');
+    expect(script).toContain('-e NOVA_LIVE_CODEX_CLI_PACKAGE_SPEC="$CODEX_CLI_PACKAGE_SPEC"');
     expect(script).toContain(
-      'run_setup_command npm install -g "$OPENCLAW_LIVE_CODEX_CLI_PACKAGE_SPEC"',
+      'run_setup_command npm install -g "$NOVA_LIVE_CODEX_CLI_PACKAGE_SPEC"',
     );
     expect(script).not.toContain("run_setup_command npm install -g @openai/codex");
   });
@@ -147,7 +147,7 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
 
     expect(script).toContain("Failed to extract accountId from token");
     expect(script).toContain(
-      "ERROR: Codex auth cannot extract accountId from the available token; refresh OPENCLAW_CODEX_AUTH_JSON or use OPENCLAW_LIVE_CODEX_HARNESS_AUTH=api-key.",
+      "ERROR: Codex auth cannot extract accountId from the available token; refresh NOVA_CODEX_AUTH_JSON or use NOVA_LIVE_CODEX_HARNESS_AUTH=api-key.",
     );
     expect(script).not.toContain(
       "SKIP: Codex auth cannot extract accountId from the available token; skipping live Codex harness lane.",
@@ -167,14 +167,12 @@ describe("scripts/test-live-codex-harness-docker.sh", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS: "180s",
+        NOVA_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS: "180s",
       },
     });
 
     expect(result.status).toBe(2);
-    expect(result.stderr).toContain(
-      "invalid OPENCLAW_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS: 180s",
-    );
+    expect(result.stderr).toContain("invalid NOVA_LIVE_CODEX_HARNESS_SETUP_TIMEOUT_SECONDS: 180s");
     expect(result.stderr).not.toContain("requires ~/.codex/auth.json");
     expect(result.stderr).not.toContain("docker");
   });

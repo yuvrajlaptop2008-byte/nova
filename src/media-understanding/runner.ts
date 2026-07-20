@@ -481,7 +481,7 @@ async function probeAntigravityCliCandidate(command: string): Promise<string | n
 
 async function resolveAntigravityCliBinary(): Promise<string | null> {
   return await getOrCreatePromise(antigravityCliCache, "agy", async () => {
-    const configured = process.env.OPENCLAW_ANTIGRAVITY_CLI?.trim();
+    const configured = process.env.NOVA_ANTIGRAVITY_CLI?.trim();
     const candidates = [configured, "agy", "antigravity"].filter((value): value is string =>
       Boolean(value),
     );

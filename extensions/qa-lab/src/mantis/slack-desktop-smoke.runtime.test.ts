@@ -111,10 +111,10 @@ describe("mantis Slack desktop smoke runtime", () => {
     const runtimeEnv = {
       PATH: process.env.PATH,
       OPENAI_API_KEY: "openai-runtime-key",
-      OPENCLAW_QA_SLACK_CHANNEL_ID: "C123",
-      OPENCLAW_QA_SLACK_DRIVER_BOT_TOKEN: "driver-token",
-      OPENCLAW_QA_SLACK_SUT_APP_TOKEN: "app-token",
-      OPENCLAW_QA_SLACK_SUT_BOT_TOKEN: "sut-token",
+      NOVA_QA_SLACK_CHANNEL_ID: "C123",
+      NOVA_QA_SLACK_DRIVER_BOT_TOKEN: "driver-token",
+      NOVA_QA_SLACK_SUT_APP_TOKEN: "app-token",
+      NOVA_QA_SLACK_SUT_BOT_TOKEN: "sut-token",
     };
     const runner = vi.fn(
       async (command: string, args: readonly string[], options: { env?: NodeJS.ProcessEnv }) => {
@@ -183,7 +183,7 @@ describe("mantis Slack desktop smoke runtime", () => {
       ["/tmp/crabbox", "stop"],
     ]);
     expect(
-      commands.every((entry) => entry.env?.OPENCLAW_LIVE_OPENAI_KEY === "openai-runtime-key"),
+      commands.every((entry) => entry.env?.NOVA_LIVE_OPENAI_KEY === "openai-runtime-key"),
     ).toBe(true);
     const runArgs = commands.find(
       (entry) => entry.command === "/tmp/crabbox" && entry.args[0] === "run",
@@ -256,7 +256,7 @@ describe("mantis Slack desktop smoke runtime", () => {
     expect(remoteScript).toContain('tail -n 200 "$diagnostic_file"');
     expect(remoteScript).toContain("Slack desktop screenshot is missing or empty");
     expect(remoteScript).not.toContain('test -s "$out/slack-desktop-smoke.png"');
-    expect(remoteScript).toContain("OPENCLAW_MANTIS_SLACK_BROWSER_PROFILE_DIR");
+    expect(remoteScript).toContain("NOVA_MANTIS_SLACK_BROWSER_PROFILE_DIR");
     expect(remoteScript)
       .toContain(`const response = await fetch("https://slack.com/api/auth.test", {
   method: "POST",
@@ -350,15 +350,15 @@ describe("mantis Slack desktop smoke runtime", () => {
       .find((entry) => entry.command === "/tmp/crabbox" && entry.args[0] === "run")
       ?.args.at(-1);
     expect(remoteScript).toContain("approval_checkpoints=1");
-    expect(remoteScript).toContain('export OPENCLAW_QA_SLACK_CHANNEL_ID="$slack_channel_id"');
+    expect(remoteScript).toContain('export NOVA_QA_SLACK_CHANNEL_ID="$slack_channel_id"');
     expect(remoteScript).toContain("--scenario 'slack-approval-exec-native'");
     expect(remoteScript).toContain("--scenario 'slack-approval-plugin-native'");
-    expect(remoteScript).toContain("OPENCLAW_QA_SLACK_APPROVAL_CHECKPOINT_DIR");
-    expect(remoteScript).toContain("OPENCLAW_QA_SLACK_APPROVAL_CHECKPOINT_TIMEOUT_MS");
+    expect(remoteScript).toContain("NOVA_QA_SLACK_APPROVAL_CHECKPOINT_DIR");
+    expect(remoteScript).toContain("NOVA_QA_SLACK_APPROVAL_CHECKPOINT_TIMEOUT_MS");
     expect(remoteScript).toContain('cat >"$out/approval-checkpoint-watcher.mjs"');
     expect(remoteScript).not.toContain('node >"$out/approval-checkpoint-watcher.mjs"');
     expect(remoteScript).toContain("approval-checkpoint-watcher.mjs");
-    expect(remoteScript).toContain("OPENCLAW_MANTIS_APPROVAL_BROWSER_BIN");
+    expect(remoteScript).toContain("NOVA_MANTIS_APPROVAL_BROWSER_BIN");
     expect(remoteScript).toContain("Rendered from the Slack API message observed by QA");
     expect(remoteScript).toContain("class='wrap'");
     expect(remoteScript).toContain("--headless=new");
@@ -480,9 +480,9 @@ describe("mantis Slack desktop smoke runtime", () => {
       expect(remoteScript).toContain(
         expectedScenarioIds.map((scenarioId) => `--scenario '${scenarioId}'`).join(" "),
       );
-      expect(remoteScript).toContain("OPENCLAW_QA_SLACK_APPROVAL_CHECKPOINT_TIMEOUT_MS:-470000");
+      expect(remoteScript).toContain("NOVA_QA_SLACK_APPROVAL_CHECKPOINT_TIMEOUT_MS:-470000");
       expect(remoteScript).toContain(
-        `OPENCLAW_MANTIS_REMOTE_COMMAND_TIMEOUT_SECONDS:-${remoteTimeoutSeconds}`,
+        `NOVA_MANTIS_REMOTE_COMMAND_TIMEOUT_SECONDS:-${remoteTimeoutSeconds}`,
       );
     },
   );
@@ -699,8 +699,8 @@ describe("mantis Slack desktop smoke runtime", () => {
       env: {
         CI: "1",
         OPENAI_API_KEY: "openai-runtime-key",
-        OPENCLAW_QA_CONVEX_SECRET_CI: "convex-secret",
-        OPENCLAW_QA_CONVEX_SITE_URL: "https://example.convex.site",
+        NOVA_QA_CONVEX_SECRET_CI: "convex-secret",
+        NOVA_QA_CONVEX_SITE_URL: "https://example.convex.site",
         PATH: process.env.PATH,
       },
       gatewaySetup: true,
@@ -721,12 +721,12 @@ describe("mantis Slack desktop smoke runtime", () => {
     const runCommand = commands.find(
       (entry) => entry.command === "/tmp/crabbox" && entry.args[0] === "run",
     );
-    expect(runCommand?.env?.OPENCLAW_MANTIS_SLACK_APP_TOKEN).toBe("xapp-leased");
-    expect(runCommand?.env?.OPENCLAW_MANTIS_SLACK_BOT_TOKEN).toBe("xoxb-leased");
-    expect(runCommand?.env?.OPENCLAW_MANTIS_SLACK_CHANNEL_ID).toBe("CLEASED");
-    expect(runCommand?.env?.OPENCLAW_QA_SLACK_CHANNEL_ID).toBe("CLEASED");
-    expect(runCommand?.env?.OPENCLAW_QA_SLACK_SUT_APP_TOKEN).toBe("xapp-leased");
-    expect(runCommand?.env?.OPENCLAW_QA_SLACK_SUT_BOT_TOKEN).toBe("xoxb-leased");
+    expect(runCommand?.env?.NOVA_MANTIS_SLACK_APP_TOKEN).toBe("xapp-leased");
+    expect(runCommand?.env?.NOVA_MANTIS_SLACK_BOT_TOKEN).toBe("xoxb-leased");
+    expect(runCommand?.env?.NOVA_MANTIS_SLACK_CHANNEL_ID).toBe("CLEASED");
+    expect(runCommand?.env?.NOVA_QA_SLACK_CHANNEL_ID).toBe("CLEASED");
+    expect(runCommand?.env?.NOVA_QA_SLACK_SUT_APP_TOKEN).toBe("xapp-leased");
+    expect(runCommand?.env?.NOVA_QA_SLACK_SUT_BOT_TOKEN).toBe("xoxb-leased");
     const remoteScript = runCommand?.args.at(-1);
     expect(remoteScript).toContain("setup_gateway=1");
     expect(remoteScript).toContain("openclaw gateway run");
@@ -845,8 +845,8 @@ describe("mantis Slack desktop smoke runtime", () => {
       crabboxBin: "/tmp/crabbox",
       env: {
         OPENAI_API_KEY: "openai-runtime-key",
-        OPENCLAW_MANTIS_SLACK_APP_TOKEN: "xapp-direct",
-        OPENCLAW_MANTIS_SLACK_BOT_TOKEN: "xoxb-direct",
+        NOVA_MANTIS_SLACK_APP_TOKEN: "xapp-direct",
+        NOVA_MANTIS_SLACK_BOT_TOKEN: "xoxb-direct",
         PATH: process.env.PATH,
       },
       gatewaySetup: true,

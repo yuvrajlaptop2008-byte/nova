@@ -183,11 +183,11 @@ async function writeConfig(params: {
 
 async function main() {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-mcp-code-mode-"));
-  const keep = process.env.OPENCLAW_MCP_CODE_MODE_GATEWAY_E2E_KEEP === "1";
+  const keep = process.env.NOVA_MCP_CODE_MODE_GATEWAY_E2E_KEEP === "1";
   const previousEnv = {
-    configPath: process.env.OPENCLAW_CONFIG_PATH,
-    stateDir: process.env.OPENCLAW_STATE_DIR,
-    testFast: process.env.OPENCLAW_TEST_FAST,
+    configPath: process.env.NOVA_CONFIG_PATH,
+    stateDir: process.env.NOVA_STATE_DIR,
+    testFast: process.env.NOVA_TEST_FAST,
   };
   let provider: Awaited<ReturnType<typeof startQaMockOpenAiServer>> | undefined;
   let server: Awaited<ReturnType<typeof startGatewayServer>> | undefined;
@@ -209,9 +209,9 @@ async function main() {
       serverPath,
     });
 
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
-    setTestEnvValue("OPENCLAW_CONFIG_PATH", configPath);
-    setTestEnvValue("OPENCLAW_TEST_FAST", "1");
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
+    setTestEnvValue("NOVA_CONFIG_PATH", configPath);
+    setTestEnvValue("NOVA_TEST_FAST", "1");
     resetConfigRuntimeState();
 
     server = await startGatewayServer(gatewayPort, {
@@ -285,9 +285,9 @@ async function main() {
     await server?.close({ reason: "mcp code-mode gateway e2e complete" });
     await provider?.stop();
     resetConfigRuntimeState();
-    restoreEnvValue("OPENCLAW_STATE_DIR", previousEnv.stateDir);
-    restoreEnvValue("OPENCLAW_CONFIG_PATH", previousEnv.configPath);
-    restoreEnvValue("OPENCLAW_TEST_FAST", previousEnv.testFast);
+    restoreEnvValue("NOVA_STATE_DIR", previousEnv.stateDir);
+    restoreEnvValue("NOVA_CONFIG_PATH", previousEnv.configPath);
+    restoreEnvValue("NOVA_TEST_FAST", previousEnv.testFast);
     if (!keep) {
       await fs.rm(rootDir, { recursive: true, force: true });
     }

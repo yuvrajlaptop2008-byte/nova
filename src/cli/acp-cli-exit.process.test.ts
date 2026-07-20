@@ -35,10 +35,10 @@ function createAcpProcessEnv(stateDir?: string): NodeJS.ProcessEnv {
     NODE_ENV: undefined,
     NODE_OPTIONS: "--use-openssl-ca",
     NODE_USE_SYSTEM_CA: "0",
-    OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-    OPENCLAW_CONFIG_PATH: stateDir ? path.join(stateDir, "openclaw.json") : undefined,
-    OPENCLAW_NO_RESPAWN: "1",
-    OPENCLAW_STATE_DIR: stateDir,
+    NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+    NOVA_CONFIG_PATH: stateDir ? path.join(stateDir, "openclaw.json") : undefined,
+    NOVA_NO_RESPAWN: "1",
+    NOVA_STATE_DIR: stateDir,
     VITEST: undefined,
   };
 }

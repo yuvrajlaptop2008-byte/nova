@@ -87,7 +87,7 @@ describe("test-shell-completion script", () => {
           ...process.env,
           HOME: homeDir,
           NO_COLOR: "1",
-          OPENCLAW_STATE_DIR: stateDir,
+          NOVA_STATE_DIR: stateDir,
           SHELL: "/bin/zsh",
         },
       },

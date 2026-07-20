@@ -38,8 +38,8 @@ describe("legacy Web Push Doctor migration", () => {
 
   function useStateDir(): string {
     const stateDir = tempDirs.make("openclaw-web-push-migration-");
-    envSnapshot ??= captureEnv(["OPENCLAW_STATE_DIR", "OPENCLAW_VAPID_SUBJECT"]);
-    setTestEnvValue("OPENCLAW_STATE_DIR", stateDir);
+    envSnapshot ??= captureEnv(["NOVA_STATE_DIR", "NOVA_VAPID_SUBJECT"]);
+    setTestEnvValue("NOVA_STATE_DIR", stateDir);
     return stateDir;
   }
 
@@ -135,7 +135,7 @@ describe("legacy Web Push Doctor migration", () => {
       stateDir,
       subscriptions: [subscription()],
     });
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    const env = { ...process.env, NOVA_STATE_DIR: stateDir };
     const gatewayLock = await acquireGatewayLock({
       allowInTests: true,
       env,
@@ -215,7 +215,7 @@ describe("legacy Web Push Doctor migration", () => {
     ],
   ])("normalizes a %s", async (_label, legacySubject, injectedSubject, expectedSubject) => {
     const stateDir = useStateDir();
-    setTestEnvValue("OPENCLAW_VAPID_SUBJECT", "mailto:ambient@example.com");
+    setTestEnvValue("NOVA_VAPID_SUBJECT", "mailto:ambient@example.com");
     const legacyKeys = vapidKeys({ subject: legacySubject ?? "" });
     if (legacySubject === undefined) {
       delete (legacyKeys as Partial<VapidKeyPair>).subject;
@@ -224,7 +224,7 @@ describe("legacy Web Push Doctor migration", () => {
 
     const result = await migrateLegacyWebPush({
       detected: detectLegacyWebPush({ stateDir, doctorOnlyStateMigrations: true }),
-      env: { ...process.env, OPENCLAW_VAPID_SUBJECT: injectedSubject },
+      env: { ...process.env, NOVA_VAPID_SUBJECT: injectedSubject },
       stateDir,
     });
 
@@ -241,7 +241,7 @@ describe("legacy Web Push Doctor migration", () => {
 
     const result = await migrateLegacyWebPush({
       detected: detectLegacyWebPush({ stateDir, doctorOnlyStateMigrations: true }),
-      env: { ...process.env, OPENCLAW_VAPID_SUBJECT: "mailto:fallback@example.com" },
+      env: { ...process.env, NOVA_VAPID_SUBJECT: "mailto:fallback@example.com" },
       stateDir,
     });
 

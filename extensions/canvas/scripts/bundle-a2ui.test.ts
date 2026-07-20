@@ -88,8 +88,8 @@ describe("scripts/bundle-a2ui.mjs", () => {
               encoding: "utf8",
               env: {
                 ...process.env,
-                OPENCLAW_A2UI_BUNDLE_HASH_FILE: hashFile,
-                OPENCLAW_A2UI_BUNDLE_OUT: outputFile,
+                NOVA_A2UI_BUNDLE_HASH_FILE: hashFile,
+                NOVA_A2UI_BUNDLE_OUT: outputFile,
                 PATH: `${fakeBinDir}${path.delimiter}${process.env.PATH ?? ""}`,
               },
               killSignal: "SIGKILL",

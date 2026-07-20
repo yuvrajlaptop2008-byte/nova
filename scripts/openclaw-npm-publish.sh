@@ -70,7 +70,7 @@ if [[ -n "${publish_target}" ]]; then
 fi
 
 publish_plan="$(
-  PACKAGE_VERSION="${package_version}" REQUESTED_PUBLISH_TAG="${OPENCLAW_NPM_PUBLISH_TAG:-}" \
+  PACKAGE_VERSION="${package_version}" REQUESTED_PUBLISH_TAG="${NOVA_NPM_PUBLISH_TAG:-}" \
     BYPASS_EXTENDED_STABLE_GUARD="${BYPASS_EXTENDED_STABLE_GUARD:-}" \
     node scripts/openclaw-npm-extended-stable-release.mjs publish-plan
 )"

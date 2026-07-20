@@ -48,8 +48,7 @@ export async function resumePostCoreUpdate(params: {
     return;
   }
 
-  process.env.OPENCLAW_COMPATIBILITY_HOST_VERSION =
-    (await readPackageVersion(params.root)) ?? VERSION;
+  process.env.NOVA_COMPATIBILITY_HOST_VERSION = (await readPackageVersion(params.root)) ?? VERSION;
 
   let configSnapshot = await readConfigFileSnapshot({
     skipPluginValidation: true,

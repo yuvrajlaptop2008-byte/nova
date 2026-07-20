@@ -1256,7 +1256,7 @@ describe("qa suite runtime launcher", () => {
   });
 
   it("preserves configured isolated worker start stagger overrides", async () => {
-    vi.stubEnv("OPENCLAW_QA_SUITE_WORKER_START_STAGGER_MS", "2500");
+    vi.stubEnv("NOVA_QA_SUITE_WORKER_START_STAGGER_MS", "2500");
     const repoRoot = await makeTempRepo("qa-suite-stagger-env-");
     await runQaSuite({
       repoRoot,

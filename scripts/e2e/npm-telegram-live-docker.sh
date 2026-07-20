@@ -6,14 +6,14 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
 
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-npm-telegram-live-e2e" OPENCLAW_NPM_TELEGRAM_LIVE_E2E_IMAGE)"
-DOCKER_TARGET="${OPENCLAW_NPM_TELEGRAM_DOCKER_TARGET:-build}"
-PACKAGE_SPEC="${OPENCLAW_NPM_TELEGRAM_PACKAGE_SPEC:-openclaw@beta}"
-PACKAGE_TGZ="${OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ:-${OPENCLAW_CURRENT_PACKAGE_TGZ:-}}"
-PACKAGE_DIR="${OPENCLAW_NPM_TELEGRAM_PACKAGE_DIR:-}"
-PACKAGE_LABEL="${OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-}"
-RUN_ID="${OPENCLAW_NPM_TELEGRAM_RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
-OUTPUT_DIR="${OPENCLAW_NPM_TELEGRAM_OUTPUT_DIR:-.artifacts/qa-e2e/npm-telegram-live/$RUN_ID}"
+IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-npm-telegram-live-e2e" NOVA_NPM_TELEGRAM_LIVE_E2E_IMAGE)"
+DOCKER_TARGET="${NOVA_NPM_TELEGRAM_DOCKER_TARGET:-build}"
+PACKAGE_SPEC="${NOVA_NPM_TELEGRAM_PACKAGE_SPEC:-openclaw@beta}"
+PACKAGE_TGZ="${NOVA_NPM_TELEGRAM_PACKAGE_TGZ:-${NOVA_CURRENT_PACKAGE_TGZ:-}}"
+PACKAGE_DIR="${NOVA_NPM_TELEGRAM_PACKAGE_DIR:-}"
+PACKAGE_LABEL="${NOVA_NPM_TELEGRAM_PACKAGE_LABEL:-}"
+RUN_ID="${NOVA_NPM_TELEGRAM_RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)-$$}"
+OUTPUT_DIR="${NOVA_NPM_TELEGRAM_OUTPUT_DIR:-.artifacts/qa-e2e/npm-telegram-live/$RUN_ID}"
 case "$OUTPUT_DIR" in
   /*) OUTPUT_DIR_HOST="$OUTPUT_DIR" ;;
   *) OUTPUT_DIR_HOST="$ROOT_DIR/$OUTPUT_DIR" ;;
@@ -22,28 +22,28 @@ OUTPUT_DIR_CONTAINER_RELATIVE=".artifacts/qa-e2e/npm-telegram-live-output"
 OUTPUT_DIR_CONTAINER="/app/$OUTPUT_DIR_CONTAINER_RELATIVE"
 
 resolve_credential_source() {
-  if [ -n "${OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE:-}" ]; then
-    printf "%s" "$OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE"
+  if [ -n "${NOVA_NPM_TELEGRAM_CREDENTIAL_SOURCE:-}" ]; then
+    printf "%s" "$NOVA_NPM_TELEGRAM_CREDENTIAL_SOURCE"
     return 0
   fi
-  if [ -n "${OPENCLAW_QA_CREDENTIAL_SOURCE:-}" ]; then
-    printf "%s" "$OPENCLAW_QA_CREDENTIAL_SOURCE"
+  if [ -n "${NOVA_QA_CREDENTIAL_SOURCE:-}" ]; then
+    printf "%s" "$NOVA_QA_CREDENTIAL_SOURCE"
     return 0
   fi
-  if [ -n "${CI:-}" ] && [ -n "${OPENCLAW_QA_CONVEX_SITE_URL:-}" ]; then
-    if [ -n "${OPENCLAW_QA_CONVEX_SECRET_CI:-}" ] || [ -n "${OPENCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
+  if [ -n "${CI:-}" ] && [ -n "${NOVA_QA_CONVEX_SITE_URL:-}" ]; then
+    if [ -n "${NOVA_QA_CONVEX_SECRET_CI:-}" ] || [ -n "${NOVA_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
       printf "convex"
     fi
   fi
 }
 
 resolve_credential_role() {
-  if [ -n "${OPENCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE:-}" ]; then
-    printf "%s" "$OPENCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE"
+  if [ -n "${NOVA_NPM_TELEGRAM_CREDENTIAL_ROLE:-}" ]; then
+    printf "%s" "$NOVA_NPM_TELEGRAM_CREDENTIAL_ROLE"
     return 0
   fi
-  if [ -n "${OPENCLAW_QA_CREDENTIAL_ROLE:-}" ]; then
-    printf "%s" "$OPENCLAW_QA_CREDENTIAL_ROLE"
+  if [ -n "${NOVA_QA_CREDENTIAL_ROLE:-}" ]; then
+    printf "%s" "$NOVA_QA_CREDENTIAL_ROLE"
   fi
 }
 
@@ -52,7 +52,7 @@ validate_openclaw_package_spec() {
   if [[ "$spec" =~ ^openclaw@(alpha|beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-(alpha|beta)\.[1-9][0-9]*)?)$ ]]; then
     return 0
   fi
-  echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_SPEC must be openclaw@alpha, openclaw@beta, openclaw@latest, or an exact OpenClaw release version; got: $spec" >&2
+  echo "NOVA_NPM_TELEGRAM_PACKAGE_SPEC must be openclaw@alpha, openclaw@beta, openclaw@latest, or an exact OpenClaw release version; got: $spec" >&2
   exit 1
 }
 
@@ -62,13 +62,13 @@ resolve_package_tgz() {
     return 0
   fi
   if [ ! -f "$candidate" ]; then
-    echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ must point to an existing .tgz file; got: $candidate" >&2
+    echo "NOVA_NPM_TELEGRAM_PACKAGE_TGZ must point to an existing .tgz file; got: $candidate" >&2
     exit 1
   fi
   case "$candidate" in
     *.tgz) ;;
     *)
-      echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ must point to a .tgz file; got: $candidate" >&2
+      echo "NOVA_NPM_TELEGRAM_PACKAGE_TGZ must point to a .tgz file; got: $candidate" >&2
       exit 1
       ;;
   esac
@@ -85,7 +85,7 @@ resolve_package_dir() {
     return 0
   fi
   if [ ! -d "$candidate" ]; then
-    echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_DIR must point to an existing directory; got: $candidate" >&2
+    echo "NOVA_NPM_TELEGRAM_PACKAGE_DIR must point to an existing directory; got: $candidate" >&2
     exit 1
   fi
   (cd "$candidate" && pwd)
@@ -114,13 +114,13 @@ resolved_package_tgz="$(resolve_package_tgz "$PACKAGE_TGZ")"
 resolved_package_dir="$(resolve_package_dir "$PACKAGE_DIR")"
 if [ -n "$resolved_package_dir" ]; then
   if [ -z "$resolved_package_tgz" ]; then
-    echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_DIR requires OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ" >&2
+    echo "NOVA_NPM_TELEGRAM_PACKAGE_DIR requires NOVA_NPM_TELEGRAM_PACKAGE_TGZ" >&2
     exit 1
   fi
   case "$resolved_package_tgz" in
     "$resolved_package_dir"/*) ;;
     *)
-      echo "OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ must be inside OPENCLAW_NPM_TELEGRAM_PACKAGE_DIR" >&2
+      echo "NOVA_NPM_TELEGRAM_PACKAGE_TGZ must be inside NOVA_NPM_TELEGRAM_PACKAGE_DIR" >&2
       exit 1
       ;;
   esac
@@ -157,30 +157,30 @@ if [ -z "$credential_role" ] && [ "$credential_source" = "convex" ]; then
 fi
 
 validate_credential_preflight() {
-  if [ "${OPENCLAW_NPM_TELEGRAM_SKIP_CREDENTIAL_PREFLIGHT:-0}" = "1" ]; then
+  if [ "${NOVA_NPM_TELEGRAM_SKIP_CREDENTIAL_PREFLIGHT:-0}" = "1" ]; then
     return 0
   fi
   if [ "$credential_source" = "convex" ]; then
-    if [ -z "${OPENCLAW_QA_CONVEX_SITE_URL:-}" ]; then
-      echo "Missing required env for Convex credential mode: OPENCLAW_QA_CONVEX_SITE_URL" >&2
+    if [ -z "${NOVA_QA_CONVEX_SITE_URL:-}" ]; then
+      echo "Missing required env for Convex credential mode: NOVA_QA_CONVEX_SITE_URL" >&2
       exit 1
     fi
     if [ "$credential_role" = "ci" ]; then
-      if [ -z "${OPENCLAW_QA_CONVEX_SECRET_CI:-}" ]; then
-        echo "Missing required env for Convex ci credential mode: OPENCLAW_QA_CONVEX_SECRET_CI" >&2
+      if [ -z "${NOVA_QA_CONVEX_SECRET_CI:-}" ]; then
+        echo "Missing required env for Convex ci credential mode: NOVA_QA_CONVEX_SECRET_CI" >&2
         exit 1
       fi
       return 0
     fi
     if [ "$credential_role" = "maintainer" ]; then
-      if [ -z "${OPENCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
-        echo "Missing required env for Convex maintainer credential mode: OPENCLAW_QA_CONVEX_SECRET_MAINTAINER" >&2
+      if [ -z "${NOVA_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
+        echo "Missing required env for Convex maintainer credential mode: NOVA_QA_CONVEX_SECRET_MAINTAINER" >&2
         exit 1
       fi
       return 0
     fi
-    if [ -z "${OPENCLAW_QA_CONVEX_SECRET_CI:-}" ] && [ -z "${OPENCLAW_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
-      echo "Missing required env for Convex credential mode: OPENCLAW_QA_CONVEX_SECRET_CI or OPENCLAW_QA_CONVEX_SECRET_MAINTAINER" >&2
+    if [ -z "${NOVA_QA_CONVEX_SECRET_CI:-}" ] && [ -z "${NOVA_QA_CONVEX_SECRET_MAINTAINER:-}" ]; then
+      echo "Missing required env for Convex credential mode: NOVA_QA_CONVEX_SECRET_CI or NOVA_QA_CONVEX_SECRET_MAINTAINER" >&2
       exit 1
     fi
     return 0
@@ -188,9 +188,9 @@ validate_credential_preflight() {
 
   local missing=()
   for key in \
-    OPENCLAW_QA_TELEGRAM_GROUP_ID \
-    OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN \
-    OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN; do
+    NOVA_QA_TELEGRAM_GROUP_ID \
+    NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN \
+    NOVA_QA_TELEGRAM_SUT_BOT_TOKEN; do
     if [ -z "${!key:-}" ]; then
       missing+=("$key")
     fi
@@ -199,8 +199,8 @@ validate_credential_preflight() {
     {
       echo "Missing required Telegram QA credential env before Docker work: ${missing[*]}"
       echo "Use one of:"
-      echo "  direct Telegram env: OPENCLAW_QA_TELEGRAM_GROUP_ID, OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN, OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN"
-      echo "  Convex env: OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE=convex plus OPENCLAW_QA_CONVEX_SITE_URL and a role secret"
+      echo "  direct Telegram env: NOVA_QA_TELEGRAM_GROUP_ID, NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN, NOVA_QA_TELEGRAM_SUT_BOT_TOKEN"
+      echo "  Convex env: NOVA_NPM_TELEGRAM_CREDENTIAL_SOURCE=convex plus NOVA_QA_CONVEX_SITE_URL and a role secret"
     } >&2
     exit 1
   fi
@@ -224,15 +224,15 @@ trap cleanup EXIT
 
 docker_env=(
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-  -e OPENCLAW_E2E_COMMAND_TIMEOUT="${OPENCLAW_E2E_COMMAND_TIMEOUT:-300s}"
+  -e NOVA_E2E_COMMAND_TIMEOUT="${NOVA_E2E_COMMAND_TIMEOUT:-300s}"
   -e TMPDIR=/tmp
-  -e OPENCLAW_NPM_TELEGRAM_PACKAGE_SPEC="$PACKAGE_SPEC"
-  -e OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL="$PACKAGE_LABEL"
-  -e OPENCLAW_NPM_TELEGRAM_OUTPUT_DIR="$OUTPUT_DIR_CONTAINER_RELATIVE"
-  -e OPENCLAW_QA_PACKAGE_SOURCE="$package_install_source"
-  -e OPENCLAW_QA_PACKAGE_SOURCE_KIND="$package_source_kind"
-  -e OPENCLAW_QA_RUNNER="${OPENCLAW_QA_RUNNER:-docker}"
-  -e OPENCLAW_NPM_TELEGRAM_FAST="${OPENCLAW_NPM_TELEGRAM_FAST:-1}"
+  -e NOVA_NPM_TELEGRAM_PACKAGE_SPEC="$PACKAGE_SPEC"
+  -e NOVA_NPM_TELEGRAM_PACKAGE_LABEL="$PACKAGE_LABEL"
+  -e NOVA_NPM_TELEGRAM_OUTPUT_DIR="$OUTPUT_DIR_CONTAINER_RELATIVE"
+  -e NOVA_QA_PACKAGE_SOURCE="$package_install_source"
+  -e NOVA_QA_PACKAGE_SOURCE_KIND="$package_source_kind"
+  -e NOVA_QA_RUNNER="${NOVA_QA_RUNNER:-docker}"
+  -e NOVA_NPM_TELEGRAM_FAST="${NOVA_NPM_TELEGRAM_FAST:-1}"
 )
 
 forward_env_if_set() {
@@ -243,10 +243,10 @@ forward_env_if_set() {
 }
 
 if [ -n "$credential_source" ]; then
-  docker_env+=(-e OPENCLAW_QA_CREDENTIAL_SOURCE="$credential_source")
+  docker_env+=(-e NOVA_QA_CREDENTIAL_SOURCE="$credential_source")
 fi
 if [ -n "$credential_role" ]; then
-  docker_env+=(-e OPENCLAW_QA_CREDENTIAL_ROLE="$credential_role")
+  docker_env+=(-e NOVA_QA_CREDENTIAL_ROLE="$credential_role")
 fi
 
 for key in \
@@ -254,48 +254,48 @@ for key in \
   ANTHROPIC_API_KEY \
   GEMINI_API_KEY \
   GOOGLE_API_KEY \
-  OPENCLAW_LIVE_OPENAI_KEY \
-  OPENCLAW_LIVE_ANTHROPIC_KEY \
-  OPENCLAW_LIVE_GEMINI_KEY \
-  OPENCLAW_QA_TELEGRAM_GROUP_ID \
-  OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN \
-  OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN \
-  OPENCLAW_QA_CONVEX_SITE_URL \
-  OPENCLAW_QA_CONVEX_SECRET_CI \
-  OPENCLAW_QA_CONVEX_SECRET_MAINTAINER \
-  OPENCLAW_QA_CREDENTIAL_LEASE_TTL_MS \
-  OPENCLAW_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS \
-  OPENCLAW_QA_CREDENTIAL_ACQUIRE_TIMEOUT_MS \
-  OPENCLAW_QA_CREDENTIAL_HTTP_TIMEOUT_MS \
-  OPENCLAW_QA_CONVEX_ENDPOINT_PREFIX \
-  OPENCLAW_QA_CREDENTIAL_OWNER_ID \
-  OPENCLAW_QA_ALLOW_INSECURE_HTTP \
-  OPENCLAW_QA_REDACT_PUBLIC_METADATA \
-  OPENCLAW_QA_PACKAGE_SOURCE_SHA \
-  OPENCLAW_QA_TELEGRAM_CANARY_TIMEOUT_MS \
-  OPENCLAW_QA_TELEGRAM_SCENARIO_TIMEOUT_MS \
-  OPENCLAW_QA_SUITE_PROGRESS \
-  OPENCLAW_NPM_TELEGRAM_PROVIDER_MODE \
-  OPENCLAW_NPM_TELEGRAM_MODEL \
-  OPENCLAW_NPM_TELEGRAM_ALT_MODEL \
-  OPENCLAW_NPM_TELEGRAM_SCENARIOS \
-  OPENCLAW_NPM_TELEGRAM_RTT_SAMPLES \
-  OPENCLAW_NPM_TELEGRAM_RTT_CHECKS \
-  OPENCLAW_NPM_TELEGRAM_RTT_TIMEOUT_MS \
-  OPENCLAW_NPM_TELEGRAM_RTT_MAX_FAILURES \
-  OPENCLAW_NPM_TELEGRAM_SKIP_HOTPATH \
-  OPENCLAW_NPM_TELEGRAM_SUT_ACCOUNT \
-  OPENCLAW_NPM_TELEGRAM_ALLOW_FAILURES; do
+  NOVA_LIVE_OPENAI_KEY \
+  NOVA_LIVE_ANTHROPIC_KEY \
+  NOVA_LIVE_GEMINI_KEY \
+  NOVA_QA_TELEGRAM_GROUP_ID \
+  NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN \
+  NOVA_QA_TELEGRAM_SUT_BOT_TOKEN \
+  NOVA_QA_CONVEX_SITE_URL \
+  NOVA_QA_CONVEX_SECRET_CI \
+  NOVA_QA_CONVEX_SECRET_MAINTAINER \
+  NOVA_QA_CREDENTIAL_LEASE_TTL_MS \
+  NOVA_QA_CREDENTIAL_HEARTBEAT_INTERVAL_MS \
+  NOVA_QA_CREDENTIAL_ACQUIRE_TIMEOUT_MS \
+  NOVA_QA_CREDENTIAL_HTTP_TIMEOUT_MS \
+  NOVA_QA_CONVEX_ENDPOINT_PREFIX \
+  NOVA_QA_CREDENTIAL_OWNER_ID \
+  NOVA_QA_ALLOW_INSECURE_HTTP \
+  NOVA_QA_REDACT_PUBLIC_METADATA \
+  NOVA_QA_PACKAGE_SOURCE_SHA \
+  NOVA_QA_TELEGRAM_CANARY_TIMEOUT_MS \
+  NOVA_QA_TELEGRAM_SCENARIO_TIMEOUT_MS \
+  NOVA_QA_SUITE_PROGRESS \
+  NOVA_NPM_TELEGRAM_PROVIDER_MODE \
+  NOVA_NPM_TELEGRAM_MODEL \
+  NOVA_NPM_TELEGRAM_ALT_MODEL \
+  NOVA_NPM_TELEGRAM_SCENARIOS \
+  NOVA_NPM_TELEGRAM_RTT_SAMPLES \
+  NOVA_NPM_TELEGRAM_RTT_CHECKS \
+  NOVA_NPM_TELEGRAM_RTT_TIMEOUT_MS \
+  NOVA_NPM_TELEGRAM_RTT_MAX_FAILURES \
+  NOVA_NPM_TELEGRAM_SKIP_HOTPATH \
+  NOVA_NPM_TELEGRAM_SUT_ACCOUNT \
+  NOVA_NPM_TELEGRAM_ALLOW_FAILURES; do
   forward_env_if_set "$key"
 done
 
 echo "Running package Telegram live Docker E2E ($PACKAGE_LABEL)..."
 run_logged_print_heartbeat "npm-telegram-package-install" 60 docker_e2e_docker_run_cmd run --rm \
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
-  -e OPENCLAW_E2E_NPM_INSTALL_TIMEOUT="${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}" \
-  -e OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE="$package_install_source" \
-  -e OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL="$PACKAGE_LABEL" \
-  -e OPENCLAW_NPM_TELEGRAM_PACKAGE_SET="$([ -n "$resolved_package_dir" ] && printf 1 || printf 0)" \
+  -e NOVA_E2E_NPM_INSTALL_TIMEOUT="${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}" \
+  -e NOVA_NPM_TELEGRAM_INSTALL_SOURCE="$package_install_source" \
+  -e NOVA_NPM_TELEGRAM_PACKAGE_LABEL="$PACKAGE_LABEL" \
+  -e NOVA_NPM_TELEGRAM_PACKAGE_SET="$([ -n "$resolved_package_dir" ] && printf 1 || printf 0)" \
   ${package_mount_args[@]+"${package_mount_args[@]}"} \
   ${registry_helper_mount_args[@]+"${registry_helper_mount_args[@]}"} \
   -v "$npm_prefix_host:/npm-global" \
@@ -306,8 +306,8 @@ export HOME="$(mktemp -d "/tmp/openclaw-npm-telegram-install.XXXXXX")"
 export NPM_CONFIG_PREFIX="/npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
 
-install_source="${OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE:?missing OPENCLAW_NPM_TELEGRAM_INSTALL_SOURCE}"
-package_label="${OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL:-$install_source}"
+install_source="${NOVA_NPM_TELEGRAM_INSTALL_SOURCE:?missing NOVA_NPM_TELEGRAM_INSTALL_SOURCE}"
+package_label="${NOVA_NPM_TELEGRAM_PACKAGE_LABEL:-$install_source}"
 echo "Installing ${package_label} from ${install_source}..."
 
 registry_pid=""
@@ -323,7 +323,7 @@ cleanup_registry() {
 }
 trap cleanup_registry EXIT
 
-if [ "${OPENCLAW_NPM_TELEGRAM_PACKAGE_SET:-0}" = "1" ]; then
+if [ "${NOVA_NPM_TELEGRAM_PACKAGE_SET:-0}" = "1" ]; then
   shopt -s nullglob
   package_tgzs=(/package-under-test/*.tgz)
   shopt -u nullglob
@@ -352,7 +352,7 @@ process.stdin.on("end", () => {
   done
   registry_port_file="$(mktemp)"
   registry_log="$(mktemp)"
-  OPENCLAW_NPM_REGISTRY_UPSTREAM=https://registry.npmjs.org \
+  NOVA_NPM_REGISTRY_UPSTREAM=https://registry.npmjs.org \
     node /tmp/openclaw-e2e/lib/plugins/npm-registry-server.mjs \
     "$registry_port_file" \
     "${registry_args[@]}" >"$registry_log" 2>&1 &
@@ -378,7 +378,7 @@ process.stdin.on("end", () => {
   export npm_config_registry="$registry_url"
 fi
 
-npm_install_timeout="${OPENCLAW_E2E_NPM_INSTALL_TIMEOUT:-600s}"
+npm_install_timeout="${NOVA_E2E_NPM_INSTALL_TIMEOUT:-600s}"
 run_npm_install() {
   if [ -z "$npm_install_timeout" ] || [ "$npm_install_timeout" = "0" ]; then
     npm install -g "$install_source" --no-fund --no-audit
@@ -392,7 +392,7 @@ run_npm_install() {
     timeout_bin="gtimeout"
   fi
   if [ -z "$timeout_bin" ]; then
-    echo "timeout or gtimeout is required for OPENCLAW_E2E_NPM_INSTALL_TIMEOUT=$npm_install_timeout" >&2
+    echo "timeout or gtimeout is required for NOVA_E2E_NPM_INSTALL_TIMEOUT=$npm_install_timeout" >&2
     return 127
   fi
 
@@ -425,7 +425,7 @@ runtime_home="$(mktemp -d "/tmp/openclaw-npm-telegram-runtime.XXXXXX")"
 export HOME="$runtime_home"
 export NPM_CONFIG_PREFIX="/npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export OPENCLAW_NPM_TELEGRAM_REPO_ROOT="/app"
+export NOVA_NPM_TELEGRAM_REPO_ROOT="/app"
 
 dump_hotpath_logs() {
   local status="$1"
@@ -505,7 +505,7 @@ for dependency in \
   link_installed_package_dependency "$dependency"
 done
 
-if [ "${OPENCLAW_NPM_TELEGRAM_SKIP_HOTPATH:-0}" != "1" ]; then
+if [ "${NOVA_NPM_TELEGRAM_SKIP_HOTPATH:-0}" != "1" ]; then
   hotpath_home="$(mktemp -d "/tmp/openclaw-npm-telegram-hotpath.XXXXXX")"
   export HOME="$hotpath_home"
   echo "Running installed-package onboarding recovery hot path..."
@@ -534,7 +534,7 @@ if [ "${OPENCLAW_NPM_TELEGRAM_SKIP_HOTPATH:-0}" != "1" ]; then
   export HOME="$runtime_home"
 fi
 
-export OPENCLAW_NPM_TELEGRAM_SUT_COMMAND="$(command -v openclaw)"
+export NOVA_NPM_TELEGRAM_SUT_COMMAND="$(command -v openclaw)"
 trap - ERR
 tsx scripts/e2e/npm-telegram-live-runner.ts
 EOF

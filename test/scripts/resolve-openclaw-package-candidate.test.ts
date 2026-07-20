@@ -498,13 +498,13 @@ describe("resolve-openclaw-package-candidate", () => {
         "const { spawn } = require('node:child_process');",
         "const fs = require('node:fs');",
         `const child = spawn(process.execPath, ['-e', ${JSON.stringify(childScript)}], { stdio: 'ignore' });`,
-        "fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_PID, String(child.pid));",
+        "fs.writeFileSync(process.env.NOVA_TEST_CHILD_PID, String(child.pid));",
         "setInterval(() => {}, 1000);",
       ].join("");
 
       const timeoutAssertion = expect(
         runCommandForTest(process.execPath, ["-e", parentScript], {
-          env: { ...process.env, OPENCLAW_TEST_CHILD_PID: childPidPath },
+          env: { ...process.env, NOVA_TEST_CHILD_PID: childPidPath },
           killAfterMs: 25,
           timeoutMs: 500,
         }),
@@ -574,10 +574,10 @@ describe("resolve-openclaw-package-candidate", () => {
     const childScript = [
       "const fs = require('node:fs');",
       "process.on('SIGTERM', () => {",
-      "  fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_CLEANUP, 'clean');",
+      "  fs.writeFileSync(process.env.NOVA_TEST_CHILD_CLEANUP, 'clean');",
       "  setTimeout(() => process.exit(0), 25);",
       "});",
-      "fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_READY, 'ready');",
+      "fs.writeFileSync(process.env.NOVA_TEST_CHILD_READY, 'ready');",
       "setInterval(() => {}, 1000);",
     ].join("");
     const parentScript = [
@@ -587,11 +587,11 @@ describe("resolve-openclaw-package-candidate", () => {
       "  stdio: 'ignore',",
       "  env: {",
       "    ...process.env,",
-      "    OPENCLAW_TEST_CHILD_CLEANUP: process.env.OPENCLAW_TEST_CHILD_CLEANUP,",
-      "    OPENCLAW_TEST_CHILD_READY: process.env.OPENCLAW_TEST_CHILD_READY,",
+      "    NOVA_TEST_CHILD_CLEANUP: process.env.NOVA_TEST_CHILD_CLEANUP,",
+      "    NOVA_TEST_CHILD_READY: process.env.NOVA_TEST_CHILD_READY,",
       "  },",
       "});",
-      "fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_PID, String(child.pid));",
+      "fs.writeFileSync(process.env.NOVA_TEST_CHILD_PID, String(child.pid));",
       "process.on('SIGTERM', () => process.exit(0));",
       "setInterval(() => {}, 1000);",
     ].join("");
@@ -601,9 +601,9 @@ describe("resolve-openclaw-package-candidate", () => {
       runCommandForTest(process.execPath, ["-e", parentScript], {
         env: {
           ...process.env,
-          OPENCLAW_TEST_CHILD_CLEANUP: cleanupPath,
-          OPENCLAW_TEST_CHILD_PID: childPidPath,
-          OPENCLAW_TEST_CHILD_READY: readyPath,
+          NOVA_TEST_CHILD_CLEANUP: cleanupPath,
+          NOVA_TEST_CHILD_PID: childPidPath,
+          NOVA_TEST_CHILD_READY: readyPath,
         },
         killAfterMs: 250,
         timeoutMs: 250,
@@ -637,7 +637,7 @@ describe("resolve-openclaw-package-candidate", () => {
         "const { spawn } = require('node:child_process');",
         "const fs = require('node:fs');",
         `const child = spawn(process.execPath, ['-e', ${JSON.stringify(childScript)}], { stdio: 'ignore' });`,
-        "fs.writeFileSync(process.env.OPENCLAW_TEST_CHILD_PID, String(child.pid));",
+        "fs.writeFileSync(process.env.NOVA_TEST_CHILD_PID, String(child.pid));",
         "setInterval(() => {}, 1000);",
       ].join("");
       // Accelerate only the module-level 5s forwarded-signal failsafe in this disposable runner.
@@ -650,7 +650,7 @@ describe("resolve-openclaw-package-candidate", () => {
       ].join("\n");
       const runner = spawn(process.execPath, ["--input-type=module", "-e", runnerScript], {
         cwd: process.cwd(),
-        env: { ...process.env, OPENCLAW_TEST_CHILD_PID: childPidPath },
+        env: { ...process.env, NOVA_TEST_CHILD_PID: childPidPath },
         stdio: ["ignore", "ignore", "pipe"],
       });
       runnerPid = runner.pid;
@@ -924,8 +924,8 @@ describe("resolve-openclaw-package-candidate", () => {
     const dir = await mkdtemp(path.join(tmpdir(), "openclaw-package-download-"));
     tempDirs.push(dir);
     const target = path.join(dir, "openclaw.tgz");
-    const previousToken = process.env.OPENCLAW_TRUSTED_PACKAGE_TOKEN;
-    process.env.OPENCLAW_TRUSTED_PACKAGE_TOKEN = "token-123";
+    const previousToken = process.env.NOVA_TRUSTED_PACKAGE_TOKEN;
+    process.env.NOVA_TRUSTED_PACKAGE_TOKEN = "token-123";
     const trustedSource = {
       allowPrivateNetwork: true,
       auth: { type: "bearer" },
@@ -964,9 +964,9 @@ describe("resolve-openclaw-package-candidate", () => {
       );
     } finally {
       if (previousToken === undefined) {
-        delete process.env.OPENCLAW_TRUSTED_PACKAGE_TOKEN;
+        delete process.env.NOVA_TRUSTED_PACKAGE_TOKEN;
       } else {
-        process.env.OPENCLAW_TRUSTED_PACKAGE_TOKEN = previousToken;
+        process.env.NOVA_TRUSTED_PACKAGE_TOKEN = previousToken;
       }
     }
 

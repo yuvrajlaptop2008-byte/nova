@@ -143,8 +143,8 @@ done
   exit 2
 }
 
-OPENCLAW_GH_BIN="$(resolve_plain_gh_bin)" || die "missing required command: gh"
-export OPENCLAW_GH_BIN
+NOVA_GH_BIN="$(resolve_plain_gh_bin)" || die "missing required command: gh"
+export NOVA_GH_BIN
 need jq
 
 since_ts=$(date_utc_relative_months "$months")

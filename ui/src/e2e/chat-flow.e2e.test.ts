@@ -16,9 +16,9 @@ import {
 
 const chromiumExecutablePath = resolvePlaywrightChromiumExecutablePath(chromium.executablePath());
 const chromiumAvailable = canRunPlaywrightChromium(chromiumExecutablePath);
-const allowMissingChromium = process.env.OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
+const allowMissingChromium = process.env.NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM === "1";
 const describeControlUiE2e = chromiumAvailable || !allowMissingChromium ? describe : describe.skip;
-const captureUiProofEnabled = process.env.OPENCLAW_CAPTURE_UI_PROOF === "1";
+const captureUiProofEnabled = process.env.NOVA_CAPTURE_UI_PROOF === "1";
 const sessionAccessibilityProofDir = path.join(
   process.cwd(),
   ".artifacts",
@@ -255,7 +255,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
   beforeAll(async () => {
     if (!chromiumAvailable) {
       throw new Error(
-        `Playwright Chromium is not installed or cannot start at ${chromiumExecutablePath}. Run \`pnpm --dir ui exec playwright install --with-deps chromium\`, set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH to a compatible browser, or set OPENCLAW_UI_E2E_ALLOW_MISSING_CHROMIUM=1 only when intentionally skipping this lane.`,
+        `Playwright Chromium is not installed or cannot start at ${chromiumExecutablePath}. Run \`pnpm --dir ui exec playwright install --with-deps chromium\`, set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH to a compatible browser, or set NOVA_UI_E2E_ALLOW_MISSING_CHROMIUM=1 only when intentionally skipping this lane.`,
       );
     }
     browser = await chromium.launch({ executablePath: chromiumExecutablePath });
@@ -1137,7 +1137,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
           "utf8",
         );
       }
-      if (process.env.OPENCLAW_BEHAVIOR_PROOF === "1") {
+      if (process.env.NOVA_BEHAVIOR_PROOF === "1") {
         process.stdout.write(
           `${JSON.stringify({ proof: "managed-image-cache", ...proofSummary })}\n`,
         );
@@ -2382,7 +2382,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
   });
 
   it("steers ordinary follow-ups when the server default is steer", async () => {
-    const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+    const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
     const context = await newBrowserContext({
       locale: "en-US",
       serviceWorkers: "block",
@@ -2441,7 +2441,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
   });
 
   it("preserves a non-steer server default for active-run follow-ups", async () => {
-    const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+    const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
     const context = await newBrowserContext({
       locale: "en-US",
       serviceWorkers: "block",
@@ -2864,7 +2864,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
   });
 
   it("keeps retained paginated history stable when returning to a session", async () => {
-    const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+    const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
     const context = await newBrowserContext({
       locale: "en-US",
       ...(artifactDir
@@ -3131,7 +3131,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
   });
 
   it("stores new input while offline and sends it after reconnect", async () => {
-    const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+    const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
     const context = await newBrowserContext({
       locale: "en-US",
       ...(artifactDir
@@ -3306,7 +3306,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       if (artifactDir) {
         await page.screenshot({ path: `${artifactDir}/03-online-delivered.png`, fullPage: true });
       }
-      if (process.env.OPENCLAW_BEHAVIOR_PROOF === "1") {
+      if (process.env.NOVA_BEHAVIOR_PROOF === "1") {
         process.stdout.write(
           `${JSON.stringify({
             proof: "offline-chat-reconnect",
@@ -4044,7 +4044,7 @@ describeControlUiE2e("Control UI mocked Gateway E2E", () => {
       });
       await expect.poll(() => page.getByText(/not supported for/u).count()).toBe(0);
 
-      const artifactDir = process.env.OPENCLAW_UI_E2E_ARTIFACT_DIR?.trim();
+      const artifactDir = process.env.NOVA_UI_E2E_ARTIFACT_DIR?.trim();
       if (artifactDir) {
         await page.screenshot({
           path: `${artifactDir}/model-thinking-sync.png`,

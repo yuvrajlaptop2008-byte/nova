@@ -122,11 +122,11 @@ describe("resolveGatewayConnection", () => {
 
   beforeEach(() => {
     envSnapshot = captureEnv([
-      "OPENCLAW_GATEWAY_URL",
-      "OPENCLAW_GATEWAY_PORT",
-      "OPENCLAW_GATEWAY_TOKEN",
-      "OPENCLAW_GATEWAY_PASSWORD",
-      "OPENCLAW_TUI_SETUP_AUTH_SOURCE",
+      "NOVA_GATEWAY_URL",
+      "NOVA_GATEWAY_PORT",
+      "NOVA_GATEWAY_TOKEN",
+      "NOVA_GATEWAY_PASSWORD",
+      "NOVA_TUI_SETUP_AUTH_SOURCE",
     ]);
     loadConfig.mockReset();
     readActiveGatewayLockPortMock.mockReset().mockResolvedValue(undefined);
@@ -135,17 +135,17 @@ describe("resolveGatewayConnection", () => {
     resolveConfigPath.mockReset();
     resolveGatewayPort.mockReturnValue(18789);
     resolveStateDir.mockImplementation(
-      (env: NodeJS.ProcessEnv) => env.OPENCLAW_STATE_DIR ?? "/tmp/openclaw",
+      (env: NodeJS.ProcessEnv) => env.NOVA_STATE_DIR ?? "/tmp/openclaw",
     );
     resolveConfigPath.mockImplementation(
       (env: NodeJS.ProcessEnv, stateDir: string) =>
-        env.OPENCLAW_CONFIG_PATH ?? `${stateDir}/openclaw.json`,
+        env.NOVA_CONFIG_PATH ?? `${stateDir}/openclaw.json`,
     );
-    delete process.env.OPENCLAW_GATEWAY_URL;
-    delete process.env.OPENCLAW_GATEWAY_PORT;
-    delete process.env.OPENCLAW_GATEWAY_TOKEN;
-    delete process.env.OPENCLAW_GATEWAY_PASSWORD;
-    delete process.env.OPENCLAW_TUI_SETUP_AUTH_SOURCE;
+    delete process.env.NOVA_GATEWAY_URL;
+    delete process.env.NOVA_GATEWAY_PORT;
+    delete process.env.NOVA_GATEWAY_TOKEN;
+    delete process.env.NOVA_GATEWAY_PASSWORD;
+    delete process.env.NOVA_TUI_SETUP_AUTH_SOURCE;
   });
 
   afterEach(() => {
@@ -163,8 +163,8 @@ describe("resolveGatewayConnection", () => {
 
     await withEnvAsync(
       {
-        OPENCLAW_GATEWAY_URL: "wss://env.example/ws",
-        OPENCLAW_GATEWAY_TOKEN: "env-token",
+        NOVA_GATEWAY_URL: "wss://env.example/ws",
+        NOVA_GATEWAY_TOKEN: "env-token",
       },
       async () => {
         const result = resolveBoundGatewayConnection({
@@ -275,7 +275,7 @@ describe("resolveGatewayConnection", () => {
     });
     readActiveGatewayLockPortMock.mockResolvedValue(48789);
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_PORT: "19001" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_PORT: "19001" }, async () => {
       const result = await resolveGatewayConnection({});
 
       expect(result.url).toBe("ws://127.0.0.1:19001");
@@ -285,16 +285,16 @@ describe("resolveGatewayConnection", () => {
   it("uses config auth token for local mode when both config and env tokens are set", async () => {
     loadConfig.mockReturnValue({ gateway: { mode: "local", auth: { token: "config-token" } } });
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_TOKEN: "env-token" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_TOKEN: "env-token" }, async () => {
       const result = await resolveGatewayConnection({});
       expect(result.token).toBe("config-token");
     });
   });
 
-  it("falls back to OPENCLAW_GATEWAY_TOKEN when config token is missing", async () => {
+  it("falls back to NOVA_GATEWAY_TOKEN when config token is missing", async () => {
     loadConfig.mockReturnValue({ gateway: { mode: "local" } });
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_TOKEN: "env-token" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_TOKEN: "env-token" }, async () => {
       const result = await resolveGatewayConnection({});
       expect(result.token).toBe("env-token");
     });
@@ -326,7 +326,7 @@ describe("resolveGatewayConnection", () => {
       },
     });
 
-    await withEnvAsync({ OPENCLAW_GATEWAY_PASSWORD: "env-password" }, async () => {
+    await withEnvAsync({ NOVA_GATEWAY_PASSWORD: "env-password" }, async () => {
       const result = await resolveGatewayConnection({});
       expect(result.password).toBe("env-password");
     });
@@ -345,8 +345,8 @@ describe("resolveGatewayConnection", () => {
 
     await withEnvAsync(
       {
-        OPENCLAW_GATEWAY_PASSWORD: "stale-env-password", // pragma: allowlist secret
-        OPENCLAW_TUI_SETUP_AUTH_SOURCE: "config",
+        NOVA_GATEWAY_PASSWORD: "stale-env-password", // pragma: allowlist secret
+        NOVA_TUI_SETUP_AUTH_SOURCE: "config",
       },
       async () => {
         const result = await resolveGatewayConnection({});
@@ -366,15 +366,15 @@ describe("resolveGatewayConnection", () => {
         mode: "local",
         auth: {
           mode: "password",
-          password: { source: "env", provider: "default", id: "OPENCLAW_GATEWAY_PASSWORD" },
+          password: { source: "env", provider: "default", id: "NOVA_GATEWAY_PASSWORD" },
         },
       },
     });
 
     await withEnvAsync(
       {
-        OPENCLAW_GATEWAY_PASSWORD: "resolved-ref-password", // pragma: allowlist secret
-        OPENCLAW_TUI_SETUP_AUTH_SOURCE: "config",
+        NOVA_GATEWAY_PASSWORD: "resolved-ref-password", // pragma: allowlist secret
+        NOVA_TUI_SETUP_AUTH_SOURCE: "config",
       },
       async () => {
         const result = await resolveGatewayConnection({});
@@ -431,7 +431,7 @@ describe("resolveGatewayConnection", () => {
     );
   });
 
-  it("prefers OPENCLAW_GATEWAY_PASSWORD over remote password fallback", async () => {
+  it("prefers NOVA_GATEWAY_PASSWORD over remote password fallback", async () => {
     loadConfig.mockReturnValue({
       gateway: {
         mode: "remote",
@@ -439,7 +439,7 @@ describe("resolveGatewayConnection", () => {
       },
     });
 
-    const gatewayPasswordEnv = "OPENCLAW_GATEWAY_PASSWORD"; // pragma: allowlist secret
+    const gatewayPasswordEnv = "NOVA_GATEWAY_PASSWORD"; // pragma: allowlist secret
     const gatewayPassword = "env-pass"; // pragma: allowlist secret
     await withEnvAsync({ [gatewayPasswordEnv]: gatewayPassword }, async () => {
       const result = await resolveGatewayConnection({});
@@ -460,8 +460,8 @@ describe("resolveGatewayConnection", () => {
 
     await withEnvAsync(
       {
-        OPENCLAW_GATEWAY_PASSWORD: "stale-env-password", // pragma: allowlist secret
-        OPENCLAW_TUI_SETUP_AUTH_SOURCE: "config",
+        NOVA_GATEWAY_PASSWORD: "stale-env-password", // pragma: allowlist secret
+        NOVA_TUI_SETUP_AUTH_SOURCE: "config",
       },
       async () => {
         const result = await resolveGatewayConnection({});

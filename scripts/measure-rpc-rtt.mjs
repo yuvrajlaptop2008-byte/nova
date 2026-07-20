@@ -541,14 +541,14 @@ export async function startGateway({
           XDG_CONFIG_HOME: path.join(tempRoot, "xdg-config"),
           XDG_DATA_HOME: path.join(tempRoot, "xdg-data"),
           XDG_CACHE_HOME: path.join(tempRoot, "xdg-cache"),
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_STATE_DIR: path.join(tempRoot, "state"),
-          OPENCLAW_GATEWAY_TOKEN: token,
-          OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-          OPENCLAW_SKIP_GMAIL_WATCHER: "1",
-          OPENCLAW_SKIP_CANVAS_HOST: "1",
-          OPENCLAW_NO_RESPAWN: "1",
-          OPENCLAW_TEST_FAST: "1",
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_STATE_DIR: path.join(tempRoot, "state"),
+          NOVA_GATEWAY_TOKEN: token,
+          NOVA_SKIP_BROWSER_CONTROL_SERVER: "1",
+          NOVA_SKIP_GMAIL_WATCHER: "1",
+          NOVA_SKIP_CANVAS_HOST: "1",
+          NOVA_NO_RESPAWN: "1",
+          NOVA_TEST_FAST: "1",
         },
         stdio: ["ignore", stdout.fd, stderr.fd],
       },
@@ -882,7 +882,7 @@ async function main() {
     process.stdout.write(`${usage()}\n`);
     return;
   }
-  const repoRoot = path.resolve(args.repoRoot ?? process.env.OPENCLAW_REPO_ROOT ?? process.cwd());
+  const repoRoot = path.resolve(args.repoRoot ?? process.env.NOVA_REPO_ROOT ?? process.cwd());
   const outputDir = path.resolve(args.outputDir);
   await fs.mkdir(outputDir, { recursive: true });
   const tempRoot = await fs.mkdtemp(path.join(outputDir, "..", ".rpc-rtt-"));

@@ -64,9 +64,9 @@ describe("compactSkillPaths", () => {
     const prompt = withEnv(
       {
         HOME: osHome,
-        OPENCLAW_HOME: osHome,
-        OPENCLAW_STATE_DIR: stateDir,
-        OPENCLAW_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+        NOVA_HOME: osHome,
+        NOVA_STATE_DIR: stateDir,
+        NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
       },
       () =>
         buildPromptForFixtureSkill({
@@ -91,9 +91,9 @@ describe("compactSkillPaths", () => {
     const prompt = withEnv(
       {
         HOME: osHome,
-        OPENCLAW_HOME: osHome,
-        OPENCLAW_STATE_DIR: stateDir,
-        OPENCLAW_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
+        NOVA_HOME: osHome,
+        NOVA_STATE_DIR: stateDir,
+        NOVA_CONFIG_PATH: path.join(stateDir, "openclaw.json"),
       },
       () =>
         buildPromptForFixtureSkill({
@@ -116,8 +116,8 @@ describe("compactSkillPaths", () => {
     const prompt = withEnv(
       {
         HOME: home,
-        OPENCLAW_STATE_DIR: stateDir,
-        OPENCLAW_HOME: undefined,
+        NOVA_STATE_DIR: stateDir,
+        NOVA_HOME: undefined,
       },
       () =>
         buildPromptForFixtureSkill({
@@ -182,7 +182,7 @@ describe("compactSkillPaths", () => {
     const skillDir = path.join(root, "workspace", "skills", "available-skill");
 
     try {
-      const prompt = withEnv({ OPENCLAW_STATE_DIR: path.join(blockedParent, "state") }, () =>
+      const prompt = withEnv({ NOVA_STATE_DIR: path.join(blockedParent, "state") }, () =>
         buildPromptForFixtureSkill({
           workspaceRoot: path.join(root, "workspace"),
           skillDir,

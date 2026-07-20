@@ -37,8 +37,8 @@ const DREAMING_TEST_BASE_TIME = new Date("2026-04-05T10:00:00.000Z");
 const DREAMING_TEST_DAY = "2026-04-05";
 const LIGHT_SLEEP_EVENT_TEXT = "__openclaw_memory_core_light_sleep__";
 const REM_SLEEP_EVENT_TEXT = "__openclaw_memory_core_rem_sleep__";
-const originalDreamingTestFast = process.env.OPENCLAW_TEST_FAST;
-const originalDreamingStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalDreamingTestFast = process.env.NOVA_TEST_FAST;
+const originalDreamingStateDir = process.env.NOVA_STATE_DIR;
 const EMPTY_SESSION_CONTENT_HASH =
   "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070";
 const LIGHT_DREAMING_TEST_CONFIG: OpenClawConfig = {
@@ -69,21 +69,21 @@ const LIGHT_DREAMING_TEST_CONFIG: OpenClawConfig = {
 };
 
 function setDreamingTestEnv(stateDir: string): void {
-  Reflect.set(process.env, "OPENCLAW_TEST_FAST", "1");
-  Reflect.set(process.env, "OPENCLAW_STATE_DIR", stateDir);
+  Reflect.set(process.env, "NOVA_TEST_FAST", "1");
+  Reflect.set(process.env, "NOVA_STATE_DIR", stateDir);
   clearRuntimeConfigSnapshot();
 }
 
 function restoreDreamingTestEnv(): void {
   if (originalDreamingTestFast === undefined) {
-    Reflect.deleteProperty(process.env, "OPENCLAW_TEST_FAST");
+    Reflect.deleteProperty(process.env, "NOVA_TEST_FAST");
   } else {
-    Reflect.set(process.env, "OPENCLAW_TEST_FAST", originalDreamingTestFast);
+    Reflect.set(process.env, "NOVA_TEST_FAST", originalDreamingTestFast);
   }
   if (originalDreamingStateDir === undefined) {
-    Reflect.deleteProperty(process.env, "OPENCLAW_STATE_DIR");
+    Reflect.deleteProperty(process.env, "NOVA_STATE_DIR");
   } else {
-    Reflect.set(process.env, "OPENCLAW_STATE_DIR", originalDreamingStateDir);
+    Reflect.set(process.env, "NOVA_STATE_DIR", originalDreamingStateDir);
   }
   clearRuntimeConfigSnapshot();
 }

@@ -12,7 +12,7 @@ import {
 // Nova tab group in sync. Membership in that group is the user-visible
 // consent boundary: only grouped tabs are reported to (and driven by) Nova.
 import {
-  OPENCLAW_TAB_GROUP_TITLE,
+  NOVA_TAB_GROUP_TITLE,
   buildRelayWsProtocols,
   nearestGroupColor,
   parsePairingString,
@@ -110,7 +110,7 @@ async function getCopilotConfig() {
 
 async function findOpenClawGroups() {
   try {
-    return await chrome.tabGroups.query({ title: OPENCLAW_TAB_GROUP_TITLE });
+    return await chrome.tabGroups.query({ title: NOVA_TAB_GROUP_TITLE });
   } catch {
     return [];
   }
@@ -137,7 +137,7 @@ async function addTabToOpenClawGroup(tabId) {
   const { groupColor } = await getConfig();
   const groupId = await chrome.tabs.group({ tabIds: [tabId] });
   await chrome.tabGroups.update(groupId, {
-    title: OPENCLAW_TAB_GROUP_TITLE,
+    title: NOVA_TAB_GROUP_TITLE,
     color: groupColor,
   });
 }
@@ -161,7 +161,7 @@ async function isOpenClawGroupId(groupId) {
   }
   try {
     const group = await chrome.tabGroups.get(groupId);
-    return group.title === OPENCLAW_TAB_GROUP_TITLE;
+    return group.title === NOVA_TAB_GROUP_TITLE;
   } catch {
     return false;
   }
@@ -219,7 +219,7 @@ async function attachDebugger(tabId) {
   const attach = (async () => {
     assertAccess();
     if (!(await isTabShared(tabId))) {
-      throw new Error(`tab ${tabId} is not in the ${OPENCLAW_TAB_GROUP_TITLE} tab group`);
+      throw new Error(`tab ${tabId} is not in the ${NOVA_TAB_GROUP_TITLE} tab group`);
     }
     assertAccess();
     if (!attachedTabs.has(tabId)) {

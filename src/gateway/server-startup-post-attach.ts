@@ -42,7 +42,7 @@ const PROVIDER_AUTH_REWARM_DELAY_MS = 1_000;
 const AGENT_RUNTIME_PLUGIN_PREWARM_START_DELAY_MS = 0;
 const DEFERRED_SIDECAR_START_DELAY_MS = 100;
 const SESSION_LOCK_CLEANUP_CONCURRENCY = 4;
-const SKIP_STARTUP_MODEL_PREWARM_ENV = "OPENCLAW_SKIP_STARTUP_MODEL_PREWARM";
+const SKIP_STARTUP_MODEL_PREWARM_ENV = "NOVA_SKIP_STARTUP_MODEL_PREWARM";
 const QMD_STARTUP_IDLE_DELAY_MS = 120_000;
 type Awaitable<T> = T | Promise<T>;
 type GatewayStartupTrace = {
@@ -649,8 +649,8 @@ export async function startGatewaySidecars(params: {
   });
 
   const skipChannels =
-    isTruthyEnvValue(process.env.OPENCLAW_SKIP_CHANNELS) ||
-    isTruthyEnvValue(process.env.OPENCLAW_SKIP_PROVIDERS);
+    isTruthyEnvValue(process.env.NOVA_SKIP_CHANNELS) ||
+    isTruthyEnvValue(process.env.NOVA_SKIP_PROVIDERS);
   // Agent RPC remains available when transports are disabled. Publish its mandatory lifecycle
   // owner before accepting work so request paths can only observe pending or ready snapshots.
   await measureStartup(params.startupTrace, "sidecars.model-runtime", () =>
@@ -686,7 +686,7 @@ export async function startGatewaySidecars(params: {
     } else {
       await measureStartup(params.startupTrace, "sidecars.channel-skip", () =>
         params.logChannels.info(
-          "skipping channel start (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)",
+          "skipping channel start (NOVA_SKIP_CHANNELS=1 or NOVA_SKIP_PROVIDERS=1)",
         ),
       );
     }

@@ -10,7 +10,7 @@ import {
 } from "./dynamic-tool-profile.js";
 import { mergeCodexThreadConfigs } from "./plugin-thread-config.js";
 import {
-  CODEX_OPENCLAW_DIRECT_DYNAMIC_TOOL_NAMESPACE,
+  CODEX_NOVA_DIRECT_DYNAMIC_TOOL_NAMESPACE,
   isJsonObject,
   type CodexConfigReadResponse,
   type CodexConfigRequirementsReadResponse,
@@ -344,8 +344,7 @@ function resolveDirectOnlyToolNamespaces(
 ): string[] {
   return (dynamicTools ?? [])
     .filter(
-      (tool) =>
-        tool.type === "namespace" && tool.name === CODEX_OPENCLAW_DIRECT_DYNAMIC_TOOL_NAMESPACE,
+      (tool) => tool.type === "namespace" && tool.name === CODEX_NOVA_DIRECT_DYNAMIC_TOOL_NAMESPACE,
     )
     .map((tool) => tool.name);
 }

@@ -435,9 +435,9 @@ export async function createMatrixQaOpenClawCliRuntime(params: {
     ...params.runtimeEnv,
     FORCE_COLOR: "0",
     NO_COLOR: "1",
-    OPENCLAW_CONFIG_PATH: configPath,
-    OPENCLAW_NO_AUTO_UPDATE: "1",
-    OPENCLAW_STATE_DIR: stateDir,
+    NOVA_CONFIG_PATH: configPath,
+    NOVA_NO_AUTO_UPDATE: "1",
+    NOVA_STATE_DIR: stateDir,
   };
   return {
     artifactDir,

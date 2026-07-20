@@ -176,7 +176,7 @@ export function withMcpAuthProfileBearer(
 
 function buildTokenEnvVarName(serverName: string): string {
   const hash = crypto.createHash("sha256").update(serverName).digest("hex").slice(0, 12);
-  return `OPENCLAW_MCP_AUTH_${hash.toUpperCase()}_TOKEN`;
+  return `NOVA_MCP_AUTH_${hash.toUpperCase()}_TOKEN`;
 }
 
 function stripOpenClawOnlyOAuthConfig(server: BundleMcpServerConfig): BundleMcpServerConfig {

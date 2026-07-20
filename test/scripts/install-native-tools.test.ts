@@ -34,7 +34,7 @@ describe.runIf(process.platform !== "win32")("native tool installers", () => {
       curlPath,
       [
         "#!/usr/bin/env bash",
-        'printf "%s\\n" "$@" >"$OPENCLAW_TEST_CURL_ARGS_PATH"',
+        'printf "%s\\n" "$@" >"$NOVA_TEST_CURL_ARGS_PATH"',
         "exit 28",
         "",
       ].join("\n"),
@@ -46,7 +46,7 @@ describe.runIf(process.platform !== "win32")("native tool installers", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        OPENCLAW_TEST_CURL_ARGS_PATH: argsPath,
+        NOVA_TEST_CURL_ARGS_PATH: argsPath,
         PATH: `${binDir}${path.delimiter}${process.env.PATH ?? ""}`,
       },
     });

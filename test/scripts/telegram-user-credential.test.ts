@@ -145,23 +145,23 @@ describe("telegram user credential IO", () => {
   });
 
   it("rejects loose and unsafe credential timeout env values", async () => {
-    const previous = process.env.OPENCLAW_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS;
+    const previous = process.env.NOVA_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS;
     try {
       for (const value of ["1e3", String(Number.MAX_SAFE_INTEGER + 1)]) {
-        process.env.OPENCLAW_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS = value;
+        process.env.NOVA_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS = value;
         await expect(
           import(
             `${new URL("../../scripts/e2e/telegram-user-credential.ts", import.meta.url).href}?case=loose-timeout-${value}-${Date.now()}`
           ),
         ).rejects.toThrow(
-          `OPENCLAW_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS must be a positive integer. Got: ${JSON.stringify(value)}.`,
+          `NOVA_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS must be a positive integer. Got: ${JSON.stringify(value)}.`,
         );
       }
     } finally {
       if (previous === undefined) {
-        delete process.env.OPENCLAW_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS;
+        delete process.env.NOVA_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS;
       } else {
-        process.env.OPENCLAW_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS = previous;
+        process.env.NOVA_TELEGRAM_USER_CREDENTIAL_COMMAND_TIMEOUT_MS = previous;
       }
     }
   });
@@ -257,20 +257,16 @@ describe("telegram user credential IO", () => {
     expect(credentialModule.optionalPositiveInteger(undefined, 30_000)).toBe(30_000);
     expect(credentialModule.optionalPositiveInteger(" 120000 ", 30_000)).toBe(120_000);
     expect(() =>
-      credentialModule.optionalPositiveInteger(
-        "1e3",
-        30_000,
-        "OPENCLAW_QA_CREDENTIAL_LEASE_TTL_MS",
-      ),
-    ).toThrow('OPENCLAW_QA_CREDENTIAL_LEASE_TTL_MS must be a positive integer. Got: "1e3".');
+      credentialModule.optionalPositiveInteger("1e3", 30_000, "NOVA_QA_CREDENTIAL_LEASE_TTL_MS"),
+    ).toThrow('NOVA_QA_CREDENTIAL_LEASE_TTL_MS must be a positive integer. Got: "1e3".');
     expect(() =>
       credentialModule.optionalPositiveInteger(
         "9007199254740992",
         30_000,
-        "OPENCLAW_QA_CREDENTIAL_PAYLOAD_MAX_BYTES",
+        "NOVA_QA_CREDENTIAL_PAYLOAD_MAX_BYTES",
       ),
     ).toThrow(
-      'OPENCLAW_QA_CREDENTIAL_PAYLOAD_MAX_BYTES must be a positive integer. Got: "9007199254740992".',
+      'NOVA_QA_CREDENTIAL_PAYLOAD_MAX_BYTES must be a positive integer. Got: "9007199254740992".',
     );
   });
 
@@ -589,7 +585,7 @@ setInterval(() => {}, 1000);
       const runner = spawn(process.execPath, ["--import", "tsx", runnerPath], {
         env: {
           ...process.env,
-          OPENCLAW_QA_CREDENTIAL_KILL_GRACE_MS: "100",
+          NOVA_QA_CREDENTIAL_KILL_GRACE_MS: "100",
         },
         stdio: ["ignore", "pipe", "pipe"],
       });

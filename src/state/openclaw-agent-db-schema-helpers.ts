@@ -4,7 +4,7 @@ import {
   readSqliteUserVersion,
 } from "../infra/sqlite-user-version.js";
 import { normalizeAgentId } from "../routing/session-key.js";
-import { OPENCLAW_AGENT_SCHEMA_VERSION } from "./openclaw-agent-db-contract.js";
+import { NOVA_AGENT_SCHEMA_VERSION } from "./openclaw-agent-db-contract.js";
 
 type ExistingAgentSchemaMeta = {
   agentId: string | null;
@@ -14,12 +14,12 @@ type ExistingAgentSchemaMeta = {
 
 export function assertSupportedAgentSchemaVersion(db: DatabaseSync, pathname: string): void {
   const userVersion = readSqliteUserVersion(db);
-  if (userVersion > OPENCLAW_AGENT_SCHEMA_VERSION) {
+  if (userVersion > NOVA_AGENT_SCHEMA_VERSION) {
     throw createNewerSqliteSchemaVersionError(
       "Nova agent database",
       pathname,
       userVersion,
-      OPENCLAW_AGENT_SCHEMA_VERSION,
+      NOVA_AGENT_SCHEMA_VERSION,
     );
   }
 }

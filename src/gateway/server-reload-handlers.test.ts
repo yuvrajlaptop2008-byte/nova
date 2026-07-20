@@ -740,7 +740,7 @@ async function withGatewayRestartSignal(
 }
 
 // Other gateway test helpers (test-helpers.mocks.ts, test-helpers.server.ts)
-// set OPENCLAW_SKIP_CHANNELS / OPENCLAW_SKIP_PROVIDERS at module load. When a
+// set NOVA_SKIP_CHANNELS / NOVA_SKIP_PROVIDERS at module load. When a
 // shared vitest worker imports those helpers before this file runs, the leaked
 // env routes reloads into the skip branch and channel restarts never fire.
 const testGatewayRestartListener = () => {};
@@ -749,8 +749,8 @@ beforeEach(() => {
   process.on("SIGUSR1", testGatewayRestartListener);
   resetGatewayWorkAdmission();
   resetProcessRegistryForTests();
-  delete process.env.OPENCLAW_SKIP_CHANNELS;
-  delete process.env.OPENCLAW_SKIP_PROVIDERS;
+  delete process.env.NOVA_SKIP_CHANNELS;
+  delete process.env.NOVA_SKIP_PROVIDERS;
 });
 
 afterEach(() => {
@@ -2582,10 +2582,10 @@ describe("gateway restart deferral preflight", () => {
   });
 
   it("defers channel hot reload until active embedded work drains", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.NOVA_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.NOVA_SKIP_PROVIDERS;
+    delete process.env.NOVA_SKIP_CHANNELS;
+    delete process.env.NOVA_SKIP_PROVIDERS;
     const startChannel = vi.fn(async () => {});
     const stopChannel = vi.fn(async () => {});
     const setState = vi.fn();
@@ -2667,14 +2667,14 @@ describe("gateway restart deferral preflight", () => {
       vi.useRealTimers();
       await reloadPromise.catch(() => {});
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.NOVA_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.NOVA_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.NOVA_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.NOVA_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -2685,10 +2685,10 @@ describe("gateway restart deferral preflight", () => {
   });
 
   it("uses the default channel reload deferral timeout when config omits deferralTimeoutMs", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.NOVA_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.NOVA_SKIP_PROVIDERS;
+    delete process.env.NOVA_SKIP_CHANNELS;
+    delete process.env.NOVA_SKIP_PROVIDERS;
     const startChannel = vi.fn(async () => {});
     const stopChannel = vi.fn(async () => {});
     const logReload = { info: vi.fn(), warn: vi.fn() };
@@ -2757,14 +2757,14 @@ describe("gateway restart deferral preflight", () => {
       vi.useRealTimers();
       await reloadPromise.catch(() => {});
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.NOVA_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.NOVA_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.NOVA_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.NOVA_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -2925,22 +2925,22 @@ describe("gateway channel hot reload handlers", () => {
   }
 
   async function withChannelReloadsEnabled(run: () => Promise<void>) {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.NOVA_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.NOVA_SKIP_PROVIDERS;
+    delete process.env.NOVA_SKIP_CHANNELS;
+    delete process.env.NOVA_SKIP_PROVIDERS;
     try {
       await run();
     } finally {
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.NOVA_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.NOVA_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.NOVA_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.NOVA_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
   }
@@ -5563,7 +5563,7 @@ describe("gateway Gmail hot reload handlers", () => {
 
 describe("gateway plugin hot reload handlers", () => {
   it("restarts channels when the candidate env removes an active skip flag", async () => {
-    const envKey = "OPENCLAW_SKIP_CHANNELS";
+    const envKey = "NOVA_SKIP_CHANNELS";
     const previousValue = process.env[envKey];
     process.env[envKey] = "1";
     const targetEnv: NodeJS.ProcessEnv = { [envKey]: "1" };
@@ -5629,7 +5629,7 @@ describe("gateway plugin hot reload handlers", () => {
   });
 
   it("skips channel work when the candidate env adds a skip flag", async () => {
-    const envKey = "OPENCLAW_SKIP_PROVIDERS";
+    const envKey = "NOVA_SKIP_PROVIDERS";
     const previousValue = process.env[envKey];
     delete process.env[envKey];
     const targetEnv: NodeJS.ProcessEnv = {};
@@ -5716,13 +5716,13 @@ describe("gateway plugin hot reload handlers", () => {
     expect(stopChannel).not.toHaveBeenCalled();
     expect(startChannel).not.toHaveBeenCalled();
     expect(logChannels.info).toHaveBeenCalledWith(
-      "skipping channel reload (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)",
+      "skipping channel reload (NOVA_SKIP_CHANNELS=1 or NOVA_SKIP_PROVIDERS=1)",
     );
   });
 
   it("publishes candidate env before cron, plugin, and channel replacements start", async () => {
     vi.useFakeTimers();
-    const envKey = "OPENCLAW_TEST_HOT_RELOAD_SERVICE_ENV";
+    const envKey = "NOVA_TEST_HOT_RELOAD_SERVICE_ENV";
     const targetEnv: NodeJS.ProcessEnv = { [envKey]: "old" };
     const initialConfig = {
       gateway: { reload: {} },
@@ -6230,10 +6230,10 @@ describe("gateway plugin hot reload handlers", () => {
   });
 
   it("rolls back stopped channels when plugin pre-replace stop fails", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.NOVA_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.NOVA_SKIP_PROVIDERS;
+    delete process.env.NOVA_SKIP_CHANNELS;
+    delete process.env.NOVA_SKIP_PROVIDERS;
     const cron = { start: vi.fn(async () => {}), stop: vi.fn() };
     const heartbeatRunner = {
       stop: vi.fn(),
@@ -6319,14 +6319,14 @@ describe("gateway plugin hot reload handlers", () => {
     } finally {
       root?.release();
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.NOVA_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.NOVA_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.NOVA_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.NOVA_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -6347,10 +6347,10 @@ describe("gateway plugin hot reload handlers", () => {
   });
 
   it("stops removed channel plugins from broad activation before swapping plugin runtime", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.NOVA_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.NOVA_SKIP_PROVIDERS;
+    delete process.env.NOVA_SKIP_CHANNELS;
+    delete process.env.NOVA_SKIP_PROVIDERS;
     const cron = { start: vi.fn(async () => {}), stop: vi.fn() };
     const heartbeatRunner = {
       stop: vi.fn(),
@@ -6421,14 +6421,14 @@ describe("gateway plugin hot reload handlers", () => {
       );
     } finally {
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.NOVA_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.NOVA_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.NOVA_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.NOVA_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -6449,10 +6449,10 @@ describe("gateway plugin hot reload handlers", () => {
   });
 
   it("stops manually started channels before plugin replacement while autostart is suppressed", async () => {
-    const previousSkipChannels = process.env.OPENCLAW_SKIP_CHANNELS;
-    const previousSkipProviders = process.env.OPENCLAW_SKIP_PROVIDERS;
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    const previousSkipChannels = process.env.NOVA_SKIP_CHANNELS;
+    const previousSkipProviders = process.env.NOVA_SKIP_PROVIDERS;
+    delete process.env.NOVA_SKIP_CHANNELS;
+    delete process.env.NOVA_SKIP_PROVIDERS;
     const cron = { start: vi.fn(async () => {}), stop: vi.fn() };
     const heartbeatRunner = {
       stop: vi.fn(),
@@ -6530,14 +6530,14 @@ describe("gateway plugin hot reload handlers", () => {
       );
     } finally {
       if (previousSkipChannels === undefined) {
-        delete process.env.OPENCLAW_SKIP_CHANNELS;
+        delete process.env.NOVA_SKIP_CHANNELS;
       } else {
-        process.env.OPENCLAW_SKIP_CHANNELS = previousSkipChannels;
+        process.env.NOVA_SKIP_CHANNELS = previousSkipChannels;
       }
       if (previousSkipProviders === undefined) {
-        delete process.env.OPENCLAW_SKIP_PROVIDERS;
+        delete process.env.NOVA_SKIP_PROVIDERS;
       } else {
-        process.env.OPENCLAW_SKIP_PROVIDERS = previousSkipProviders;
+        process.env.NOVA_SKIP_PROVIDERS = previousSkipProviders;
       }
     }
 
@@ -6571,8 +6571,8 @@ describe("deferred channel reload abort generation", () => {
   afterEach(() => {
     hoisted.activeTaskCount.value = 0;
     vi.useRealTimers();
-    delete process.env.OPENCLAW_SKIP_CHANNELS;
-    delete process.env.OPENCLAW_SKIP_PROVIDERS;
+    delete process.env.NOVA_SKIP_CHANNELS;
+    delete process.env.NOVA_SKIP_PROVIDERS;
   });
 
   const createTestHandlers = (

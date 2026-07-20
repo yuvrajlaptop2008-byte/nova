@@ -4,7 +4,7 @@
  * Harness selection uses this factory to expose the embedded Nova runtime
  * through the same AgentHarness contract as external harness plugins.
  */
-import { OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
+import { NOVA_EMBEDDED_CONTEXT_ENGINE_HOST } from "../../context-engine/host-compat.js";
 import { runEmbeddedAttempt } from "../embedded-agent-runner/run/attempt.js";
 import type { AgentHarness } from "./types.js";
 
@@ -13,7 +13,7 @@ export function createOpenClawAgentHarness(): AgentHarness {
   return {
     id: "openclaw",
     label: "Nova embedded agent",
-    contextEngineHostCapabilities: OPENCLAW_EMBEDDED_CONTEXT_ENGINE_HOST.capabilities,
+    contextEngineHostCapabilities: NOVA_EMBEDDED_CONTEXT_ENGINE_HOST.capabilities,
     supports: () => ({ supported: true, priority: 0 }),
     runAttempt: runEmbeddedAttempt,
   };

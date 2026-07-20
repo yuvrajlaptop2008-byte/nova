@@ -1,6 +1,6 @@
-OPENCLAW_PLUGINS_FIXTURE_PID_FILES=()
-OPENCLAW_PLUGINS_FIXTURE_EXIT_TRAP_INSTALLED=0
-OPENCLAW_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION=""
+NOVA_PLUGINS_FIXTURE_PID_FILES=()
+NOVA_PLUGINS_FIXTURE_EXIT_TRAP_INSTALLED=0
+NOVA_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION=""
 
 openclaw_plugins_read_positive_int_env() {
   local name="${1:?missing environment variable name}"
@@ -33,7 +33,7 @@ openclaw_plugins_read_nonnegative_decimal_env() {
 openclaw_plugins_cleanup_fixture_servers() {
   local pid_file
   local pid
-  for pid_file in "${OPENCLAW_PLUGINS_FIXTURE_PID_FILES[@]:-}"; do
+  for pid_file in "${NOVA_PLUGINS_FIXTURE_PID_FILES[@]:-}"; do
     [[ -f "$pid_file" ]] || continue
     pid="$(cat "$pid_file" 2>/dev/null || true)"
     if [[ "$pid" =~ ^[0-9]+$ ]]; then
@@ -62,8 +62,8 @@ openclaw_plugins_stop_fixture_process() {
   local pid="$1"
   local _
   local attempts interval
-  attempts="$(openclaw_plugins_read_positive_int_env OPENCLAW_PLUGINS_FIXTURE_STOP_ATTEMPTS 40)" || return $?
-  interval="$(openclaw_plugins_read_nonnegative_decimal_env OPENCLAW_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS 0.25)" || return $?
+  attempts="$(openclaw_plugins_read_positive_int_env NOVA_PLUGINS_FIXTURE_STOP_ATTEMPTS 40)" || return $?
+  interval="$(openclaw_plugins_read_nonnegative_decimal_env NOVA_PLUGINS_FIXTURE_STOP_INTERVAL_SECONDS 0.25)" || return $?
   if declare -F openclaw_e2e_stop_process >/dev/null 2>&1; then
     openclaw_e2e_stop_process "$pid"
     return
@@ -88,7 +88,7 @@ openclaw_plugins_print_fixture_log() {
   fi
 
   local max_bytes
-  max_bytes="$(openclaw_plugins_read_positive_int_env OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES 65536)" || return $?
+  max_bytes="$(openclaw_plugins_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536)" || return $?
 
   local log_bytes
   log_bytes="$(wc -c <"$log_file" 2>/dev/null || echo 0)"
@@ -105,17 +105,17 @@ openclaw_plugins_print_fixture_log() {
 }
 
 openclaw_plugins_validate_fixture_log_print_bytes() {
-  openclaw_plugins_read_positive_int_env OPENCLAW_DOCKER_E2E_LOG_PRINT_BYTES 65536 >/dev/null
+  openclaw_plugins_read_positive_int_env NOVA_DOCKER_E2E_LOG_PRINT_BYTES 65536 >/dev/null
 }
 
 openclaw_plugins_register_fixture_pid_file() {
   local pid_file="$1"
-  OPENCLAW_PLUGINS_FIXTURE_PID_FILES+=("$pid_file")
+  NOVA_PLUGINS_FIXTURE_PID_FILES+=("$pid_file")
   openclaw_plugins_install_fixture_cleanup_trap
 }
 
 openclaw_plugins_install_fixture_cleanup_trap() {
-  if [[ "${OPENCLAW_PLUGINS_FIXTURE_EXIT_TRAP_INSTALLED:-0}" = "1" ]]; then
+  if [[ "${NOVA_PLUGINS_FIXTURE_EXIT_TRAP_INSTALLED:-0}" = "1" ]]; then
     return
   fi
 
@@ -124,18 +124,18 @@ openclaw_plugins_install_fixture_cleanup_trap() {
   if [[ -n "$existing_trap" && "$existing_trap" != *openclaw_plugins_fixture_exit_trap* ]]; then
     local existing_action="${existing_trap#trap -- }"
     existing_action="${existing_action% EXIT}"
-    eval "OPENCLAW_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION=$existing_action"
+    eval "NOVA_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION=$existing_action"
   fi
 
-  OPENCLAW_PLUGINS_FIXTURE_EXIT_TRAP_INSTALLED=1
+  NOVA_PLUGINS_FIXTURE_EXIT_TRAP_INSTALLED=1
   trap openclaw_plugins_fixture_exit_trap EXIT
 }
 
 openclaw_plugins_fixture_exit_trap() {
   local status="$?"
   openclaw_plugins_cleanup_fixture_servers
-  if [[ -n "${OPENCLAW_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION:-}" ]]; then
-    eval "$OPENCLAW_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION"
+  if [[ -n "${NOVA_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION:-}" ]]; then
+    eval "$NOVA_PLUGINS_FIXTURE_PREVIOUS_EXIT_ACTION"
   fi
   exit "$status"
 }

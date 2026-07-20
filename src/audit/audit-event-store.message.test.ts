@@ -28,7 +28,7 @@ type OutboundMessageAuditTerminal = {
 }[OutboundMessageAuditEventInput["status"]];
 
 function createDatabaseOptions() {
-  return { env: { OPENCLAW_STATE_DIR: makeTempDir(tempDirs, "openclaw-message-audit-") } };
+  return { env: { NOVA_STATE_DIR: makeTempDir(tempDirs, "openclaw-message-audit-") } };
 }
 
 type InboundMessageOverrides = Partial<

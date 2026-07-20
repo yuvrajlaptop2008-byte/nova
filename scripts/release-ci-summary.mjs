@@ -12,7 +12,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { plainGhEnv, resolvePlainGhBin } from "./lib/plain-gh.mjs";
 
-const DEFAULT_REPO = process.env.OPENCLAW_RELEASE_REPO || "openclaw/openclaw";
+const DEFAULT_REPO = process.env.NOVA_RELEASE_REPO || "openclaw/openclaw";
 const RELEASE_EVIDENCE_SCHEMA = "openclaw.release-validation-evidence/v3";
 const SHA_PINNED_BRANCH_PATTERN = /^release-ci\/[a-f0-9]{12}-[1-9][0-9]*$/u;
 const RELEASE_EVIDENCE_SCRIPT = "scripts/release-ci-summary.mjs";

@@ -504,7 +504,7 @@ export async function runReliabilityStress(options: CliOptions): Promise<Reliabi
   const syncedRepository = path.join(runScratch, "synced-snapshots");
   const validationRoot = path.join(runScratch, "snapshot-validation");
   const restoreRoot = path.join(runScratch, "restored");
-  const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+  const env = { ...process.env, NOVA_STATE_DIR: stateDir };
   const started = nowMs();
   let writer: WriterHandle | undefined;
   try {

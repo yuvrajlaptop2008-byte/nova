@@ -43,16 +43,16 @@ export const MEMORY_SEARCH_PROBE_QUERY = "Top-level memory file";
 
 const SKIP_GATEWAY_ENV = {
   NODE_ENV: "test",
-  OPENCLAW_DISABLE_BONJOUR: "1",
-  OPENCLAW_NO_RESPAWN: "1",
-  OPENCLAW_SKIP_ACPX_RUNTIME: "1",
-  OPENCLAW_SKIP_ACPX_RUNTIME_PROBE: "1",
-  OPENCLAW_SKIP_BROWSER_CONTROL_SERVER: "1",
-  OPENCLAW_SKIP_CANVAS_HOST: "1",
-  OPENCLAW_SKIP_CHANNELS: "1",
-  OPENCLAW_SKIP_CRON: "1",
-  OPENCLAW_SKIP_GMAIL_WATCHER: "1",
-  OPENCLAW_SKIP_PROVIDERS: "1",
+  NOVA_DISABLE_BONJOUR: "1",
+  NOVA_NO_RESPAWN: "1",
+  NOVA_SKIP_ACPX_RUNTIME: "1",
+  NOVA_SKIP_ACPX_RUNTIME_PROBE: "1",
+  NOVA_SKIP_BROWSER_CONTROL_SERVER: "1",
+  NOVA_SKIP_CANVAS_HOST: "1",
+  NOVA_SKIP_CHANNELS: "1",
+  NOVA_SKIP_CRON: "1",
+  NOVA_SKIP_GMAIL_WATCHER: "1",
+  NOVA_SKIP_PROVIDERS: "1",
 };
 
 function usage() {
@@ -69,7 +69,7 @@ Options:
   --sample-delay-ms <n>          First post-invoke FD sample delay. Default: 1000.
   --settle-delay-ms <n>          Final FD sample delay after invoke settles. Default: 5000.
   --output-dir <path>            Artifact directory. Default: .artifacts/memory-fd-repro/<timestamp>.
-  --keep                         Keep the synthetic OPENCLAW_HOME and workspace after the run.
+  --keep                         Keep the synthetic NOVA_HOME and workspace after the run.
   --allow-non-darwin             Run on non-macOS platforms. lsof REG counts are most meaningful on macOS.
   --help                         Show this help.
 `.trim();
@@ -161,15 +161,15 @@ export function parseArgs(argv) {
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const options = {
     fileCount: undefined,
-    mode: process.env.OPENCLAW_MEMORY_FD_REPRO_MODE || "fixed",
+    mode: process.env.NOVA_MEMORY_FD_REPRO_MODE || "fixed",
     maxWorkspaceRegFds: undefined,
     minLeakedFds: undefined,
     invokeTimeoutMs: undefined,
     sampleDelayMs: undefined,
     settleDelayMs: undefined,
     outputDir: path.resolve(".artifacts", "memory-fd-repro", stamp),
-    keep: process.env.OPENCLAW_MEMORY_FD_REPRO_KEEP === "1",
-    allowNonDarwin: process.env.OPENCLAW_MEMORY_FD_REPRO_ALLOW_NON_DARWIN === "1",
+    keep: process.env.NOVA_MEMORY_FD_REPRO_KEEP === "1",
+    allowNonDarwin: process.env.NOVA_MEMORY_FD_REPRO_ALLOW_NON_DARWIN === "1",
   };
 
   parseArgv: for (let i = 0; i < args.length; i += 1) {
@@ -236,22 +236,19 @@ export function parseArgs(argv) {
   if (!["fixed", "leak", "report"].includes(options.mode)) {
     throw new Error('--mode must be "fixed", "leak", or "report"');
   }
-  options.fileCount ??= readPositiveNumberEnv("OPENCLAW_MEMORY_FD_REPRO_FILES", DEFAULT_FILE_COUNT);
+  options.fileCount ??= readPositiveNumberEnv("NOVA_MEMORY_FD_REPRO_FILES", DEFAULT_FILE_COUNT);
   options.maxWorkspaceRegFds ??= readNumberEnv(
-    "OPENCLAW_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS",
+    "NOVA_MEMORY_FD_REPRO_MAX_WORKSPACE_REG_FDS",
     DEFAULT_MAX_WORKSPACE_REG_FDS,
   );
-  options.invokeTimeoutMs ??= readTimerTimeoutNumberEnv(
-    "OPENCLAW_MEMORY_FD_REPRO_TIMEOUT_MS",
-    30_000,
-  );
+  options.invokeTimeoutMs ??= readTimerTimeoutNumberEnv("NOVA_MEMORY_FD_REPRO_TIMEOUT_MS", 30_000);
   options.sampleDelayMs ??= readTimerTimeoutNumberEnv(
-    "OPENCLAW_MEMORY_FD_REPRO_SAMPLE_DELAY_MS",
+    "NOVA_MEMORY_FD_REPRO_SAMPLE_DELAY_MS",
     1_000,
     0,
   );
   options.settleDelayMs ??= readTimerTimeoutNumberEnv(
-    "OPENCLAW_MEMORY_FD_REPRO_SETTLE_DELAY_MS",
+    "NOVA_MEMORY_FD_REPRO_SETTLE_DELAY_MS",
     5_000,
     0,
   );
@@ -797,9 +794,9 @@ async function main() {
     ...process.env,
     ...SKIP_GATEWAY_ENV,
     HOME: homeDir,
-    OPENCLAW_STATE_DIR: path.join(homeDir, ".openclaw"),
-    OPENCLAW_CONFIG_PATH: configPath,
-    OPENCLAW_GATEWAY_TOKEN: token,
+    NOVA_STATE_DIR: path.join(homeDir, ".openclaw"),
+    NOVA_CONFIG_PATH: configPath,
+    NOVA_GATEWAY_TOKEN: token,
   };
   let child;
 

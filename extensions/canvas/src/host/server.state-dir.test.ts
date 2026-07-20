@@ -12,7 +12,7 @@ describe("canvas host state dir defaults", () => {
     ({ createCanvasHostHandler } = await import("./server.js"));
   });
 
-  it("uses OPENCLAW_STATE_DIR for the default canvas root", async () => {
+  it("uses NOVA_STATE_DIR for the default canvas root", async () => {
     await withStateDirEnv("openclaw-canvas-state-", async ({ stateDir }) => {
       const handler = await createCanvasHostHandler({
         runtime: defaultRuntime,

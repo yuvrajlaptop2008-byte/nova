@@ -1085,9 +1085,9 @@ describe("loadOpenClawPlugins", () => {
 
     const registry = withEnv(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(repoRoot, "extensions"),
-        OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: path.join(repoRoot, "extensions"),
+        NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+        NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
         loadOpenClawPlugins({
@@ -1156,9 +1156,9 @@ describe("loadOpenClawPlugins", () => {
 
     const registry = withEnv(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(repoRoot, "extensions"),
-        OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: path.join(repoRoot, "extensions"),
+        NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+        NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () =>
         loadOpenClawPlugins({
@@ -1258,9 +1258,9 @@ describe("loadOpenClawPlugins", () => {
     };
     const registry = withEnv(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(repoRoot, "dist", "extensions"),
-        OPENCLAW_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: path.join(repoRoot, "dist", "extensions"),
+        NOVA_TEST_TRUST_BUNDLED_PLUGINS_DIR: "1",
+        NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
       () => {
         const manifestRegistry = loadPluginManifestRegistry({ config });

@@ -22,8 +22,8 @@ export async function withAcpManagerTaskStateDir(
   run: (root: string) => Promise<void>,
 ): Promise<void> {
   await withTempDir({ prefix: "openclaw-acp-manager-task-" }, async (root) => {
-    const envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
-    setTestEnvValue("OPENCLAW_STATE_DIR", root);
+    const envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
+    setTestEnvValue("NOVA_STATE_DIR", root);
     resetAcpManagerTaskStateForTests();
     installInMemoryTaskRegistryRuntime();
     configureTaskFlowRegistryRuntime({

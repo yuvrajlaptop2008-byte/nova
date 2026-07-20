@@ -897,7 +897,7 @@ describe("chrome.ts internal", () => {
           },
         }),
       );
-      vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+      vi.stubEnv("NOVA_CONFIG_PATH", configPath);
       let cdpReachable = false;
       const originalFetch = globalThis.fetch;
       vi.stubGlobal(
@@ -1696,7 +1696,7 @@ describe("chrome.ts internal", () => {
     });
 
     it("falls back to the default color when profile.color is undefined", async () => {
-      // Covers the `profile.color ?? DEFAULT_OPENCLAW_BROWSER_COLOR` coalescing.
+      // Covers the `profile.color ?? DEFAULT_NOVA_BROWSER_COLOR` coalescing.
       vi.spyOn(fs, "existsSync").mockImplementation((p) => {
         const s = String(p);
         if (
@@ -1741,7 +1741,7 @@ describe("chrome.ts internal", () => {
       const configDir = await fsp.mkdtemp(path.join(os.tmpdir(), "openclaw-redact-off-"));
       const configPath = path.join(configDir, "openclaw.json");
       await fsp.writeFile(configPath, JSON.stringify({ logging: { redactSensitive: "off" } }));
-      vi.stubEnv("OPENCLAW_CONFIG_PATH", configPath);
+      vi.stubEnv("NOVA_CONFIG_PATH", configPath);
       const executablePath = path.join(configDir, "chrome-stderr-existing");
       await fsp.writeFile(executablePath, "");
       vi.spyOn(fs, "existsSync").mockImplementation((p) => {

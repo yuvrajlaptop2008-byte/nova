@@ -42,12 +42,12 @@ import {
 } from "./openclaw-quarantine-store.js";
 import {
   createOpenClawDatabaseVerificationError,
-  OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+  NOVA_SQLITE_BUSY_TIMEOUT_MS,
   type OpenClawStateDatabaseOptions,
 } from "./openclaw-state-db.js";
 
 export {
-  OPENCLAW_AGENT_SCHEMA_VERSION,
+  NOVA_AGENT_SCHEMA_VERSION,
   type OpenClawAgentDatabase,
   type OpenClawAgentDatabaseOptions,
   type OpenClawAgentDatabaseOwnerInspection,
@@ -69,10 +69,10 @@ export { resolveOpenClawAgentSqlitePath } from "./openclaw-agent-db.paths.js";
  * per pathname, protected with private file modes, and registered in the shared
  * Nova state database for discovery and maintenance.
  */
-const OPENCLAW_AGENT_DB_SLOW_OPEN_MS = 1_000;
+const NOVA_AGENT_DB_SLOW_OPEN_MS = 1_000;
 // Each WAL database consumes roughly three file descriptors, so the fixed cap
 // satisfies the bounded-cache policy within a predictable FD budget, without config.
-export const OPENCLAW_AGENT_DB_OPEN_HANDLE_CAP = 64;
+export const NOVA_AGENT_DB_OPEN_HANDLE_CAP = 64;
 const agentDbLog = createSubsystemLogger("state/agent-db");
 const cachedDatabases = new Map<string, OpenClawAgentDatabase>();
 // External schema changes under a live process are unsupported: doctor migrations
@@ -109,14 +109,14 @@ function logSlowAgentDatabaseOpen(params: {
   elapsedMs: number;
   path: string;
 }): void {
-  if (params.elapsedMs < OPENCLAW_AGENT_DB_SLOW_OPEN_MS) {
+  if (params.elapsedMs < NOVA_AGENT_DB_SLOW_OPEN_MS) {
     return;
   }
   agentDbLog.warn("slow Nova agent database open", {
     agentId: params.agentId,
     elapsedMs: params.elapsedMs,
     path: params.path,
-    thresholdMs: OPENCLAW_AGENT_DB_SLOW_OPEN_MS,
+    thresholdMs: NOVA_AGENT_DB_SLOW_OPEN_MS,
   });
 }
 
@@ -128,7 +128,7 @@ export function inspectOpenClawAgentDatabaseOwner(
   let db: DatabaseSync | undefined;
   try {
     db = new sqlite.DatabaseSync(pathname, { readOnly: true });
-    db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+    db.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
     assertSupportedAgentSchemaVersion(db, pathname);
     const existing = readExistingAgentSchemaMeta(db);
     if (!existing) {
@@ -208,7 +208,7 @@ export function openOpenClawAgentDatabase(
   const walMaintenance = (() => {
     let maintenance: OpenClawAgentDatabase["walMaintenance"] | undefined;
     try {
-      db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
+      db.exec(`PRAGMA busy_timeout = ${NOVA_SQLITE_BUSY_TIMEOUT_MS};`);
       if (!isValidatedReopen) {
         assertSupportedAgentSchemaVersion(db, pathname);
         assertExistingAgentSchemaOwner(readExistingAgentSchemaMeta(db), agentId, pathname);
@@ -217,10 +217,10 @@ export function openOpenClawAgentDatabase(
       // This guard is read-only (no busy waits), so every physical open pays it.
       assertAgentDatabaseIntegrityBeforeMutation(db, pathname);
       configureSqlitePreSchemaPragmas(db, {
-        busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+        busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
       });
       maintenance = configureSqliteConnectionPragmas(db, {
-        busyTimeoutMs: OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+        busyTimeoutMs: NOVA_SQLITE_BUSY_TIMEOUT_MS,
         databaseLabel: `openclaw-agent:${agentId}`,
         databasePath: pathname,
         foreignKeys: true,
@@ -313,7 +313,7 @@ export function runOpenClawAgentWriteTransaction<T>(
         return operationResult;
       },
       {
-        busyTimeoutMs: transactionOptions.busyTimeoutMs ?? OPENCLAW_SQLITE_BUSY_TIMEOUT_MS,
+        busyTimeoutMs: transactionOptions.busyTimeoutMs ?? NOVA_SQLITE_BUSY_TIMEOUT_MS,
         databaseLabel: database.path,
         ...transactionOptions,
         operationLabel: transactionOptions.operationLabel ?? "agent.write",
@@ -354,7 +354,7 @@ function evictLruAgentDatabaseHandles(): void {
   // Callers re-fetch handles from this cache at each operation entry and use
   // them within one synchronous section, so eviction can never close a handle
   // mid-use; a handle retained across an eviction-triggering open goes stale.
-  while (cachedDatabases.size >= OPENCLAW_AGENT_DB_OPEN_HANDLE_CAP) {
+  while (cachedDatabases.size >= NOVA_AGENT_DB_OPEN_HANDLE_CAP) {
     let evicted = false;
     for (const [pathname, database] of cachedDatabases) {
       // A synchronous transaction owns its handle through COMMIT or ROLLBACK;
@@ -381,7 +381,7 @@ function evictLruAgentDatabaseHandles(): void {
       agentDbLog.warn(
         "agent database handle cap exceeded; all cached handles are in transactions",
         {
-          cap: OPENCLAW_AGENT_DB_OPEN_HANDLE_CAP,
+          cap: NOVA_AGENT_DB_OPEN_HANDLE_CAP,
           openHandles: cachedDatabases.size,
         },
       );

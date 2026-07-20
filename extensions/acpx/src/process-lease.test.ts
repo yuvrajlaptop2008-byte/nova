@@ -10,14 +10,14 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   createAcpxProcessLeaseStore,
   openAcpxProcessLeaseStateStore,
-  OPENCLAW_ACPX_LEASE_ID_ARG,
-  OPENCLAW_ACPX_LEASE_ID_ENV,
-  OPENCLAW_GATEWAY_INSTANCE_ID_ARG,
+  NOVA_ACPX_LEASE_ID_ARG,
+  NOVA_ACPX_LEASE_ID_ENV,
+  NOVA_GATEWAY_INSTANCE_ID_ARG,
   withAcpxLeaseEnvironment,
   type AcpxProcessLease,
 } from "./process-lease.js";
 
-const OPENCLAW_GATEWAY_INSTANCE_ID_ENV = "OPENCLAW_GATEWAY_INSTANCE_ID";
+const NOVA_GATEWAY_INSTANCE_ID_ENV = "NOVA_GATEWAY_INSTANCE_ID";
 
 function makeLease(index: number): AcpxProcessLease {
   return {
@@ -40,7 +40,7 @@ describe("createAcpxProcessLeaseStore", () => {
   beforeEach(async () => {
     resetPluginStateStoreForTests();
     stateDir = await mkdtemp(path.join(tmpdir(), "openclaw-acpx-leases-"));
-    env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+    env = { ...process.env, NOVA_STATE_DIR: stateDir };
   });
 
   afterEach(async () => {
@@ -91,12 +91,12 @@ describe("withAcpxLeaseEnvironment", () => {
     expect(command).toBe(
       [
         "env",
-        `${OPENCLAW_ACPX_LEASE_ID_ENV}=lease-test`,
-        `${OPENCLAW_GATEWAY_INSTANCE_ID_ENV}=gateway-test`,
+        `${NOVA_ACPX_LEASE_ID_ENV}=lease-test`,
+        `${NOVA_GATEWAY_INSTANCE_ID_ENV}=gateway-test`,
         "node /tmp/openclaw/acpx/codex-acp-wrapper.mjs",
-        OPENCLAW_ACPX_LEASE_ID_ARG,
+        NOVA_ACPX_LEASE_ID_ARG,
         "lease-test",
-        OPENCLAW_GATEWAY_INSTANCE_ID_ARG,
+        NOVA_GATEWAY_INSTANCE_ID_ARG,
         "gateway-test",
       ].join(" "),
     );
@@ -113,13 +113,13 @@ describe("withAcpxLeaseEnvironment", () => {
     expect(command).toBe(
       [
         "node C:/openclaw/acpx/codex-acp-wrapper.mjs",
-        OPENCLAW_ACPX_LEASE_ID_ARG,
+        NOVA_ACPX_LEASE_ID_ARG,
         "lease-test",
-        OPENCLAW_GATEWAY_INSTANCE_ID_ARG,
+        NOVA_GATEWAY_INSTANCE_ID_ARG,
         "gateway-test",
       ].join(" "),
     );
-    expect(command).not.toContain(`${OPENCLAW_ACPX_LEASE_ID_ENV}=`);
-    expect(command).not.toContain(`${OPENCLAW_GATEWAY_INSTANCE_ID_ENV}=`);
+    expect(command).not.toContain(`${NOVA_ACPX_LEASE_ID_ENV}=`);
+    expect(command).not.toContain(`${NOVA_GATEWAY_INSTANCE_ID_ENV}=`);
   });
 });

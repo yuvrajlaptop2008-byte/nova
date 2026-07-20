@@ -108,13 +108,13 @@ describe("resolveVapidKeys", () => {
       "mailto:env@test.com",
     );
     const envSnapshot = captureEnv([
-      "OPENCLAW_VAPID_PUBLIC_KEY",
-      "OPENCLAW_VAPID_PRIVATE_KEY",
-      "OPENCLAW_VAPID_SUBJECT",
+      "NOVA_VAPID_PUBLIC_KEY",
+      "NOVA_VAPID_PRIVATE_KEY",
+      "NOVA_VAPID_SUBJECT",
     ]);
-    setTestEnvValue("OPENCLAW_VAPID_PUBLIC_KEY", `  ${environmentKeys.publicKey}  `);
-    setTestEnvValue("OPENCLAW_VAPID_PRIVATE_KEY", `  ${environmentKeys.privateKey}  `);
-    setTestEnvValue("OPENCLAW_VAPID_SUBJECT", `  ${environmentKeys.subject}  `);
+    setTestEnvValue("NOVA_VAPID_PUBLIC_KEY", `  ${environmentKeys.publicKey}  `);
+    setTestEnvValue("NOVA_VAPID_PRIVATE_KEY", `  ${environmentKeys.privateKey}  `);
+    setTestEnvValue("NOVA_VAPID_SUBJECT", `  ${environmentKeys.subject}  `);
     try {
       await expect(resolveVapidKeys(tmpDir)).resolves.toEqual(environmentKeys);
       expect(readPersistedVapidKeyPair(tmpDir)).toBeNull();
@@ -126,13 +126,13 @@ describe("resolveVapidKeys", () => {
 
   it("treats blank environment values as unset", async () => {
     const envSnapshot = captureEnv([
-      "OPENCLAW_VAPID_PUBLIC_KEY",
-      "OPENCLAW_VAPID_PRIVATE_KEY",
-      "OPENCLAW_VAPID_SUBJECT",
+      "NOVA_VAPID_PUBLIC_KEY",
+      "NOVA_VAPID_PRIVATE_KEY",
+      "NOVA_VAPID_SUBJECT",
     ]);
-    setTestEnvValue("OPENCLAW_VAPID_PUBLIC_KEY", "   ");
-    setTestEnvValue("OPENCLAW_VAPID_PRIVATE_KEY", "   ");
-    setTestEnvValue("OPENCLAW_VAPID_SUBJECT", "   ");
+    setTestEnvValue("NOVA_VAPID_PUBLIC_KEY", "   ");
+    setTestEnvValue("NOVA_VAPID_PRIVATE_KEY", "   ");
+    setTestEnvValue("NOVA_VAPID_SUBJECT", "   ");
     try {
       const keys = await resolveVapidKeys(tmpDir);
       expect(keys).toEqual(
@@ -151,7 +151,7 @@ describe("resolveVapidKeys", () => {
 
   it("applies the current subject to a persisted identity", async () => {
     const initial = await resolveVapidKeys(tmpDir);
-    process.env.OPENCLAW_VAPID_SUBJECT = "mailto:changed@test.com";
+    process.env.NOVA_VAPID_SUBJECT = "mailto:changed@test.com";
     try {
       await expect(resolveVapidKeys(tmpDir)).resolves.toEqual({
         ...initial,
@@ -159,7 +159,7 @@ describe("resolveVapidKeys", () => {
       });
       expect(readPersistedVapidKeyPair(tmpDir)?.subject).toBe("https://openclaw.ai");
     } finally {
-      delete process.env.OPENCLAW_VAPID_SUBJECT;
+      delete process.env.NOVA_VAPID_SUBJECT;
     }
   });
 });

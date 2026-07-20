@@ -28,9 +28,7 @@ vi.mock("../process/supervisor/index.js", () => ({
 }));
 
 const isWin = process.platform === "win32";
-const defaultShell = isWin
-  ? undefined
-  : process.env.OPENCLAW_TEST_SHELL || getBashShellConfig().shell;
+const defaultShell = isWin ? undefined : process.env.NOVA_TEST_SHELL || getBashShellConfig().shell;
 const tempDirs = createTempDirTracker();
 
 function requireTextContent(

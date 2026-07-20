@@ -361,7 +361,7 @@ async function drainCommitmentExtractionQueue(): Promise<number> {
 if (
   process.env.VITEST ||
   process.env.NODE_ENV === "test" ||
-  process.env.OPENCLAW_COMMITMENTS_SAFETY_E2E === "1"
+  process.env.NOVA_COMMITMENTS_SAFETY_E2E === "1"
 ) {
   (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.commitmentRuntimeTestApi")] = {
     configureCommitmentExtractionRuntime,

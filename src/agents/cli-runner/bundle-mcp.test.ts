@@ -280,8 +280,8 @@ describe("prepareCliBundleMcpConfig", () => {
           type: "http",
           url: "http://127.0.0.1:23119/mcp",
           headers: {
-            Authorization: "Bearer ${OPENCLAW_MCP_TOKEN}",
-            "x-openclaw-cli-capture-key": "${OPENCLAW_MCP_CLI_CAPTURE_KEY}",
+            Authorization: "Bearer ${NOVA_MCP_TOKEN}",
+            "x-openclaw-cli-capture-key": "${NOVA_MCP_CLI_CAPTURE_KEY}",
           },
         },
       },
@@ -289,15 +289,15 @@ describe("prepareCliBundleMcpConfig", () => {
     const prepared = await prepareBundleProbeCliConfig({
       additionalConfig,
       env: {
-        OPENCLAW_MCP_TOKEN: "lb-tk-123",
-        OPENCLAW_MCP_CLI_CAPTURE_KEY: "",
+        NOVA_MCP_TOKEN: "lb-tk-123",
+        NOVA_MCP_CLI_CAPTURE_KEY: "",
       },
     });
     const otherEnvPrepared = await prepareBundleProbeCliConfig({
       additionalConfig,
       env: {
-        OPENCLAW_MCP_TOKEN: "other-loopback-token",
-        OPENCLAW_MCP_CLI_CAPTURE_KEY: "",
+        NOVA_MCP_TOKEN: "other-loopback-token",
+        NOVA_MCP_CLI_CAPTURE_KEY: "",
       },
     });
 
@@ -344,14 +344,14 @@ describe("prepareCliBundleMcpConfig", () => {
       workspaceDir,
       config: { plugins: { enabled: false } },
       env: {
-        OPENCLAW_MCP_TOKEN: "lb-tk-123",
-        OPENCLAW_MCP_SESSION_KEY: "agent:main:telegram:group:chat123",
+        NOVA_MCP_TOKEN: "lb-tk-123",
+        NOVA_MCP_SESSION_KEY: "agent:main:telegram:group:chat123",
       },
     });
 
     expect(prepared.env).toEqual({
-      OPENCLAW_MCP_TOKEN: "lb-tk-123",
-      OPENCLAW_MCP_SESSION_KEY: "agent:main:telegram:group:chat123",
+      NOVA_MCP_TOKEN: "lb-tk-123",
+      NOVA_MCP_SESSION_KEY: "agent:main:telegram:group:chat123",
     });
 
     await prepared.cleanup?.();

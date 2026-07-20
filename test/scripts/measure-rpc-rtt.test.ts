@@ -339,9 +339,9 @@ describe("scripts/measure-rpc-rtt.mjs", () => {
         detached: process.platform !== "win32",
         env: expect.objectContaining({
           HOME: path.join(tempRoot, "home"),
-          OPENCLAW_CONFIG_PATH: "/tmp/openclaw.json",
-          OPENCLAW_GATEWAY_TOKEN: "secret-token",
-          OPENCLAW_STATE_DIR: path.join(tempRoot, "state"),
+          NOVA_CONFIG_PATH: "/tmp/openclaw.json",
+          NOVA_GATEWAY_TOKEN: "secret-token",
+          NOVA_STATE_DIR: path.join(tempRoot, "state"),
           PATH: "/bin",
         }),
         stdio: ["ignore", 41, 42],

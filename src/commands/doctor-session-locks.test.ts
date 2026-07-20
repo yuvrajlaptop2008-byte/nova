@@ -271,7 +271,7 @@ describe("noteSessionLockHealth", () => {
 
     await noteSessionLockHealth({
       shouldRepair: true,
-      env: { OPENCLAW_SESSION_WRITE_LOCK_STALE_MS: "30000" },
+      env: { NOVA_SESSION_WRITE_LOCK_STALE_MS: "30000" },
       readOwnerProcessArgs: () => ["node", "/opt/openclaw/openclaw.mjs", "doctor"],
     });
 

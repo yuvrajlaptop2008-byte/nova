@@ -17,7 +17,7 @@ function validationOk(raw: unknown) {
 const mockReadSourceConfigSnapshot = vi.hoisted(() => async () => {
   const fsValue = await import("node:fs/promises");
   const pathValue = await import("node:path");
-  const configPath = pathValue.join(process.env.OPENCLAW_STATE_DIR ?? "", "openclaw.json");
+  const configPath = pathValue.join(process.env.NOVA_STATE_DIR ?? "", "openclaw.json");
   try {
     const raw = await fsValue.readFile(configPath, "utf-8");
     const parsed = JSON.parse(raw);
@@ -39,7 +39,7 @@ const mockReadSourceConfigSnapshot = vi.hoisted(() => async () => {
 const mockReplaceConfigFile = vi.hoisted(() => async ({ nextConfig }: { nextConfig: unknown }) => {
   const fsLocal = await import("node:fs/promises");
   const pathLocal = await import("node:path");
-  const configPath = pathLocal.join(process.env.OPENCLAW_STATE_DIR ?? "", "openclaw.json");
+  const configPath = pathLocal.join(process.env.NOVA_STATE_DIR ?? "", "openclaw.json");
   await fsLocal.writeFile(configPath, JSON.stringify(nextConfig, null, 2), "utf-8");
 });
 
@@ -71,9 +71,9 @@ async function withMcpConfigHome<T>(
       prefix: "openclaw-mcp-config-",
       skipSessionCleanup: true,
       env: {
-        OPENCLAW_CONFIG_PATH: undefined,
-        OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-        OPENCLAW_DISABLE_BUNDLED_PLUGINS: undefined,
+        NOVA_CONFIG_PATH: undefined,
+        NOVA_BUNDLED_PLUGINS_DIR: undefined,
+        NOVA_DISABLE_BUNDLED_PLUGINS: undefined,
       },
     },
   );

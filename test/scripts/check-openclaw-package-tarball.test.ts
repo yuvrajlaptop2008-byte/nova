@@ -156,7 +156,7 @@ describe("check-openclaw-package-tarball", () => {
             "const args = process.argv.slice(2);",
             "if (args[0] === '-tf') { console.log('package/package.json'); process.exit(0); }",
             "const outputDir = args[args.indexOf('-C') + 1];",
-            "fs.writeFileSync(process.env.OPENCLAW_TEST_EXTRACT_DIR_FILE, outputDir);",
+            "fs.writeFileSync(process.env.NOVA_TEST_EXTRACT_DIR_FILE, outputDir);",
             "console.error('extract denied');",
             "process.exit(7);",
           ].join("\n"),
@@ -169,7 +169,7 @@ describe("check-openclaw-package-tarball", () => {
           encoding: "utf8",
           env: {
             ...process.env,
-            OPENCLAW_TEST_EXTRACT_DIR_FILE: extractDirFile,
+            NOVA_TEST_EXTRACT_DIR_FILE: extractDirFile,
             PATH: `${fakeBin}${delimiter}${process.env.PATH ?? ""}`,
           },
         });

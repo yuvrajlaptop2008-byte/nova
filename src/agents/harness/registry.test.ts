@@ -13,7 +13,7 @@ import {
 import { selectAgentHarness } from "./selection.js";
 import type { AgentHarness } from "./types.js";
 
-const originalRuntime = process.env.OPENCLAW_AGENT_RUNTIME;
+const originalRuntime = process.env.NOVA_AGENT_RUNTIME;
 
 beforeEach(() => {
   clearAgentHarnesses();
@@ -22,9 +22,9 @@ beforeEach(() => {
 afterEach(() => {
   clearAgentHarnesses();
   if (originalRuntime == null) {
-    delete process.env.OPENCLAW_AGENT_RUNTIME;
+    delete process.env.NOVA_AGENT_RUNTIME;
   } else {
-    process.env.OPENCLAW_AGENT_RUNTIME = originalRuntime;
+    process.env.NOVA_AGENT_RUNTIME = originalRuntime;
   }
 });
 
@@ -128,7 +128,7 @@ describe("agent harness registry", () => {
   it("keeps model-specific harnesses behind plugin registration in auto mode", () => {
     // Auto mode should not select a model-specific runtime until the owning
     // plugin has registered its harness in this process.
-    process.env.OPENCLAW_AGENT_RUNTIME = "auto";
+    process.env.NOVA_AGENT_RUNTIME = "auto";
 
     expect(selectAgentHarness({ provider: "plugin-models", modelId: "custom-1" }).id).toBe(
       "openclaw",
@@ -144,7 +144,7 @@ describe("agent harness registry", () => {
   });
 
   it("falls back to Nova for other models", () => {
-    process.env.OPENCLAW_AGENT_RUNTIME = "auto";
+    process.env.NOVA_AGENT_RUNTIME = "auto";
 
     expect(selectAgentHarness({ provider: "anthropic", modelId: "sonnet-4.6" }).id).toBe(
       "openclaw",
@@ -152,7 +152,7 @@ describe("agent harness registry", () => {
   });
 
   it("lets a plugin harness win in auto mode by priority", () => {
-    process.env.OPENCLAW_AGENT_RUNTIME = "auto";
+    process.env.NOVA_AGENT_RUNTIME = "auto";
     registerAgentHarness(makeHarness("plugin-harness", { priority: 200 }), {
       ownerPluginId: "plugin-a",
     });

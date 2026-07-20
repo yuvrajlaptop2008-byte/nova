@@ -305,8 +305,7 @@ function loadConfiguredAgentAuthStores(
     activeAgentDirs.add(agentDir);
     addExpectedAgentDir(agentDir, agentId);
   }
-  const envAgentDir =
-    env.OPENCLAW_AGENT_DIR?.trim() || env.PI_CODING_AGENT_DIR?.trim() || undefined;
+  const envAgentDir = env.NOVA_AGENT_DIR?.trim() || env.PI_CODING_AGENT_DIR?.trim() || undefined;
   if (envAgentDir) {
     const agentDir = path.resolve(resolveUserPath(envAgentDir, env));
     activeAgentDirs.add(agentDir);

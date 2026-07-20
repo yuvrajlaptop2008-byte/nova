@@ -51,7 +51,7 @@ function createRuntimeStub(stateDir?: string): PluginRuntime {
       openKeyedStore: (options: OpenKeyedStoreOptions) =>
         createPluginStateKeyedStoreForTests("msteams", options),
       resolveStateDir: (env?: NodeJS.ProcessEnv) => {
-        const override = env?.OPENCLAW_STATE_DIR?.trim();
+        const override = env?.NOVA_STATE_DIR?.trim();
         if (override) {
           return override;
         }
@@ -335,9 +335,9 @@ describe("msteams file consent invoke FS fallback", () => {
   let originalStateDir: string | undefined;
 
   beforeEach(async () => {
-    originalStateDir = process.env.OPENCLAW_STATE_DIR;
+    originalStateDir = process.env.NOVA_STATE_DIR;
     tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "openclaw-msteams-invoke-"));
-    process.env.OPENCLAW_STATE_DIR = tmpDir;
+    process.env.NOVA_STATE_DIR = tmpDir;
     setMSTeamsRuntime(createRuntimeStub(tmpDir));
     vi.clearAllMocks();
     fileConsentMockState.uploadToConsentUrl.mockReset();
@@ -346,9 +346,9 @@ describe("msteams file consent invoke FS fallback", () => {
 
   afterEach(async () => {
     if (originalStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.NOVA_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = originalStateDir;
+      process.env.NOVA_STATE_DIR = originalStateDir;
     }
     try {
       await fs.promises.rm(tmpDir, { recursive: true, force: true });

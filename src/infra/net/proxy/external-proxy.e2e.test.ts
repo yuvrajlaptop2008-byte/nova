@@ -446,23 +446,23 @@ describe("SSRF external proxy routing", () => {
           throw new Error("expected external proxy routing to start");
         }
         try {
-          const response = await undiciFetch(process.env.OPENCLAW_TEST_TARGET_URL, {
+          const response = await undiciFetch(process.env.NOVA_TEST_TARGET_URL, {
             signal: AbortSignal.timeout(${PROBE_TIMEOUT_MS}),
           });
           const body = await response.text();
-          const globalFetchResponse = await fetch(process.env.OPENCLAW_TEST_GLOBAL_FETCH_TARGET_URL, {
+          const globalFetchResponse = await fetch(process.env.NOVA_TEST_GLOBAL_FETCH_TARGET_URL, {
             signal: AbortSignal.timeout(${PROBE_TIMEOUT_MS}),
           });
           const globalFetchBody = await globalFetchResponse.text();
-          const nodeHttp = await nodeHttpGet(process.env.OPENCLAW_TEST_NODE_HTTP_TARGET_URL);
-          const explicitAgent = await nodeHttpGet(process.env.OPENCLAW_TEST_EXPLICIT_AGENT_TARGET_URL, {
+          const nodeHttp = await nodeHttpGet(process.env.NOVA_TEST_NODE_HTTP_TARGET_URL);
+          const explicitAgent = await nodeHttpGet(process.env.NOVA_TEST_EXPLICIT_AGENT_TARGET_URL, {
             agent: new http.Agent(),
           });
           await expectFailure("node:https", () =>
-            nodeHttpsProbe(process.env.OPENCLAW_TEST_NODE_HTTPS_TARGET_URL),
+            nodeHttpsProbe(process.env.NOVA_TEST_NODE_HTTPS_TARGET_URL),
           );
-          await websocketProbe(process.env.OPENCLAW_TEST_WS_TARGET_URL);
-          await gatewayLoopbackBypassProbe(process.env.OPENCLAW_TEST_GATEWAY_BYPASS_WS_URL);
+          await websocketProbe(process.env.NOVA_TEST_WS_TARGET_URL);
+          await gatewayLoopbackBypassProbe(process.env.NOVA_TEST_GATEWAY_BYPASS_WS_URL);
           await expectFailure("non-loopback bypass", () =>
             gatewayLoopbackBypassProbe("wss://gateway.example.com/socket"),
           );
@@ -478,14 +478,14 @@ describe("SSRF external proxy routing", () => {
       `,
       {
         ...process.env,
-        OPENCLAW_PROXY_URL: `http://127.0.0.1:${proxyPort}`,
-        OPENCLAW_TEST_TARGET_URL: `http://127.0.0.1:${targetPort}/private-metadata`,
-        OPENCLAW_TEST_GLOBAL_FETCH_TARGET_URL: `http://127.0.0.1:${globalFetchTargetPort}/global-fetch-metadata`,
-        OPENCLAW_TEST_NODE_HTTP_TARGET_URL: `http://127.0.0.1:${targetPort}/node-http-metadata`,
-        OPENCLAW_TEST_EXPLICIT_AGENT_TARGET_URL: `http://127.0.0.1:${targetPort}/explicit-agent`,
-        OPENCLAW_TEST_NODE_HTTPS_TARGET_URL: `https://127.0.0.1:${httpsLikeTargetPort}/https-connect-proof`,
-        OPENCLAW_TEST_WS_TARGET_URL: `ws://127.0.0.1:${wsTargetPort}/websocket-proxied`,
-        OPENCLAW_TEST_GATEWAY_BYPASS_WS_URL: `ws://127.0.0.1:${gatewayBypassWsTargetPort}/gateway-bypass`,
+        NOVA_PROXY_URL: `http://127.0.0.1:${proxyPort}`,
+        NOVA_TEST_TARGET_URL: `http://127.0.0.1:${targetPort}/private-metadata`,
+        NOVA_TEST_GLOBAL_FETCH_TARGET_URL: `http://127.0.0.1:${globalFetchTargetPort}/global-fetch-metadata`,
+        NOVA_TEST_NODE_HTTP_TARGET_URL: `http://127.0.0.1:${targetPort}/node-http-metadata`,
+        NOVA_TEST_EXPLICIT_AGENT_TARGET_URL: `http://127.0.0.1:${targetPort}/explicit-agent`,
+        NOVA_TEST_NODE_HTTPS_TARGET_URL: `https://127.0.0.1:${httpsLikeTargetPort}/https-connect-proof`,
+        NOVA_TEST_WS_TARGET_URL: `ws://127.0.0.1:${wsTargetPort}/websocket-proxied`,
+        NOVA_TEST_GATEWAY_BYPASS_WS_URL: `ws://127.0.0.1:${gatewayBypassWsTargetPort}/gateway-bypass`,
         NO_PROXY: "127.0.0.1,localhost",
         no_proxy: "localhost",
       },
@@ -550,7 +550,7 @@ describe("SSRF external proxy routing", () => {
           throw new Error("expected external proxy routing to start");
         }
         try {
-          const response = await nodeHttpsGet(process.env.OPENCLAW_TEST_DISCORD_TLS_URL);
+          const response = await nodeHttpsGet(process.env.NOVA_TEST_DISCORD_TLS_URL);
           console.log(JSON.stringify(response));
         } finally {
           await stopProxy(handle);
@@ -559,8 +559,8 @@ describe("SSRF external proxy routing", () => {
         {
           ...process.env,
           NODE_EXTRA_CA_CERTS: tlsFixture.caPath,
-          OPENCLAW_PROXY_URL: `http://127.0.0.1:${proxyPort}`,
-          OPENCLAW_TEST_DISCORD_TLS_URL: `https://discord.com:${tlsTargetPort}/tls-proxy-proof`,
+          NOVA_PROXY_URL: `http://127.0.0.1:${proxyPort}`,
+          NOVA_TEST_DISCORD_TLS_URL: `https://discord.com:${tlsTargetPort}/tls-proxy-proof`,
           NO_PROXY: "127.0.0.1,localhost",
           no_proxy: "localhost",
         },

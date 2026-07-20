@@ -12,7 +12,7 @@ function runAgentsDeleteAssert(root: string, outputPath: string, env: Record<str
     encoding: "utf8",
     env: {
       ...process.env,
-      OPENCLAW_STATE_DIR: path.join(root, "state"),
+      NOVA_STATE_DIR: path.join(root, "state"),
       SHARED_WORKSPACE: path.join(root, "workspace"),
       ...env,
     },
@@ -32,7 +32,7 @@ describe("workspace fixture assertions", () => {
       );
 
       const result = runAgentsDeleteAssert(root, outputPath, {
-        OPENCLAW_FIXTURE_AGENTS_DELETE_OUTPUT_MAX_BYTES: "1024",
+        NOVA_FIXTURE_AGENTS_DELETE_OUTPUT_MAX_BYTES: "1024",
       });
 
       expect(result.status).not.toBe(0);
@@ -56,7 +56,7 @@ describe("workspace fixture assertions", () => {
       );
 
       const result = runAgentsDeleteAssert(root, outputPath, {
-        OPENCLAW_FIXTURE_AGENTS_DELETE_OUTPUT_MAX_BYTES: "131072",
+        NOVA_FIXTURE_AGENTS_DELETE_OUTPUT_MAX_BYTES: "131072",
       });
 
       expect(result.status).not.toBe(0);

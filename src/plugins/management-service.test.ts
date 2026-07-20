@@ -27,7 +27,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("../config/config.js", () => ({
   assertConfigWriteAllowedInCurrentMode: (params?: { env?: NodeJS.ProcessEnv }) => {
-    if (params?.env?.OPENCLAW_NIX_MODE === "1") {
+    if (params?.env?.NOVA_NIX_MODE === "1") {
       throw new Error("Config is managed by Nix");
     }
   },
@@ -456,7 +456,7 @@ describe("plugin management service", () => {
       setManagedPluginEnabled({
         pluginId: "workboard",
         enabled: true,
-        env: { OPENCLAW_NIX_MODE: "1" },
+        env: { NOVA_NIX_MODE: "1" },
       }),
     ).rejects.toThrow("managed by Nix");
     expect(mocks.readConfig).not.toHaveBeenCalled();

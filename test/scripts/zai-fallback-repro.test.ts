@@ -74,7 +74,7 @@ describe("zai fallback repro command resolution", () => {
     const exitCode = await runZaiFallbackRepro({
       env: {
         ANTHROPIC_API_KEY: "anthropic-test-key",
-        OPENCLAW_ZAI_FALLBACK_SESSION_ID: "session-test",
+        NOVA_ZAI_FALLBACK_SESSION_ID: "session-test",
         PATH: process.env.PATH,
         ZAI_API_KEY: "zai-test-key",
       },
@@ -92,7 +92,7 @@ describe("zai fallback repro command resolution", () => {
         calls.push(label);
         if (label === "run1") {
           const sessionFile = path.join(
-            String(env.OPENCLAW_STATE_DIR),
+            String(env.NOVA_STATE_DIR),
             "agents",
             "main",
             "sessions",
@@ -127,7 +127,7 @@ describe("zai fallback repro command resolution", () => {
     const exitCode = await runZaiFallbackRepro({
       env: {
         ANTHROPIC_API_KEY: "anthropic-test-key",
-        OPENCLAW_ZAI_FALLBACK_SESSION_ID: "session-test",
+        NOVA_ZAI_FALLBACK_SESSION_ID: "session-test",
         PATH: process.env.PATH,
         ZAI_API_KEY: "zai-test-key",
       },
@@ -150,7 +150,7 @@ describe("zai fallback repro command resolution", () => {
     const exitCode = await runZaiFallbackRepro({
       env: {
         ANTHROPIC_API_KEY: "anthropic-test-key",
-        OPENCLAW_ZAI_FALLBACK_SESSION_ID: "session-test",
+        NOVA_ZAI_FALLBACK_SESSION_ID: "session-test",
         PATH: process.env.PATH,
         ZAI_API_KEY: "zai-test-key",
       },
@@ -159,7 +159,7 @@ describe("zai fallback repro command resolution", () => {
       runCommand: async (label, _args, env) => {
         if (label === "run1") {
           const sessionFile = path.join(
-            String(env.OPENCLAW_STATE_DIR),
+            String(env.NOVA_STATE_DIR),
             "agents",
             "main",
             "sessions",

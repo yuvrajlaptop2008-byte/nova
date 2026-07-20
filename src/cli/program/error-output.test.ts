@@ -32,8 +32,8 @@ describe("formatCliParseErrorOutput", () => {
   });
 
   it("preserves active profile context in command suggestions", () => {
-    const originalProfile = process.env.OPENCLAW_PROFILE;
-    process.env.OPENCLAW_PROFILE = "work";
+    const originalProfile = process.env.NOVA_PROFILE;
+    process.env.NOVA_PROFILE = "work";
     try {
       const output = formatCliParseErrorOutput("error: unknown command 'doctr'\n", {
         argv: ["node", "openclaw", "doctr"],
@@ -42,9 +42,9 @@ describe("formatCliParseErrorOutput", () => {
       expect(output).toContain("Did you mean this?\n  openclaw --profile work doctor\n");
     } finally {
       if (originalProfile === undefined) {
-        delete process.env.OPENCLAW_PROFILE;
+        delete process.env.NOVA_PROFILE;
       } else {
-        process.env.OPENCLAW_PROFILE = originalProfile;
+        process.env.NOVA_PROFILE = originalProfile;
       }
     }
   });

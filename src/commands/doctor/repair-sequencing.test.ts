@@ -296,7 +296,7 @@ describe("doctor repair sequencing", () => {
   });
 
   it("runs the doctor-only onboarding recommendation scope migration", async () => {
-    const env = { OPENCLAW_STATE_DIR: "/tmp/openclaw-doctor-test" };
+    const env = { NOVA_STATE_DIR: "/tmp/openclaw-doctor-test" };
     const candidate = {} as OpenClawConfig;
     mocks.migrateLegacyOnboardingRecommendationsScope.mockReturnValue({
       changes: ["Migrated onboarding recommendation state."],
@@ -995,7 +995,7 @@ describe("doctor repair sequencing", () => {
       },
       doctorFixCommand: "openclaw doctor --fix",
       env: {
-        OPENCLAW_UPDATE_IN_PROGRESS: "1",
+        NOVA_UPDATE_IN_PROGRESS: "1",
       },
     });
 

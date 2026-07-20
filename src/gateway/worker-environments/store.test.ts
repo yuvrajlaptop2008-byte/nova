@@ -43,7 +43,7 @@ describe("worker environment store", () => {
 
   beforeEach(async () => {
     root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), "openclaw-worker-env-"));
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     nowMs = 1_000;
     store = createWorkerEnvironmentStore({ database, now: () => nowMs });
   });
@@ -127,7 +127,7 @@ describe("worker environment store", () => {
 
     snapshot.settings.region = "mutated-after-create";
     closeOpenClawStateDatabaseForTest();
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerEnvironmentStore({ database, now: () => nowMs });
 
     expect(store.get("worker-crash")?.profileSnapshot).toEqual({
@@ -151,7 +151,7 @@ describe("worker environment store", () => {
     });
 
     closeOpenClawStateDatabaseForTest();
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerEnvironmentStore({ database, now: () => nowMs });
     expect(store.get("worker-cancelled")?.destroyRequestedAtMs).toBe(1_050);
   });
@@ -175,7 +175,7 @@ describe("worker environment store", () => {
       patch: readyPatch(),
     });
     closeOpenClawStateDatabaseForTest();
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerEnvironmentStore({ database, now: () => nowMs });
     expect(store.get("worker-1")).toMatchObject({
       sshEndpoint: SSH_ENDPOINT,
@@ -241,7 +241,7 @@ describe("worker environment store", () => {
     expect(store.getCredential("worker-owner")).toMatchObject({ ownerEpoch: 1, sessionId: null });
 
     closeOpenClawStateDatabaseForTest();
-    database = openOpenClawStateDatabase({ env: { OPENCLAW_STATE_DIR: root } });
+    database = openOpenClawStateDatabase({ env: { NOVA_STATE_DIR: root } });
     store = createWorkerEnvironmentStore({ database, now: () => nowMs });
     const renewal = [CREDENTIAL, "renewal"].join("-");
     expect(

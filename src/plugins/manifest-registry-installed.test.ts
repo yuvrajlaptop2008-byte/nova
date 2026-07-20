@@ -332,7 +332,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     writePlugin(rootDir, "installed", "installed-");
     const index = createIndex(rootDir);
     const env = {
-      OPENCLAW_VERSION: "2026.4.25",
+      NOVA_VERSION: "2026.4.25",
       VITEST: "true",
     };
 
@@ -366,7 +366,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     writePlugin(rootDir, "installed", "installed-");
     const index = createIndexWithPackageJson(rootDir);
     const env = {
-      OPENCLAW_VERSION: "2026.4.25",
+      NOVA_VERSION: "2026.4.25",
       VITEST: "true",
     };
 
@@ -401,7 +401,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     writePlugin(rootDir, "installed", "installed-");
     const index = createIndexWithPackageJson(rootDir);
     const env = {
-      OPENCLAW_VERSION: "2026.4.25",
+      NOVA_VERSION: "2026.4.25",
       VITEST: "true",
     };
 
@@ -438,7 +438,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     const registry = loadPluginManifestRegistryForInstalledIndex({
       index: createIndex(installedRoot),
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        NOVA_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -479,7 +479,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       },
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        NOVA_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -532,7 +532,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       },
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        NOVA_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -580,7 +580,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       },
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        NOVA_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -633,7 +633,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
           ],
         },
         env: {
-          OPENCLAW_VERSION: "2026.4.25",
+          NOVA_VERSION: "2026.4.25",
           VITEST: "true",
         },
         includeDisabled: true,
@@ -667,7 +667,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
         ],
       } as unknown as InstalledPluginIndex,
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        NOVA_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,
@@ -718,7 +718,7 @@ describe("loadPluginManifestRegistryForInstalledIndex", () => {
     const registry = loadPluginManifestRegistryForInstalledIndex({
       index: persisted,
       env: {
-        OPENCLAW_VERSION: "2026.4.25",
+        NOVA_VERSION: "2026.4.25",
         VITEST: "true",
       },
       includeDisabled: true,

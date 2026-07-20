@@ -281,7 +281,7 @@ describe("Parallels smoke model selection", () => {
     expect(controller).toContain('prlctl stop "$VM_NAME" --acpi');
     expect(controller).toContain("HypervisorPresent");
     expect(controller).toContain("git --version && node --version && npm --version");
-    expect(controller).toContain("OPENCLAW_PARALLELS_WINDOWS_LIBRARY_ONLY");
+    expect(controller).toContain("NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY");
     expect(controller).not.toContain("openclaw-windows-node");
   });
 
@@ -290,7 +290,7 @@ describe("Parallels smoke model selection", () => {
       "bash",
       [
         "-c",
-        'set -- run-tests --app-option; OPENCLAW_PARALLELS_WINDOWS_LIBRARY_ONLY=1 source "$1"; printf "%s\\n" "$*"',
+        'set -- run-tests --app-option; NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY=1 source "$1"; printf "%s\\n" "$*"',
         "bash",
         WINDOWS_PREPARE_WRAPPER,
       ],
@@ -305,7 +305,7 @@ describe("Parallels smoke model selection", () => {
       "bash",
       [
         "-c",
-        'OPENCLAW_PARALLELS_WINDOWS_LIBRARY_ONLY=1 source "$1"; curl() { printf "%s\\n" "$@"; }; fetch_host_metadata "https://example.test/metadata"',
+        'NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY=1 source "$1"; curl() { printf "%s\\n" "$@"; }; fetch_host_metadata "https://example.test/metadata"',
         "bash",
         WINDOWS_PREPARE_WRAPPER,
       ],
@@ -334,7 +334,7 @@ describe("Parallels smoke model selection", () => {
       "bash",
       [
         "-c",
-        `OPENCLAW_PARALLELS_WINDOWS_LIBRARY_ONLY=1 source "$1"
+        `NOVA_PARALLELS_WINDOWS_LIBRARY_ONLY=1 source "$1"
 curl() {
   count="$(<"$CURL_CALL_COUNT")"
   count=$((count + 1))
@@ -409,8 +409,8 @@ fetch_host_metadata "https://example.test/metadata"`,
   it("keeps provider auth and model defaults in the shared TypeScript helper", () => {
     const providerAuth = readFileSync(TS_PATHS.providerAuth, "utf8");
 
-    expect(providerAuth).toContain("OPENCLAW_PARALLELS_OPENAI_MODEL");
-    expect(providerAuth).toContain("OPENCLAW_PARALLELS_WINDOWS_OPENAI_MODEL");
+    expect(providerAuth).toContain("NOVA_PARALLELS_OPENAI_MODEL");
+    expect(providerAuth).toContain("NOVA_PARALLELS_WINDOWS_OPENAI_MODEL");
     expect(providerAuth).toContain("openai/gpt-5.6-luna");
     expect(providerAuth).toContain('authChoice: "openai-api-key"');
     expect(providerAuth).toContain('authChoice: "apiKey"');
@@ -453,7 +453,7 @@ fetch_host_metadata "https://example.test/metadata"`,
     expect(script).toContain(
       "Remove-Item $isolationScriptPath -Force -ErrorAction SilentlyContinue",
     );
-    expect(script).toContain("Remove-Item Env:OPENCLAW_PARALLELS_PLUGIN_ISOLATION");
+    expect(script).toContain("Remove-Item Env:NOVA_PARALLELS_PLUGIN_ISOLATION");
   });
 
   it("writes full model ids as config map keys in provider batches", () => {
@@ -507,7 +507,7 @@ fetch_host_metadata "https://example.test/metadata"`,
     expect(parallelsVm).toContain("export function waitForVmStatus");
     expect(hostServer).toContain("export async function startHostServer");
     expect(hostServer).toContain("export async function startNpmRegistryServer");
-    expect(hostServer).toContain('OPENCLAW_NPM_REGISTRY_UPSTREAM: "https://registry.npmjs.org"');
+    expect(hostServer).toContain('NOVA_NPM_REGISTRY_UPSTREAM: "https://registry.npmjs.org"');
     expect(hostServer).toContain("http.server");
     expect(snapshots).toContain("export function resolveSnapshot");
     expect(smokeCommon).toContain("runSmokeLane");
@@ -853,7 +853,7 @@ if (isPrlctl) {
     );
     expect(invalidSkipBothResult.status).toBe(1);
     expect(invalidSkipBothResult.stderr).toContain(
-      "OPENCLAW_PARALLELS_SKIP_SNAPSHOT_RESTORE=1 requires --mode fresh or --mode upgrade",
+      "NOVA_PARALLELS_SKIP_SNAPSHOT_RESTORE=1 requires --mode fresh or --mode upgrade",
     );
     expect(() =>
       withEnv({ [SKIP_SNAPSHOT_RESTORE_ENV]: "1" }, () =>
@@ -1153,7 +1153,7 @@ if (isPrlctl) {
       withEnv(
         {
           OPENAI_API_KEY: "sk-openai",
-          OPENCLAW_PARALLELS_WINDOWS_OPENAI_MODEL: "openai/custom-windows",
+          NOVA_PARALLELS_WINDOWS_OPENAI_MODEL: "openai/custom-windows",
         },
         () => resolveWindowsProviderAuth({ provider: "openai" }),
       ),
@@ -1473,8 +1473,8 @@ exit 0
 
     expect(macos).toContain('channel: "dev"');
     expect(windows).toContain("Name channel -Value 'dev'");
-    expect(macos).toContain("OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1");
-    expect(windows).toContain("OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS");
+    expect(macos).toContain("NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS=1");
+    expect(windows).toContain("NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS");
   });
 
   it("requires macOS dashboard smoke to load built assets", () => {
@@ -1493,7 +1493,7 @@ exit 0
     expect(script).toContain('"--model"');
     expect(script).toContain("auth.modelId");
     expect(script).toContain("authForPlatform");
-    expect(script).toContain("OPENCLAW_PARALLELS_LINUX_DISABLE_BONJOUR");
+    expect(script).toContain("NOVA_PARALLELS_LINUX_DISABLE_BONJOUR");
   });
 
   it("keeps the Windows update config scrub compatible with PowerShell 5.1", () => {
@@ -1555,7 +1555,7 @@ exit 0
   it("keeps Windows gateway reachability on a real deadline with start recovery", () => {
     const script = readFileSync(TS_PATHS.windows, "utf8");
 
-    expect(script).toContain("OPENCLAW_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S");
+    expect(script).toContain("NOVA_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S");
     expect(script).toContain("Date.now() < deadline");
     expect(script).toContain("gateway start");
     expect(script).toContain("gateway-reachable recovery");
@@ -1569,8 +1569,8 @@ exit 0
     expect(script).toContain("runWindowsBackgroundPowerShell");
     expect(transports).toContain("Join-Path (Join-Path $env:WINDIR 'Temp\\\\openclaw-parallels')");
     expect(transports).toContain("icacls.exe $runDir /inheritance:r");
-    expect(transports).toContain("__OPENCLAW_BACKGROUND_DONE__");
-    expect(transports).toContain("__OPENCLAW_BACKGROUND_EXIT__");
+    expect(transports).toContain("__NOVA_BACKGROUND_DONE__");
+    expect(transports).toContain("__NOVA_BACKGROUND_EXIT__");
     expect(transports).toContain("poll.status !== 0 && poll.status !== 124");
     expect(transports).toContain('cmd.exe /d /s /c start "" /b powershell.exe');
     expect(transports).toContain('if exist "${windowsDonePath}"');
@@ -1778,7 +1778,7 @@ setInterval(() => {}, 1000);
       try {
         const grandchildScript = [
           "const { writeFileSync } = require('node:fs');",
-          "writeFileSync(process.env.OPENCLAW_TEST_GRANDCHILD_PID, String(process.pid));",
+          "writeFileSync(process.env.NOVA_TEST_GRANDCHILD_PID, String(process.pid));",
           "process.on('SIGTERM', () => {});",
           "setInterval(() => {}, 1000);",
         ].join("\n");
@@ -1786,7 +1786,7 @@ setInterval(() => {}, 1000);
           "const { spawn } = require('node:child_process');",
           "const { writeFileSync } = require('node:fs');",
           `spawn(process.execPath, ['-e', ${JSON.stringify(grandchildScript)}], { env: process.env, stdio: 'ignore' });`,
-          "writeFileSync(process.env.OPENCLAW_TEST_READY_FILE, 'ready');",
+          "writeFileSync(process.env.NOVA_TEST_READY_FILE, 'ready');",
           "process.on('SIGTERM', () => process.exit(0));",
           "setInterval(() => {}, 1000);",
         ].join("\n");
@@ -1798,8 +1798,8 @@ setInterval(() => {}, 1000);
             "  check: false,",
             "  env: {",
             "    ...process.env,",
-            `    OPENCLAW_TEST_GRANDCHILD_PID: ${JSON.stringify(grandchildPidPath)},`,
-            `    OPENCLAW_TEST_READY_FILE: ${JSON.stringify(readyPath)},`,
+            `    NOVA_TEST_GRANDCHILD_PID: ${JSON.stringify(grandchildPidPath)},`,
+            `    NOVA_TEST_READY_FILE: ${JSON.stringify(readyPath)},`,
             "  },",
             "  quiet: true,",
             "  timeoutMs: 30_000,",
@@ -1951,7 +1951,7 @@ setInterval(() => {}, 1000);
       try {
         const grandchildScript = [
           "const { writeFileSync } = require('node:fs');",
-          "writeFileSync(process.env.OPENCLAW_TEST_GRANDCHILD_PID, String(process.pid));",
+          "writeFileSync(process.env.NOVA_TEST_GRANDCHILD_PID, String(process.pid));",
           "process.on('SIGTERM', () => {});",
           "setInterval(() => {}, 1000);",
         ].join("\n");
@@ -1959,7 +1959,7 @@ setInterval(() => {}, 1000);
           "const { spawn } = require('node:child_process');",
           "const { writeFileSync } = require('node:fs');",
           `spawn(process.execPath, ['-e', ${JSON.stringify(grandchildScript)}], { env: process.env, stdio: 'ignore' });`,
-          "writeFileSync(process.env.OPENCLAW_TEST_READY_FILE, 'ready');",
+          "writeFileSync(process.env.NOVA_TEST_READY_FILE, 'ready');",
           "process.on('SIGTERM', () => process.exit(0));",
           "setInterval(() => {}, 1000);",
         ].join("\n");
@@ -1970,8 +1970,8 @@ setInterval(() => {}, 1000);
             `await runStreaming(process.execPath, ['-e', ${JSON.stringify(parentScript)}], {`,
             "  env: {",
             "    ...process.env,",
-            `    OPENCLAW_TEST_GRANDCHILD_PID: ${JSON.stringify(grandchildPidPath)},`,
-            `    OPENCLAW_TEST_READY_FILE: ${JSON.stringify(readyPath)},`,
+            `    NOVA_TEST_GRANDCHILD_PID: ${JSON.stringify(grandchildPidPath)},`,
+            `    NOVA_TEST_READY_FILE: ${JSON.stringify(readyPath)},`,
             "  },",
             `  logPath: ${JSON.stringify(logPath)},`,
             "  quiet: true,",
@@ -2046,7 +2046,7 @@ setInterval(() => {}, 1000);
     () => {
       const result = run(
         process.execPath,
-        ["-e", "process.stderr.write('__OPENCLAW_HOST_COMMAND_SPAWN_ERROR__{}\\n')"],
+        ["-e", "process.stderr.write('__NOVA_HOST_COMMAND_SPAWN_ERROR__{}\\n')"],
         {
           check: false,
           quiet: true,
@@ -2149,10 +2149,8 @@ setInterval(() => {}, 1000);
     const script = readFileSync(TS_PATHS.windows, "utf8");
 
     expect(script).toContain('guestPowerShellBackground(\n      "agent-turn"');
-    expect(script).toContain("OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S");
-    expect(script).toContain(
-      'readPositiveIntEnv(\n    "OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S"',
-    );
+    expect(script).toContain("NOVA_PARALLELS_WINDOWS_AGENT_TIMEOUT_S");
+    expect(script).toContain('readPositiveIntEnv(\n    "NOVA_PARALLELS_WINDOWS_AGENT_TIMEOUT_S"');
     expect(script).toContain("windowsAgentTurnConfigPatchScript(this.auth.modelId)");
     expect(script).toContain("--model");
     expect(script).toContain('resolveParallelsModelTimeoutSeconds("windows")');
@@ -2175,7 +2173,7 @@ setInterval(() => {}, 1000);
       windows: 1800,
     });
     expect(readFileSync(TS_PATHS.macos, "utf8")).toContain(
-      'this.agentTimeoutSeconds = readPositiveIntEnv("OPENCLAW_PARALLELS_MACOS_AGENT_TIMEOUT_S", 2700)',
+      'this.agentTimeoutSeconds = readPositiveIntEnv("NOVA_PARALLELS_MACOS_AGENT_TIMEOUT_S", 2700)',
     );
     expect(readFileSync(TS_PATHS.macos, "utf8")).toContain("--timeout ${this.modelTimeoutSeconds}");
     expect(readFileSync(TS_PATHS.linux, "utf8")).toContain(
@@ -2185,22 +2183,22 @@ setInterval(() => {}, 1000);
 
   it("rejects loose Parallels numeric limits before starting smoke lanes", () => {
     expect(
-      withEnv({ OPENCLAW_PARALLELS_MODEL_TIMEOUT_S: "1200" }, () =>
+      withEnv({ NOVA_PARALLELS_MODEL_TIMEOUT_S: "1200" }, () =>
         resolveParallelsModelTimeoutSeconds("linux"),
       ),
     ).toBe(1200);
     expect(
-      withEnv({ OPENCLAW_PARALLELS_NUMERIC_TEST: " 42 " }, () =>
-        readPositiveIntEnv("OPENCLAW_PARALLELS_NUMERIC_TEST", 7),
+      withEnv({ NOVA_PARALLELS_NUMERIC_TEST: " 42 " }, () =>
+        readPositiveIntEnv("NOVA_PARALLELS_NUMERIC_TEST", 7),
       ),
     ).toBe(42);
 
     expectFatalError(
       () =>
-        withEnv({ OPENCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S: "1800s" }, () =>
+        withEnv({ NOVA_PARALLELS_MACOS_MODEL_TIMEOUT_S: "1800s" }, () =>
           resolveParallelsModelTimeoutSeconds("macos"),
         ),
-      "invalid OPENCLAW_PARALLELS_MACOS_MODEL_TIMEOUT_S: 1800s",
+      "invalid NOVA_PARALLELS_MACOS_MODEL_TIMEOUT_S: 1800s",
     );
     expectFatalError(
       () => parseMacosSmokeArgs(["--host-port", "18425x"]),
@@ -2216,24 +2214,24 @@ setInterval(() => {}, 1000);
     }
     expectFatalError(
       () =>
-        withEnv({ OPENCLAW_PARALLELS_LINUX_AGENT_TIMEOUT_S: "1e3" }, () =>
-          readPositiveIntEnv("OPENCLAW_PARALLELS_LINUX_AGENT_TIMEOUT_S", 1500),
+        withEnv({ NOVA_PARALLELS_LINUX_AGENT_TIMEOUT_S: "1e3" }, () =>
+          readPositiveIntEnv("NOVA_PARALLELS_LINUX_AGENT_TIMEOUT_S", 1500),
         ),
-      "invalid OPENCLAW_PARALLELS_LINUX_AGENT_TIMEOUT_S: 1e3",
+      "invalid NOVA_PARALLELS_LINUX_AGENT_TIMEOUT_S: 1e3",
     );
     expectFatalError(
       () =>
-        withEnv({ OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S: "2700s" }, () =>
-          readPositiveIntEnv("OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S", 2700),
+        withEnv({ NOVA_PARALLELS_WINDOWS_AGENT_TIMEOUT_S: "2700s" }, () =>
+          readPositiveIntEnv("NOVA_PARALLELS_WINDOWS_AGENT_TIMEOUT_S", 2700),
         ),
-      "invalid OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S: 2700s",
+      "invalid NOVA_PARALLELS_WINDOWS_AGENT_TIMEOUT_S: 2700s",
     );
     expectFatalError(
       () =>
-        withEnv({ OPENCLAW_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S: "12.5" }, () =>
-          readPositiveIntEnv("OPENCLAW_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S", 7200),
+        withEnv({ NOVA_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S: "12.5" }, () =>
+          readPositiveIntEnv("NOVA_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S", 7200),
         ),
-      "invalid OPENCLAW_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S: 12.5",
+      "invalid NOVA_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S: 12.5",
     );
     expectFatalError(
       () => parseNpmUpdateSmokeArgs(["--platform", "macos,macos"]),
@@ -2241,19 +2239,19 @@ setInterval(() => {}, 1000);
     );
 
     expect(readFileSync(TS_PATHS.macos, "utf8")).toContain(
-      'this.updateDevTimeoutSeconds = readPositiveIntEnv(\n      "OPENCLAW_PARALLELS_MACOS_UPDATE_DEV_TIMEOUT_S"',
+      'this.updateDevTimeoutSeconds = readPositiveIntEnv(\n      "NOVA_PARALLELS_MACOS_UPDATE_DEV_TIMEOUT_S"',
     );
     expect(readFileSync(TS_PATHS.linux, "utf8")).toContain(
-      'readPositiveIntEnv(\n    "OPENCLAW_PARALLELS_LINUX_AGENT_TIMEOUT_S"',
+      'readPositiveIntEnv(\n    "NOVA_PARALLELS_LINUX_AGENT_TIMEOUT_S"',
     );
     expect(readFileSync(TS_PATHS.windows, "utf8")).toContain(
-      'readPositiveIntEnv(\n    "OPENCLAW_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S"',
+      'readPositiveIntEnv(\n    "NOVA_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S"',
     );
     expect(readFileSync(TS_PATHS.packageArtifact, "utf8")).toContain(
-      'readPositiveIntEnv("OPENCLAW_PARALLELS_PACKAGE_LOCK_TIMEOUT_MS", 30 * 60_000)',
+      'readPositiveIntEnv("NOVA_PARALLELS_PACKAGE_LOCK_TIMEOUT_MS", 30 * 60_000)',
     );
     expect(readFileSync(TS_PATHS.npmUpdate, "utf8")).toContain(
-      'readPositiveIntEnv("OPENCLAW_PARALLELS_NPM_UPDATE_TIMEOUT_S", 1200)',
+      'readPositiveIntEnv("NOVA_PARALLELS_NPM_UPDATE_TIMEOUT_S", 1200)',
     );
   });
 
@@ -2272,10 +2270,10 @@ setInterval(() => {}, 1000);
 
     expect(powershell).toContain("windowsScopedEnvFunction");
     expect(windows).toContain(
-      "Invoke-WithScopedEnv @{ OPENCLAW_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS",
+      "Invoke-WithScopedEnv @{ NOVA_ALLOW_OLDER_BINARY_DESTRUCTIVE_ACTIONS",
     );
     expect(windows).toContain("$script:OpenClawUpdateExit = $LASTEXITCODE");
-    expect(windows).not.toContain("$env:OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'");
+    expect(windows).not.toContain("$env:NOVA_DISABLE_BUNDLED_PLUGINS = '1'");
   });
 
   it("writes Parallels phase timing artifacts", () => {
@@ -2293,7 +2291,7 @@ setInterval(() => {}, 1000);
     const windows = readFileSync(TS_PATHS.windows, "utf8");
 
     expect(powershell).toContain("windowsOpenClawResolver");
-    expect(powershell).toContain("OPENCLAW_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED");
+    expect(powershell).toContain("NOVA_PARALLELS_AGENT_RUNTIME_POLICY_SUPPORTED");
     expect(powershell).toContain("Programs\\nodejs");
     expect(powershell).toContain('selectedModelEntry.agentRuntime = { id: "openclaw" }');
     expect(powershell).toContain("delete selectedModelEntry.agentRuntime");

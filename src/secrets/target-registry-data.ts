@@ -500,7 +500,7 @@ export function getSecretTargetRegistry(params?: {
     return loadSecretTargetRegistryFromPluginMetadata({
       env: {
         ...process.env,
-        OPENCLAW_BUNDLED_PLUGINS_DIR: process.env.OPENCLAW_BUNDLED_PLUGINS_DIR ?? "extensions",
+        NOVA_BUNDLED_PLUGINS_DIR: process.env.NOVA_BUNDLED_PLUGINS_DIR ?? "extensions",
       },
       preferPersisted: false,
     });

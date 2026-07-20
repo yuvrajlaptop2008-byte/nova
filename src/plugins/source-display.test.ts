@@ -76,8 +76,8 @@ describe("formatPluginSourceForTable", () => {
   it("ignores untrusted explicit env override for the stock source root", () => {
     const homeDir = path.resolve(path.sep, "tmp", "openclaw-home");
     const rawEnv = {
-      OPENCLAW_BUNDLED_PLUGINS_DIR: "~/bundled",
-      OPENCLAW_STATE_DIR: "~/state",
+      NOVA_BUNDLED_PLUGINS_DIR: "~/bundled",
+      NOVA_STATE_DIR: "~/state",
     } as NodeJS.ProcessEnv;
     const stock = withPathResolutionEnv(homeDir, rawEnv, (env) => resolveBundledPluginsDir(env));
     if (!stock) {

@@ -8,7 +8,7 @@ import {
 import { runGatewayUpdate, type UpdateRunResult } from "../../infra/update-runner.js";
 import { defaultRuntime } from "../../runtime.js";
 import {
-  OPENCLAW_DATABASE_SCHEMA_DOCS_URL,
+  NOVA_DATABASE_SCHEMA_DOCS_URL,
   preflightOpenClawDatabaseSchemas,
   type IncompatibleOpenClawDatabase,
   type IndeterminateOpenClawDatabase,
@@ -53,7 +53,7 @@ export function formatSchemaRefusalLines(
       (database) =>
         `${prefix}: could not inspect ${database.kind} database ${database.path}: ${database.reason}; retry once the gateway releases it.`,
     ),
-    OPENCLAW_DATABASE_SCHEMA_DOCS_URL,
+    NOVA_DATABASE_SCHEMA_DOCS_URL,
     "Installing manually via npm bypasses this guard; back up first and verify compatibility.",
   ];
 }
@@ -81,7 +81,7 @@ export function createBeforeGitMutation(params: {
   return async (target) => {
     if (target?.metadataUnreadable) {
       defaultRuntime.error(
-        `Update refused: could not inspect the target's schema support (${target.metadataUnreadable}). Retry, or see ${OPENCLAW_DATABASE_SCHEMA_DOCS_URL}.`,
+        `Update refused: could not inspect the target's schema support (${target.metadataUnreadable}). Retry, or see ${NOVA_DATABASE_SCHEMA_DOCS_URL}.`,
       );
       defaultRuntime.exit(1);
       throw new UpdateCommandAbort();

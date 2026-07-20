@@ -85,7 +85,7 @@ describe("OpenAI runtime routing policy", () => {
   });
 
   it("fails closed to Nova when the provider artifact is unavailable", () => {
-    vi.stubEnv("OPENCLAW_DISABLE_BUNDLED_PLUGINS", "1");
+    vi.stubEnv("NOVA_DISABLE_BUNDLED_PLUGINS", "1");
     expect(resolveOpenAIImplicitAgentRuntime({ provider: "openai", modelId: "gpt-5.5" })).toBe(
       "openclaw",
     );

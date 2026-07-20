@@ -28,7 +28,7 @@ const GATEWAY_STARTUP_CORE_RUNNER = DEFAULT_NODE_TEST_RUNNER;
 // This cold gateway graph can stall after warming Vitest's module cache; its
 // retry completes in seconds, so do not spend the global five-minute timeout.
 const GATEWAY_STARTUP_HEALTH_RUNTIME_ENV = {
-  OPENCLAW_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000",
+  NOVA_VITEST_NO_OUTPUT_TIMEOUT_MS: "60000",
 };
 const MAX_BUNDLED_NODE_TEST_PATTERNS = 64;
 // PR-only bundles trade a little serial work for fewer ephemeral runner registrations.
@@ -202,7 +202,7 @@ function isExclusiveCompactGroup(group) {
 // and hit worker-startup timeouts under contention before serialization.
 const PINNED_WORKER_COMPACT_GROUP_RE =
   /^core-tooling(?:-\d+|-isolated)$|^core-runtime-tui-pty$|^core-runtime-infra-process$|^core-runtime-media-ui$|^agentic-gateway-(?:core|methods)$/u;
-const PINNED_COMPACT_GROUP_ENV = { OPENCLAW_VITEST_MAX_WORKERS: "2" };
+const PINNED_COMPACT_GROUP_ENV = { NOVA_VITEST_MAX_WORKERS: "2" };
 
 function applyCompactGroupWorkerPins(group) {
   if (!PINNED_WORKER_COMPACT_GROUP_RE.test(group.shard_name)) {
@@ -1117,7 +1117,7 @@ const SPLIT_NODE_SHARDS = new Map([
         shardName: "core-runtime-tui-pty",
         configs: ["test/vitest/vitest.tui-pty.config.ts"],
         env: {
-          OPENCLAW_TUI_PTY_INCLUDE_LOCAL: "1",
+          NOVA_TUI_PTY_INCLUDE_LOCAL: "1",
         },
         requiresDist: false,
         runner: "blacksmith-4vcpu-ubuntu-2404",

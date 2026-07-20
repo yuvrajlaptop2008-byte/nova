@@ -38,7 +38,7 @@ changelog_required_for_changed_files() {
 }
 
 root_changelog_update_allowed_for_pr() {
-  case "${OPENCLAW_ALLOW_ROOT_CHANGELOG_PR:-}" in
+  case "${NOVA_ALLOW_ROOT_CHANGELOG_PR:-}" in
     1|true|TRUE|yes|YES|on|ON)
       return 0
       ;;

@@ -87,7 +87,7 @@ type MarkMainSessionsAbortedForRestart = NonNullable<
 type DrainActiveSessionsForShutdown = NonNullable<
   GatewayCloseHandlerParams["drainActiveSessionsForShutdown"]
 >;
-const originalRestartTraceEnv = process.env.OPENCLAW_GATEWAY_RESTART_TRACE;
+const originalRestartTraceEnv = process.env.NOVA_GATEWAY_RESTART_TRACE;
 
 function firstMockCall<T extends readonly unknown[]>(mock: { mock: { calls: readonly T[] } }) {
   return mock.mock.calls[0];
@@ -169,9 +169,9 @@ describe("createGatewayCloseHandler", () => {
   afterEach(() => {
     vi.useRealTimers();
     if (originalRestartTraceEnv === undefined) {
-      delete process.env.OPENCLAW_GATEWAY_RESTART_TRACE;
+      delete process.env.NOVA_GATEWAY_RESTART_TRACE;
     } else {
-      process.env.OPENCLAW_GATEWAY_RESTART_TRACE = originalRestartTraceEnv;
+      process.env.NOVA_GATEWAY_RESTART_TRACE = originalRestartTraceEnv;
     }
   });
 
@@ -376,7 +376,7 @@ describe("createGatewayCloseHandler", () => {
   });
 
   it("emits parseable restart close trace spans when enabled", async () => {
-    process.env.OPENCLAW_GATEWAY_RESTART_TRACE = "1";
+    process.env.NOVA_GATEWAY_RESTART_TRACE = "1";
     const drainActiveSessionsForShutdown = vi.fn<DrainActiveSessionsForShutdown>(async () => ({
       emittedSessionIds: [],
       timedOut: false,
@@ -438,7 +438,7 @@ describe("createGatewayCloseHandler", () => {
   });
 
   it("emits restart ready child spans without shortening the parent ready span", async () => {
-    process.env.OPENCLAW_GATEWAY_RESTART_TRACE = "1";
+    process.env.NOVA_GATEWAY_RESTART_TRACE = "1";
 
     startGatewayRestartTrace("restart.signal.received", [["reason", "test restart"]]);
     await new Promise((resolve) => {

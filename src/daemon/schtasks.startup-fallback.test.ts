@@ -94,7 +94,7 @@ const {
 } = await import("./schtasks.js");
 
 function resolveStartupEntryPath(env: Record<string, string>, extension = "cmd") {
-  const taskName = env.OPENCLAW_WINDOWS_TASK_NAME ?? "Nova Gateway";
+  const taskName = env.NOVA_WINDOWS_TASK_NAME ?? "Nova Gateway";
   return path.join(
     expectDefined(env.APPDATA, "env.APPDATA test invariant"),
     "Microsoft",
@@ -120,8 +120,8 @@ async function writeNodeScript(env: Record<string, string>, port = "18789") {
     scriptPath,
     [
       "@echo off",
-      `set "OPENCLAW_SERVICE_KIND=node"`,
-      `set "OPENCLAW_GATEWAY_PORT=${port}"`,
+      `set "NOVA_SERVICE_KIND=node"`,
+      `set "NOVA_GATEWAY_PORT=${port}"`,
       `"C:\\bin\\openclaw.cmd" node run --host 127.0.0.1 --port ${port}`,
       "",
     ].join("\r\n"),
@@ -135,8 +135,8 @@ const NODE_PROCESS_QUERY =
 function makeNodeServiceEnv(env: Record<string, string>): Record<string, string> {
   return {
     ...env,
-    OPENCLAW_SERVICE_KIND: "node",
-    OPENCLAW_WINDOWS_TASK_NAME: "Nova Node",
+    NOVA_SERVICE_KIND: "node",
+    NOVA_WINDOWS_TASK_NAME: "Nova Node",
   };
 }
 
@@ -208,7 +208,7 @@ function expectStartupFallbackSpawn() {
   expect(args).toContain("--port");
   expect(args).toContain("18789");
   expect(options.detached).toBe(true);
-  expect((options.env as Record<string, string> | undefined)?.OPENCLAW_GATEWAY_PORT).toBe("18789");
+  expect((options.env as Record<string, string> | undefined)?.NOVA_GATEWAY_PORT).toBe("18789");
   expect(options.stdio).toBe("ignore");
   expect(options.windowsHide).toBe(true);
 }
@@ -247,7 +247,7 @@ function installGatewayScheduledTask(
     env,
     stdout,
     programArguments: ["node", "gateway.js", "--port", port],
-    environment: { OPENCLAW_GATEWAY_PORT: port },
+    environment: { NOVA_GATEWAY_PORT: port },
     startupFallbackTakeoverRuntime,
   });
 }
@@ -256,14 +256,14 @@ function installNodeScheduledTask(env: Record<string, string>, stdout = new Pass
   return installScheduledTask({
     env: {
       ...env,
-      OPENCLAW_SERVICE_KIND: "node",
-      OPENCLAW_WINDOWS_TASK_NAME: "Nova Node",
+      NOVA_SERVICE_KIND: "node",
+      NOVA_WINDOWS_TASK_NAME: "Nova Node",
     },
     stdout,
     programArguments: ["node", "openclaw", "node", "run", "--host", "127.0.0.1", "--port", "18789"],
     environment: {
-      OPENCLAW_SERVICE_KIND: "node",
-      OPENCLAW_GATEWAY_PORT: "18789",
+      NOVA_SERVICE_KIND: "node",
+      NOVA_GATEWAY_PORT: "18789",
     },
   });
 }
@@ -408,7 +408,7 @@ describe("Windows startup fallback", () => {
 
       const result = await installGatewayScheduledTask({
         ...env,
-        OPENCLAW_WINDOWS_TASK_HIDDEN_LAUNCHER: "1",
+        NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER: "1",
       });
 
       const startupEntryPath = resolveStartupEntryPath(env, "vbs");
@@ -493,7 +493,7 @@ describe("Windows startup fallback", () => {
         scriptPath,
         [
           "@echo off",
-          'set "OPENCLAW_GATEWAY_PORT=18789"',
+          'set "NOVA_GATEWAY_PORT=18789"',
           '"C:\\bin\\openclaw-doppler.exe" gateway --port 18789',
           "",
         ].join("\r\n"),
@@ -782,7 +782,7 @@ describe("Windows startup fallback", () => {
     await withWindowsEnv("openclaw-win-startup-", async ({ env }) => {
       const startupEntryPath = await writeStartupFallbackEntry(env);
       await writeGatewayScript(env, 18789);
-      env.OPENCLAW_GATEWAY_PORT = "19433";
+      env.NOVA_GATEWAY_PORT = "19433";
       inspectPortUsage.mockImplementation(async (port) => ({
         port,
         status: port === 18789 ? "busy" : "free",
@@ -820,7 +820,7 @@ describe("Windows startup fallback", () => {
     await withWindowsEnv("openclaw-win-startup-", async ({ env }) => {
       const startupEntryPath = await writeStartupFallbackEntry(env);
       await writeGatewayScript(env, 18789);
-      env.OPENCLAW_GATEWAY_PORT = "19433";
+      env.NOVA_GATEWAY_PORT = "19433";
       vi.spyOn(process, "platform", "get").mockReturnValue("win32");
       let processQueries = 0;
       spawnSync.mockImplementation((command, args) => {
@@ -879,7 +879,7 @@ describe("Windows startup fallback", () => {
       await writeGatewayScript(env, 18789);
       const scriptPath = resolveTaskScriptPath(env);
       const scriptBefore = decodeWindowsLauncherScript({ buffer: await fs.readFile(scriptPath) });
-      env.OPENCLAW_GATEWAY_PORT = "19433";
+      env.NOVA_GATEWAY_PORT = "19433";
       vi.spyOn(process, "platform", "get").mockReturnValue("win32");
       spawnSync.mockImplementation((command, args) => {
         if (
@@ -954,7 +954,7 @@ describe("Windows startup fallback", () => {
       await writeGatewayScript(env, 18789);
       const scriptPath = resolveTaskScriptPath(env);
       const scriptBefore = decodeWindowsLauncherScript({ buffer: await fs.readFile(scriptPath) });
-      env.OPENCLAW_GATEWAY_PORT = "19433";
+      env.NOVA_GATEWAY_PORT = "19433";
       vi.spyOn(process, "platform", "get").mockReturnValue("win32");
       spawnSync.mockImplementation((command, args) =>
         command === getWindowsPowerShellExePath() &&
@@ -1007,7 +1007,7 @@ describe("Windows startup fallback", () => {
       await writeGatewayScript(env, 18789);
       const scriptPath = resolveTaskScriptPath(env);
       const scriptBefore = decodeWindowsLauncherScript({ buffer: await fs.readFile(scriptPath) });
-      env.OPENCLAW_GATEWAY_PORT = "19433";
+      env.NOVA_GATEWAY_PORT = "19433";
       vi.spyOn(process, "platform", "get").mockReturnValue("win32");
       spawnSync.mockImplementation((command, args) =>
         command === getWindowsPowerShellExePath() &&
@@ -1163,7 +1163,7 @@ describe("Windows startup fallback", () => {
     await withWindowsEnv("openclaw-win-startup-", async ({ env }) => {
       const startupEntryPath = await writeStartupFallbackEntry(env);
       await writeGatewayScript(env, 18789);
-      env.OPENCLAW_GATEWAY_PORT = "19433";
+      env.NOVA_GATEWAY_PORT = "19433";
       let oldPortProbes = 0;
       inspectPortUsage.mockImplementation(async (port) => {
         if (port !== 18789) {
@@ -1256,7 +1256,7 @@ describe("Windows startup fallback", () => {
 
   it("accepts a clean hidden-launcher exit when its gateway listener is running", async () => {
     await withWindowsEnv("openclaw-win-startup-", async ({ env }) => {
-      const hiddenEnv = { ...env, OPENCLAW_WINDOWS_TASK_HIDDEN_LAUNCHER: "1" };
+      const hiddenEnv = { ...env, NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER: "1" };
       const startupEntryPath = await writeStartupFallbackEntry(hiddenEnv);
       await writeGatewayScript(hiddenEnv);
       findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4242]);
@@ -1290,7 +1290,7 @@ describe("Windows startup fallback", () => {
 
   it("keeps the Startup launcher when a clean task exit needs the direct fallback", async () => {
     await withWindowsEnv("openclaw-win-startup-", async ({ env }) => {
-      const hiddenEnv = { ...env, OPENCLAW_WINDOWS_TASK_HIDDEN_LAUNCHER: "1" };
+      const hiddenEnv = { ...env, NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER: "1" };
       const startupEntryPath = await writeStartupFallbackEntry(hiddenEnv);
       await writeGatewayScript(hiddenEnv);
       fastForwardTaskStartWait();
@@ -1599,8 +1599,8 @@ describe("Windows startup fallback", () => {
 
   it("does not report a node task as running from a gateway listener", async () => {
     await withWindowsEnv("openclaw-win-startup-", async ({ env }) => {
-      env.OPENCLAW_SERVICE_KIND = "node";
-      env.OPENCLAW_WINDOWS_TASK_NAME = "Nova Node";
+      env.NOVA_SERVICE_KIND = "node";
+      env.NOVA_WINDOWS_TASK_NAME = "Nova Node";
       findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4242]);
       schtasksResponses.push(
         { code: 0, stdout: "", stderr: "" },
@@ -1620,8 +1620,8 @@ describe("Windows startup fallback", () => {
       vi.spyOn(process, "platform", "get").mockReturnValue("win32");
       const nodeEnv = {
         ...env,
-        OPENCLAW_SERVICE_KIND: "node",
-        OPENCLAW_WINDOWS_TASK_NAME: "Nova Node",
+        NOVA_SERVICE_KIND: "node",
+        NOVA_WINDOWS_TASK_NAME: "Nova Node",
       };
       await writeNodeScript(nodeEnv);
       findVerifiedGatewayListenerPidsOnPortSync.mockReturnValue([4242]);
@@ -1712,7 +1712,7 @@ describe("Windows startup fallback", () => {
         isScheduledTaskInstalled({
           env: {
             ...env,
-            OPENCLAW_WINDOWS_TASK_HIDDEN_LAUNCHER: "1",
+            NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER: "1",
           },
         }),
       ).resolves.toBe(true);
@@ -1728,7 +1728,7 @@ describe("Windows startup fallback", () => {
       await uninstallScheduledTask({
         env: {
           ...env,
-          OPENCLAW_WINDOWS_TASK_HIDDEN_LAUNCHER: "1",
+          NOVA_WINDOWS_TASK_HIDDEN_LAUNCHER: "1",
         },
         stdout,
       });
@@ -2039,7 +2039,7 @@ describe("Windows startup fallback", () => {
 
       const stdout = new PassThrough();
       const envWithoutPort = { ...env };
-      delete envWithoutPort.OPENCLAW_GATEWAY_PORT;
+      delete envWithoutPort.NOVA_GATEWAY_PORT;
       await stopScheduledTask({ env: envWithoutPort, stdout });
 
       expectGatewayTermination(5151);

@@ -19,9 +19,9 @@ async function expectPathMissing(targetPath: string): Promise<void> {
 describe("openclaw test state", () => {
   it("creates an isolated home layout with spawn env and restores process env", async () => {
     const previousHome = process.env.HOME;
-    const previousOpenClawHome = process.env.OPENCLAW_HOME;
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
-    const previousConfigPath = process.env.OPENCLAW_CONFIG_PATH;
+    const previousOpenClawHome = process.env.NOVA_HOME;
+    const previousStateDir = process.env.NOVA_STATE_DIR;
+    const previousConfigPath = process.env.NOVA_CONFIG_PATH;
 
     const state = await createOpenClawTestState({
       label: "unit",
@@ -34,20 +34,20 @@ describe("openclaw test state", () => {
       expect(state.configPath).toBe(path.join(state.stateDir, "openclaw.json"));
       expect(state.workspaceDir).toBe(path.join(state.home, "workspace"));
       expect(state.env.HOME).toBe(state.home);
-      expect(state.env.OPENCLAW_HOME).toBe(state.home);
-      expect(state.env.OPENCLAW_STATE_DIR).toBe(state.stateDir);
-      expect(state.env.OPENCLAW_CONFIG_PATH).toBe(state.configPath);
+      expect(state.env.NOVA_HOME).toBe(state.home);
+      expect(state.env.NOVA_STATE_DIR).toBe(state.stateDir);
+      expect(state.env.NOVA_CONFIG_PATH).toBe(state.configPath);
       expect(process.env.HOME).toBe(state.home);
-      expect(process.env.OPENCLAW_HOME).toBe(state.home);
+      expect(process.env.NOVA_HOME).toBe(state.home);
       expect(JSON.parse(await fs.readFile(state.configPath, "utf8"))).toStrictEqual({});
     } finally {
       await state.cleanup();
     }
 
     expect(process.env.HOME).toBe(previousHome);
-    expect(process.env.OPENCLAW_HOME).toBe(previousOpenClawHome);
-    expect(process.env.OPENCLAW_STATE_DIR).toBe(previousStateDir);
-    expect(process.env.OPENCLAW_CONFIG_PATH).toBe(previousConfigPath);
+    expect(process.env.NOVA_HOME).toBe(previousOpenClawHome);
+    expect(process.env.NOVA_STATE_DIR).toBe(previousStateDir);
+    expect(process.env.NOVA_CONFIG_PATH).toBe(previousConfigPath);
     await expectPathMissing(state.root);
   });
 
@@ -61,8 +61,8 @@ describe("openclaw test state", () => {
       },
       async (state) => {
         expect(process.env.HOME).toBe(previousHome);
-        expect(process.env.OPENCLAW_STATE_DIR).toBe(state.stateDir);
-        expect(process.env.OPENCLAW_CONFIG_PATH).toBe(state.configPath);
+        expect(process.env.NOVA_STATE_DIR).toBe(state.stateDir);
+        expect(process.env.NOVA_CONFIG_PATH).toBe(state.configPath);
         expect(state.env.HOME).toBe(previousHome);
         await expectPathMissing(state.configPath);
       },
@@ -70,20 +70,20 @@ describe("openclaw test state", () => {
   });
 
   it("clears inherited agent-dir overrides by default", async () => {
-    await withEnvAsync({ OPENCLAW_AGENT_DIR: "/tmp/outside-openclaw-agent" }, async () => {
+    await withEnvAsync({ NOVA_AGENT_DIR: "/tmp/outside-openclaw-agent" }, async () => {
       const state = await createOpenClawTestState({
         layout: "state-only",
       });
 
       try {
-        expect(process.env.OPENCLAW_AGENT_DIR).toBeUndefined();
-        expect(state.env.OPENCLAW_AGENT_DIR).toBeUndefined();
+        expect(process.env.NOVA_AGENT_DIR).toBeUndefined();
+        expect(state.env.NOVA_AGENT_DIR).toBeUndefined();
         expect(state.agentDir()).toBe(path.join(state.stateDir, "agents", "main", "agent"));
       } finally {
         await state.cleanup();
       }
 
-      expect(process.env.OPENCLAW_AGENT_DIR).toBe("/tmp/outside-openclaw-agent");
+      expect(process.env.NOVA_AGENT_DIR).toBe("/tmp/outside-openclaw-agent");
     });
   });
 
@@ -91,12 +91,12 @@ describe("openclaw test state", () => {
     await withOpenClawTestState(
       {
         env: {
-          OPENCLAW_AGENT_DIR: "/tmp/explicit-openclaw-agent",
+          NOVA_AGENT_DIR: "/tmp/explicit-openclaw-agent",
         },
       },
       async (state) => {
-        expect(process.env.OPENCLAW_AGENT_DIR).toBe("/tmp/explicit-openclaw-agent");
-        expect(state.env.OPENCLAW_AGENT_DIR).toBe("/tmp/explicit-openclaw-agent");
+        expect(process.env.NOVA_AGENT_DIR).toBe("/tmp/explicit-openclaw-agent");
+        expect(state.env.NOVA_AGENT_DIR).toBe("/tmp/explicit-openclaw-agent");
       },
     );
   });
@@ -107,8 +107,8 @@ describe("openclaw test state", () => {
         agentEnv: "main",
       },
       async (state) => {
-        expect(process.env.OPENCLAW_AGENT_DIR).toBe(state.agentDir());
-        expect(state.env.OPENCLAW_AGENT_DIR).toBe(state.agentDir());
+        expect(process.env.NOVA_AGENT_DIR).toBe(state.agentDir());
+        expect(state.env.NOVA_AGENT_DIR).toBe(state.agentDir());
       },
     );
   });
@@ -160,18 +160,18 @@ describe("openclaw test state", () => {
   });
 
   it("keeps external-service env scoped to the fixture", async () => {
-    const previousPolicy = process.env.OPENCLAW_SERVICE_REPAIR_POLICY;
+    const previousPolicy = process.env.NOVA_SERVICE_REPAIR_POLICY;
 
     await withOpenClawTestState(
       {
         scenario: "external-service",
       },
       async (state) => {
-        expect(process.env.OPENCLAW_SERVICE_REPAIR_POLICY).toBe("external");
-        expect(state.env.OPENCLAW_SERVICE_REPAIR_POLICY).toBe("external");
+        expect(process.env.NOVA_SERVICE_REPAIR_POLICY).toBe("external");
+        expect(state.env.NOVA_SERVICE_REPAIR_POLICY).toBe("external");
       },
     );
 
-    expect(process.env.OPENCLAW_SERVICE_REPAIR_POLICY).toBe(previousPolicy);
+    expect(process.env.NOVA_SERVICE_REPAIR_POLICY).toBe(previousPolicy);
   });
 });

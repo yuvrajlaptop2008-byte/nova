@@ -458,7 +458,7 @@ async function withTaskRegistryTempDir<T>(
   options?: { durableStore?: boolean },
 ): Promise<T> {
   return await withTempDir({ prefix: "openclaw-task-registry-" }, async (root) => {
-    return await withEnvAsync({ OPENCLAW_STATE_DIR: root }, async () => {
+    return await withEnvAsync({ NOVA_STATE_DIR: root }, async () => {
       resetTaskRegistryForTests({ persist: false });
       resetTaskFlowRegistryForTests({ persist: false });
       if (options?.durableStore !== true) {
@@ -800,7 +800,7 @@ describe("task-registry", () => {
 
   it("clears terminal errors when explicitly updated without an error", async () => {
     await withTaskRegistryTempDir(async (root) => {
-      process.env.OPENCLAW_STATE_DIR = root;
+      process.env.NOVA_STATE_DIR = root;
       resetTaskRegistryForTests();
 
       const task = createTaskRecord({
@@ -1861,7 +1861,7 @@ describe("task-registry", () => {
 
   it("delivers delegated ACP completion directly to an explicitly bound Discord thread", async () => {
     await withTaskRegistryTempDir(async (root) => {
-      process.env.OPENCLAW_STATE_DIR = root;
+      process.env.NOVA_STATE_DIR = root;
       resetTaskRegistryForTests();
       const runId = "run-bound-discord-thread-terminal";
       hoisted.sendMessageMock.mockResolvedValue({
@@ -1953,7 +1953,7 @@ describe("task-registry", () => {
     "keeps delegated ACP completion queued without an explicit bound Discord thread ($id)",
     async ({ requesterOrigin }) => {
       await withTaskRegistryTempDir(async (root) => {
-        process.env.OPENCLAW_STATE_DIR = root;
+        process.env.NOVA_STATE_DIR = root;
         resetTaskRegistryForTests();
         const runId = `run-non-bound-discord-thread-terminal-${requesterOrigin.channel}-${requesterOrigin.to}`;
         hoisted.sendMessageMock.mockResolvedValue({

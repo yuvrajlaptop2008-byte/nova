@@ -8,7 +8,7 @@ import {
 // The env variable name is part of the observable contract the messages
 // reference; the mode resolver is internal and proven through the public
 // isGatewayExternallySupervised surface.
-const GATEWAY_SUPERVISOR_MODE_ENV = "OPENCLAW_SUPERVISOR_MODE";
+const GATEWAY_SUPERVISOR_MODE_ENV = "NOVA_SUPERVISOR_MODE";
 
 describe("gateway supervision", () => {
   it.each([
@@ -30,7 +30,7 @@ describe("gateway supervision", () => {
       }),
     ).toThrow(
       "Nova gateway lifecycle is managed by an external supervisor " +
-        "(OPENCLAW_SUPERVISOR_MODE=external). Use that supervisor to restart the gateway.",
+        "(NOVA_SUPERVISOR_MODE=external). Use that supervisor to restart the gateway.",
     );
   });
 

@@ -57,12 +57,12 @@ describe("tryRouteCli", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    originalDisableRouteFirst = process.env.OPENCLAW_DISABLE_ROUTE_FIRST;
-    originalHideBanner = process.env.OPENCLAW_HIDE_BANNER;
-    originalLogLevel = process.env.OPENCLAW_LOG_LEVEL;
-    delete process.env.OPENCLAW_DISABLE_ROUTE_FIRST;
-    delete process.env.OPENCLAW_HIDE_BANNER;
-    delete process.env.OPENCLAW_LOG_LEVEL;
+    originalDisableRouteFirst = process.env.NOVA_DISABLE_ROUTE_FIRST;
+    originalHideBanner = process.env.NOVA_HIDE_BANNER;
+    originalLogLevel = process.env.NOVA_LOG_LEVEL;
+    delete process.env.NOVA_DISABLE_ROUTE_FIRST;
+    delete process.env.NOVA_HIDE_BANNER;
+    delete process.env.NOVA_LOG_LEVEL;
     originalForceStderr = loggingState.forceConsoleToStderr;
     loggingState.forceConsoleToStderr = false;
     findRoutedCommandMock.mockReturnValue({
@@ -76,19 +76,19 @@ describe("tryRouteCli", () => {
       loggingState.forceConsoleToStderr = originalForceStderr;
     }
     if (originalDisableRouteFirst === undefined) {
-      delete process.env.OPENCLAW_DISABLE_ROUTE_FIRST;
+      delete process.env.NOVA_DISABLE_ROUTE_FIRST;
     } else {
-      process.env.OPENCLAW_DISABLE_ROUTE_FIRST = originalDisableRouteFirst;
+      process.env.NOVA_DISABLE_ROUTE_FIRST = originalDisableRouteFirst;
     }
     if (originalHideBanner === undefined) {
-      delete process.env.OPENCLAW_HIDE_BANNER;
+      delete process.env.NOVA_HIDE_BANNER;
     } else {
-      process.env.OPENCLAW_HIDE_BANNER = originalHideBanner;
+      process.env.NOVA_HIDE_BANNER = originalHideBanner;
     }
     if (originalLogLevel === undefined) {
-      delete process.env.OPENCLAW_LOG_LEVEL;
+      delete process.env.NOVA_LOG_LEVEL;
     } else {
-      process.env.OPENCLAW_LOG_LEVEL = originalLogLevel;
+      process.env.NOVA_LOG_LEVEL = originalLogLevel;
     }
   });
 
@@ -176,7 +176,7 @@ describe("tryRouteCli", () => {
   it("routes status when root options precede the command", async () => {
     const capturedLogLevels: Array<string | undefined> = [];
     ensureConfigReadyMock.mockImplementationOnce(async () => {
-      capturedLogLevels.push(process.env.OPENCLAW_LOG_LEVEL);
+      capturedLogLevels.push(process.env.NOVA_LOG_LEVEL);
     });
 
     await expect(tryRouteCli(["node", "openclaw", "--log-level", "debug", "status"])).resolves.toBe(
@@ -195,13 +195,13 @@ describe("tryRouteCli", () => {
       scope: "channels",
     });
     expect(capturedLogLevels).toEqual(["debug"]);
-    expect(process.env.OPENCLAW_LOG_LEVEL).toBe("debug");
+    expect(process.env.NOVA_LOG_LEVEL).toBe("debug");
   });
 
   it("applies routed log level options after the command", async () => {
     const capturedLogLevels: Array<string | undefined> = [];
     ensureConfigReadyMock.mockImplementationOnce(async () => {
-      capturedLogLevels.push(process.env.OPENCLAW_LOG_LEVEL);
+      capturedLogLevels.push(process.env.NOVA_LOG_LEVEL);
     });
 
     await expect(tryRouteCli(["node", "openclaw", "status", "--log-level=trace"])).resolves.toBe(
@@ -211,7 +211,7 @@ describe("tryRouteCli", () => {
     expect(ensureConfigReadyMock).toHaveBeenCalledTimes(1);
     expect(runRouteMock).toHaveBeenCalledTimes(1);
     expect(capturedLogLevels).toEqual(["trace"]);
-    expect(process.env.OPENCLAW_LOG_LEVEL).toBe("trace");
+    expect(process.env.NOVA_LOG_LEVEL).toBe("trace");
   });
 
   it("uses the last valid routed log level option", async () => {
@@ -221,7 +221,7 @@ describe("tryRouteCli", () => {
 
     expect(ensureConfigReadyMock).toHaveBeenCalledTimes(1);
     expect(runRouteMock).toHaveBeenCalledTimes(1);
-    expect(process.env.OPENCLAW_LOG_LEVEL).toBe("trace");
+    expect(process.env.NOVA_LOG_LEVEL).toBe("trace");
   });
 
   it.each([
@@ -237,11 +237,11 @@ describe("tryRouteCli", () => {
     expect(ensureConfigReadyMock).not.toHaveBeenCalled();
     expect(ensurePluginRegistryLoadedMock).not.toHaveBeenCalled();
     expect(runRouteMock).not.toHaveBeenCalled();
-    expect(process.env.OPENCLAW_LOG_LEVEL).toBeUndefined();
+    expect(process.env.NOVA_LOG_LEVEL).toBeUndefined();
   });
 
-  it("respects OPENCLAW_HIDE_BANNER for routed commands", async () => {
-    process.env.OPENCLAW_HIDE_BANNER = "1";
+  it("respects NOVA_HIDE_BANNER for routed commands", async () => {
+    process.env.NOVA_HIDE_BANNER = "1";
 
     await expect(tryRouteCli(["node", "openclaw", "status"])).resolves.toBe(true);
 

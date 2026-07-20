@@ -11,7 +11,7 @@ import {
   hasInternalRuntimeContext,
   INTERNAL_RUNTIME_CONTEXT_BEGIN,
   INTERNAL_RUNTIME_CONTEXT_END,
-  OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE,
+  NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE,
   relocateCurrentRuntimeContextCarrierToTail,
   stripInternalRuntimeContext,
 } from "./internal-runtime-context.js";
@@ -19,7 +19,7 @@ import {
 type TestMessage = { role: string; content: string; customType?: string };
 
 function carrier(content = "runtime ctx"): TestMessage {
-  return { role: "custom", customType: OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE, content };
+  return { role: "custom", customType: NOVA_RUNTIME_CONTEXT_CUSTOM_TYPE, content };
 }
 function user(content: string): TestMessage {
   return { role: "user", content };

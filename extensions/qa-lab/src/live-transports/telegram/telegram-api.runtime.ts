@@ -92,9 +92,9 @@ type TelegramGatewayClient = {
 
 const TELEGRAM_QA_DEFAULT_READY_TIMEOUT_MS = 45_000;
 const TELEGRAM_QA_ENV_FIELDS = [
-  { field: "groupId", envKey: "OPENCLAW_QA_TELEGRAM_GROUP_ID" },
-  { field: "driverToken", envKey: "OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN" },
-  { field: "sutToken", envKey: "OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN" },
+  { field: "groupId", envKey: "NOVA_QA_TELEGRAM_GROUP_ID" },
+  { field: "driverToken", envKey: "NOVA_QA_TELEGRAM_DRIVER_BOT_TOKEN" },
+  { field: "sutToken", envKey: "NOVA_QA_TELEGRAM_SUT_BOT_TOKEN" },
 ] as const;
 
 const telegramQaCredentialPayloadSchema = z.object({
@@ -388,7 +388,7 @@ export async function flushTelegramUpdates(token: string) {
 }
 
 function resolveTelegramQaReadyTimeoutMs(env: NodeJS.ProcessEnv = process.env) {
-  const raw = env.OPENCLAW_QA_TRANSPORT_READY_TIMEOUT_MS;
+  const raw = env.NOVA_QA_TRANSPORT_READY_TIMEOUT_MS;
   return raw
     ? (parseStrictPositiveInteger(raw) ?? TELEGRAM_QA_DEFAULT_READY_TIMEOUT_MS)
     : TELEGRAM_QA_DEFAULT_READY_TIMEOUT_MS;

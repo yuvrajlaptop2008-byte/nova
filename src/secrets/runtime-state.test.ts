@@ -44,7 +44,7 @@ describe("secrets runtime state", () => {
   const autoCleanupTempDirs = useAutoCleanupTempDirTracker(afterEach);
 
   beforeEach(() => {
-    envSnapshot = captureEnv(["OPENCLAW_STATE_DIR"]);
+    envSnapshot = captureEnv(["NOVA_STATE_DIR"]);
   });
 
   afterEach(() => {
@@ -113,7 +113,7 @@ describe("secrets runtime state", () => {
     const secretRef = {
       source: "env" as const,
       provider: "default",
-      id: "OPENCLAW_DEBUG_AUTH_TOKEN",
+      id: "NOVA_DEBUG_AUTH_TOKEN",
     };
     const snapshot: PreparedSecretsRuntimeSnapshot = {
       sourceConfig: { gateway: { auth: { mode: "token", token: secretRef } } },

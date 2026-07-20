@@ -232,7 +232,7 @@ describe("scripts/changed-lanes", () => {
     const result = spawnSync(process.execPath, ["scripts/check-changed.mjs", "--help"], {
       cwd: repoRoot,
       encoding: "utf8",
-      env: { ...createNestedGitEnv(), OPENCLAW_TESTBOX: "1" },
+      env: { ...createNestedGitEnv(), NOVA_TESTBOX: "1" },
     });
 
     expect(result.status).toBe(0);
@@ -279,8 +279,8 @@ describe("scripts/changed-lanes", () => {
         ...createNestedGitEnv(),
         CI: "",
         GITHUB_ACTIONS: "",
-        OPENCLAW_CHECK_CHANGED_REMOTE_CHILD: "",
-        OPENCLAW_TESTBOX: "1",
+        NOVA_CHECK_CHANGED_REMOTE_CHILD: "",
+        NOVA_TESTBOX: "1",
         PATH: `${binDir}:${process.env.PATH ?? ""}`,
       },
     });
@@ -322,8 +322,8 @@ describe("scripts/changed-lanes", () => {
           ...createNestedGitEnv(),
           CI: "",
           GITHUB_ACTIONS: "",
-          OPENCLAW_CHECK_CHANGED_REMOTE_CHILD: "",
-          OPENCLAW_TESTBOX: "",
+          NOVA_CHECK_CHANGED_REMOTE_CHILD: "",
+          NOVA_TESTBOX: "",
           PATH: `${binDir}:${process.env.PATH ?? ""}`,
         },
       },
@@ -350,7 +350,7 @@ describe("scripts/changed-lanes", () => {
     const result = spawnSync(process.execPath, ["scripts/check-changed.mjs", "--dr-run"], {
       cwd: repoRoot,
       encoding: "utf8",
-      env: { ...createNestedGitEnv(), OPENCLAW_TESTBOX: "1" },
+      env: { ...createNestedGitEnv(), NOVA_TESTBOX: "1" },
     });
 
     expect(result.status).toBe(1);
@@ -516,23 +516,23 @@ describe("scripts/changed-lanes", () => {
     mkdirSync(path.join(dir, "src"), { recursive: true });
     writeFileSync(path.join(dir, "src", "feature.ts"), "export const value = 1;\n", "utf8");
 
-    const previousRawSync = process.env.OPENCLAW_CHANGED_LANES_RAW_SYNC;
-    delete process.env.OPENCLAW_CHANGED_LANES_RAW_SYNC;
+    const previousRawSync = process.env.NOVA_CHANGED_LANES_RAW_SYNC;
+    delete process.env.NOVA_CHANGED_LANES_RAW_SYNC;
     try {
       const normalPaths = listChangedPathsFromGit({ base: "origin/main", cwd: dir });
       expect(normalPaths.length).toBeGreaterThan(200);
       expect(normalPaths).toContain("baseline-0.txt");
       expect(normalPaths).toContain("src/feature.ts");
 
-      process.env.OPENCLAW_CHANGED_LANES_RAW_SYNC = "1";
+      process.env.NOVA_CHANGED_LANES_RAW_SYNC = "1";
       expect(listChangedPathsFromGit({ base: "origin/main", cwd: dir })).toEqual([
         "src/feature.ts",
       ]);
     } finally {
       if (previousRawSync === undefined) {
-        delete process.env.OPENCLAW_CHANGED_LANES_RAW_SYNC;
+        delete process.env.NOVA_CHANGED_LANES_RAW_SYNC;
       } else {
-        process.env.OPENCLAW_CHANGED_LANES_RAW_SYNC = previousRawSync;
+        process.env.NOVA_CHANGED_LANES_RAW_SYNC = previousRawSync;
       }
     }
   });
@@ -823,10 +823,10 @@ describe("scripts/changed-lanes", () => {
     expect(plan.commands.map((command) => command.args[0])).toContain("tsgo:core:test");
     expect(plan.commands.find((command) => command.args[0] === "tsgo:core")?.env).toEqual({
       PATH: "/usr/bin",
-      OPENCLAW_OXLINT_SKIP_LOCK: "1",
-      OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD: "1",
-      OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
-      OPENCLAW_TSGO_SPARSE_SKIP: "1",
+      NOVA_OXLINT_SKIP_LOCK: "1",
+      NOVA_TEST_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_TSGO_SPARSE_SKIP: "1",
     });
     expect(plan.commands.find((command) => command.name === "lint core changed file")).toEqual({
       name: "lint core changed file",
@@ -839,9 +839,9 @@ describe("scripts/changed-lanes", () => {
       ],
       env: {
         PATH: "/usr/bin",
-        OPENCLAW_OXLINT_SKIP_LOCK: "1",
-        OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD: "1",
-        OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
+        NOVA_OXLINT_SKIP_LOCK: "1",
+        NOVA_TEST_HEAVY_CHECK_LOCK_HELD: "1",
+        NOVA_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
       },
     });
   });
@@ -1039,24 +1039,24 @@ describe("scripts/changed-lanes", () => {
   it("reenables local-check policy for changed typecheck commands", () => {
     const result = detectChangedLanes(["packages/normalization-core/src/string-normalization.ts"]);
     const plan = createChangedCheckPlan(result, {
-      env: { OPENCLAW_LOCAL_CHECK: "0", PATH: "/usr/bin" },
+      env: { NOVA_LOCAL_CHECK: "0", PATH: "/usr/bin" },
     });
 
     expect(plan.commands.find((command) => command.args[0] === "tsgo:core")?.env).toEqual({
-      OPENCLAW_LOCAL_CHECK: "1",
-      OPENCLAW_OXLINT_SKIP_LOCK: "1",
-      OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD: "1",
-      OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
-      OPENCLAW_TSGO_SPARSE_SKIP: "1",
+      NOVA_LOCAL_CHECK: "1",
+      NOVA_OXLINT_SKIP_LOCK: "1",
+      NOVA_TEST_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_TSGO_SPARSE_SKIP: "1",
       PATH: "/usr/bin",
     });
   });
 
   it("marks changed-check children as covered by the parent heavy-check lock", () => {
     expect(createChangedCheckChildEnv({ PATH: "/usr/bin" })).toEqual({
-      OPENCLAW_OXLINT_SKIP_LOCK: "1",
-      OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD: "1",
-      OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_OXLINT_SKIP_LOCK: "1",
+      NOVA_TEST_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
       PATH: "/usr/bin",
     });
   });
@@ -1130,8 +1130,8 @@ describe("scripts/changed-lanes", () => {
       "--timing-json",
       "--",
       "env",
-      "OPENCLAW_CHECK_CHANGED_REMOTE_CHILD=1",
-      "OPENCLAW_CHANGED_LANES_RAW_SYNC=1",
+      "NOVA_CHECK_CHANGED_REMOTE_CHILD=1",
+      "NOVA_CHANGED_LANES_RAW_SYNC=1",
       "CI=1",
       "PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false",
       "corepack",
@@ -1170,7 +1170,7 @@ describe("scripts/changed-lanes", () => {
     }
     for (const result of [docsResult, metadataResult]) {
       expect(
-        shouldDelegateChangedCheckToCrabbox([], { OPENCLAW_TESTBOX: "1" }, { cwd: dir, result }),
+        shouldDelegateChangedCheckToCrabbox([], { NOVA_TESTBOX: "1" }, { cwd: dir, result }),
       ).toBe(true);
     }
     expect(changedCheckRequiresRemote(mixedResult)).toBe(true);
@@ -1246,9 +1246,9 @@ describe("scripts/changed-lanes", () => {
     expect(shouldDelegateChangedCheckToCrabbox(["--dry-run"], {})).toBe(false);
     expect(shouldDelegateChangedCheckToCrabbox([], { GITHUB_ACTIONS: "true" })).toBe(false);
     expect(shouldDelegateChangedCheckToCrabbox([], { CI: "1" })).toBe(false);
-    expect(
-      shouldDelegateChangedCheckToCrabbox([], { OPENCLAW_CHECK_CHANGED_REMOTE_CHILD: "1" }),
-    ).toBe(false);
+    expect(shouldDelegateChangedCheckToCrabbox([], { NOVA_CHECK_CHANGED_REMOTE_CHILD: "1" })).toBe(
+      false,
+    );
   });
 
   it("runs changed-check lint lanes under the parent heavy-check lock", () => {
@@ -1259,9 +1259,9 @@ describe("scripts/changed-lanes", () => {
     );
 
     expect(lintCommand?.env).toEqual({
-      OPENCLAW_OXLINT_SKIP_LOCK: "1",
-      OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD: "1",
-      OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_OXLINT_SKIP_LOCK: "1",
+      NOVA_TEST_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
       PATH: "/usr/bin",
     });
   });
@@ -1274,9 +1274,9 @@ describe("scripts/changed-lanes", () => {
     const testCommand = plan.commands.find((command) => command.args[0] === "test:macos:ci");
 
     expect(testCommand?.env).toEqual({
-      OPENCLAW_OXLINT_SKIP_LOCK: "1",
-      OPENCLAW_TEST_HEAVY_CHECK_LOCK_HELD: "1",
-      OPENCLAW_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_OXLINT_SKIP_LOCK: "1",
+      NOVA_TEST_HEAVY_CHECK_LOCK_HELD: "1",
+      NOVA_TSGO_HEAVY_CHECK_LOCK_HELD: "1",
       PATH: "/usr/bin",
     });
   });
@@ -1475,8 +1475,8 @@ describe("scripts/changed-lanes", () => {
     );
     expect(schedulerDryRun?.bin).toBe("node");
     expect(schedulerDryRun?.args).toEqual(["scripts/test-docker-all.mjs"]);
-    expect(schedulerDryRun?.env?.OPENCLAW_DOCKER_ALL_DRY_RUN).toBe("1");
-    expect(schedulerDryRun?.env?.OPENCLAW_DOCKER_ALL_LIVE_MODE).toBe("only");
+    expect(schedulerDryRun?.env?.NOVA_DOCKER_ALL_DRY_RUN).toBe("1");
+    expect(schedulerDryRun?.env?.NOVA_DOCKER_ALL_LIVE_MODE).toBe("only");
   });
 
   it("routes live Docker package script-only changes through the focused gate", () => {
@@ -1499,7 +1499,7 @@ describe("scripts/changed-lanes", () => {
         scripts: {
           "test:docker:all": "node scripts/test-docker-all.mjs",
           "test:docker:live-acp-bind:droid":
-            "OPENCLAW_LIVE_ACP_BIND_AGENT=droid bash scripts/test-live-acp-bind-docker.sh",
+            "NOVA_LIVE_ACP_BIND_AGENT=droid bash scripts/test-live-acp-bind-docker.sh",
         },
         dependencies: {
           leftpad: "1.0.0",
@@ -1559,7 +1559,7 @@ describe("scripts/changed-lanes", () => {
           scripts: {
             "test:docker:all": "node scripts/test-docker-all.mjs",
             "test:docker:live-acp-bind:droid":
-              "OPENCLAW_LIVE_ACP_BIND_AGENT=droid bash scripts/test-live-acp-bind-docker.sh",
+              "NOVA_LIVE_ACP_BIND_AGENT=droid bash scripts/test-live-acp-bind-docker.sh",
           },
         },
         null,
@@ -1662,7 +1662,7 @@ describe("scripts/changed-lanes", () => {
         name: "fixture",
         scripts: {
           "test:docker:live-acp-bind:droid":
-            "OPENCLAW_LIVE_ACP_BIND_AGENT=droid bash scripts/test-live-acp-bind-docker.sh",
+            "NOVA_LIVE_ACP_BIND_AGENT=droid bash scripts/test-live-acp-bind-docker.sh",
         },
         dependencies: { leftpad: "1.0.1" },
       },

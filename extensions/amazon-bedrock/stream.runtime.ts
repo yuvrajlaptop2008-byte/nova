@@ -113,7 +113,7 @@ function normalizeAdaptiveClaudeToolChoice(
 
 // Nova synthesizes these caps when the provider's real output limit is unknown.
 // Keep them out of Bedrock adaptive requests so Bedrock can use its native default.
-const OPENCLAW_FALLBACK_MODEL_MAX_TOKENS = new Set([4096, 8192, 16_384]);
+const NOVA_FALLBACK_MODEL_MAX_TOKENS = new Set([4096, 8192, 16_384]);
 
 function resolveAdaptiveBedrockMaxTokens(
   model: Model<"bedrock-converse-stream">,
@@ -122,7 +122,7 @@ function resolveAdaptiveBedrockMaxTokens(
   if (baseMaxTokens !== undefined) {
     return baseMaxTokens;
   }
-  return OPENCLAW_FALLBACK_MODEL_MAX_TOKENS.has(model.maxTokens) ? undefined : model.maxTokens;
+  return NOVA_FALLBACK_MODEL_MAX_TOKENS.has(model.maxTokens) ? undefined : model.maxTokens;
 }
 
 /** Stream a Bedrock Converse request using Bedrock-specific options. */
@@ -712,13 +712,13 @@ function mapThinkingLevelToEffort(
 
 /**
  * Resolve cache retention preference.
- * Defaults to "short" and uses OPENCLAW_CACHE_RETENTION for backward compatibility.
+ * Defaults to "short" and uses NOVA_CACHE_RETENTION for backward compatibility.
  */
 function resolveCacheRetention(cacheRetention?: CacheRetention): CacheRetention {
   if (cacheRetention) {
     return cacheRetention;
   }
-  if (typeof process !== "undefined" && process.env.OPENCLAW_CACHE_RETENTION === "long") {
+  if (typeof process !== "undefined" && process.env.NOVA_CACHE_RETENTION === "long") {
     return "long";
   }
   return "short";

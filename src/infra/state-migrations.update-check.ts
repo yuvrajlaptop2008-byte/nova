@@ -160,7 +160,7 @@ export function migrateLegacyUpdateCheckState(params: {
         imported = true;
         shouldArchive = true;
       },
-      { env: { ...process.env, OPENCLAW_STATE_DIR: params.stateDir } },
+      { env: { ...process.env, NOVA_STATE_DIR: params.stateDir } },
     );
   } catch (err) {
     warnings.push(`Failed migrating legacy update-check state: ${String(err)}`);

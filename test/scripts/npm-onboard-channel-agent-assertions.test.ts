@@ -303,7 +303,7 @@ describe("npm onboard channel agent assertions", () => {
       "telegram",
       { configuredChannels: ["telegram"] },
       `# Nova status\n${"x".repeat(128)}`,
-      { OPENCLAW_NPM_ONBOARD_STATUS_TEXT_MAX_BYTES: "64" },
+      { NOVA_NPM_ONBOARD_STATUS_TEXT_MAX_BYTES: "64" },
     );
 
     expect(result.status).not.toBe(0);
@@ -315,7 +315,7 @@ describe("npm onboard channel agent assertions", () => {
       "telegram",
       { configuredChannels: ["telegram"], filler: "x".repeat(128) },
       "# Channels\ntelegram ok configured",
-      { OPENCLAW_NPM_ONBOARD_JSON_ARTIFACT_MAX_BYTES: "64" },
+      { NOVA_NPM_ONBOARD_JSON_ARTIFACT_MAX_BYTES: "64" },
     );
 
     expect(result.status).not.toBe(0);

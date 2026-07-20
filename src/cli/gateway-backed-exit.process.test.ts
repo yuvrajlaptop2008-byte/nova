@@ -86,7 +86,7 @@ describe("gateway-backed CLI process exit", () => {
     await fs.mkdir(stateDir, { recursive: true });
     await fs.writeFile(
       caTriggerPath,
-      `if (process.env.OPENCLAW_NODE_OPTIONS_READY === "1") {
+      `if (process.env.NOVA_NODE_OPTIONS_READY === "1") {
   const { getCACertificates } = await import("node:tls");
   getCACertificates("default");
 }
@@ -119,10 +119,10 @@ describe("gateway-backed CLI process exit", () => {
           NODE_ENV: undefined,
           NODE_OPTIONS: undefined,
           NODE_USE_SYSTEM_CA: "1",
-          OPENCLAW_CONFIG_PATH: configPath,
-          OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-          OPENCLAW_NODE_OPTIONS_READY: undefined,
-          OPENCLAW_STATE_DIR: stateDir,
+          NOVA_CONFIG_PATH: configPath,
+          NOVA_DISABLE_BUNDLED_PLUGINS: "1",
+          NOVA_NODE_OPTIONS_READY: undefined,
+          NOVA_STATE_DIR: stateDir,
           VITEST: undefined,
         },
         stdio: ["pipe", "pipe", "pipe"],

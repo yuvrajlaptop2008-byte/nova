@@ -27,7 +27,7 @@ import {
   type SystemProfileImportState,
 } from "./src/browser/system-profile-import-state.js";
 
-const EAGER_BROWSER_CONTROL_SERVICE_ENV = "OPENCLAW_EAGER_BROWSER_CONTROL_SERVER";
+const EAGER_BROWSER_CONTROL_SERVICE_ENV = "NOVA_EAGER_BROWSER_CONTROL_SERVER";
 
 const loadBrowserRegistrationRuntimeModule = createLazyRuntimeModule(
   () => import("./register.runtime.js"),
