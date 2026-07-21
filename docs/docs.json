@@ -7,8 +7,8 @@
     "library": "lucide"
   },
   "logo": {
-    "light": "/assets/pixel-lobster.svg",
-    "dark": "/assets/pixel-lobster.svg"
+    "light": "/assets/nova-logo.svg",
+    "dark": "/assets/nova-logo.svg"
   },
   "fonts": {
     "body": {
@@ -18,7 +18,7 @@
       "family": "DM Sans"
     }
   },
-  "favicon": "/assets/pixel-lobster.svg",
+  "favicon": "/assets/nova-favicon.svg",
   "colors": {
     "primary": "#D84A31",
     "dark": "#E05540",
@@ -1944,6 +1944,7 @@
                 "group": "Technical reference",
                 "pages": [
                   "agent-runtime-architecture",
+                  "nova-systems",
                   "reference/wizard",
                   "reference/token-use",
                   "reference/secretref-credential-surface",

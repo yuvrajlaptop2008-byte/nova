@@ -7,8 +7,8 @@ import {
 } from "../../packages/normalization-core/src/number-coercion.js";
 import type { Model } from "../llm/types.js";
 
-// Static Nova lobster mascot; keep shapes in sync with ui/public/favicon.svg.
-const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" aria-hidden="true"><defs><linearGradient id="lobster-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#991b1b"/></linearGradient></defs><path fill="url(#lobster-gradient)" d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z"/><path fill="url(#lobster-gradient)" d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z"/><path fill="url(#lobster-gradient)" d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z"/><path stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" d="M45 15 Q35 5 30 8"/><path stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" d="M75 15 Q85 5 90 8"/><circle cx="45" cy="35" r="6" fill="#050810"/><circle cx="75" cy="35" r="6" fill="#050810"/><circle cx="46" cy="34" r="2.5" fill="#00e5cc"/><circle cx="76" cy="34" r="2.5" fill="#00e5cc"/></svg>`;
+// Static Nova star mascot; keep shapes in sync with ui/public/favicon.svg.
+const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" aria-hidden="true"><defs><linearGradient id="star-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#e5e7eb"/></linearGradient><radialGradient id="bg-gradient" cx="50%" cy="38%" r="72%"><stop offset="0%" stop-color="#bae6fd"/><stop offset="100%" stop-color="#1e40af"/></radialGradient></defs><rect width="120" height="120" rx="24" fill="url(#bg-gradient)"/><path d="M60 14l18 55 56 6-46 38 15 56-48-35-48 35 15-56-46-38 56-6z" fill="url(#star-gradient)" stroke="#0b1220" stroke-width="3" stroke-linejoin="round"/></svg>`;
 
 /** Normalized OAuth credential bundle persisted by provider auth profiles. */
 export type OAuthCredentials = {

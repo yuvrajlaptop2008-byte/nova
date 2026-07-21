@@ -1,4 +1,4 @@
-// Shared Nova banner: the pixel lobster mascot beside the nova
+// Shared Nova banner: the pixel star mascot beside the nova
 // wordmark, with a short startup animation on rich interactive terminals.
 // Used by the wizard flows (doctor/onboard/configure) and the foreground
 // gateway run; non-TTY and CI paths always get the plain static banner.
@@ -12,31 +12,31 @@ import type { RuntimeEnv } from "../runtime.js";
 
 // Art is pregenerated from pixel bitmaps (two pixel rows per terminal row via
 // ▀▄█). Mascot and wordmark are separate so they can be tinted independently;
-// the wordmark starts on mascot row 2, keeping the claws above the text line.
+// the wordmark starts on mascot row 2, keeping the star above the text line.
 const MASCOT_ART = [
-  "▄███▄     ▄███▄",
-  "▀█▄█▀     ▀█▄█▀",
-  "     ▀▄ ▄▀",
-  "    ██ █ ██",
-  "    ▀█████▀",
-  "   ▄█▀ █ ▀█▄",
+  "      ██       ",
+  "     ████      ",
+  "█████████████",
+  "     ████      ",
+  "    ██ ██      ",
+  "   ██   ██    ",
 ] as const;
-// Claw tips with the pincer notch widened; swapping the top two rows in and
-// out produces the "snip".
-const MASCOT_OPEN_ROWS = ["▄█▀█▄     ▄█▀█▄", "▀█ █▀     ▀█ █▀"] as const;
+// Twinkle frames: the top opens into a brighter 4-point sparkle, swapped in
+// and out to produce the "twinkle".
+const MASCOT_OPEN_ROWS = ["   ███ ███   ", "    █████    "] as const;
 const MASCOT_WIDTH = 15;
 const WORDMARK_ROW_OFFSET = 2;
 
 const WORDMARK_ART = [
-  "█▀▀▀█ █▀▀▀█ █▀▀▀▀ █▄  █ █▀▀▀▀ █     █▀▀▀█ █   █",
-  "█   █ █▀▀▀▀ █▀▀▀  █ ▀▄█ █     █     █▀▀▀█ █▄▀▄█",
-  "▀▀▀▀▀ ▀     ▀▀▀▀▀ ▀   ▀ ▀▀▀▀▀ ▀▀▀▀▀ ▀   ▀ ▀   ▀",
+  "█▀▀▀█ █▀▀▀█ █   █ ▀▀▀ ",
+  "█  ██ █   █ █   █ █   █",
+  "█   █ █▀▀▀█ ▀▀▀ █▀▀▀█",
 ] as const;
 const GAP = 3;
-const BANNER_WIDTH = MASCOT_WIDTH + GAP + 48;
+const BANNER_WIDTH = MASCOT_WIDTH + GAP + WORDMARK_ART[0].length;
 const ROWS = MASCOT_ART.length;
 
-type ClawBannerOptions = {
+type NovaBannerOptions = {
   columns?: number;
   isTty?: boolean;
   rich?: boolean;
@@ -49,7 +49,7 @@ type ClawBannerOptions = {
   write?: (chunk: string) => void;
 };
 
-export type ClawBannerResult = "static" | "completed" | "settled";
+export type NovaBannerResult = "static" | "completed" | "settled";
 
 type CellTint = (col: number) => (text: string) => string;
 
@@ -90,7 +90,7 @@ function staticBannerLines(): string[] {
 }
 
 function plainTitleLine(): string {
-  const icon = decorativeEmoji("🦞");
+  const icon = decorativeEmoji("⭐");
   return supportsDecorativeEmoji() && icon ? `${icon} nova ${icon}` : "nova";
 }
 
@@ -100,15 +100,15 @@ const defaultSleep = (ms: number) =>
   });
 
 // One combined entrance: a left-to-right molt wipe reveals the color, a
-// shimmer band sweeps the wordmark, and the claws snip. The rng varies the
-// shimmer passes and snip count a little so back-to-back runs don't feel
+// shimmer band sweeps the wordmark, and the star twinkles. The rng varies the
+// shimmer passes and twinkle count a little so back-to-back runs don't feel
 // canned; every sequence ends on the exact static banner.
 async function animateBanner(opts: {
   rng: () => number;
   settleWhen?: PromiseLike<unknown>;
   sleep: (ms: number) => Promise<void>;
   write: (chunk: string) => void;
-}): Promise<Exclude<ClawBannerResult, "static">> {
+}): Promise<Exclude<NovaBannerResult, "static">> {
   const { rng, settleWhen, sleep, write } = opts;
   let settleRequested = false;
   const settleSignal = settleWhen
@@ -140,7 +140,7 @@ async function animateBanner(opts: {
   // banner runs before any other component installs signal handlers, so a
   // scoped restore-and-exit handler is safe here and removed right after.
   const onSignal = (signal: "SIGINT" | "SIGTERM") => {
-    restoreTerminalState(`claw banner ${signal}`);
+    restoreTerminalState(`nova banner ${signal}`);
     process.exit(signal === "SIGINT" ? 130 : 143);
   };
   const onSigint = () => onSignal("SIGINT");
@@ -179,7 +179,7 @@ async function animateBanner(opts: {
         }
       }
     }
-    // Snip: claws open and close once, sometimes twice.
+    // Twinkle: star opens and closes once, sometimes twice.
     const snips = rng() < 0.4 ? 2 : 1;
     for (let snip = 0; snip < snips; snip++) {
       draw(composeFrame({ mascotRows: [...MASCOT_OPEN_ROWS, ...MASCOT_ART.slice(2)] }));
@@ -212,10 +212,10 @@ async function animateBanner(opts: {
  * Prints the Nova banner: animated on rich interactive terminals, static
  * otherwise, plain title on terminals too narrow for the art.
  */
-export async function printClawBanner(
+export async function printNovaBanner(
   runtime: RuntimeEnv,
-  options: ClawBannerOptions = {},
-): Promise<ClawBannerResult> {
+  options: NovaBannerOptions = {},
+): Promise<NovaBannerResult> {
   const columns = options.columns ?? process.stdout.columns ?? 80;
   if (columns < BANNER_WIDTH) {
     runtime.log(`${plainTitleLine()}\n`);

@@ -1,8 +1,8 @@
-// Claw banner tests: static/animated gating and the final-frame invariant.
+// Nova banner tests: static/animated gating and the final-frame invariant.
 import { describe, expect, it, vi } from "vitest";
 import { stripAnsi } from "../../packages/terminal-core/src/ansi.js";
 import type { RuntimeEnv } from "../runtime.js";
-import { printClawBanner } from "./claw-banner.js";
+import { printNovaBanner } from "./nova-banner.js";
 
 const runtimeStub = () => {
   const log = vi.fn();
@@ -12,7 +12,7 @@ const runtimeStub = () => {
 async function runAnimated(rng: () => number) {
   const chunks: string[] = [];
   const { runtime } = runtimeStub();
-  await printClawBanner(runtime, {
+  await printNovaBanner(runtime, {
     columns: 120,
     isTty: true,
     rich: true,
@@ -26,30 +26,30 @@ async function runAnimated(rng: () => number) {
 
 async function runStatic() {
   const { runtime, log } = runtimeStub();
-  await printClawBanner(runtime, { columns: 120, isTty: false, env: {} });
+  await printNovaBanner(runtime, { columns: 120, isTty: false, env: {} });
   return stripAnsi(String(log.mock.calls[0]?.[0]))
     .split("\n")
     .filter((row) => row.length > 0);
 }
 
-describe("printClawBanner", () => {
+describe("printNovaBanner", () => {
   it("prints the static banner when not animatable", async () => {
     const { runtime, log } = runtimeStub();
-    await printClawBanner(runtime, { columns: 120, isTty: false, env: {} });
+    await printNovaBanner(runtime, { columns: 120, isTty: false, env: {} });
     const output = stripAnsi(String(log.mock.calls[0]?.[0]));
-    expect(output.split("\n")[0]).toBe("▄███▄     ▄███▄");
-    expect(output).toContain("█▀▀▀█ █▀▀▀█ █▀▀▀▀ █▄  █");
+    expect(output.split("\n")[0]).toBe("      ██");
+    expect(output).toContain("█▀▀▀█ █▀▀▀█");
   });
 
   it("stays static under CI even on a rich TTY", async () => {
     const { runtime, log } = runtimeStub();
-    await printClawBanner(runtime, { columns: 120, isTty: true, rich: true, env: { CI: "1" } });
+    await printNovaBanner(runtime, { columns: 120, isTty: true, rich: true, env: { CI: "1" } });
     expect(log).toHaveBeenCalledTimes(1);
   });
 
   it("falls back to the plain title on narrow terminals", async () => {
     const { runtime, log } = runtimeStub();
-    await printClawBanner(runtime, { columns: 50, isTty: true, rich: true, env: {} });
+    await printNovaBanner(runtime, { columns: 30, isTty: true, rich: true, env: {} });
     const output = String(log.mock.calls[0]?.[0]);
     expect(output).toContain("nova");
     expect(output).not.toContain("█");
@@ -72,7 +72,7 @@ describe("printClawBanner", () => {
     const before = process.listenerCount("SIGINT");
     let during = -1;
     const { runtime } = runtimeStub();
-    await printClawBanner(runtime, {
+    await printNovaBanner(runtime, {
       columns: 120,
       isTty: true,
       rich: true,
@@ -96,7 +96,7 @@ describe("printClawBanner", () => {
       settle = resolve;
     });
     const { runtime } = runtimeStub();
-    const banner = printClawBanner(runtime, {
+    const banner = printNovaBanner(runtime, {
       columns: 120,
       isTty: true,
       rich: true,

@@ -57,10 +57,10 @@ import { setConsoleSubsystemFilter, setConsoleTimestampPrefix } from "../../logg
 import { withDiagnosticPhase } from "../../logging/diagnostic-phase.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { defaultRuntime } from "../../runtime.js";
-import { printClawBanner, type ClawBannerResult } from "../claw-banner.js";
 import { formatCliCommand } from "../command-format.js";
 import { formatInvalidConfigPort, formatInvalidPortOption } from "../error-format.js";
 import type { InvalidConfigRecoveryDeps } from "../invalid-config-recovery.js";
+import { printNovaBanner, type NovaBannerResult } from "../nova-banner.js";
 import { withProgress } from "../progress.js";
 import { parsePort } from "../shared/parse-port.js";
 import {
@@ -702,8 +702,8 @@ async function runGatewayCommandOnce(opts: GatewayRunOpts, hooks: GatewayRunRunt
     () => import("../../gateway/server.js"),
   );
   const rawServerImport = serverImportMeasurement.result;
-  const bannerDone: Promise<ClawBannerResult> = process.stdout.isTTY
-    ? printClawBanner(defaultRuntime, { settleWhen: rawServerImport })
+  const bannerDone: Promise<NovaBannerResult> = process.stdout.isTTY
+    ? printNovaBanner(defaultRuntime, { settleWhen: rawServerImport })
     : Promise.resolve("static");
   const loadServerModule = async () => {
     try {

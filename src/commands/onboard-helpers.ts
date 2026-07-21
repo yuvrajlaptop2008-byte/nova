@@ -22,7 +22,7 @@ import {
   prepareWorkspaceStateDeletion,
 } from "../agents/workspace-state-store.js";
 import { DEFAULT_AGENT_WORKSPACE_DIR, ensureAgentWorkspace } from "../agents/workspace.js";
-import { printClawBanner } from "../cli/claw-banner.js";
+import { printNovaBanner } from "../cli/nova-banner.js";
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
 import { resolveConfigPath } from "../config/paths.js";
 import { resolveSessionTranscriptsDirForAgent } from "../config/sessions/paths.js";
@@ -183,7 +183,7 @@ export function validateGatewayPasswordInput(value: unknown): string | undefined
 
 /** Prints the onboarding banner: pixel mascot beside the nova wordmark. */
 export async function printWizardHeader(runtime: RuntimeEnv): Promise<void> {
-  await printClawBanner(runtime);
+  await printNovaBanner(runtime);
 }
 
 /** Records wizard provenance metadata on config writes. */
